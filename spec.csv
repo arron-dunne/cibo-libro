@@ -1,0 +1,45 @@
+ID,Requirement,Category,Phase
+R001,Users can create an account and log in securely,Security/Auth,MVP
+R002,"Users can manually add a recipe with title, ingredients, steps, tags, and image",Data/Input,MVP
+R003,Users can paste a URL to import recipe metadata and structured content if available,Data/Import,MVP
+R004,"If parsing fails, store recipe as metadata + link only",Data/Import,MVP
+R005,Users can browse recipes in a card-based grid layout,UI,MVP
+R006,Users can search and filter recipes by tags,UI/Search,MVP
+R007,"Users can view recipes in Cook Mode with step-by-step navigation, large text, timers, and wake-lock",UI/Experience,MVP
+R008,Users can export their recipes as JSON or CSV,Data/Export,MVP
+R009,Application is responsive and mobile-first,UI/Responsive,MVP
+R010,Users can upload an image or screenshot to import recipe via OCR,Data/Import,Release1
+R011,Importer parses more blog formats and improves structured parsing,Data/Import,Release1
+R012,New imports land in a Recipe Inbox for tagging and cleanup,UI/Workflow,Release1
+R013,Auto-tagging suggestions generated for new recipes,AI/UX,Release1
+R014,Users can create shopping lists from recipes,Data/Lists,Release1
+R015,Ingredients in shopping lists are normalized and deduplicated,Data/Lists,Release1
+R016,Users can scale servings and convert units between US/metric,Data/Conversion,Release1
+R017,"Shopping list groups items by aisle (Produce, Dairy, Pantry)",Data/Lists,Release1
+R018,Users can publish their own recipes to public pages with shareable links,Data/Public,Release1
+R019,Creators can integrate their recipes via schema-based import and embed cards,Creator Tools,Release1
+R020,"Users can save custom filter views (e.g., 15-min vegetarian dinners)",UI/UX,Release1
+R021,Pro users can create multiple shopping lists,Data/Lists,Release2
+R022,Pro users can view weekly planning view with consolidated lists,UI/Planning,Release2
+R023,"Pro users can export shopping lists as PDF, CSV, or Markdown",Data/Export,Release2
+R024,"Pro users have access to advanced import tools (OCR batch, more sites)",Data/Import,Release2
+R025,Users can maintain a lightweight pantry list,Data/Pantry,Release2
+R026,Users can filter recipes based on pantry items,UI/Search,Release2
+R027,Users can track leftovers with expiry dates,Data/Pantry,Release2
+R028,Users can export owned recipes into a styled PDF for printing,Data/Export,Release2
+R029,Users can order print-on-demand cookbooks of owned recipes,Monetization,Release2
+R030,Users can share cookbooks with family members and collaborate,Collaboration,Release2
+R031,"Cooking courses with creators, including video and premium guides",Future/Content,Future
+R032,"Gamification with badges, streaks, and challenges",Future/Gamification,Future
+R033,AI-based substitutions and pantry recommendations,Future/AI,Future
+R034,Meal planning calendar with drag-and-drop recipes,Future/Planning,Future
+R035,Nutrition tracking and auto-macro estimates,Future/Nutrition,Future
+R036,Integration with grocery delivery APIs for shopping list export,Future/Integrations,Future
+R037,Voice integration with smart speakers for hands-free cook mode,Future/Integrations,Future
+R038,App shall comply with all laws and copyright requirements,Compliance/Legal,MVP
+R039,App shall include a 'Report abuse' button on public recipe pages,Compliance/Legal,MVP
+R040,App shall implement a DMCA/Notice & Takedown workflow,Compliance/Legal,MVP
+R041,"App shall include Terms of Service, Privacy Policy, and Content Policy available to users",Compliance/Legal,MVP
+R042,Imported recipes can only be private or link-only; only user-authored recipes can be public,Compliance/Legal,MVP
+R043,Users under 16 are not permitted to create accounts,Compliance/Legal,MVP
+R044,App shall provide multiple themes including a dark theme selectable by the user; the chosen theme persists across sessions, applies globally to key surfaces, avoids FOUC, and meets WCAG AA contrast.","UI/UX","Release1"
