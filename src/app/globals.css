@@ -13,3 +13,6 @@ body {
 .font-modern    { font-family: var(--font-space-grotesk), var(--font-inter), ui-sans-serif, system-ui; }
 .font-editorial { font-family: var(--font-playfair), Georgia, "Times New Roman", serif; }
 .font-hand      { font-family: var(--font-caveat), var(--font-inter), system-ui, cursive; }
+/* Fun heading font */
+.font-fun { font-family: var(--font-fredoka), ui-sans-serif, system-ui, sans-serif; }
+

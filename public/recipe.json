@@ -1,0 +1,54 @@
+{
+    "id": "spaghetti-carbonara",
+    "title": "Spaghetti Carbonara",
+    "description": "A classic Roman pasta dish that’s creamy, indulgent, and surprisingly simple to make. Rich with eggs, cheese, pancetta, and black pepper, it delivers maximum flavor with minimal ingredients.",
+    "imageUrl": "https://images.unsplash.com/photo-1633337474564-1d9478ca4e2e?q=80&w=1471&auto=format&fit=crop",
+    "tags": [
+        "Italian",
+        "Pasta",
+        "Quick",
+        "Comfort Food"
+    ],
+    "prepMinutes": 15,
+    "cookMinutes": 20,
+    "totalMinutes": 35,
+    "servings": 4,
+    "ingredients": [
+        "400g spaghetti",
+        "150g pancetta or guanciale, diced",
+        "2 large eggs + 2 egg yolks",
+        "100g Pecorino Romano cheese, grated",
+        "Freshly ground black pepper",
+        "Salt, for pasta water"
+    ],
+    "steps": [
+        {
+            "text": "Bring a large pot of salted water to a boil and cook the spaghetti until al dente."
+        },
+        {
+            "text": "Meanwhile, sauté the pancetta in a skillet over medium heat until crispy and golden."
+        },
+        {
+            "text": "Whisk together eggs, egg yolks, and grated Pecorino Romano in a bowl until creamy."
+        },
+        {
+            "text": "Drain pasta (reserve 1 cup of cooking water) and toss with the pancetta in the skillet."
+        },
+        {
+            "text": "Remove from heat, add the egg mixture, and stir quickly, adding reserved water as needed for creaminess. Season generously with black pepper and serve immediately."
+        }
+    ],
+    "sourceUrl": "https://www.example.com/spaghetti-carbonara",
+    "notes": "Use guanciale if you can; move fast off-heat so the eggs don’t scramble.",
+    "serveWith": [
+        "Crisp White Wine",
+        {
+            "label": "Garlic Bread",
+            "href": "/recipes/garlic-bread"
+        },
+        {
+            "label": "Simple Green Salad",
+            "href": "/recipes/green-salad"
+        }
+    ]
+}
