@@ -57,3 +57,4 @@ R055,Accessibility shall respect prefers-reduced-motion and provide visible focu
 R056,Data model shall support recipe types owned or external with public flag tags array steps array and ingredients array,Data,MVP
 R057,Routes shall include slash recipes for library slash recipes slash id for detail and slash cook slash id for cook mode,Data,MVP
 R058,Public share routes shall be slash r slash slug for read-only pages,Data,Release1
+R059,Users can sign in with Google and Apple,Auth,Release1

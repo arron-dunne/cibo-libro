@@ -4,7 +4,7 @@ import { PrismaClient } from "@prisma/client";
 declare global {
   // Prevent multiple instances of Prisma Client in development
   // (Next.js hot reload can cause it to re-import)
-  // eslint-disable-next-line no-var
+   
   var prisma: PrismaClient | undefined;
 }
 

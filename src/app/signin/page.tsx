@@ -37,7 +37,7 @@ export default async function SigninPage({
         <div className="pointer-events-none absolute -z-10 -mx-4 -mt-4 h-32 w-32 rounded-full bg-orange-200/60 blur-3xl" />
         <div className="pointer-events-none absolute -z-10 right-2 top-24 h-24 w-24 rounded-full bg-rose-200/60 blur-2xl" />
 
-        <h1 className="font-[var(--font-fredoka)] text-3xl font-extrabold tracking-tight">
+        <h1 className="font-[var(--font-fredoka)] text-3xl tracking-tight">
           Welcome back ✨
         </h1>
         <p className="mt-1 text-sm text-gray-600">

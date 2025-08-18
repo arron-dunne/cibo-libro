@@ -79,6 +79,9 @@
   * Choose from multiple beatutiful color themes
   * Dark theme toggleable
 
+* **OAuth**
+  * login with Google and Apple (reduce signup friction)
+
 **Polish**
 
 * Saved filter views (“15-min vegetarian dinners”).

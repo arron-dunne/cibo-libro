@@ -103,7 +103,7 @@ export default async function RootLayout({
               <div className="grid h-9 w-9 place-items-center rounded-full bg-white/85 text-orange-600">
                 🍽️
               </div>
-              <div className="font-[var(--font-fredoka)] text-lg font-extrabold">
+              <div className="font-[var(--font-fredoka)] text-lg">
                 Cookbook Hub
               </div>
             </div>
