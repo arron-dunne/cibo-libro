@@ -1,0 +1,19 @@
+Title,Description,List,Labels
+Freeze MVP Scope,Finalize one-page PRD with purpose users top 6 stories success metrics,Backlog,Planning
+Design Foundations,Choose color palette typography spacing build mini UI kit in Storybook,Backlog,Design
+Wireframes,Create wireframes for Add Recipe Recipe Inbox Library Grid and Cook Mode,Backlog,Design
+Repo & Architecture Setup,Set up Next.js TS App Router Tailwind+shadcn Prisma Postgres Auth.js S3 R2 observability stack,Backlog,Development
+Data Model & API,Define schema for User Recipe ImportJob Build minimal API endpoints add import get search edit,Backlog,Development
+Manual Recipe Entry,Build manual recipe add form persist to DB display in detail + library,Backlog,Feature
+Recipe Library Grid,Implement card-based grid with tags search and filters,Backlog,Feature
+Recipe Importer V1,Parse JSON-LD Microdata fallback to title image link card Add guardrails,Backlog,Feature
+Cook Mode,Build step-by-step cook view with large text inline timers and wake lock,Backlog,Feature
+Recipe Export,Add JSON CSV export for user-owned recipes,Backlog,Feature
+Public Recipe Pages,Enable optional public pages for owned recipes only add report abuse button,Backlog,Feature
+Legal & Compliance,Publish Privacy Policy Terms of Use DMCA Takedown policy add age gate + logs,Backlog,Compliance
+Performance & Accessibility,Budget LCP<2.5s on 4G CLS<0.1 add keyboard navigation AA contrast reduced motion,Backlog,Polish
+Testing Plan,Unit tests parser validators E2E tests manual add import cook mode public toggle,Backlog,QA
+Seed Data Script,Add script to generate sample users 10 recipes and 6 tags for dev test,Backlog,QA
+Beta Plan,Recruit 20–50 testers add in-product feedback widget set up synthesis loop,Backlog,Growth
+Landing Page + Waitlist,Build landing page with email waitlist and onboarding email,Backlog,Growth
+Bug Bash & Polish,Run bug bash add error empty states skeleton loaders anonymized analytics dashboard,Backlog,Polish
