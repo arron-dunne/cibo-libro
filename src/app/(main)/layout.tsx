@@ -1,3 +1,4 @@
+// app/layout.tsx
 import "@/styles/globals.css";
 import type { Metadata } from "next";
 import Image from "next/image";
@@ -11,9 +12,7 @@ export const metadata: Metadata = {
   description: "A beautiful digital cookbook.",
 };
 
-export default async function RootLayout({
-  children,
-}: { children: React.ReactNode }) {
+export default async function RootLayout({ children }: { children: React.ReactNode }) {
   const session = await auth();
 
   async function doSignOut() {
@@ -22,9 +21,9 @@ export default async function RootLayout({
   }
 
   return (
-    <html lang="en" className={`${nunito.variable}`}>
+    <html lang="en" className={nunito.variable}>
       <body className="min-h-screen text-gray-900 antialiased">
-        {/* Brand gradient background + soft glow (site-wide) */}
+        {/* Brand gradient background + soft glow */}
         <div className="fixed inset-0 -z-50">
           <div className="h-full w-full bg-gradient-to-br from-orange-400 via-orange-500 to-rose-500" />
           <div
@@ -41,6 +40,7 @@ export default async function RootLayout({
         <nav className="sticky top-4 z-40">
           <div className="mx-auto w-[min(1150px,95%)]">
             <div className="flex h-14 items-center gap-3 rounded-full border border-white/60 bg-white/85 px-3 sm:px-4 shadow-[0_10px_30px_rgba(0,0,0,0.10)] backdrop-blur supports-[backdrop-filter]:bg-white/65">
+              {/* Brand */}
               <a href="/" className="flex items-center gap-2" aria-label="cibo libro home">
                 <Image
                   src="/images/logo.png"
@@ -52,6 +52,15 @@ export default async function RootLayout({
                 />
               </a>
 
+              {/* Main shortcuts */}
+              <div className="mx-auto hidden gap-1 sm:flex">
+                <NavLink href="/" label="Home" icon="M3.75 12h16.5M4.5 12l7.5-7.5L19.5 12" />
+                <NavLink href="/recipes" label="All recipes" icon="M4 6h16M4 12h16M4 18h16" />
+                <NavLink href="/recipes/new" label="Add" icon="M12 4v16M4 12h16" highlight />
+                <NavLink href="/settings" label="Settings" icon="M10.325 4.317L9.257 6.5M19 12a7 7 0 11-14 0 7 7 0 0114 0z" />
+              </div>
+
+              {/* Auth */}
               <div className="ml-auto flex items-center gap-2 text-sm">
                 {session?.user ? (
                   <>
@@ -84,17 +93,12 @@ export default async function RootLayout({
         </nav>
 
         {/* Page container */}
-        <main className="mx-auto w-[min(1150px,95%)] py-8">
-          {children}
-        </main>
+        <main className="mx-auto w-[min(1150px,95%)] py-8">{children}</main>
 
-        {/* Footer */}
+        {/* Footer (rounded icon removed) */}
         <footer className="mt-auto border-t border-white/30 bg-white/10 py-8 text-white backdrop-blur">
           <div className="mx-auto w-[min(1150px,95%)] flex flex-wrap items-center justify-between gap-4">
             <div className="flex items-center gap-3">
-              <div className="grid h-9 w-9 place-items-center rounded-full bg-white/85 text-orange-600 shadow">
-                🍽️
-              </div>
               <Image
                 src="/images/logo.png"
                 alt="cibo libro"
@@ -109,12 +113,54 @@ export default async function RootLayout({
               <a className="hover:underline" href="/support">Support</a>
               <a className="hover:underline" href="/contact">Contact</a>
             </nav>
-            <div className="text-xs/6 opacity-90">
-              © {new Date().getFullYear()} cibo libro. All rights reserved.
-            </div>
+            <div className="text-xs/6 opacity-90">© {new Date().getFullYear()} cibo libro. All rights reserved.</div>
           </div>
         </footer>
+
+        {/* Inline SVG button component */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              window.__navIcon = (d)=>'data:image/svg+xml;utf8,'+encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="'+d+'"/></svg>');
+            `,
+          }}
+        />
       </body>
     </html>
+  );
+}
+
+/* Reusable pill-like navbar link */
+function NavLink({
+  href,
+  label,
+  icon,
+  highlight = false,
+}: {
+  href: string;
+  label: string;
+  icon: string;
+  highlight?: boolean;
+}) {
+  return (
+    <a
+      href={href}
+      className={[
+        "flex items-center gap-2 rounded-full px-3 py-1.5 text-sm font-medium shadow transition",
+        highlight
+          ? "bg-orange-600 text-white hover:-translate-y-0.5 hover:bg-orange-700"
+          : "border border-orange-200 bg-white text-orange-700 hover:-translate-y-0.5 hover:bg-orange-50",
+      ].join(" ")}
+    >
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img
+        alt=""
+        aria-hidden
+        width={16}
+        height={16}
+        src={`javascript:__navIcon('${icon}')`}
+      />
+      {label}
+    </a>
   );
 }
