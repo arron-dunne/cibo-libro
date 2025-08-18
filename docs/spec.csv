@@ -1,59 +1,59 @@
 ID,Requirement,Category,Phase
 R001,App shall be responsive mobile-first with desktop enhancements,UI,MVP
 R002,App shall meet WCAG 2.1 AA for color contrast and keyboard navigation,Accessibility,MVP
-R003,App shall publish Privacy Policy, Terms of Use, and DMCA/Notice & Takedown at launch,Legal,MVP
+R003,App shall publish Privacy Policy and Terms of Use and DMCA or Notice and Takedown documents at launch,Legal,MVP
 R004,App shall provide a Report Abuse entry point on any public page,Legal,Release1
-R005,Users shall be able to create an account with email/password,Auth,MVP
-R006,Users shall be able to log in/out and maintain sessions securely (HTTP-only cookies, CSRF),Security,MVP
-R007,Users shall be able to add recipes manually via a guided multi-step form (title, description, ingredients, steps, tags, image),Feature,MVP
-R008,Users shall be able to import a recipe from a URL (JSON-LD/Microdata parse first),Feature,MVP
-R009,If import fails, the system shall store a link-only card with image/title/attribution and "View Original",Feature,MVP
-R010,Importer shall respect robots.txt, timeouts, rate limits, and set a custom user-agent,Compliance,MVP
-R011,Importer shall store full parsed content privately for personal use; public publishing only for owned recipes,Compliance,MVP
-R012,Library page shall display recipes as cards with image, title, tags, and quick metadata,UI,MVP
+R005,Users shall be able to create an account with email and password,Auth,MVP
+R006,Users shall be able to log in or out and maintain sessions securely with HTTP-only cookies and CSRF protection,Security,MVP
+R007,Users shall be able to add recipes manually via a guided multi-step form including title description ingredients steps tags and image,Feature,MVP
+R008,Users shall be able to import a recipe from a URL using JSON-LD or Microdata parse first,Feature,MVP
+R009,If import fails the system shall store a link-only card with image title attribution and a View Original link,Feature,MVP
+R010,Importer shall respect robots txt timeouts rate limits and set a custom user-agent,Compliance,MVP
+R011,Importer shall store full parsed content privately for personal use and allow public publishing only for owned recipes,Compliance,MVP
+R012,Library page shall display recipes as cards with image title tags and quick metadata,UI,MVP
 R013,Users shall be able to search recipes by keyword,Feature,MVP
-R014,Users shall be able to filter recipes by tags (e.g., Dinner, Vegan, Chicken),Feature,MVP
+R014,Users shall be able to filter recipes by tags such as Dinner Vegan Chicken,Feature,MVP
 R015,Users shall be able to mark recipes as Favorites and filter by Favorites,Feature,MVP
-R016,Recipe detail page shall show hero image, tags, description, prep/cook/total time, servings, ingredients, steps, notes, serve-with,UI,MVP
+R016,Recipe detail page shall show hero image tags description prep time cook time total time servings ingredients steps notes and serve-with,UI,MVP
 R017,Serve-with entries may be plain text or links to other recipes,Feature,MVP
-R018,Cook Mode shall present one step at a time with large type and next/back controls,Feature,MVP
+R018,Cook Mode shall present one step at a time with large type and next or back controls,Feature,MVP
 R019,Cook Mode shall offer optional inline timers when a step includes a duration,Feature,MVP
 R020,Cook Mode shall attempt wake lock to prevent screen sleep where supported,Feature,MVP
 R021,Users shall be able to edit and delete their own recipes,Feature,MVP
-R022,Users shall be able to export their data (JSON/CSV) on demand,Data Portability,MVP
-R023,Public recipe pages shall be available for user-owned recipes only (shareable link),Feature,Release1
-R024,Public pages shall exclude imported full text and present attribution/source with "View Original",Compliance,Release1
+R022,Users shall be able to export their data in JSON or CSV format on demand,Data Portability,MVP
+R023,Public recipe pages shall be available for user-owned recipes only with a shareable link,Feature,Release1
+R024,Public pages shall exclude imported full text and present attribution or source with a View Original link,Compliance,Release1
 R025,Creator Mode shall support schema-based ingestion for creator sites with canonical links,Feature,Release1
-R026,Creator Mode shall offer an embeddable card that links back to the creator’s site,Feature,Release1
+R026,Creator Mode shall offer an embeddable card that links back to the creator site,Feature,Release1
 R027,New URL imports shall land in a Recipe Inbox for cleanup and tagging,Feature,Release1
-R028,Auto-tagging suggestions shall be offered on imported recipes (NLP heuristic),Feature,Release1
-R029,Users shall be able to upload images for manual recipes and imports (where permitted),Storage,Release1
-R030,Importer V2 shall support OCR for image uploads (books/screenshots),Feature,Release1
-R031,Shopping Brain V1 shall generate a single shopping list from selected recipes,Feature,Release1
-R032,Shopping Brain V1 shall normalize/dedupe ingredients and convert units (US/metric),Feature,Release1
-R033,Shopping Brain V1 shall group items by aisle (Produce, Dairy, Pantry),Feature,Release1
+R028,Auto-tagging suggestions shall be offered on imported recipes using NLP heuristics,Feature,Release1
+R029,Users shall be able to upload images for manual recipes and imports where permitted,Storage,Release1
+R030,Importer version 2 shall support OCR for image uploads from books or screenshots,Feature,Release1
+R031,Shopping Brain version 1 shall generate a single shopping list from selected recipes,Feature,Release1
+R032,Shopping Brain version 1 shall normalize and dedupe ingredients and convert units between US and metric,Feature,Release1
+R033,Shopping Brain version 1 shall group items by aisle such as Produce Dairy Pantry,Feature,Release1
 R034,Theming shall allow multiple color themes and a dark-mode toggle,UI,Release1
-R035,Users shall be able to create and save filtered views (e.g., “15‑min vegetarian dinners”),Feature,Release1
+R035,Users shall be able to create and save filtered views such as fifteen minute vegetarian dinners,Feature,Release1
 R036,Advanced shopping lists shall support multiple lists and a weekly planning view,Feature,Release2
-R037,Advanced lists shall export to PDF/CSV/Markdown,Feature,Release2
-R038,Pantry & Leftovers Lite shall allow a quick pantry list and “Cook with what I have” filter,Feature,Release2
-R039,Leftovers shall include a simple freshness tracker (e.g., “good until Friday”),Feature,Release2
-R040,Print‑to‑Cookbook shall export recipes to a styled PDF and integrate with print‑on‑demand,Feature,Release2
-R041,Print‑to‑Cookbook shall include user-owned recipes only; imported recipes appear as link cards,Compliance,Release2
-R042,Family sharing shall allow invitations to a shared cookbook (recipes + lists),Feature,Release2
-R043,AI features (future) may include smart substitutions, summarization, and pantry‑based suggestions,Feature,Future
-R044,Meal planning calendar with drag‑and‑drop recipes shall be available in future,Feature,Future
-R045,Nutrition tracking shall estimate macros/calories from recipe data in future,Feature,Future
+R037,Advanced lists shall export to PDF or CSV or Markdown,Feature,Release2
+R038,Pantry and Leftovers Lite shall allow a quick pantry list and Cook with what I have filter,Feature,Release2
+R039,Leftovers shall include a simple freshness tracker such as good until Friday,Feature,Release2
+R040,Print-to-Cookbook shall export recipes to a styled PDF and integrate with print-on-demand,Feature,Release2
+R041,Print-to-Cookbook shall include user-owned recipes only and imported recipes shall appear as link cards,Compliance,Release2
+R042,Family sharing shall allow invitations to a shared cookbook including recipes and shopping lists,Feature,Release2
+R043,AI features in future may include smart substitutions summarization and pantry-based suggestions,Feature,Future
+R044,Meal planning calendar with drag-and-drop recipes shall be available in future,Feature,Future
+R045,Nutrition tracking shall estimate macros and calories from recipe data in future,Feature,Future
 R046,Integrations shall include grocery APIs and smart speaker support in future,Feature,Future
-R047,Performance budgets: LCP < 2.5s on 4G, CLS < 0.1, first input responsive,Performance,MVP
-R048,App shall provide meaningful empty states, error states, and skeleton loaders,UX,MVP
-R049,Security: password hashing (argon2/bcrypt), input validation (Zod), strict authz on recipe ownership,Security,MVP
-R050,File uploads shall be size/type-checked and use signed URLs to object storage,Security,MVP
-R051,Observability: Sentry for errors and PostHog events (RecipeImported, CookStarted, ListCreated),Telemetry,MVP
+R047,Performance budgets shall target LCP less than two point five seconds on 4G CLS less than zero point one and first input responsive,Performance,MVP
+R048,App shall provide meaningful empty states error states and skeleton loaders,UX,MVP
+R049,Security shall include password hashing with argon2 or bcrypt input validation with Zod and strict authorization on recipe ownership,Security,MVP
+R050,File uploads shall be size and type-checked and use signed URLs to object storage,Security,MVP
+R051,Observability shall use Sentry for errors and PostHog for events including RecipeImported CookStarted ListCreated,Telemetry,MVP
 R052,PWA behavior shall support offline Cook Mode with cached assets and recipe data,UX,MVP
-R053,Age gate (16+) and content policy shall be documented and enforced where applicable,Compliance,MVP
+R053,Age gate set at sixteen years or older and content policy shall be documented and enforced where applicable,Compliance,MVP
 R054,Public release gating shall require legal pages live and Report Abuse wired on public pages,Compliance,Release1
-R055,Accessibility: respect prefers-reduced-motion and provide visible focus states,Accessibility,MVP
-R056,Data model shall support recipe types {owned|external}, public flag, tags[], steps[], ingredients[],Data,MVP
-R057,Routes shall include /recipes (library), /recipes/:id (detail), /cook/:id (cook mode),Data,MVP
-R058,Public share routes shall be /r/:slug (read-only),Data,Release1
+R055,Accessibility shall respect prefers-reduced-motion and provide visible focus states,Accessibility,MVP
+R056,Data model shall support recipe types owned or external with public flag tags array steps array and ingredients array,Data,MVP
+R057,Routes shall include slash recipes for library slash recipes slash id for detail and slash cook slash id for cook mode,Data,MVP
+R058,Public share routes shall be slash r slash slug for read-only pages,Data,Release1
