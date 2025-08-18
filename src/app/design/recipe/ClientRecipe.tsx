@@ -43,8 +43,6 @@ type Recipe = {
 export default function ClientRecipe({ recipe }: { recipe: Recipe }) {
   const [dark, setDark] = useState(false);
 
-  console.log(dark)
-
   // normalize shapes
   const stepsArray = Array.isArray(recipe.steps) ? recipe.steps : [];
   const normalizedSteps: Step[] = stepsArray.map((s: any) =>
@@ -62,12 +60,25 @@ export default function ClientRecipe({ recipe }: { recipe: Recipe }) {
         {/* Floating Navbar */}
         <nav className="sticky top-4 z-50">
           <div className="mx-auto max-w-6xl px-4">
-            <div className="flex items-center gap-3 rounded-full border border-white/30 bg-white/70 px-4 py-2 shadow-lg backdrop-blur supports-[backdrop-filter]:bg-white/60 dark:border-neutral-800 dark:bg-neutral-900/70 dark:supports-[backdrop-filter]:bg-neutral-900/60">
-              <div className="grid h-9 w-9 place-items-center rounded-full bg-orange-600 text-white shadow dark:bg-emerald-500">
-                🍊
-              </div>
-              <span className="text-sm font-extrabold tracking-tight">Cookbook Hub</span>
+            <div className="flex items-center gap-3 rounded-full border border-white/30 bg-white/70 px-3 py-2 shadow-lg backdrop-blur supports-[backdrop-filter]:bg-white/60 dark:border-neutral-800 dark:bg-neutral-900/70 dark:supports-[backdrop-filter]:bg-neutral-900/60">
+              {/* Brand logo */}
+              <Link href="/" className="flex items-center gap-2 pl-1">
+                <span className="relative inline-flex items-center">
+                  {/* Wordmark — ensure your file is at /public/logo.png */}
+                  <Image
+                    src="/images/logo.png"
+                    alt="cibo libro"
+                    width={160}
+                    height={36}
+                    priority
+                    className="h-9 w-auto drop-shadow-[0_2px_6px_rgba(0,0,0,0.15)]"
+                  />
+                  {/* subtle pulse halo for a playful touch */}
+                  <span className="pointer-events-none absolute left-1/2 top-1/2 -z-10 hidden h-8 w-8 -translate-x-1/2 -translate-y-1/2 rounded-full bg-orange-300/20 blur-md md:block" />
+                </span>
+              </Link>
 
+              {/* Search */}
               <div className="mx-2 hidden flex-1 items-center gap-2 rounded-full border border-orange-200/70 bg-white px-3 py-1.5 md:flex dark:border-neutral-700 dark:bg-neutral-800">
                 <Search className="h-4 w-4 text-orange-600 dark:text-neutral-300" />
                 <input
@@ -76,6 +87,7 @@ export default function ClientRecipe({ recipe }: { recipe: Recipe }) {
                 />
               </div>
 
+              {/* Quick links */}
               <a
                 href="#"
                 className="rounded-full bg-white/90 px-3 py-1.5 text-xs font-semibold shadow hover:bg-white dark:bg-neutral-800 dark:hover:bg-neutral-700"
@@ -223,12 +235,18 @@ export default function ClientRecipe({ recipe }: { recipe: Recipe }) {
         {/* SITE FOOTER ON BACKGROUND */}
         <footer className="mt-12 border-t border-white/30 bg-white/10 py-8 text-white backdrop-blur dark:border-neutral-800 dark:bg-neutral-900/30 dark:text-neutral-300">
           <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-4 px-4">
-            <div className="flex items-center gap-2">
-              <div className="grid h-9 w-9 place-items-center rounded-full bg-white/80 text-orange-600 dark:bg-neutral-800 dark:text-emerald-400">
+            <div className="flex items-center gap-3">
+              <div className="grid h-9 w-9 place-items-center rounded-full bg-white/85 text-orange-600 shadow">
                 <UtensilsCrossed className="h-5 w-5" />
               </div>
-              <div className="font-fun text-lg font-extrabold text-white dark:text-neutral-100">
-                Cookbook Hub
+              <div className="flex items-center gap-2">
+                <Image
+                  src="/logo.png"
+                  alt="cibo libro"
+                  width={132}
+                  height={28}
+                  className="h-7 w-auto drop-shadow-[0_2px_6px_rgba(0,0,0,0.18)]"
+                />
               </div>
             </div>
             <nav className="flex flex-wrap gap-4 text-sm">
@@ -245,8 +263,8 @@ export default function ClientRecipe({ recipe }: { recipe: Recipe }) {
                 Contact
               </Link>
             </nav>
-            <div className="text-xs/6 opacity-80">
-              © {new Date().getFullYear()} Cookbook Hub. All rights reserved.
+            <div className="text-xs/6 opacity-90">
+              © {new Date().getFullYear()} cibo libro. All rights reserved.
             </div>
           </div>
         </footer>
