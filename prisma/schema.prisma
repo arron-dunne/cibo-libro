@@ -1,0 +1,112 @@
+// prisma/schema.prisma
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL") // pooled (runtime)
+  directUrl = env("DIRECT_URL") // direct (migrations, studio)
+}
+
+enum RecipeType {
+  OWNED
+  EXTERNAL
+}
+
+enum ImportStatus {
+  PENDING
+  SUCCESS
+  FAILED
+}
+
+model User {
+  id           String   @id @default(cuid())
+  email        String   @unique
+  passwordHash String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  // Relations
+  recipes    Recipe[]
+  importJobs ImportJob[] // ← add this line
+  accounts   Account[]
+  sessions   Session[]
+}
+
+model Recipe {
+  id          String     @id @default(cuid())
+  ownerId     String
+  type        RecipeType
+  title       String
+  imageUrl    String?
+  ingredients String[] // Postgres text[]
+  steps       String[]
+  tags        String[]
+  sourceUrl   String?
+  slug        String?    @unique
+  isPublic    Boolean    @default(false)
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+
+  owner User @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+
+  @@index([ownerId])
+  @@index([isPublic])
+}
+
+model ImportJob {
+  id         String       @id @default(cuid())
+  userId     String
+  sourceUrl  String
+  status     ImportStatus @default(PENDING)
+  rawHtml    String?
+  parsedJson Json?
+  errorMsg   String?
+  createdAt  DateTime     @default(now())
+  updatedAt  DateTime     @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, status])
+  @@index([sourceUrl])
+}
+
+/**
+ * * Auth.js adapter tables **
+ */
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
