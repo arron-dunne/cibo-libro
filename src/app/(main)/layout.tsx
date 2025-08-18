@@ -1,19 +1,13 @@
 import "@/styles/globals.css";
 import type { Metadata } from "next";
 import Image from "next/image";
-import { Inter, Fredoka, Nunito } from "next/font/google";
+import { Nunito } from "next/font/google";
 import { auth, signOut } from "@/lib/auth";
 
-const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
-const fredoka = Fredoka({
-  subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],
-  variable: "--font-fredoka",
-});
 const nunito = Nunito({ subsets: ["latin"], variable: "--font-nunito" });
 
 export const metadata: Metadata = {
-  title: "cibo libro",
+  title: "Cibo Libro",
   description: "A beautiful digital cookbook.",
 };
 
@@ -28,7 +22,7 @@ export default async function RootLayout({
   }
 
   return (
-    <html lang="en" className={`${inter.variable} ${fredoka.variable} ${nunito.variable}`}>
+    <html lang="en" className={`${nunito.variable}`}>
       <body className="min-h-screen text-gray-900 antialiased">
         {/* Brand gradient background + soft glow (site-wide) */}
         <div className="fixed inset-0 -z-50">
