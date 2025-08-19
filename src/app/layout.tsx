@@ -2,7 +2,7 @@ import "@/styles/globals.css";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Cibo Libro — Coming Soon",
+  title: "Cibo Libro",
   description: "We’re cooking something tasty. Back soon!",
   robots: { index: true, follow: true },
 };
