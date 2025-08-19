@@ -5,6 +5,7 @@ import { prisma } from "@/lib/prisma";
 import { RecipeType } from "@prisma/client";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
+import { uniqueRecipeSlug } from "@/lib/uniqueSlug";
 
 /* ──────────────────────────────────────────────────────────────────────────
    Recipe DTO schemas
@@ -45,43 +46,45 @@ function requireUserId() {
   });
 }
 
-function slugify(input: string) {
-  return input
-    .toLowerCase()
-    .normalize("NFKD")
-    .replace(/[\u0300-\u036f]/g, "") // strip accents
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/(^-|-$)/g, "")
-    .slice(0, 80);
-}
-
-async function uniqueRecipeSlug(baseTitle: string) {
-  const base = slugify(baseTitle) || "recipe";
-  let candidate = base;
-  let n = 2;
-
-  // eslint-disable-next-line no-constant-condition
-  while (true) {
-    const exists = await prisma.recipe.findUnique({ where: { slug: candidate } });
-    if (!exists) return candidate;
-    candidate = `${base}-${n++}`;
-  }
-}
+// Type describing the subset of fields we actually write via these actions
+type RecipeWritableData = {
+  title: string;
+  description?: string; // prisma expects string | undefined (not null)
+  imageUrl?: string;
+  sourceUrl?: string;
+  prepMins?: number | null;
+  cookMins?: number | null;
+  servings?: number | null;
+  ingredients: string[];
+  steps: string[];
+  tags?: string[];
+};
 
 function dtoToPrismaData(dto: RecipeDTO) {
   // Only include defined keys to avoid overwriting optional columns unintentionally
-  const data: any = {
+  const data: RecipeWritableData = {
     title: dto.title,
     ingredients: dto.ingredients,
     steps: dto.steps,
     tags: dto.tags ?? [],
   };
-  if (dto.description !== undefined) data.description = dto.description || null;
-  if (dto.imageUrl !== undefined) data.imageUrl = dto.imageUrl || null;
-  if (dto.sourceUrl !== undefined) data.sourceUrl = dto.sourceUrl || null;
-  if (dto.prepMins !== undefined) data.prepMins = dto.prepMins;
-  if (dto.cookMins !== undefined) data.cookMins = dto.cookMins;
-  if (dto.servings !== undefined) data.servings = dto.servings;
+  // Strings: avoid assigning null — Prisma create type is string | undefined
+  if (dto.description !== undefined) {
+    const d = typeof dto.description === 'string' ? dto.description.trim() : undefined;
+    if (d && d.length > 0) data.description = d; // else leave undefined to use default
+  }
+  if (dto.imageUrl !== undefined) {
+    const u = dto.imageUrl ?? undefined;
+    if (u) data.imageUrl = u;
+  }
+  if (dto.sourceUrl !== undefined) {
+    const u = dto.sourceUrl ?? undefined;
+    if (u) data.sourceUrl = u;
+  }
+  // Numbers: allow null when columns are nullable, otherwise leave undefined
+  if (dto.prepMins !== undefined) data.prepMins = dto.prepMins ?? null;
+  if (dto.cookMins !== undefined) data.cookMins = dto.cookMins ?? null;
+  if (dto.servings !== undefined) data.servings = dto.servings ?? null;
   return data;
 }
 
@@ -134,26 +137,29 @@ export async function updateRecipe(id: string, input: unknown) {
 
 export async function publishDraft(id: string) {
   const userId = await requireUserId();
-
   const existing = await prisma.recipe.findUnique({ where: { id } });
   if (!existing || existing.ownerId !== userId) throw new Error("Not found");
 
+  // If already public, just return
+  if (existing.isPublic) return { id: existing.id, slug: existing.slug };
+
   const slug = existing.slug ?? (await uniqueRecipeSlug(existing.title));
 
-  const published = await prisma.recipe.update({
+  const updated = await prisma.recipe.update({
     where: { id },
     data: { isPublic: true, slug },
     select: { id: true, slug: true },
   });
 
   revalidatePath("/recipes");
-  revalidatePath(`/recipes/${published.slug}`);
-  return published;
+  revalidatePath(`/recipes/${updated.slug}`);
+  return updated;
 }
 
 export async function publishRecipe(input: unknown) {
   const userId = await requireUserId();
   const parsed = BaseSchema.parse(input);
+
   const slug = await uniqueRecipeSlug(parsed.title);
 
   const created = await prisma.recipe.create({

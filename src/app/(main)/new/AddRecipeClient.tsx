@@ -1,7 +1,8 @@
 // app/recipes/new/AddRecipeClient.tsx
 "use client";
 
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
+import Image from "next/image";
 import { saveDraft, updateRecipe, publishRecipe, publishDraft } from "./actions";
 
 // ────────────────────────────────────────────────────────────────────────────
@@ -50,13 +51,16 @@ export default function AddRecipeClient() {
   const [toast, setToast] = useState<string | null>(null);
   const [undo, setUndo] = useState<Snapshot | null>(null);
 
-  // Section anchors
-  const sectionsRef = {
-    details: useRef<HTMLDivElement | null>(null),
-    ingredients: useRef<HTMLDivElement | null>(null),
-    steps: useRef<HTMLDivElement | null>(null),
-    photos: useRef<HTMLDivElement | null>(null),
-  };
+  // Section anchors (memoized so the object reference is stable for effects)
+  const sectionsRef = useMemo(
+    () => ({
+      details: React.createRef<HTMLDivElement>(),
+      ingredients: React.createRef<HTMLDivElement>(),
+      steps: React.createRef<HTMLDivElement>(),
+      photos: React.createRef<HTMLDivElement>(),
+    }),
+    []
+  );
   const [active, setActive] = useState<SectionKey>("details");
 
   const canPublish =
@@ -114,7 +118,7 @@ export default function AddRecipeClient() {
     );
     Object.values(sectionsRef).forEach((r) => r.current && observer.observe(r.current));
     return () => observer.disconnect();
-  }, []);
+  }, [sectionsRef]);
 
   // Actions
   const onSaveDraft = async () => {
@@ -415,9 +419,16 @@ export default function AddRecipeClient() {
                     />
                   </div>
                   <div className="overflow-hidden rounded-xl border border-zinc-200 bg-white/90">
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
                     {imageUrl ? (
-                      <img src={imageUrl} alt="Cover" className="h-40 w-full object-cover" />
+                      <Image
+                        src={imageUrl}
+                        alt="Cover"
+                        width={800}
+                        height={320}
+                        className="h-40 w-full object-cover"
+                        unoptimized
+                        sizes="(max-width: 640px) 100vw, 600px"
+                      />
                     ) : (
                       <div className="flex h-40 items-center justify-center text-zinc-400">No image selected</div>
                     )}

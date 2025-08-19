@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Link from "next/link";
 import { Nunito } from "next/font/google";
 import { auth, signOut } from "@/lib/auth";
 
@@ -33,7 +34,7 @@ export default async function Layout({ children }: { children: React.ReactNode }
         <div className="mx-auto w-[min(1150px,95%)]">
           <div className="flex h-14 items-center gap-3 rounded-full border border-white/60 bg-white/85 px-3 sm:px-4 shadow-[0_10px_30px_rgba(0,0,0,0.10)] backdrop-blur supports-[backdrop-filter]:bg-white/65">
             {/* Brand */}
-            <a href="/" className="flex items-center gap-2" aria-label="cibo libro home">
+            <Link href="/" className="flex items-center gap-2" aria-label="cibo libro home">
               <Image
                 src="/images/logo.png"
                 alt="cibo libro"
@@ -42,7 +43,7 @@ export default async function Layout({ children }: { children: React.ReactNode }
                 className="h-9 w-auto drop-shadow-[0_2px_6px_rgba(0,0,0,0.15)]"
                 priority
               />
-            </a>
+            </Link>
 
             {/* Main shortcuts */}
             <div className="mx-auto hidden gap-1 sm:flex">
@@ -65,18 +66,18 @@ export default async function Layout({ children }: { children: React.ReactNode }
                 </>
               ) : (
                 <>
-                  <a
+                  <Link
                     href="/signin"
                     className="rounded-full border border-orange-200 bg-white px-3 py-1.5 font-medium text-orange-700 shadow transition hover:-translate-y-0.5 hover:bg-orange-50"
                   >
                     Sign in
-                  </a>
-                  <a
+                  </Link>
+                  <Link
                     href="/signup"
                     className="rounded-full bg-orange-600 px-3 py-1.5 font-semibold text-white shadow-[0_8px_18px_rgba(234,88,12,0.35)] transition hover:-translate-y-0.5 hover:bg-orange-700"
                   >
                     Sign up
-                  </a>
+                  </Link>
                 </>
               )}
             </div>
@@ -100,10 +101,10 @@ export default async function Layout({ children }: { children: React.ReactNode }
             />
           </div>
           <nav className="flex flex-wrap gap-4 text-sm">
-            <a className="hover:underline" href="/legal/content-policy">Content Policy</a>
-            <a className="hover:underline" href="/legal/privacy">Privacy Policy</a>
-            <a className="hover:underline" href="/support">Support</a>
-            <a className="hover:underline" href="/contact">Contact</a>
+            <Link className="hover:underline" href="/legal/content-policy">Content Policy</Link>
+            <Link className="hover:underline" href="/legal/privacy">Privacy Policy</Link>
+            <Link className="hover:underline" href="/support">Support</Link>
+            <Link className="hover:underline" href="/contact">Contact</Link>
           </nav>
           <div className="text-xs/6 opacity-90">© {new Date().getFullYear()} cibo libro. All rights reserved.</div>
         </div>
