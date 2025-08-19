@@ -1,15 +1,20 @@
+// app/recipes/new/AddRecipeClient.tsx
 "use client";
 
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { saveDraft, updateRecipe, publishRecipe, publishDraft } from "./actions";
 
+// ────────────────────────────────────────────────────────────────────────────
+// Types / utils
+// ────────────────────────────────────────────────────────────────────────────
 type SectionKey = "details" | "ingredients" | "steps" | "photos";
 
 type Snapshot = {
+  // Keep aligned with your actions.ts/Zod & Prisma schema
   title: string;
-  description?: string;
-  prepTime?: number | null;
-  cookTime?: number | null;
+  description?: string | null;
+  prepMins?: number | null; 
+  cookMins?: number | null; 
   servings?: number | null;
   imageUrl?: string | null;
   ingredients: string[];
@@ -21,19 +26,22 @@ type Snapshot = {
 const clsx = (...xs: Array<string | false | null | undefined>) => xs.filter(Boolean).join(" ");
 const sanitizeLines = (xs: string[]) => xs.map((s) => s.trim()).filter(Boolean);
 
+// ────────────────────────────────────────────────────────────────────────────
+// Component
+// ────────────────────────────────────────────────────────────────────────────
 export default function AddRecipeClient() {
-  // Core state
+  // Core state (persisted via actions)
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
-  const [prepTime, setPrepTime] = useState<number | null>(null);
-  const [cookTime, setCookTime] = useState<number | null>(null);
+  const [prepMins, setPrepMins] = useState<number | null>(null);
+  const [cookMins, setCookMins] = useState<number | null>(null);
   const [servings, setServings] = useState<number | null>(null);
   const [imageUrl, setImageUrl] = useState<string | null>(null);
 
   const [ingredients, setIngredients] = useState<string[]>([""]);
   const [steps, setSteps] = useState<string[]>([""]);
   const [tags, setTags] = useState<string[]>([]);
-  const [sourceUrl] = useState<string | null>(null);
+  const [sourceUrl] = useState<string | null>(null); // manual adds keep this null
 
   // Draft / publish state
   const [draftId, setDraftId] = useState<string | null>(null);
@@ -56,13 +64,13 @@ export default function AddRecipeClient() {
     sanitizeLines(ingredients).length > 0 &&
     sanitizeLines(steps).length > 0;
 
-  // Snapshot helpers
+  // Snapshot helpers (this is exactly what we send to your server actions)
   const snapshot = useCallback(
     (): Snapshot => ({
       title: title.trim(),
-      description: description.trim(),
-      prepTime,
-      cookTime,
+      description: description.trim() || null,
+      prepMins,
+      cookMins,
       servings,
       imageUrl: imageUrl || null,
       ingredients: sanitizeLines(ingredients),
@@ -70,14 +78,14 @@ export default function AddRecipeClient() {
       tags: sanitizeLines(tags),
       sourceUrl: sourceUrl || null,
     }),
-    [title, description, prepTime, cookTime, servings, imageUrl, ingredients, steps, tags, sourceUrl]
+    [title, description, prepMins, cookMins, servings, imageUrl, ingredients, steps, tags, sourceUrl]
   );
 
   const setSnapshot = (s: Snapshot) => {
     setTitle(s.title ?? "");
     setDescription(s.description ?? "");
-    setPrepTime(s.prepTime ?? null);
-    setCookTime(s.cookTime ?? null);
+    setPrepMins(s.prepMins ?? null);
+    setCookMins(s.cookMins ?? null);
     setServings(s.servings ?? null);
     setImageUrl(s.imageUrl ?? null);
     setIngredients(s.ingredients?.length ? s.ingredients : [""]);
@@ -91,7 +99,7 @@ export default function AddRecipeClient() {
     setUndo(null);
   };
 
-  // Track active section for pill highlight
+  // Active section tracking (for pill highlight)
   useEffect(() => {
     const observer = new IntersectionObserver(
       (entries) => {
@@ -152,6 +160,7 @@ export default function AddRecipeClient() {
   const addRow = (setter: React.Dispatch<React.SetStateAction<string[]>>) => setter((xs) => [...xs, ""]);
   const removeRow = (setter: React.Dispatch<React.SetStateAction<string[]>>, idx: number) =>
     setter((xs) => (xs.length > 1 ? xs.filter((_, i) => i !== idx) : xs));
+
   const onPasteMulti =
     (setter: React.Dispatch<React.SetStateAction<string[]>>, idx: number) =>
     (e: React.ClipboardEvent<HTMLInputElement>) => {
@@ -169,7 +178,7 @@ export default function AddRecipeClient() {
     };
 
   const handleEnter =
-    (setter: React.Dispatch<React.SetStateAction<string[]>>, idx: number) =>
+    (setter: React.Dispatch<React.SetStateAction<string[]>>, idx: number, selector: string) =>
     (e: React.KeyboardEvent<HTMLInputElement>) => {
       if (e.key === "Enter") {
         e.preventDefault();
@@ -178,20 +187,24 @@ export default function AddRecipeClient() {
           copy.splice(idx + 1, 0, "");
           return copy;
         });
-        setTimeout(() => {
-          const inputs = document.querySelectorAll<HTMLInputElement>("input.recipe-row");
+        requestAnimationFrame(() => {
+          const inputs = document.querySelectorAll<HTMLInputElement>(selector);
           inputs[idx + 1]?.focus();
-        }, 0);
+        });
       }
     };
 
   const scrollTo = (key: SectionKey) => {
     const el = sectionsRef[key].current;
     if (!el) return;
-    el.scrollIntoView({ behavior: "smooth", block: "start" });
+    el.scrollIntoView({ behavior: "smooth", block: "start", inline: "nearest" });
+    const heading = el.querySelector("h2") as HTMLElement | null;
+    setTimeout(() => heading?.focus?.(), 350);
   };
 
+  // ──────────────────────────────────────────────────────────────────────────
   // Render
+  // ──────────────────────────────────────────────────────────────────────────
   return (
     <div className="text-zinc-900">
       {/* Mobile pills (top under navbar) */}
@@ -237,28 +250,61 @@ export default function AddRecipeClient() {
           <section className="mt-4 min-w-0 flex-1 md:mt-0">
             <div className="flex flex-col gap-5">
               {/* Details */}
-              <Panel ref={sectionsRef.details} id="details" title="Details">
+              <Panel ref={sectionsRef.details} id="details" title="Details" subtitle="Title, description, times, servings, and tags.">
                 <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                   <div className="sm:col-span-2">
                     <Label>Title</Label>
-                    <input className="recipe-row w-full rounded-lg border px-3 py-2" value={title} onChange={(e) => setTitle(e.target.value)} />
+                    <input
+                      type="text"
+                      className="w-full rounded-lg border border-zinc-300 bg-white/95 px-3 py-2 outline-none focus:ring-2 focus:ring-orange-400"
+                      placeholder="e.g. Grandma’s Best Lasagna"
+                      value={title}
+                      onChange={(e) => setTitle(e.target.value)}
+                    />
                   </div>
+
                   <div className="sm:col-span-2">
                     <Label>Description</Label>
-                    <textarea className="w-full rounded-lg border px-3 py-2" rows={3} value={description} onChange={(e) => setDescription(e.target.value)} />
+                    <textarea
+                      rows={3}
+                      className="w-full rounded-lg border border-zinc-300 bg-white/95 px-3 py-2 outline-none focus:ring-2 focus:ring-orange-400"
+                      placeholder="Short note about the dish"
+                      value={description}
+                      onChange={(e) => setDescription(e.target.value)}
+                    />
+                  </div>
+
+                  <div>
+                    <Label>Prep time (min)</Label>
+                    <input
+                      type="number"
+                      inputMode="numeric"
+                      className="w-full rounded-lg border border-zinc-300 bg-white/95 px-3 py-2 outline-none focus:ring-2 focus:ring-orange-400"
+                      value={prepMins ?? ""}
+                      onChange={(e) => setPrepMins(e.target.value ? Number(e.target.value) : null)}
+                    />
                   </div>
                   <div>
-                    <Label>Prep Time (min)</Label>
-                    <input type="number" className="w-full rounded-lg border px-3 py-2" value={prepTime ?? ""} onChange={(e) => setPrepTime(e.target.value ? Number(e.target.value) : null)} />
-                  </div>
-                  <div>
-                    <Label>Cook Time (min)</Label>
-                    <input type="number" className="w-full rounded-lg border px-3 py-2" value={cookTime ?? ""} onChange={(e) => setCookTime(e.target.value ? Number(e.target.value) : null)} />
+                    <Label>Cook time (min)</Label>
+                    <input
+                      type="number"
+                      inputMode="numeric"
+                      className="w-full rounded-lg border border-zinc-300 bg-white/95 px-3 py-2 outline-none focus:ring-2 focus:ring-orange-400"
+                      value={cookMins ?? ""}
+                      onChange={(e) => setCookMins(e.target.value ? Number(e.target.value) : null)}
+                    />
                   </div>
                   <div>
                     <Label>Servings</Label>
-                    <input type="number" className="w-full rounded-lg border px-3 py-2" value={servings ?? ""} onChange={(e) => setServings(e.target.value ? Number(e.target.value) : null)} />
+                    <input
+                      type="number"
+                      inputMode="numeric"
+                      className="w-full rounded-lg border border-zinc-300 bg-white/95 px-3 py-2 outline-none focus:ring-2 focus:ring-orange-400"
+                      value={servings ?? ""}
+                      onChange={(e) => setServings(e.target.value ? Number(e.target.value) : null)}
+                    />
                   </div>
+
                   <div className="sm:col-span-2">
                     <Label>Tags</Label>
                     <TagsEditor value={tags} onChange={setTags} />
@@ -267,49 +313,115 @@ export default function AddRecipeClient() {
               </Panel>
 
               {/* Ingredients */}
-              <Panel ref={sectionsRef.ingredients} id="ingredients" title="Ingredients">
+              <Panel
+                ref={sectionsRef.ingredients}
+                id="ingredients"
+                title="Ingredients"
+                subtitle="One per line. Press Enter to add another. Paste multi-line to auto-split."
+              >
                 <div className="flex flex-col gap-2">
                   {ingredients.map((val, i) => (
-                    <input
-                      key={`ing-${i}`}
-                      type="text"
-                      className="recipe-row rounded-lg border px-3 py-2"
-                      placeholder={i === 0 ? "e.g. 250g dried pasta" : ""}
-                      value={val}
-                      onChange={(e) => setIngredients((xs) => xs.map((x, idx) => (idx === i ? e.target.value : x)))}
-                      onPaste={onPasteMulti(setIngredients, i)}
-                      onKeyDown={handleEnter(setIngredients, i)}
-                    />
+                    <div key={`ing-${i}`} className="flex items-center gap-2">
+                      <input
+                        type="text"
+                        className="ingredient-input w-full rounded-lg border border-zinc-300 bg-white/95 px-3 py-2 outline-none focus:ring-2 focus:ring-orange-400"
+                        placeholder={i === 0 ? "e.g. 250g dried pasta" : ""}
+                        value={val}
+                        onChange={(e) => setIngredients((xs) => xs.map((x, idx) => (idx === i ? e.target.value : x)))}
+                        onPaste={onPasteMulti(setIngredients, i)}
+                        onKeyDown={handleEnter(setIngredients, i, "input.ingredient-input")}
+                      />
+                      <button
+                        type="button"
+                        className="rounded-md border border-zinc-300 px-2 py-2 text-sm hover:bg-zinc-50 disabled:opacity-50"
+                        onClick={() => removeRow(setIngredients, i)}
+                        disabled={ingredients.length === 1}
+                        aria-label="Remove ingredient"
+                      >
+                        −
+                      </button>
+                    </div>
                   ))}
-                  <button type="button" className="mt-2 rounded-md border px-3 py-2" onClick={() => addRow(setIngredients)}>+ Add ingredient</button>
+                  <div>
+                    <button
+                      type="button"
+                      className="mt-1 rounded-md border border-zinc-300 bg-white px-3 py-2 text-sm hover:bg-zinc-50"
+                      onClick={() => addRow(setIngredients)}
+                    >
+                      + Add ingredient
+                    </button>
+                  </div>
                 </div>
               </Panel>
 
               {/* Steps */}
-              <Panel ref={sectionsRef.steps} id="steps" title="Steps">
+              <Panel
+                ref={sectionsRef.steps}
+                id="steps"
+                title="Steps"
+                subtitle="One per line. Press Enter to add another. Paste multi-line to auto-split."
+              >
                 <div className="flex flex-col gap-2">
                   {steps.map((val, i) => (
-                    <input
-                      key={`step-${i}`}
-                      type="text"
-                      className="recipe-row rounded-lg border px-3 py-2"
-                      placeholder={i === 0 ? "e.g. Preheat oven to 180°C" : ""}
-                      value={val}
-                      onChange={(e) => setSteps((xs) => xs.map((x, idx) => (idx === i ? e.target.value : x)))}
-                      onPaste={onPasteMulti(setSteps, i)}
-                      onKeyDown={handleEnter(setSteps, i)}
-                    />
+                    <div key={`step-${i}`} className="flex items-center gap-2">
+                      <input
+                        type="text"
+                        className="step-input w-full rounded-lg border border-zinc-300 bg-white/95 px-3 py-2 outline-none focus:ring-2 focus:ring-orange-400"
+                        placeholder={i === 0 ? "e.g. Preheat oven to 180°C (fan)." : ""}
+                        value={val}
+                        onChange={(e) => setSteps((xs) => xs.map((x, idx) => (idx === i ? e.target.value : x)))}
+                        onPaste={onPasteMulti(setSteps, i)}
+                        onKeyDown={handleEnter(setSteps, i, "input.step-input")}
+                      />
+                      <button
+                        type="button"
+                        className="rounded-md border border-zinc-300 px-2 py-2 text-sm hover:bg-zinc-50 disabled:opacity-50"
+                        onClick={() => removeRow(setSteps, i)}
+                        disabled={steps.length === 1}
+                        aria-label="Remove step"
+                      >
+                        −
+                      </button>
+                    </div>
                   ))}
-                  <button type="button" className="mt-2 rounded-md border px-3 py-2" onClick={() => addRow(setSteps)}>+ Add step</button>
+                  <div>
+                    <button
+                      type="button"
+                      className="mt-1 rounded-md border border-zinc-300 bg-white px-3 py-2 text-sm hover:bg-zinc-50"
+                      onClick={() => addRow(setSteps)}
+                    >
+                      + Add step
+                    </button>
+                  </div>
                 </div>
               </Panel>
 
               {/* Photos */}
-              <Panel ref={sectionsRef.photos} id="photos" title="Photos">
-                <Label>Image URL (optional)</Label>
-                <input type="url" className="w-full rounded-lg border px-3 py-2" placeholder="https://example.com/cover.jpg" value={imageUrl ?? ""} onChange={(e) => setImageUrl(e.target.value || null)} />
-                <div className="mt-3">
-                  {imageUrl ? <img src={imageUrl} alt="Cover" className="h-40 w-full object-cover rounded-lg border" /> : <div className="h-40 flex items-center justify-center border rounded-lg text-zinc-400">No image</div>}
+              <Panel
+                ref={sectionsRef.photos}
+                id="photos"
+                title="Photos"
+                subtitle="Hook your uploader here later. For now, paste an image URL."
+              >
+                <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                  <div className="sm:col-span-2">
+                    <Label>Image URL (optional)</Label>
+                    <input
+                      type="url"
+                      className="w-full rounded-lg border border-zinc-300 bg-white/95 px-3 py-2 outline-none focus:ring-2 focus:ring-orange-400"
+                      placeholder="https://example.com/cover.jpg"
+                      value={imageUrl ?? ""}
+                      onChange={(e) => setImageUrl(e.target.value || null)}
+                    />
+                  </div>
+                  <div className="overflow-hidden rounded-xl border border-zinc-200 bg-white/90">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    {imageUrl ? (
+                      <img src={imageUrl} alt="Cover" className="h-40 w-full object-cover" />
+                    ) : (
+                      <div className="flex h-40 items-center justify-center text-zinc-400">No image selected</div>
+                    )}
+                  </div>
                 </div>
               </Panel>
 
@@ -356,6 +468,9 @@ export default function AddRecipeClient() {
   );
 }
 
+// ────────────────────────────────────────────────────────────────────────────
+// Small atoms
+// ────────────────────────────────────────────────────────────────────────────
 const SECTIONS: [SectionKey, string][] = [
   ["details", "Details"],
   ["ingredients", "Ingredients"],
