@@ -1,4 +1,4 @@
-**Product Name:** _Your Digital Cookbook Hub_ (working title)  
+**Product Name:** Cibo Libro
 **Version:** MVP (Prototype)
 
 ---
