@@ -48,8 +48,8 @@ model Recipe {
   prepMins         Int?
   cookMins         Int?
   servings         Int?
-  imageKey         String?
-  imageExternalUrl String?
+  imageKey         String? // R2 object key for user-uploaded images
+  imageExternalUrl String? // Original external URL for imported recipes
   ingredients      String[] // Postgres text[]
   steps            String[]
   tags             String[]

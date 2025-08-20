@@ -2,34 +2,30 @@
 import { S3Client, DeleteObjectCommand, GetObjectCommand } from '@aws-sdk/client-s3';
 import { createPresignedPost } from '@aws-sdk/s3-presigned-post';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
+import { randomUUID } from 'crypto';
+import { AllowedType, ALLOWED_TYPES, MAX_SIZE_BYTES, DEFAULT_TTL_SECONDS } from './constants';
 
 const {
-  R2_ACCOUNT_ID,
-  R2_ACCESS_KEY_ID,
-  R2_SECRET_ACCESS_KEY,
+    R2_ACCESS_KEY_ID,
+    R2_SECRET_ACCESS_KEY,
+    R2_ENDPOINT_URL,
   R2_BUCKET_NAME,
 } = process.env;
 
-if (!R2_ACCOUNT_ID || !R2_ACCESS_KEY_ID || !R2_SECRET_ACCESS_KEY || !R2_BUCKET_NAME) {
+if (!R2_ACCESS_KEY_ID || !R2_SECRET_ACCESS_KEY || !R2_ENDPOINT_URL || !R2_BUCKET_NAME) {
   throw new Error('Missing R2 env vars. Check R2_ACCOUNT_ID, R2_ACCESS_KEY_ID, R2_SECRET_ACCESS_KEY, R2_BUCKET_NAME');
 }
 
 export const r2 = new S3Client({
   region: 'auto',
-  endpoint: `https://${R2_ACCOUNT_ID}.r2.cloudflarestorage.com`,
+  endpoint: R2_ENDPOINT_URL,
   credentials: {
     accessKeyId: R2_ACCESS_KEY_ID,
     secretAccessKey: R2_SECRET_ACCESS_KEY,
   },
 });
 
-// --- Config you can tweak for MVP ---
-export const ALLOWED_TYPES = ['image/jpeg', 'image/png', 'image/webp'] as const;
-export type AllowedType = typeof ALLOWED_TYPES[number];
-export const MAX_SIZE_BYTES = 3 * 1024 * 1024; // 3MB
-export const DEFAULT_TTL_SECONDS = 300; // 5 minutes
-
-// Utility: get extension from mime
+// Utility: extension from MIME
 export function extFromMime(mime: AllowedType) {
   switch (mime) {
     case 'image/jpeg': return 'jpg';
@@ -39,31 +35,25 @@ export function extFromMime(mime: AllowedType) {
   }
 }
 
-// Utility: namespaced object key
-export function buildObjectKey(params: { userId: string; recipeId: string; variant?: 'main' | 'thumb'; ext: string }) {
-  const { userId, recipeId, variant = 'main', ext } = params;
-  // Keep it deterministic but unique-per-replacement (timestamp). For strict immutability, swap for cuid().
-  return `u_${userId}/r_${recipeId}/${variant}_${Date.now()}.${ext}`;
+// Utility: generate a random object key
+export function buildObjectKey(mime: AllowedType) {
+  return `${randomUUID()}.${extFromMime(mime)}`;
 }
 
 /**
  * Create a presigned POST so the browser can upload directly to R2.
- * Return shape matches what fetch+FormData expects on the client.
  */
 export async function signUpload(input: {
-  userId: string;
-  recipeId: string;
   contentType: AllowedType;
   sizeBytes: number;
-  variant?: 'main' | 'thumb';
-  ttlSeconds?: number; // validity of the *upload form*
+  ttlSeconds?: number;
 }) {
-  const { userId, recipeId, contentType, sizeBytes, variant = 'main', ttlSeconds = DEFAULT_TTL_SECONDS } = input;
+  const { contentType, sizeBytes, ttlSeconds = DEFAULT_TTL_SECONDS } = input;
 
   if (!ALLOWED_TYPES.includes(contentType)) throw new Error('Invalid content type');
   if (sizeBytes > MAX_SIZE_BYTES) throw new Error('File too large');
 
-  const key = buildObjectKey({ userId, recipeId, variant, ext: extFromMime(contentType) });
+  const key = buildObjectKey(contentType);
 
   const { url, fields } = await createPresignedPost(r2, {
     Bucket: R2_BUCKET_NAME!,
@@ -72,11 +62,7 @@ export async function signUpload(input: {
       ['content-length-range', 0, MAX_SIZE_BYTES],
       ['starts-with', '$Content-Type', contentType],
     ],
-    Fields: {
-      'Content-Type': contentType,
-      // If your bucket policy allows public reads later, you could include ACL here.
-      // For MVP private bucket, omit ACL and keep objects private.
-    },
+    Fields: { 'Content-Type': contentType },
     Expires: ttlSeconds,
   });
 
@@ -97,7 +83,9 @@ export async function signDownload(input: {
   return { url, key, expiresIn: ttlSeconds };
 }
 
-/** Delete an object (e.g., when a user replaces/removes a photo). */
+/**
+ * Delete an object (e.g., when a user replaces/removes a photo).
+ */
 export async function deleteObject(key: string) {
   await r2.send(new DeleteObjectCommand({ Bucket: R2_BUCKET_NAME!, Key: key }));
 }
