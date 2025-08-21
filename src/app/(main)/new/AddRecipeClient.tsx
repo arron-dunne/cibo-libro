@@ -3,6 +3,8 @@
 
 import Image from "next/image";
 import React, { useCallback, useEffect, useMemo, useState, useRef } from "react";
+import { compressImageFile } from "@/lib/images/compress";
+import { MAX_SIZE_BYTES } from "@/lib/images/constants";
 import { saveDraft, updateRecipe, publishRecipe, publishDraft } from "./actions";
 
 // ────────────────────────────────────────────────────────────────────────────
@@ -223,55 +225,49 @@ export default function AddRecipeClient() {
 
   const onPick = async (e: React.ChangeEvent<HTMLInputElement>) => {
     setUploadError(null);
-    const file = e.target.files?.[0];
-    if (!file) return;
+    const raw = e.target.files?.[0];
+    if (!raw) return;
 
-    // immediate preview from local file
-    const localUrl = URL.createObjectURL(file);
+    // Instant local preview (keep input value intact)
+    const localUrl = URL.createObjectURL(raw);
     setImagePreview(localUrl);
 
     setUploading(true);
-    let attempt = 1;
+    try {
+      // 1) Compress client-side
+      const compressed = await compressImageFile(raw, {
+        maxWidth: 1600,
+        maxHeight: 1600,
+        maxBytes: MAX_SIZE_BYTES,
+        preferWebP: true,
+      });
 
-    const tryUpload = async (): Promise<boolean> => {
-      try {
-        const signRes = await fetch('/api/images/sign-upload', {
-          method: 'POST',
-          headers: { 'content-type': 'application/json' },
-          body: JSON.stringify({ contentType: file.type, size: file.size }),
-        });
-        if (!signRes.ok) throw new Error(`Sign failed: ${signRes.status}`);
+      // 2) Sign with compressed metadata
+      const signRes = await fetch("/api/images/sign-upload", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ contentType: compressed.type, size: compressed.size }),
+      });
+      if (!signRes.ok) throw new Error(`Sign failed: ${signRes.status}`);
+      const { method, url, key, requiredHeaders } = await signRes.json();
 
-        const { method, url, key, requiredHeaders, maxBytes } = (await signRes.json()) as SignResponse;
-        if (file.size > maxBytes) throw new Error('File too large');
+      // 3) Upload compressed file
+      const putOnce = async () => {
+        const r = await fetch(url, { method, headers: requiredHeaders, body: compressed });
+        if (!r.ok) throw new Error(`Upload failed: ${r.status}`);
+      };
+      try { await putOnce(); }
+      catch { await putOnce(); } // one retry
 
-        const putRes = await fetch(url, { method, headers: requiredHeaders, body: file });
-        if (!putRes.ok) {
-          const txt = await putRes.text();
-          throw new Error(`Upload failed: ${putRes.status} ${txt}`);
-        }
-
-        setImageKey(key);
-        return true;
-      } catch (err: any) {
-        console.error(`Upload attempt ${attempt} failed`, err);
-        return false;
-      }
-    };
-
-    let success = await tryUpload();
-    if (!success && attempt === 1) {
-      attempt++;
-      success = await tryUpload();
+      setImageKey(key);
+      setUploadError(null);
+    } catch (err: any) {
+      setUploadError(err?.message ?? "Upload failed");
+    } finally {
+      setUploading(false);
     }
-
-    if (!success) {
-      setUploadError("Could not upload image after retry.");
-      // keep the local preview but indicate failure in UI
-    }
-
-    setUploading(false);
   };
+
 
 
   // ──────────────────────────────────────────────────────────────────────────
@@ -473,7 +469,7 @@ export default function AddRecipeClient() {
                 ref={sectionsRef.photos}
                 id="cover-image"
                 title="Cover Image"
-                subtitle="JPEG, PNG, or WebP recommended."
+                subtitle="Choose a photo (JPEG, PNG, WebP)"
               >
                 <div className="sm:col-span-2">
                   <input
@@ -498,9 +494,6 @@ export default function AddRecipeClient() {
                     )}
                     {uploadError && (
                       <span className="text-red-600">Upload failed: {uploadError}</span>
-                    )}
-                    {!uploading && !imageKey && !uploadError && (
-                      <span className="text-zinc-600">No image selected</span>
                     )}
                   </div>
 
