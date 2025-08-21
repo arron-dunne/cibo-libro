@@ -242,6 +242,13 @@ export default function AddRecipeClient() {
         preferWebP: true,
       });
 
+      // Too large error
+      if (compressed.size > MAX_SIZE_BYTES) {
+        throw new Error(
+          `File too large (max ${Math.floor( MAX_SIZE_BYTES / (1024 * 1024))} MB`
+        );
+      }
+
       // 2) Sign with compressed metadata
       const signRes = await fetch("/api/images/sign-upload", {
         method: "POST",
