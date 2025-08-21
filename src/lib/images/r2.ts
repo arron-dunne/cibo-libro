@@ -3,7 +3,7 @@ import "server-only";
 
 export const runtime = 'nodejs'
 
-import { S3Client, ListObjectsV2Command, PutObjectCommand } from '@aws-sdk/client-s3';
+import { S3Client, PutObjectCommand, GetObjectCommand } from '@aws-sdk/client-s3';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 import { ALLOWED_TYPES, AllowedType, MAX_SIZE_BYTES, DEFAULT_TTL_SECONDS } from './constants';
 import { randomUUID } from 'crypto';
@@ -42,6 +42,27 @@ export function buildObjectKey(mime: AllowedType) {
   return `${randomUUID()}.${extFromMime(mime)}`;
 }
 
+
+export async function signGet({ key, expiresIn = 60 } : 
+  { 
+    key: string; 
+    expiresIn?: number 
+  }) {
+
+  const Bucket = process.env.R2_BUCKET_NAME!;
+  if (!Bucket) throw new Error("R2_BUCKET_NAME missing");
+
+  const cmd = new GetObjectCommand({
+    Bucket,
+    Key: key,
+    // (optional) Force content-type/filename on response:
+    // ResponseContentType: "image/webp",
+    // ResponseContentDisposition: `inline; filename="cover.webp"`,
+  });
+
+  const url = await getSignedUrl(r2, cmd, { expiresIn });
+  return { url, expiresIn, key };
+}
 
 /**
  * signPut — create a presigned PUT URL for direct browser upload to R2.

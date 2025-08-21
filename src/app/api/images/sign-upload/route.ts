@@ -1,14 +1,12 @@
 // app/api/images/sign-upload/route.ts
-import "server-only";
-
-export const runtime = 'nodejs';
+"use server";
 
 import { NextResponse } from 'next/server';
 import { z } from 'zod';
 import { signPut } from '@/lib/images/r2'; // the helper we made earlier
 import { MAX_SIZE_BYTES, AllowedType, ALLOWED_TYPES } from "@/lib/images/constants";
 // import { requireUser } from '@/lib/auth'; // TODO: your auth
-
+import { auth } from "@/lib/auth";
 const BodySchema = z.object({
   contentType: z.enum(ALLOWED_TYPES),
   size: z.number().int().positive().max(MAX_SIZE_BYTES),
