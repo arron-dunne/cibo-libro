@@ -8,32 +8,35 @@ import {
 } from '@aws-sdk/client-s3';
 import { createPresignedPost } from '@aws-sdk/s3-presigned-post';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
-import { randomUUID } from 'crypto';
 
 const {
+  R2_ACCOUNT_ID,
   R2_ACCESS_KEY_ID,
   R2_SECRET_ACCESS_KEY,
-  R2_ENDPOINT_URL,      // e.g. https://<ACCOUNT_ID>.r2.cloudflarestorage.com
   R2_BUCKET_NAME,
 } = process.env;
 
-if (!R2_ACCESS_KEY_ID || !R2_SECRET_ACCESS_KEY || !R2_ENDPOINT_URL || !R2_BUCKET_NAME) {
-  throw new Error(
-    'Missing R2 env vars. Expected R2_ACCESS_KEY_ID, R2_SECRET_ACCESS_KEY, R2_ENDPOINT_URL, R2_BUCKET_NAME'
-  );
+if (!R2_ACCOUNT_ID || !R2_ACCESS_KEY_ID || !R2_SECRET_ACCESS_KEY || !R2_BUCKET_NAME) {
+  throw new Error('Missing R2 env vars. Check R2_ACCOUNT_ID, R2_ACCESS_KEY_ID, R2_SECRET_ACCESS_KEY, R2_BUCKET_NAME');
 }
 
 export const r2 = new S3Client({
   region: 'auto',
-  endpoint: R2_ENDPOINT_URL,
-  forcePathStyle: true, // IMPORTANT for R2
+  endpoint: `https://${R2_ACCOUNT_ID}.r2.cloudflarestorage.com`,
   credentials: {
     accessKeyId: R2_ACCESS_KEY_ID,
     secretAccessKey: R2_SECRET_ACCESS_KEY,
   },
 });
 
-export function extFromMime(mime: string) {
+// --- Config you can tweak for MVP ---
+export const ALLOWED_TYPES = ['image/jpeg', 'image/png', 'image/webp'] as const;
+export type AllowedType = typeof ALLOWED_TYPES[number];
+export const MAX_SIZE_BYTES = 3 * 1024 * 1024; // 3MB
+export const DEFAULT_TTL_SECONDS = 300; // 5 minutes
+
+// Utility: get extension from mime
+export function extFromMime(mime: AllowedType) {
   switch (mime) {
     case 'image/jpeg': return 'jpg';
     case 'image/png':  return 'png';
