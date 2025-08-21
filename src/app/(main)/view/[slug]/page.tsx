@@ -54,7 +54,11 @@ export default async function ViewRecipePage({
           {/* Image */}
           <div className="relative">
             <div className="relative h-72 w-full md:h-full">
-              <ClientImage imageKey={recipe.imageKey ?? undefined}/>
+              <ClientImage
+                imageKey={recipe.imageKey ?? undefined}
+                alt={recipe.title || "Recipe image"}
+              />
+
               <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/20 via-black/0 to-black/0" />
             </div>
           </div>

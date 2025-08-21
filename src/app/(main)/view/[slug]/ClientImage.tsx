@@ -1,52 +1,93 @@
-// app/view/[slug]/ClientImage.tsx
 "use client";
 
 import Image from "next/image";
 import { useEffect, useState } from "react";
-import { set } from "zod";
+import { z } from "zod";
 
-/*
-  We fetch the image from R2 cloudflare bucket client side so we dont
-  send large image data through vercel. We also need to hit the API route
-  from the client to give it the cookie.
-*/
-export function ClientImage({ imageKey } : { imageKey: string | undefined }) {
-    
-    const [imageSrc, setImageSrc] = useState<string>("https://images.unsplash.com/photo-1633337474564-1d9478ca4e2e?q=80&w=1471&auto=format&fit=crop");
+// Response validation
+const SignedUrlResponse = z.object({
+  url: z.string().url(),
+});
 
-    useEffect(() => {
-          if (imageKey) {
-          try {
-            fetch(`${process.env.NEXT_PUBLIC_APP_URL}/api/images/sign-download`, {
-              method: "POST",
-              headers: { "content-type": "application/json" },
-              body: JSON.stringify({ key: imageKey }),
-              cache: "no-store",
-            }).then(res => {
-              if (!res.ok) {
-                throw new Error(`Error with POST request: ${res.status}`);
-              }
-              return res.json();
-            }).then(data => {
-                const url : string = data.url;
-                setImageSrc(url);
-            })
-          } catch (err) {
-            console.error("Error fetching signed download URL:", err);
+type ClientImageProps = {
+  imageKey?: string;
+  alt?: string;
+};
+
+export function ClientImage({ imageKey, alt }: ClientImageProps) {
+  const [imageSrc, setImageSrc] = useState<string | null>(null);
+  const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
+  const [retry, setRetry] = useState(false);
+
+  useEffect(() => {
+    if (!imageKey) return;
+
+    let aborted = false;
+    const fetchUrl = async (attempt = 1) => {
+      try {
+        setStatus("loading");
+        const res = await fetch(
+          `${process.env.NEXT_PUBLIC_APP_URL}/api/images/sign-download`,
+          {
+            method: "POST",
+            headers: { "content-type": "application/json" },
+            body: JSON.stringify({ key: imageKey }),
+            cache: "no-store",
           }
+        );
+
+        if (!res.ok) {
+          throw new Error(`Error fetching signed URL: ${res.status}`);
         }
 
-    })
+        const data = SignedUrlResponse.parse(await res.json());
+        if (!aborted) {
+          setImageSrc(data.url);
+          setStatus("success");
+        }
+      } catch (err) {
+        console.error(`Image fetch attempt ${attempt} failed:`, err);
+        if (attempt === 1 && !retry) {
+          // retry once
+          setRetry(true);
+          fetchUrl(2);
+        } else {
+          setStatus("error");
+        }
+      }
+    };
 
+    fetchUrl();
+
+    return () => {
+      aborted = true;
+    };
+  }, [imageKey, retry]);
+
+  if (status === "loading") {
     return (
-        <Image
-            src={imageSrc}
-            alt="Recipe image"
-            fill
-            priority
-            sizes="(max-width: 768px) 100vw, 60vw"
-            className="object-cover"
-        />
-    )
+      <div className="flex h-full w-full items-center justify-center bg-white/50 animate-pulse">
+        <span className="text-sm text-gray-600">Loading image…</span>
+      </div>
+    );
+  }
 
+  if (status === "error" || !imageSrc) {
+    return (
+      <div className="flex h-full w-full items-center justify-center bg-gray-200 text-gray-500">
+        <span className="text-sm">Image unavailable</span>
+      </div>
+    );
+  }
+
+  return (
+    <Image
+      src={imageSrc}
+      alt={alt || "Recipe image"}
+      fill
+      priority
+      sizes="(max-width: 768px) 100vw, 60vw"
+      className="object-cover"
+    />
+  );
 }
