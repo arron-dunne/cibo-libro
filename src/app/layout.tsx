@@ -1,7 +1,5 @@
 // app/layout.tsx
 import "@/styles/globals.css";
-import { Analytics } from "@vercel/analytics/next";
-import { SpeedInsights } from "@vercel/speed-insights/next";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -14,8 +12,6 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   return (
     <html lang="en">
       <body>
-        <Analytics />
-        <SpeedInsights />
         { children}
       </body>
     </html>
