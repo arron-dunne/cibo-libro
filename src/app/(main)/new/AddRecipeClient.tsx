@@ -1,6 +1,7 @@
 // app/new/AddRecipeClient.tsx
 "use client";
 
+import Image from "next/image";
 import React, { useCallback, useEffect, useMemo, useState, useRef } from "react";
 import { saveDraft, updateRecipe, publishRecipe, publishDraft } from "./actions";
 
@@ -217,32 +218,59 @@ export default function AddRecipeClient() {
     requiredHeaders: Record<string, string>;
     maxBytes: number;
   };
+
+  const [imagePreview, setImagePreview] = useState<string | null>(null);
+
   const onPick = async (e: React.ChangeEvent<HTMLInputElement>) => {
     setUploadError(null);
     const file = e.target.files?.[0];
     if (!file) return;
+
+    // immediate preview from local file
+    const localUrl = URL.createObjectURL(file);
+    setImagePreview(localUrl);
+
     setUploading(true);
-    try {
-      const signRes = await fetch('/api/images/sign-upload', {
-        method: 'POST',
-        headers: { 'content-type': 'application/json' },
-        body: JSON.stringify({ contentType: file.type, size: file.size }),
-      });
-      if (!signRes.ok) throw new Error(`Sign failed: ${signRes.status}`);
-      const { method, url, key, requiredHeaders, maxBytes } = (await signRes.json()) as SignResponse;
-      if (file.size > maxBytes) throw new Error('File too large');
-      const putRes = await fetch(url, { method, headers: requiredHeaders, body: file });
-      if (!putRes.ok) {
-        const txt = await putRes.text();
-        throw new Error(`Upload failed: ${putRes.status} ${txt}`);
+    let attempt = 1;
+
+    const tryUpload = async (): Promise<boolean> => {
+      try {
+        const signRes = await fetch('/api/images/sign-upload', {
+          method: 'POST',
+          headers: { 'content-type': 'application/json' },
+          body: JSON.stringify({ contentType: file.type, size: file.size }),
+        });
+        if (!signRes.ok) throw new Error(`Sign failed: ${signRes.status}`);
+
+        const { method, url, key, requiredHeaders, maxBytes } = (await signRes.json()) as SignResponse;
+        if (file.size > maxBytes) throw new Error('File too large');
+
+        const putRes = await fetch(url, { method, headers: requiredHeaders, body: file });
+        if (!putRes.ok) {
+          const txt = await putRes.text();
+          throw new Error(`Upload failed: ${putRes.status} ${txt}`);
+        }
+
+        setImageKey(key);
+        return true;
+      } catch (err: any) {
+        console.error(`Upload attempt ${attempt} failed`, err);
+        return false;
       }
-      setImageKey(key);
-      if (fileInputRef.current) fileInputRef.current.value = '';
-    } catch (err: any) {
-      setUploadError(err?.message ?? String(err));
-    } finally {
-      setUploading(false);
+    };
+
+    let success = await tryUpload();
+    if (!success && attempt === 1) {
+      attempt++;
+      success = await tryUpload();
     }
+
+    if (!success) {
+      setUploadError("Could not upload image after retry.");
+      // keep the local preview but indicate failure in UI
+    }
+
+    setUploading(false);
   };
 
 
@@ -440,34 +468,58 @@ export default function AddRecipeClient() {
                 </div>
               </Panel>
 
-              {/* Photos */}
+              {/* Cover Image */}
               <Panel
                 ref={sectionsRef.photos}
-                id="photos"
-                title="Photos"
-                subtitle="Upload a cover image (JPEG/PNG/WebP)."
+                id="cover-image"
+                title="Cover Image"
+                subtitle="JPEG, PNG, or WebP recommended."
               >
-                <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-                  <div className="sm:col-span-2">
-                    <Label>Upload image</Label>
-                    <input
-                      ref={fileInputRef}
-                      type="file"
-                      accept="image/jpeg,image/png,image/webp"
-                      onChange={onPick}
-                      className="block w-full rounded-lg border border-zinc-300 bg-white/95 px-3 py-2"
-                    />
-                    <div className="mt-2 text-sm text-zinc-600">
-                      {uploading
-                        ? "Uploading to R2…"
-                        : imageKey
-                          ? (<><span>Saved key: </span><code className="px-1 py-0.5 bg-zinc-100 rounded">{imageKey}</code></>)
-                          : "No image selected"}
-                    </div>
-                    {uploadError && <div className="mt-2 text-sm text-red-600">Error: {uploadError}</div>}
+                <div className="sm:col-span-2">
+                  <input
+                    ref={fileInputRef}
+                    type="file"
+                    accept="image/jpeg,image/png,image/webp"
+                    onChange={onPick}
+                    className="block w-full rounded-lg border border-zinc-300 bg-white/95 px-3 py-2"
+                    disabled={uploading}
+                  />
+
+                  {/* Status messages */}
+                  <div className="mt-2 text-sm">
+                    {uploading && (
+                      <span className="flex items-center gap-2 text-zinc-600">
+                        <span className="animate-spin h-4 w-4 border-2 border-orange-500 border-t-transparent rounded-full"></span>
+                        Uploading…
+                      </span>
+                    )}
+                    {!uploading && imageKey && !uploadError && (
+                      <span className="text-emerald-600">Uploaded successfully</span>
+                    )}
+                    {uploadError && (
+                      <span className="text-red-600">Upload failed: {uploadError}</span>
+                    )}
+                    {!uploading && !imageKey && !uploadError && (
+                      <span className="text-zinc-600">No image selected</span>
+                    )}
                   </div>
+
+                  {/* Preview image */}
+                  {imagePreview && (
+                    <div className="mt-3 relative aspect-video w-full overflow-hidden rounded-lg border">
+                      <Image
+                        src={imagePreview}
+                        alt="Cover image preview"
+                        fill
+                        sizes="100vw"
+                        className={`object-cover ${uploadError ? "opacity-70 grayscale" : ""}`}
+                      />
+                    </div>
+                  )}
                 </div>
               </Panel>
+
+
 
 
               {/* Bottom bar */}
