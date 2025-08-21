@@ -66,10 +66,8 @@ export function ClientImage({ imageKey, alt }: ClientImageProps) {
 
   if (status === "loading") {
     return (
-      <div className="flex h-full w-full items-center justify-center bg-white/50 animate-pulse">
-        <span className="text-sm text-gray-600">Loading image…</span>
-      </div>
-    );
+      <div className = "h-full w-full animate-pulse rounded-3xl bg-white/50" />
+        );
   }
 
   if (status === "error" || !imageSrc) {

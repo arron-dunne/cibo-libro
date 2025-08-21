@@ -49,22 +49,21 @@ export default async function ViewRecipePage({
   return (
     <div className="space-y-6">
       {/* HERO CARD */}
-      <section className="overflow-hidden rounded-3xl border border-white/40 bg-white shadow-2xl">
-        <div className="grid items-stretch gap-0 md:grid-cols-[1.2fr_1fr]">
+      <section className="overflow-hidden rounded-3xl border border-white/40 bg-white shadow-2xl min-h-[50vh] flex">
+        <div className="grid items-stretch gap-0 md:grid-cols-[1.2fr_1fr] flex-1">
           {/* Image */}
-          <div className="relative">
+          <div className="relative h-full">
             <div className="relative h-72 w-full md:h-full">
               <ClientImage
                 imageKey={recipe.imageKey ?? undefined}
                 alt={recipe.title || "Recipe image"}
               />
-
               <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/20 via-black/0 to-black/0" />
             </div>
           </div>
 
           {/* Title + meta */}
-          <div className="relative p-5 md:p-8">
+          <div className="relative p-5 md:p-8 flex flex-col justify-center">
             <div className="absolute -right-12 -top-12 h-40 w-40 rounded-full bg-orange-200/50 blur-3xl" />
             <div className="absolute bottom-6 right-10 h-28 w-28 rounded-full bg-rose-200/60 blur-2xl" />
 
@@ -72,7 +71,7 @@ export default async function ViewRecipePage({
               {recipe.title || "Untitled recipe"}
             </h1>
 
-            {!!tags.length && (
+            {tags.length ? (
               <div className="mt-3 flex flex-wrap gap-2">
                 {tags.map((t) => (
                   <span
@@ -83,11 +82,20 @@ export default async function ViewRecipePage({
                   </span>
                 ))}
               </div>
+            ) : (
+              <div className="mt-3 flex gap-2">
+                <span className="h-6 w-20 rounded-full bg-slate-100" />
+                <span className="h-6 w-14 rounded-full bg-slate-100" />
+              </div>
             )}
 
-            {recipe.description && (
+            {recipe.description ? (
               <p className="mt-4 max-w-prose text-sm text-slate-600">
                 {recipe.description}
+              </p>
+            ) : (
+              <p className="mt-4 max-w-prose text-sm italic text-slate-400">
+                No description provided.
               </p>
             )}
 
