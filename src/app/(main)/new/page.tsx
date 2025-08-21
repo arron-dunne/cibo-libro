@@ -1,4 +1,5 @@
-// app/recipes/new/page.tsx
+// app/new/page.tsx
+
 import { auth } from "@/lib/auth";
 import AddRecipeClient from "./AddRecipeClient";
 

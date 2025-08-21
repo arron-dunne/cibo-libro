@@ -40,24 +40,25 @@ model User {
 }
 
 model Recipe {
-  id          String       @id @default(cuid())
-  ownerId     String
-  type        RecipeType
-  title       String
-  description String       @default("")
-  prepMins    Int?
-  cookMins    Int?
-  servings    Int?
-  imageUrl    String?
-  ingredients String[] // Postgres text[]
-  steps       String[]
-  tags        String[]
-  sourceUrl   String?
-  slug        String?      @unique
-  isPublic    Boolean      @default(false)
-  status      RecipeStatus @default(PUBLISHED)
-  createdAt   DateTime     @default(now())
-  updatedAt   DateTime     @updatedAt
+  id               String       @id @default(cuid())
+  ownerId          String
+  type             RecipeType
+  title            String
+  description      String       @default("")
+  prepMins         Int?
+  cookMins         Int?
+  servings         Int?
+  imageKey         String?
+  imageExternalUrl String?
+  ingredients      String[] // Postgres text[]
+  steps            String[]
+  tags             String[]
+  sourceUrl        String?
+  slug             String?      @unique
+  isPublic         Boolean      @default(false)
+  status           RecipeStatus @default(PUBLISHED)
+  createdAt        DateTime     @default(now())
+  updatedAt        DateTime     @updatedAt
 
   owner User @relation(fields: [ownerId], references: [id], onDelete: Cascade)
 

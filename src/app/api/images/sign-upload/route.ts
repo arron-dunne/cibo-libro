@@ -41,20 +41,10 @@ export async function POST(req: Request) {
       { status: 200 },
     );
   } catch (err: any) {
-    // // zod errors → 400; others → 500
-    // const status = err instanceof z.ZodError ? 400 : 500;
-    // const message =
-    //   err instanceof z.ZodError ? z.treeifyError(err) : { error: err?.message ?? 'Server error' };
-    // return NextResponse.json(message, { status });
-
-
-    // 🔎 Log the true cause on the server (Vercel logs / terminal)
-    console.error('sign-upload error:', {
-      message: err?.message,
-      stack: err?.stack,
-      name: err?.name,
-    });
-    // Send a minimal error to the client
-    return NextResponse.json({ error: 'Upload signing failed' }, { status: 500 });
+    // zod errors → 400; others → 500
+    const status = err instanceof z.ZodError ? 400 : 500;
+    const message =
+      err instanceof z.ZodError ? z.treeifyError(err) : { error: err?.message ?? 'Server error' };
+    return NextResponse.json(message, { status });
   }
 }

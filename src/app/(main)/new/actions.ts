@@ -1,3 +1,5 @@
+// app/new/actions.ts
+
 "use server";
 
 import { auth } from "@/lib/auth";
@@ -25,7 +27,7 @@ const BaseSchema = z
   .object({
     title: z.string().trim().min(1, "Title is required"),
     description: z.string().trim().optional().nullable(),
-    imageUrl: z.url().optional().nullable(),
+    imageKey: z.string().trim().optional().nullable(),
     sourceUrl: z.url().optional().nullable(),
     ingredients: z.array(NonEmptyLine).min(1, "At least one ingredient"),
     steps: z.array(NonEmptyLine).min(1, "At least one step"),
@@ -50,7 +52,7 @@ function requireUserId() {
 type RecipeWritableData = {
   title: string;
   description?: string; // prisma expects string | undefined (not null)
-  imageUrl?: string;
+  imageKey?: string;
   sourceUrl?: string;
   prepMins?: number | null;
   cookMins?: number | null;
@@ -73,9 +75,9 @@ function dtoToPrismaData(dto: RecipeDTO) {
     const d = typeof dto.description === 'string' ? dto.description.trim() : undefined;
     if (d && d.length > 0) data.description = d; // else leave undefined to use default
   }
-  if (dto.imageUrl !== undefined) {
-    const u = dto.imageUrl ?? undefined;
-    if (u) data.imageUrl = u;
+  if (dto.imageKey !== undefined) {
+    const u = dto.imageKey ?? undefined;
+    if (u) data.imageKey = u;
   }
   if (dto.sourceUrl !== undefined) {
     const u = dto.sourceUrl ?? undefined;

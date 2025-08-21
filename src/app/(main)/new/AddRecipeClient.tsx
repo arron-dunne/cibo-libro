@@ -1,8 +1,7 @@
-// app/recipes/new/AddRecipeClient.tsx
+// app/new/AddRecipeClient.tsx
 "use client";
 
-import React, { useCallback, useEffect, useMemo, useState } from "react";
-import Image from "next/image";
+import React, { useCallback, useEffect, useMemo, useState, useRef } from "react";
 import { saveDraft, updateRecipe, publishRecipe, publishDraft } from "./actions";
 
 // ────────────────────────────────────────────────────────────────────────────
@@ -14,10 +13,10 @@ type Snapshot = {
   // Keep aligned with your actions.ts/Zod & Prisma schema
   title: string;
   description?: string | null;
-  prepMins?: number | null; 
-  cookMins?: number | null; 
+  prepMins?: number | null;
+  cookMins?: number | null;
   servings?: number | null;
-  imageUrl?: string | null;
+  imageKey?: string | null;
   ingredients: string[];
   steps: string[];
   tags: string[];
@@ -37,7 +36,11 @@ export default function AddRecipeClient() {
   const [prepMins, setPrepMins] = useState<number | null>(null);
   const [cookMins, setCookMins] = useState<number | null>(null);
   const [servings, setServings] = useState<number | null>(null);
-  const [imageUrl, setImageUrl] = useState<string | null>(null);
+  const [imageKey, setImageKey] = useState<string | null>(null);
+  const [uploading, setUploading] = useState(false);
+  const [uploadError, setUploadError] = useState<string | null>(null);
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
+
 
   const [ingredients, setIngredients] = useState<string[]>([""]);
   const [steps, setSteps] = useState<string[]>([""]);
@@ -76,13 +79,13 @@ export default function AddRecipeClient() {
       prepMins,
       cookMins,
       servings,
-      imageUrl: imageUrl || null,
+      imageKey: imageKey || null,
       ingredients: sanitizeLines(ingredients),
       steps: sanitizeLines(steps),
       tags: sanitizeLines(tags),
       sourceUrl: sourceUrl || null,
     }),
-    [title, description, prepMins, cookMins, servings, imageUrl, ingredients, steps, tags, sourceUrl]
+    [title, description, prepMins, cookMins, servings, imageKey, ingredients, steps, tags, sourceUrl]
   );
 
   const setSnapshot = (s: Snapshot) => {
@@ -91,7 +94,7 @@ export default function AddRecipeClient() {
     setPrepMins(s.prepMins ?? null);
     setCookMins(s.cookMins ?? null);
     setServings(s.servings ?? null);
-    setImageUrl(s.imageUrl ?? null);
+    setImageKey(s.imageKey ?? null);
     setIngredients(s.ingredients?.length ? s.ingredients : [""]);
     setSteps(s.steps?.length ? s.steps : [""]);
     setTags(s.tags ?? []);
@@ -167,36 +170,36 @@ export default function AddRecipeClient() {
 
   const onPasteMulti =
     (setter: React.Dispatch<React.SetStateAction<string[]>>, idx: number) =>
-    (e: React.ClipboardEvent<HTMLInputElement>) => {
-      const text = e.clipboardData.getData("text");
-      if (text.includes("\n")) {
-        e.preventDefault();
-        const lines = sanitizeLines(text.split("\n"));
-        setter((xs) => {
-          const copy = [...xs];
-          copy[idx] = (copy[idx] || "") + lines[0];
-          if (lines.length > 1) copy.splice(idx + 1, 0, ...lines.slice(1));
-          return copy;
-        });
-      }
-    };
+      (e: React.ClipboardEvent<HTMLInputElement>) => {
+        const text = e.clipboardData.getData("text");
+        if (text.includes("\n")) {
+          e.preventDefault();
+          const lines = sanitizeLines(text.split("\n"));
+          setter((xs) => {
+            const copy = [...xs];
+            copy[idx] = (copy[idx] || "") + lines[0];
+            if (lines.length > 1) copy.splice(idx + 1, 0, ...lines.slice(1));
+            return copy;
+          });
+        }
+      };
 
   const handleEnter =
     (setter: React.Dispatch<React.SetStateAction<string[]>>, idx: number, selector: string) =>
-    (e: React.KeyboardEvent<HTMLInputElement>) => {
-      if (e.key === "Enter") {
-        e.preventDefault();
-        setter((xs) => {
-          const copy = [...xs];
-          copy.splice(idx + 1, 0, "");
-          return copy;
-        });
-        requestAnimationFrame(() => {
-          const inputs = document.querySelectorAll<HTMLInputElement>(selector);
-          inputs[idx + 1]?.focus();
-        });
-      }
-    };
+      (e: React.KeyboardEvent<HTMLInputElement>) => {
+        if (e.key === "Enter") {
+          e.preventDefault();
+          setter((xs) => {
+            const copy = [...xs];
+            copy.splice(idx + 1, 0, "");
+            return copy;
+          });
+          requestAnimationFrame(() => {
+            const inputs = document.querySelectorAll<HTMLInputElement>(selector);
+            inputs[idx + 1]?.focus();
+          });
+        }
+      };
 
   const scrollTo = (key: SectionKey) => {
     const el = sectionsRef[key].current;
@@ -205,6 +208,43 @@ export default function AddRecipeClient() {
     const heading = el.querySelector("h2") as HTMLElement | null;
     setTimeout(() => heading?.focus?.(), 350);
   };
+
+  type SignResponse = {
+    method: 'PUT';
+    url: string;
+    key: string;
+    expiresIn: number;
+    requiredHeaders: Record<string, string>;
+    maxBytes: number;
+  };
+  const onPick = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    setUploadError(null);
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setUploading(true);
+    try {
+      const signRes = await fetch('/api/images/sign-upload', {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({ contentType: file.type, size: file.size }),
+      });
+      if (!signRes.ok) throw new Error(`Sign failed: ${signRes.status}`);
+      const { method, url, key, requiredHeaders, maxBytes } = (await signRes.json()) as SignResponse;
+      if (file.size > maxBytes) throw new Error('File too large');
+      const putRes = await fetch(url, { method, headers: requiredHeaders, body: file });
+      if (!putRes.ok) {
+        const txt = await putRes.text();
+        throw new Error(`Upload failed: ${putRes.status} ${txt}`);
+      }
+      setImageKey(key);
+      if (fileInputRef.current) fileInputRef.current.value = '';
+    } catch (err: any) {
+      setUploadError(err?.message ?? String(err));
+    } finally {
+      setUploading(false);
+    }
+  };
+
 
   // ──────────────────────────────────────────────────────────────────────────
   // Render
@@ -405,36 +445,30 @@ export default function AddRecipeClient() {
                 ref={sectionsRef.photos}
                 id="photos"
                 title="Photos"
-                subtitle="Hook your uploader here later. For now, paste an image URL."
+                subtitle="Upload a cover image (JPEG/PNG/WebP)."
               >
                 <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
                   <div className="sm:col-span-2">
-                    <Label>Image URL (optional)</Label>
+                    <Label>Upload image</Label>
                     <input
-                      type="url"
-                      className="w-full rounded-lg border border-zinc-300 bg-white/95 px-3 py-2 outline-none focus:ring-2 focus:ring-orange-400"
-                      placeholder="https://example.com/cover.jpg"
-                      value={imageUrl ?? ""}
-                      onChange={(e) => setImageUrl(e.target.value || null)}
+                      ref={fileInputRef}
+                      type="file"
+                      accept="image/jpeg,image/png,image/webp"
+                      onChange={onPick}
+                      className="block w-full rounded-lg border border-zinc-300 bg-white/95 px-3 py-2"
                     />
-                  </div>
-                  <div className="overflow-hidden rounded-xl border border-zinc-200 bg-white/90">
-                    {imageUrl ? (
-                      <Image
-                        src={imageUrl}
-                        alt="Cover"
-                        width={800}
-                        height={320}
-                        className="h-40 w-full object-cover"
-                        unoptimized
-                        sizes="(max-width: 640px) 100vw, 600px"
-                      />
-                    ) : (
-                      <div className="flex h-40 items-center justify-center text-zinc-400">No image selected</div>
-                    )}
+                    <div className="mt-2 text-sm text-zinc-600">
+                      {uploading
+                        ? "Uploading to R2…"
+                        : imageKey
+                          ? (<><span>Saved key: </span><code className="px-1 py-0.5 bg-zinc-100 rounded">{imageKey}</code></>)
+                          : "No image selected"}
+                    </div>
+                    {uploadError && <div className="mt-2 text-sm text-red-600">Error: {uploadError}</div>}
                   </div>
                 </div>
               </Panel>
+
 
               {/* Bottom bar */}
               <div className="sticky bottom-0 z-40 mt-2 flex items-center justify-between gap-3 rounded-2xl border border-white/60 bg-white/80 px-4 py-3 shadow-md backdrop-blur">
