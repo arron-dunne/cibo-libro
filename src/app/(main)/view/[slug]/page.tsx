@@ -1,19 +1,20 @@
 // src/app/view/[slug]/page.tsx
+'use server';
+
 import { notFound } from "next/navigation";
 import Image from "next/image";
 import { prisma } from "@/lib/prisma";
 
-// Force dynamic so private data (or frequently changing) is fetched per request.
-// Remove if you later make some recipes public and want to statically render.
-export const dynamic = "force-dynamic";
-
 export default async function ViewRecipePage({
   params,
 }: {
-  params: { slug: string };
+  params: Promise<{ slug: string }>;
 }) {
+
+  const slug = await params.then((p) => p.slug);
+
   const recipe = await prisma.recipe.findFirst({
-    where: { slug: params.slug },
+    where: { slug: slug },
     select: {
       id: true,
       title: true,
@@ -36,10 +37,7 @@ export default async function ViewRecipePage({
   const ingredients: string[] = Array.isArray(recipe.ingredients)
     ? recipe.ingredients
     : [];
-  const stepsRaw = Array.isArray(recipe.steps) ? recipe.steps : [];
-  const steps: { text: string }[] = stepsRaw.map((s: any) =>
-    typeof s === "string" ? { text: s } : { text: s?.text ?? "" }
-  );
+  const steps: string[] = Array.isArray(recipe.steps) ? recipe.steps : [];
 
   const prep = Number(recipe.prepMins ?? 0);
   const cook = Number(recipe.cookMins ?? 0);
@@ -146,7 +144,7 @@ export default async function ViewRecipePage({
                     <div className="absolute left-[-9px] top-1 grid h-5 w-5 place-items-center rounded-full bg-orange-500 text-[11px] font-extrabold text-white shadow">
                       {i + 1}
                     </div>
-                    <p className="text-base leading-relaxed">{s.text}</p>
+                    <p className="text-base leading-relaxed">{s}</p>
                   </li>
                 ))}
               </ol>
