@@ -176,6 +176,6 @@ export async function publishRecipe(input: unknown) {
   });
 
   revalidatePath("/recipes");
-  revalidatePath(`/recipes/${created.slug}`);
+  revalidatePath(`/view/${created.slug}`);
   return created;
 }

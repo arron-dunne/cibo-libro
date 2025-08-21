@@ -151,10 +151,10 @@ export default function AddRecipeClient() {
     try {
       if (draftId) {
         const res = await publishDraft(draftId);
-        window.location.href = `/recipes/${res.slug ?? res.id}`;
+        window.location.href = `/view/${res.slug ?? res.id}`;
       } else {
         const res = await publishRecipe(snapshot());
-        window.location.href = `/recipes/${res.slug ?? res.id}`;
+        window.location.href = `/view/${res.slug ?? res.id}`;
       }
     } catch {
       setToast("Failed to publish");
