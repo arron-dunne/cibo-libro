@@ -1,9 +1,9 @@
-// lib/r2.ts
+// lib/images/r2.ts
 import "server-only";
 
 export const runtime = 'nodejs'
 
-import { S3Client, PutObjectCommand, GetObjectCommand } from '@aws-sdk/client-s3';
+import { S3Client, PutObjectCommand, GetObjectCommand, DeleteObjectCommand } from '@aws-sdk/client-s3';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 import { ALLOWED_TYPES, AllowedType, MAX_SIZE_BYTES, DEFAULT_TTL_SECONDS } from './constants';
 import { randomUUID } from 'crypto';
@@ -38,8 +38,9 @@ export function extFromMime(mime: AllowedType) {
   }
 }
 
-export function buildObjectKey(mime: AllowedType) {
-  return `${randomUUID()}.${extFromMime(mime)}`;
+export function buildObjectKey(userId: string, mime: AllowedType)
+{
+  return `user/${userId}/${randomUUID()}.${extFromMime(mime)}`;
 }
 
 
@@ -69,16 +70,17 @@ export async function signGet({ key, expiresIn = 60 } :
  * Returns the URL + key and the exact headers the client must send.
  */
 export async function signPut(input: {
+  userId: string
   contentType: AllowedType;
 }) {
-  const { contentType } = input;
+  const { userId, contentType } = input;
 
   // Validate mime
   if (!ALLOWED_TYPES.includes(contentType)) {
     throw new Error(`Unsupported content type: ${contentType}`);
   }
 
-  const key = buildObjectKey(contentType);
+  const key = buildObjectKey(userId, contentType);
   const expiresIn = DEFAULT_TTL_SECONDS; // seconds
 
   // Important: ContentType here MUST match the client's PUT header exactly.
@@ -101,16 +103,15 @@ export async function signPut(input: {
   };
 }
 
-
-// export async function signDownload(input: { key: string; ttlSeconds?: number }) {
-//   const { key, ttlSeconds = 300 } = input;
-//   const cmd = new GetObjectCommand({ Bucket: R2_BUCKET_NAME!, Key: key });
-//   const url = await getSignedUrl(r2, cmd, { expiresIn: ttlSeconds });
-//   return url;
-// }
-
-// export async function deleteObject(key: string) {
-//   await r2.send(new DeleteObjectCommand({ Bucket: R2_BUCKET_NAME!, Key: key }));
-// }
+export async function deleteObject(key: string) {
+  try {
+    await r2.send(new DeleteObjectCommand({ Bucket: R2_BUCKET_NAME, Key: key }));
+    return { ok: true };
+  } catch (e: any) {
+    // If NotFound: still ok (idempotent)
+    if (e?.$metadata?.httpStatusCode === 404) return { ok: true };
+    return { ok: false, status: e?.$metadata?.httpStatusCode ?? 500 };
+  }
+}
 
 // (keep your presigned POST/PUT helpers here if you want)
