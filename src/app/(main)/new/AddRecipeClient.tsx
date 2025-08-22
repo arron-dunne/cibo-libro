@@ -57,6 +57,7 @@ export default function AddRecipeClient() {
   // Upload status
   const [uploading, setUploading] = useState(false);
   const [uploadError, setUploadError] = useState<string | null>(null);
+  const [imageNotice, setImageNotice] = useState<string | null>(null);
 
   // Form lists
   const [ingredients, setIngredients] = useState<string[]>([""]);
@@ -294,10 +295,24 @@ export default function AddRecipeClient() {
   // ──────────────────────────────────────────────────────────────────────────
   const onPick = async (e: React.ChangeEvent<HTMLInputElement>) => {
     setUploadError(null);
+    setImageNotice(null);
     const raw = e.target.files?.[0];
     if (!raw) return;
 
-    // Instant local preview (keep input value intact)
+    // If there’s an existing *pending* upload, remove it first to avoid orphans
+    if (coverDraft) {
+      try {
+        await deletePendingCover(); // your helper; idempotent server-side
+        // Clear the old input value (we’re about to set a new file anyway)
+        if (fileInputRef.current) fileInputRef.current.value = "";
+        setImageNotice("Image removed"); // shows under the input
+        setTimeout(() => setImageNotice(null), 1800);
+      } catch {
+        // Non-fatal; continue with new upload
+      }
+    }
+
+    // Local preview of the *new* file
     const localUrl = URL.createObjectURL(raw);
     setImagePreview(localUrl);
 
@@ -310,7 +325,6 @@ export default function AddRecipeClient() {
         maxBytes: MAX_SIZE_BYTES,
         preferWebP: true,
       });
-
       if (compressed.size > MAX_SIZE_BYTES) {
         throw new Error(`File too large (max ${Math.floor(MAX_SIZE_BYTES / (1024 * 1024))} MB)`);
       }
@@ -329,21 +343,19 @@ export default function AddRecipeClient() {
         const r = await fetch(url, { method, headers: requiredHeaders, body: compressed });
         if (!r.ok) throw new Error(`Upload failed: ${r.status}`);
       };
-      try {
-        await putOnce();
-      } catch {
-        await putOnce();
-      }
+      try { await putOnce(); } catch { await putOnce(); }
 
       // 4) Hold pending cover until finalize
       setCoverDraft({ key, uploadId });
       setUploadError(null);
+      setImageNotice(null); // clear any old “removed” message
     } catch (err: any) {
       setUploadError(err?.message ?? "Upload failed");
     } finally {
       setUploading(false);
     }
   };
+
 
   // ──────────────────────────────────────────────────────────────────────────
   // Render
@@ -556,8 +568,8 @@ export default function AddRecipeClient() {
                     disabled={uploading}
                   />
 
-                  {/* Upload status + inline delete control */}
-                  <div className="mt-2 flex items-center gap-3 text-sm">
+                  {/* Upload status + inline delete (under the file input) */}
+                  <div className="mt-2 flex flex-wrap items-center gap-3 text-sm">
                     {uploading && (
                       <span className="flex items-center gap-2 text-zinc-600">
                         <span className="animate-spin h-4 w-4 border-2 border-orange-500 border-t-transparent rounded-full"></span>
@@ -572,18 +584,19 @@ export default function AddRecipeClient() {
                           type="button"
                           onClick={async () => {
                             try {
-                              if (coverDraft) {
-                                await deletePendingCover();
-                              } else if (imageKey && draftId) {
-                                await deleteAttachedCover();
-                              }
-                              // Clear input
+                              if (coverDraft) await deletePendingCover();
+                              else if (imageKey && draftId) await deleteAttachedCover();
+
+                              // Clear the <input type="file" />
                               if (fileInputRef.current) fileInputRef.current.value = "";
-                              setToast("Image removed");
-                              setTimeout(() => setToast(null), 2000);
+
+                              // Clear preview + show message locally
+                              setImagePreview(null);
+                              setImageNotice("Image removed");
+                              setTimeout(() => setImageNotice(null), 1800);
                             } catch {
-                              setToast("Failed to remove image");
-                              setTimeout(() => setToast(null), 2000);
+                              setImageNotice("Failed to remove image");
+                              setTimeout(() => setImageNotice(null), 2000);
                             }
                           }}
                           className="rounded-md border border-zinc-300 bg-white px-2 py-1 text-xs hover:bg-zinc-50"
@@ -594,7 +607,11 @@ export default function AddRecipeClient() {
                     )}
 
                     {uploadError && <span className="text-red-600">Upload failed: {uploadError}</span>}
+
+                    {/* Local notice area for “Image removed” etc. */}
+                    {imageNotice && <span className="text-zinc-700">{imageNotice}</span>}
                   </div>
+
 
                   {/* Preview image */}
                   {imagePreview && (
