@@ -69,7 +69,7 @@ model Recipe {
 }
 
 model Upload {
-  id          String   @id @default(cuid()) // "uploadId" returned to client
+  id          String   @id @default(uuid()) // "uploadId" returned to client
   userId      String
   key         String   @unique // e.g. user/<userId>/<uuid>.<ext>
   size        Int // bytes (after client compression)
