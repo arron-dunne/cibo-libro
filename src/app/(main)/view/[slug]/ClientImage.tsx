@@ -27,7 +27,7 @@ export function ClientImage({ imageKey, alt }: ClientImageProps) {
       try {
         setStatus("loading");
         const res = await fetch(
-          `${process.env.NEXT_PUBLIC_APP_URL}/api/images/sign-download`,
+          `${process.env.NEXT_PUBLIC_VERCEL_URL}/api/images/sign-download`,
           {
             method: "POST",
             headers: { "content-type": "application/json" },
