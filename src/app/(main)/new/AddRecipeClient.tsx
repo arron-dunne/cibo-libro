@@ -250,36 +250,36 @@ export default function AddRecipeClient() {
 
   const onPasteMulti =
     (setter: React.Dispatch<React.SetStateAction<string[]>>, idx: number) =>
-    (e: React.ClipboardEvent<HTMLInputElement>) => {
-      const text = e.clipboardData.getData("text");
-      if (text.includes("\n")) {
-        e.preventDefault();
-        const lines = sanitizeLines(text.split("\n"));
-        setter((xs) => {
-          const copy = [...xs];
-          copy[idx] = (copy[idx] || "") + lines[0];
-          if (lines.length > 1) copy.splice(idx + 1, 0, ...lines.slice(1));
-          return copy;
-        });
-      }
-    };
+      (e: React.ClipboardEvent<HTMLInputElement>) => {
+        const text = e.clipboardData.getData("text");
+        if (text.includes("\n")) {
+          e.preventDefault();
+          const lines = sanitizeLines(text.split("\n"));
+          setter((xs) => {
+            const copy = [...xs];
+            copy[idx] = (copy[idx] || "") + lines[0];
+            if (lines.length > 1) copy.splice(idx + 1, 0, ...lines.slice(1));
+            return copy;
+          });
+        }
+      };
 
   const handleEnter =
     (setter: React.Dispatch<React.SetStateAction<string[]>>, idx: number, selector: string) =>
-    (e: React.KeyboardEvent<HTMLInputElement>) => {
-      if (e.key === "Enter") {
-        e.preventDefault();
-        setter((xs) => {
-          const copy = [...xs];
-          copy.splice(idx + 1, 0, "");
-          return copy;
-        });
-        requestAnimationFrame(() => {
-          const inputs = document.querySelectorAll<HTMLInputElement>(selector);
-          inputs[idx + 1]?.focus();
-        });
-      }
-    };
+      (e: React.KeyboardEvent<HTMLInputElement>) => {
+        if (e.key === "Enter") {
+          e.preventDefault();
+          setter((xs) => {
+            const copy = [...xs];
+            copy.splice(idx + 1, 0, "");
+            return copy;
+          });
+          requestAnimationFrame(() => {
+            const inputs = document.querySelectorAll<HTMLInputElement>(selector);
+            inputs[idx + 1]?.focus();
+          });
+        }
+      };
 
   const scrollTo = (key: SectionKey) => {
     const el = sectionsRef[key].current;
@@ -556,17 +556,43 @@ export default function AddRecipeClient() {
                     disabled={uploading}
                   />
 
-                  {/* Status messages */}
-                  <div className="mt-2 text-sm">
+                  {/* Upload status + inline delete control */}
+                  <div className="mt-2 flex items-center gap-3 text-sm">
                     {uploading && (
                       <span className="flex items-center gap-2 text-zinc-600">
                         <span className="animate-spin h-4 w-4 border-2 border-orange-500 border-t-transparent rounded-full"></span>
                         Uploading…
                       </span>
                     )}
+
                     {!uploading && (coverDraft || imageKey) && !uploadError && (
-                      <span className="text-emerald-600">Uploaded successfully</span>
+                      <div className="flex items-center gap-3">
+                        <span className="text-emerald-600">Uploaded successfully</span>
+                        <button
+                          type="button"
+                          onClick={async () => {
+                            try {
+                              if (coverDraft) {
+                                await deletePendingCover();
+                              } else if (imageKey && draftId) {
+                                await deleteAttachedCover();
+                              }
+                              // Clear input
+                              if (fileInputRef.current) fileInputRef.current.value = "";
+                              setToast("Image removed");
+                              setTimeout(() => setToast(null), 2000);
+                            } catch {
+                              setToast("Failed to remove image");
+                              setTimeout(() => setToast(null), 2000);
+                            }
+                          }}
+                          className="rounded-md border border-zinc-300 bg-white px-2 py-1 text-xs hover:bg-zinc-50"
+                        >
+                          Remove
+                        </button>
+                      </div>
                     )}
+
                     {uploadError && <span className="text-red-600">Upload failed: {uploadError}</span>}
                   </div>
 
@@ -580,45 +606,6 @@ export default function AddRecipeClient() {
                         sizes="100vw"
                         className={`object-cover ${uploadError ? "opacity-70 grayscale" : ""}`}
                       />
-                    </div>
-                  )}
-
-                  {/* Delete controls */}
-                  {(coverDraft || imageKey) && (
-                    <div className="mt-3 flex gap-2">
-                      {coverDraft && (
-                        <button
-                          type="button"
-                          onClick={async () => {
-                            try {
-                              await deletePendingCover();
-                            } catch (e) {
-                              setToast("Failed to remove image");
-                              setTimeout(() => setToast(null), 1500);
-                            }
-                          }}
-                          className="rounded-md border border-zinc-300 bg-white px-3 py-2 text-sm hover:bg-zinc-50"
-                        >
-                          Remove selected image
-                        </button>
-                      )}
-                      {!coverDraft && imageKey && (
-                        <button
-                          type="button"
-                          disabled={!draftId}
-                          onClick={async () => {
-                            try {
-                              await deleteAttachedCover();
-                            } catch (e) {
-                              setToast("Failed to remove image");
-                              setTimeout(() => setToast(null), 1500);
-                            }
-                          }}
-                          className="rounded-md border border-zinc-300 bg-white px-3 py-2 text-sm hover:bg-zinc-50 disabled:opacity-50"
-                        >
-                          Remove current cover
-                        </button>
-                      )}
                     </div>
                   )}
                 </div>
