@@ -5,23 +5,18 @@ import Image from "next/image";
 import Link from "next/link";
 
 /**
- * ClientRecipesGrid — polished, delightful recipe library UI
- *
- * Improvements:
- * - True responsive grid (max 4 cols desktop → 1 col mobile)
- * - Gorgeous top filter/search bar, centered with subtle glassmorphism
- * - Cards with consistent aspect, soft shadows, playful hover lift
- * - Harmonized typography + spacing
- * - Empty states styled as friendly onboarding moments
- * - Cards are full clickable links to /view/[slug]
+ * ClientRecipesGrid — R2-aware recipe grid (no expanding cards)
+ * - Uses `imageKey` → POST /api/images/sign-download to get a signed URL
+ * - Schema fields: slug, prepMins, cookMins, tags[]
+ * - Equal-height cards, 1→4 responsive columns, glassy filter bar
  */
 
 export type Recipe = {
   id: string;
-  slug?: string | null; // ← for /view/[slug]
+  slug?: string | null;               // /view/[slug]
   title: string;
   description?: string | null;
-  imageKey?: string | null;
+  imageKey?: string | null;           // R2 object key
   tags?: string[] | null;
   prepMins?: number | null;
   cookMins?: number | null;
@@ -29,29 +24,55 @@ export type Recipe = {
   sourceUrl?: string | null;
 };
 
-type SortOptionKey = "recent" | "title" | "time";
+export type ClientRecipesGridProps = {
+  recipes: Recipe[];
+  initialQuery?: string;
+  initialTags?: string[];
+  initialSort?: SortOptionKey;
+};
 
+/** Sort options */
 const SORT_OPTIONS = [
   { key: "recent" as const, label: "Recently updated" },
   { key: "title" as const, label: "Title A→Z" },
   { key: "time" as const, label: "Total time" },
 ];
+type SortOptionKey = (typeof SORT_OPTIONS)[number]["key"];
 
-export default function ClientRecipesGrid({ recipes }: { recipes: Recipe[] }) {
-  const [query, setQuery] = useState("");
-  const [sortBy, setSortBy] = useState<SortOptionKey>("recent");
+export default function ClientRecipesGrid({
+  recipes,
+  initialQuery = "",
+  initialTags = [],
+  initialSort = "recent",
+}: ClientRecipesGridProps) {
+  const [query, setQuery] = useState(initialQuery);
+  const [selectedTags, setSelectedTags] = useState<string[]>(initialTags);
+  const [sortBy, setSortBy] = useState<SortOptionKey>(initialSort);
 
-  const normalized = useMemo(() =>
-    recipes.map((r) => ({
-      ...r,
-      _q: [r.title, r.description, ...(r.tags ?? [])].join(" ").toLowerCase(),
-      _time: ((r.prepMins ?? 0) + (r.cookMins ?? 0)) || undefined,
-    })),
-  [recipes]);
+  // Unique tags by frequency, then A→Z
+  const allTags = useMemo(() => {
+    const counts = new Map<string, number>();
+    for (const r of recipes) for (const t of r.tags ?? []) counts.set(t, (counts.get(t) ?? 0) + 1);
+    return [...counts.entries()].sort((a, b) => (b[1] - a[1]) || a[0].localeCompare(b[0])).map(([t]) => t);
+  }, [recipes]);
+
+  const normalized = useMemo(
+    () =>
+      recipes.map((r) => ({
+        ...r,
+        _q: [r.title, r.description, ...(r.tags ?? [])].join(" ").toLowerCase(),
+        _time: ((r.prepMins ?? 0) + (r.cookMins ?? 0)) || undefined,
+      })),
+    [recipes]
+  );
 
   const visible = useMemo(() => {
     const q = query.trim().toLowerCase();
-    let list = normalized.filter((r) => (q ? r._q.includes(q) : true));
+    let list = normalized.filter((r) => {
+      const matchesQuery = q ? r._q.includes(q) : true;
+      const matchesTags = selectedTags.length ? (r.tags ?? []).some((t) => selectedTags.includes(t)) : true;
+      return matchesQuery && matchesTags;
+    });
     switch (sortBy) {
       case "title":
         list = list.sort((a, b) => a.title.localeCompare(b.title));
@@ -61,73 +82,144 @@ export default function ClientRecipesGrid({ recipes }: { recipes: Recipe[] }) {
         break;
       case "recent":
       default:
+        // Keep server order (assume updatedAt desc)
         break;
     }
     return list;
-  }, [normalized, query, sortBy]);
+  }, [normalized, query, selectedTags, sortBy]);
+
+  const toggleTag = (tag: string) =>
+    setSelectedTags((prev) => (prev.includes(tag) ? prev.filter((t) => t !== tag) : [...prev, tag]));
 
   return (
-    <div className="flex flex-col gap-8">
-      {/* Filter Bar */}
-      <div className="sticky top-16 z-10 w-full bg-white/60 backdrop-blur-md border-b border-orange-200 shadow-sm">
-        <div className="mx-auto max-w-6xl px-4 py-4 flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
-          {/* Search */}
-          <div className="flex-1 flex items-center gap-3">
-            <label className="relative flex-1">
-              <input
-                value={query}
-                onChange={(e) => setQuery(e.target.value)}
-                placeholder="Search recipes or tags…"
-                className="w-full rounded-full border border-zinc-200 bg-white/90 px-4 py-2.5 pr-10 text-sm shadow-inner outline-none focus:ring-2 focus:ring-orange-400/50 focus:border-orange-500"
-              />
-              <svg className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 h-5 w-5 text-zinc-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <circle cx="11" cy="11" r="8" />
-                <path d="m21 21-4.3-4.3" />
-              </svg>
-            </label>
-          </div>
+    <div className="mx-auto max-w-screen-2xl px-4 sm:px-6 lg:px-8 py-4 md:py-6 flex flex-col gap-6">
+      {/* Filter Bar (glassy card) */}
+      <div className="sticky top-20 z-10">
+        <div className="rounded-2xl border border-zinc-200/70 bg-white/80 backdrop-blur-md shadow-sm">
+          <div className="p-3 md:p-4 flex flex-col gap-3">
+            <div className="flex flex-wrap items-center gap-3">
+              {/* Search */}
+              <label className="relative flex-1 min-w-[240px]">
+                <span className="sr-only">Search recipes</span>
+                <input
+                  value={query}
+                  onChange={(e) => setQuery(e.target.value)}
+                  placeholder="Search recipes, tags…"
+                  className="w-full rounded-xl border border-zinc-200 bg-white/90 px-4 py-2.5 pr-10 text-sm shadow-sm outline-none focus:ring-2 focus:ring-orange-500/30 focus:border-orange-500"
+                  aria-label="Search recipes"
+                />
+                <svg
+                  className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 h-5 w-5 text-zinc-400"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                >
+                  <circle cx="11" cy="11" r="8" />
+                  <path d="m21 21-4.3-4.3" />
+                </svg>
+              </label>
 
-          {/* Sort */}
-          <div className="flex items-center gap-2">
-            <label htmlFor="sort" className="text-sm font-medium text-zinc-600">Sort</label>
-            <select
-              id="sort"
-              className="rounded-full border border-zinc-200 bg-white px-3 py-2 text-sm shadow-sm outline-none focus:ring-2 focus:ring-orange-400/50 focus:border-orange-500"
-              value={sortBy}
-              onChange={(e) => setSortBy(e.target.value as SortOptionKey)}
-            >
-              {SORT_OPTIONS.map((o) => (
-                <option key={o.key} value={o.key}>{o.label}</option>
-              ))}
-            </select>
+              {/* Sort */}
+              <div className="flex items-center gap-2">
+                <label htmlFor="sort" className="text-sm text-zinc-600">
+                  Sort
+                </label>
+                <select
+                  id="sort"
+                  className="rounded-xl border border-zinc-200 bg-white px-3 py-2 text-sm shadow-sm outline-none focus:ring-2 focus:ring-orange-500/30 focus:border-orange-500"
+                  value={sortBy}
+                  onChange={(e) => setSortBy(e.target.value as SortOptionKey)}
+                >
+                  {SORT_OPTIONS.map((o) => (
+                    <option key={o.key} value={o.key}>
+                      {o.label}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              {/* Count */}
+              <div className="ml-auto text-sm text-zinc-600">
+                Showing <strong>{visible.length}</strong> of {recipes.length}
+              </div>
+            </div>
+
+            {/* Tags */}
+            {allTags.length > 0 && (
+              <div className="flex items-center gap-2 overflow-x-auto pb-1">
+                {allTags.map((tag) => {
+                  const active = selectedTags.includes(tag);
+                  return (
+                    <button
+                      key={tag}
+                      onClick={() => toggleTag(tag)}
+                      className={
+                        "whitespace-nowrap rounded-full border px-3 py-1.5 text-sm transition " +
+                        (active
+                          ? "border-orange-500 bg-orange-50 text-orange-700 shadow-sm"
+                          : "border-zinc-200 bg-white text-zinc-700 hover:bg-zinc-50")
+                      }
+                      aria-pressed={active}
+                    >
+                      {tag}
+                    </button>
+                  );
+                })}
+                {selectedTags.length > 0 && (
+                  <button
+                    onClick={() => setSelectedTags([])}
+                    className="ml-1 whitespace-nowrap rounded-full border border-zinc-200 bg-white px-3 py-1.5 text-sm text-zinc-600 hover:bg-zinc-50"
+                  >
+                    Clear
+                  </button>
+                )}
+              </div>
+            )}
           </div>
         </div>
       </div>
 
-      <div className="mx-auto max-w-6xl w-full px-4">
-        <div className="mb-3 text-sm text-zinc-600">
-          Showing <strong>{visible.length}</strong> of {recipes.length} recipes
-        </div>
+      {/* Empty states */}
+      {recipes.length === 0 && (
+        <EmptyState title="No recipes yet" subtitle="Add your first recipe to see it here." />
+      )}
+      {recipes.length > 0 && visible.length === 0 && (
+        <EmptyState
+          title="No matches"
+          subtitle="Try a different search or clear your tag filters."
+          actionLabel="Clear filters"
+          onAction={() => {
+            setQuery("");
+            setSelectedTags([]);
+          }}
+        />
+      )}
 
-        {/* Grid */}
-        <ul className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6" role="list">
-          {visible.map((r) => (
-            <li key={r.id}><RecipeCard recipe={r} /></li>
-          ))}
-        </ul>
-      </div>
+      {/* Grid */}
+      <ul className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5 md:gap-6" role="list">
+        {visible.map((r) => (
+          <li key={r.id}>
+            <RecipeCard recipe={r} />
+          </li>
+        ))}
+      </ul>
     </div>
   );
 }
 
 function RecipeCard({ recipe }: { recipe: Recipe }) {
   const minutes = ((recipe.prepMins ?? 0) + (recipe.cookMins ?? 0)) || undefined;
-  const href = recipe.slug ? `/view/${recipe.slug}` : `/view/${recipe.id}`; // robust fallback
+  const href = recipe.slug ? `/view/${recipe.slug}` : `/view/${recipe.id}`;
 
   return (
-    <article className="group relative overflow-hidden rounded-2xl border border-zinc-200 bg-white shadow transition hover:shadow-lg hover:-translate-y-1 cursor-pointer">
-      {/* Make the whole card clickable */}
-      <Link href={href} aria-label={`Open ${recipe.title}`} className="absolute inset-0 z-10 focus:outline-none focus-visible:ring-2 focus-visible:ring-orange-500/50" />
+    <article className="group relative flex h-full flex-col overflow-hidden rounded-2xl border border-zinc-200 bg-white shadow-sm transition hover:-translate-y-0.5 hover:shadow-md focus-within:shadow-md cursor-pointer">
+      {/* Make whole card clickable + accessible */}
+      <Link
+        href={href}
+        aria-label={`Open ${recipe.title}`}
+        className="absolute inset-0 z-10 focus:outline-none focus-visible:ring-2 focus-visible:ring-orange-500/50"
+      />
 
       {/* Media */}
       <div className="relative aspect-[4/3] w-full bg-zinc-100">
@@ -135,20 +227,31 @@ function RecipeCard({ recipe }: { recipe: Recipe }) {
       </div>
 
       {/* Content */}
-      <div className="p-4">
-        <h3 className="line-clamp-1 text-lg font-semibold text-zinc-900">{recipe.title}</h3>
+      <div className="p-4 flex-1 flex flex-col">
+        <h3 className="line-clamp-1 text-lg font-semibold text-zinc-900 tracking-tight">{recipe.title}</h3>
         {recipe.description && (
           <p className="mt-1 line-clamp-2 text-sm text-zinc-600">{recipe.description}</p>
         )}
-        <div className="mt-3 flex flex-wrap gap-2 text-xs text-zinc-600">
-          {minutes && (
-            <span className="inline-flex items-center gap-1 rounded-full bg-orange-50 px-2 py-1 text-orange-700 font-medium">⏱ {minutes} min</span>
-          )}
-          {recipe.servings && (
-            <span className="inline-flex items-center gap-1 rounded-full bg-orange-50 px-2 py-1 text-orange-700 font-medium">🍽 {recipe.servings} servings</span>
-          )}
-          {(recipe.tags ?? []).slice(0, 2).map((t) => (
-            <span key={t} className="inline-flex items-center gap-1 rounded-full bg-zinc-100 px-2 py-1">#{t}</span>
+        <div className="mt-3 flex flex-wrap items-center gap-2 text-xs text-zinc-600">
+          {minutes ? (
+            <span className="inline-flex items-center gap-1 rounded-full bg-zinc-100 px-2 py-1">
+              <ClockIcon className="h-3.5 w-3.5" />
+              {minutes} min
+            </span>
+          ) : null}
+          {typeof recipe.servings === "number" && recipe.servings > 0 ? (
+            <span className="inline-flex items-center gap-1 rounded-full bg-zinc-100 px-2 py-1">
+              <BowlIcon className="h-3.5 w-3.5" />
+              {recipe.servings} servings
+            </span>
+          ) : null}
+          {(recipe.tags ?? []).slice(0, 3).map((t) => (
+            <span
+              key={t}
+              className="inline-flex items-center gap-1 rounded-full bg-orange-50 px-2 py-1 font-medium text-orange-700"
+            >
+              #{t}
+            </span>
           ))}
         </div>
       </div>
@@ -156,8 +259,13 @@ function RecipeCard({ recipe }: { recipe: Recipe }) {
   );
 }
 
+/**
+ * SignedImage — POSTs `imageKey` to /api/images/sign-download to get a signed URL.
+ * - No GET fallback (API is POST-only)
+ * - Caches by key to avoid duplicate calls
+ * - Graceful skeleton + placeholder
+ */
 
-// Module-scope cache survives re-renders in the same session
 const signedUrlCache = new Map<string, string>();
 
 function useSignedImageUrl(key?: string | null) {
@@ -174,7 +282,6 @@ function useSignedImageUrl(key?: string | null) {
       return;
     }
 
-    // Cache hit
     if (signedUrlCache.has(key)) {
       setUrl(signedUrlCache.get(key)!);
       setLoading(false);
@@ -198,32 +305,27 @@ function useSignedImageUrl(key?: string | null) {
         });
 
         if (!res.ok) {
-          // Try to surface a useful error from the API
           let message = `sign-download failed (${res.status})`;
           try {
             const j = await res.json();
             message = j?.error || j?.message || message;
           } catch {
-            // ignore JSON parse errors
+            /* ignore */
           }
           throw new Error(message);
         }
 
         const data = await res.json();
-        const signed =
+        const signed: string | undefined =
           data?.url ?? data?.signedUrl ?? data?.signed_url;
 
-        if (typeof signed !== "string" || !signed) {
-          throw new Error("No signed URL in response");
-        }
-
-        if (key) {
+        if (key && signed) {
           signedUrlCache.set(key, signed);
           setUrl(signed);
+          setLoading(false);
         } else {
-          throw new Error("No key provided");
+          throw new Error("No signed URL in response");
         }
-        setLoading(false);
       } catch (e: any) {
         if (controller.signal.aborted) return;
         setError(e?.message ?? "Failed to obtain signed URL");
@@ -239,58 +341,62 @@ function useSignedImageUrl(key?: string | null) {
   return { url, loading, error } as const;
 }
 
-/**
- * SignedImage — fetches a signed R2 download URL for an `imageKey` and renders it.
- * - Caches by key to avoid redundant calls.
- * - Shows pretty skeleton while loading; falls back to placeholder on error.
- */
 function SignedImage({ imageKey, alt }: { imageKey?: string | null; alt: string }) {
   const { url, loading } = useSignedImageUrl(imageKey);
+  const showSkeleton = loading || !url;
 
   return (
     <>
-      {/* Image skeleton */}
-      <div className="absolute inset-0 animate-pulse bg-gradient-to-br from-zinc-200 to-zinc-100" aria-hidden={true} />
-      {url ? (
-        <Image
-          src={url}
-          alt={alt}
-          fill
-          sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-          className={`object-cover transition-opacity ${loading ? "opacity-0" : "opacity-100"}`}
-          onLoad={() => {/* natural load transitions */ }}
-          unoptimized
-          priority={false}
-        />
-      ) : (
-        <Image
-          src={PLACEHOLDER}
-          alt="Placeholder"
-          fill
-          sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-          className="object-cover"
-          unoptimized
-          priority={false}
+      {showSkeleton && (
+        <div
+          className="absolute inset-0 animate-pulse bg-gradient-to-br from-zinc-200 to-zinc-100"
+          aria-hidden
         />
       )}
+      <Image
+        src={url || PLACEHOLDER}
+        alt={alt}
+        fill
+        sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+        className="object-cover"
+        unoptimized
+        priority={false}
+      />
     </>
   );
 }
 
-function EmptyState({ title, subtitle, actionLabel, onAction }: { title: string; subtitle?: string; actionLabel?: string; onAction?: () => void; }) {
+function EmptyState({
+  title,
+  subtitle,
+  actionLabel,
+  onAction,
+}: {
+  title: string;
+  subtitle?: string;
+  actionLabel?: string;
+  onAction?: () => void;
+}) {
   return (
     <div className="my-12 flex flex-col items-center justify-center rounded-2xl border border-dashed border-zinc-300 bg-zinc-50 p-10 text-center">
-      <div className="mb-2 rounded-full bg-white p-3 shadow-sm"><BookIcon className="h-6 w-6 text-zinc-500" /></div>
+      <div className="mb-2 rounded-full bg-white p-3 shadow-sm">
+        <BookIcon className="h-6 w-6 text-zinc-500" />
+      </div>
       <h4 className="text-lg font-semibold text-zinc-900">{title}</h4>
       {subtitle && <p className="mt-1 max-w-md text-sm text-zinc-600">{subtitle}</p>}
       {actionLabel && onAction && (
-        <button onClick={onAction} className="mt-4 rounded-full bg-orange-600 px-4 py-2 text-sm font-semibold text-white shadow hover:bg-orange-700">{actionLabel}</button>
+        <button
+          onClick={onAction}
+          className="mt-4 rounded-full bg-orange-600 px-4 py-2 text-sm font-semibold text-white shadow hover:bg-orange-700"
+        >
+          {actionLabel}
+        </button>
       )}
     </div>
   );
 }
 
-/** Lightweight icons (no deps) */
+/** Tiny icons (no deps) */
 function ClockIcon(props: React.SVGProps<SVGSVGElement>) {
   return (
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" {...props}>
@@ -299,7 +405,6 @@ function ClockIcon(props: React.SVGProps<SVGSVGElement>) {
     </svg>
   );
 }
-
 function BowlIcon(props: React.SVGProps<SVGSVGElement>) {
   return (
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" {...props}>
@@ -308,7 +413,6 @@ function BowlIcon(props: React.SVGProps<SVGSVGElement>) {
     </svg>
   );
 }
-
 function BookIcon(props: React.SVGProps<SVGSVGElement>) {
   return (
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" {...props}>
