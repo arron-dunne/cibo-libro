@@ -7,5 +7,11 @@ export const config = {
     "/api/recipes/:path*",
     "/import/:path*",
     "/api/import/:path*",
+
+    "/new/:path*",
+    "/view/:path*",
+
+    "/api/images/sign-upload",
+    "/api/images/sign-download",
   ],
 };

@@ -1,26 +1,19 @@
-// app/recipes/new/page.tsx
+// app/new/page.tsx
+
+// Server component page that renders the AddRecipeClient behind auth.
+import { redirect } from "next/navigation";
 import { auth } from "@/lib/auth";
 import AddRecipeClient from "./AddRecipeClient";
 
-export const dynamic = "force-dynamic";
+export const dynamic = "force-dynamic"; // ensure fresh auth for this page
 
-export default async function NewRecipePage() {
+export default async function Page() {
   const session = await auth();
-  if (!session?.user) {
-    return (
-      <div className="rounded-2xl border border-white/40 bg-white/80 p-6 shadow-lg">
-        <h1 className="text-xl font-semibold">Please sign in</h1>
-        <p className="mt-2 text-gray-700">You need an account to add recipes.</p>
-        <a
-          href="/signin?next=/recipes/new"
-          className="mt-4 inline-block rounded-full bg-orange-600 px-4 py-2 font-semibold text-white"
-        >
-          Sign in
-        </a>
-      </div>
-    );
+  if (!session?.user?.id) {
+    // If you have a custom sign‑in route, use that instead
+    redirect("/login?next=/new");
   }
 
-  // Slim wrapper: no extra white card – the client renders panels itself
+  // You can pass initial data here if you later support editing an existing draft
   return <AddRecipeClient />;
 }

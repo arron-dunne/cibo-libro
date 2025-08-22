@@ -1,8 +1,9 @@
-// app/recipes/new/AddRecipeClient.tsx
 "use client";
 
-import React, { useCallback, useEffect, useMemo, useState } from "react";
 import Image from "next/image";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { compressImageFile } from "@/lib/images/compress";
+import { MAX_SIZE_BYTES } from "@/lib/images/constants";
 import { saveDraft, updateRecipe, publishRecipe, publishDraft } from "./actions";
 
 // ────────────────────────────────────────────────────────────────────────────
@@ -11,17 +12,26 @@ import { saveDraft, updateRecipe, publishRecipe, publishDraft } from "./actions"
 type SectionKey = "details" | "ingredients" | "steps" | "photos";
 
 type Snapshot = {
-  // Keep aligned with your actions.ts/Zod & Prisma schema
+  // Keep aligned with actions.ts & Prisma (NOTE: no imageKey here)
   title: string;
   description?: string | null;
-  prepMins?: number | null; 
-  cookMins?: number | null; 
+  prepMins?: number | null;
+  cookMins?: number | null;
   servings?: number | null;
-  imageUrl?: string | null;
   ingredients: string[];
   steps: string[];
   tags: string[];
   sourceUrl?: string | null;
+};
+
+type SignUploadResponse = {
+  method: "PUT";
+  url: string;
+  key: string;
+  uploadId: string;
+  expiresIn: number;
+  requiredHeaders: Record<string, string>;
+  maxBytes: number;
 };
 
 const clsx = (...xs: Array<string | false | null | undefined>) => xs.filter(Boolean).join(" ");
@@ -37,8 +47,20 @@ export default function AddRecipeClient() {
   const [prepMins, setPrepMins] = useState<number | null>(null);
   const [cookMins, setCookMins] = useState<number | null>(null);
   const [servings, setServings] = useState<number | null>(null);
-  const [imageUrl, setImageUrl] = useState<string | null>(null);
 
+  // Image states
+  const [imageKey, setImageKey] = useState<string | null>(null); // finalized pointer on recipe
+  const [coverDraft, setCoverDraft] = useState<{ key: string; uploadId: string } | null>(null); // server-issued, not yet attached
+  const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
+
+  // Upload status
+  const [uploading, setUploading] = useState(false);
+  const [uploadError, setUploadError] = useState<string | null>(null);
+  const [imageNotice, setImageNotice] = useState<string | null>(null);
+  const [deleting, setDeleting] = useState(false);
+
+  // Form lists
   const [ingredients, setIngredients] = useState<string[]>([""]);
   const [steps, setSteps] = useState<string[]>([""]);
   const [tags, setTags] = useState<string[]>([]);
@@ -51,7 +73,7 @@ export default function AddRecipeClient() {
   const [toast, setToast] = useState<string | null>(null);
   const [undo, setUndo] = useState<Snapshot | null>(null);
 
-  // Section anchors (memoized so the object reference is stable for effects)
+  // Section anchors
   const sectionsRef = useMemo(
     () => ({
       details: React.createRef<HTMLDivElement>(),
@@ -68,7 +90,7 @@ export default function AddRecipeClient() {
     sanitizeLines(ingredients).length > 0 &&
     sanitizeLines(steps).length > 0;
 
-  // Snapshot helpers (this is exactly what we send to your server actions)
+  // Snapshot helpers (exact payload for actions.ts)
   const snapshot = useCallback(
     (): Snapshot => ({
       title: title.trim(),
@@ -76,22 +98,22 @@ export default function AddRecipeClient() {
       prepMins,
       cookMins,
       servings,
-      imageUrl: imageUrl || null,
       ingredients: sanitizeLines(ingredients),
       steps: sanitizeLines(steps),
       tags: sanitizeLines(tags),
       sourceUrl: sourceUrl || null,
     }),
-    [title, description, prepMins, cookMins, servings, imageUrl, ingredients, steps, tags, sourceUrl]
+    [title, description, prepMins, cookMins, servings, ingredients, steps, tags, sourceUrl]
   );
 
-  const setSnapshot = (s: Snapshot) => {
+  const setSnapshot = (s: Snapshot & { imageKey?: string | null }) => {
     setTitle(s.title ?? "");
     setDescription(s.description ?? "");
     setPrepMins(s.prepMins ?? null);
     setCookMins(s.cookMins ?? null);
     setServings(s.servings ?? null);
-    setImageUrl(s.imageUrl ?? null);
+    // imageKey is owned by finalize flow; set it only if provided from server read
+    if (typeof s.imageKey !== "undefined") setImageKey(s.imageKey);
     setIngredients(s.ingredients?.length ? s.ingredients : [""]);
     setSteps(s.steps?.length ? s.steps : [""]);
     setTags(s.tags ?? []);
@@ -120,12 +142,138 @@ export default function AddRecipeClient() {
     return () => observer.disconnect();
   }, [sectionsRef]);
 
+  // ──────────────────────────────────────────────────────────────────────────
+  // API helpers
+  // ──────────────────────────────────────────────────────────────────────────
+  async function finalizeCoverIfNeeded(recipeId: string) {
+    if (!coverDraft) return;
+    if (imageKey === coverDraft.key) return;
+
+    const res = await fetch("/api/images/finalize", {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ recipeId, newKey: coverDraft.key }),
+    });
+
+    if (!res.ok) {
+      throw new Error(`Finalize failed: ${res.status}`);
+    }
+
+    // Flip local pointer & clear draft
+    setImageKey(coverDraft.key);
+    setCoverDraft(null);
+  }
+
+  async function deletePendingCover() {
+    if (!coverDraft) return;
+    // optimistic UI: hide immediately
+    const prevPreview = imagePreview;
+    const prevDraft = coverDraft;
+
+    setDeleting(true);
+    setImagePreview(null);
+    setCoverDraft(null);
+    setImageNotice("Deleting…");
+
+    try {
+      const res = await fetch("/api/images/delete", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ key: prevDraft.key }),
+      });
+      if (!res.ok) throw new Error(String(res.status));
+
+      // success
+      if (fileInputRef.current) fileInputRef.current.value = "";
+      setImageNotice("Image removed");
+      setTimeout(() => setImageNotice(null), 1500);
+    } catch {
+      // revert on failure
+      setCoverDraft(prevDraft);
+      setImagePreview(prevPreview);
+      setImageNotice("Failed to remove image");
+      setTimeout(() => setImageNotice(null), 2000);
+    } finally {
+      setDeleting(false);
+    }
+  }
+
+  async function deleteAttachedCover() {
+    if (!imageKey || !draftId) return;
+    // optimistic UI: hide immediately
+    const prevPreview = imagePreview;
+    const prevImageKey = imageKey;
+
+    setDeleting(true);
+    setImagePreview(null);
+    setImageKey(null);
+    setImageNotice("Deleting…");
+
+    try {
+      const res = await fetch("/api/images/delete", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ key: prevImageKey, recipeId: draftId }),
+      });
+      if (!res.ok) throw new Error(String(res.status));
+
+      if (fileInputRef.current) fileInputRef.current.value = "";
+      setImageNotice("Image removed");
+      setTimeout(() => setImageNotice(null), 1500);
+    } catch {
+      // revert on failure
+      setImageKey(prevImageKey);
+      setImagePreview(prevPreview);
+      setImageNotice("Failed to remove image");
+      setTimeout(() => setImageNotice(null), 2000);
+    } finally {
+      setDeleting(false);
+    }
+  }
+
+  // Silent delete used only during "swap" (don't show Deleting…, don't clear preview/input)
+  async function deletePendingCoverSilent() {
+    if (!coverDraft) return;
+    const key = coverDraft.key;
+
+    // Clear just the draft key so UI no longer offers "Remove selected image"
+    setCoverDraft(null);
+
+    // Fire-and-forget the server cleanup; no UI updates here
+    fetch("/api/images/delete", {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ key }),
+    }).catch(() => { });
+  }
+
+
+  // helper: set the <input type="file"> to a given File (so it isn't left empty)
+  function setFileInputTo(file: File) {
+    try {
+      const dt = new DataTransfer();
+      dt.items.add(file);
+      if (fileInputRef.current) fileInputRef.current.files = dt.files;
+    } catch {
+      // Not critical; some environments might block programmatic assignment
+    }
+  }
+
+  function extFromMime(mime: string) {
+    if (mime === "image/webp") return ".webp";
+    if (mime === "image/png") return ".png";
+    return ".jpg";
+  }
+
+  // ──────────────────────────────────────────────────────────────────────────
   // Actions
+  // ──────────────────────────────────────────────────────────────────────────
   const onSaveDraft = async () => {
     setSaving(true);
     try {
       const data = snapshot();
       let id = draftId;
+
       if (!id) {
         const res = await saveDraft(data);
         id = res.id;
@@ -133,6 +281,12 @@ export default function AddRecipeClient() {
       } else {
         await updateRecipe(id, data);
       }
+
+      // finalize on draft save (if we have a fresh upload)
+      if (id) {
+        await finalizeCoverIfNeeded(id);
+      }
+
       setToast("Draft saved");
     } catch {
       setToast("Failed to save draft");
@@ -147,11 +301,15 @@ export default function AddRecipeClient() {
     setPublishing(true);
     try {
       if (draftId) {
+        // Safety: ensure finalize before publish
+        await finalizeCoverIfNeeded(draftId);
         const res = await publishDraft(draftId);
-        window.location.href = `/recipes/${res.slug ?? res.id}`;
+        window.location.href = `/view/${res.slug ?? res.id}`;
       } else {
-        const res = await publishRecipe(snapshot());
-        window.location.href = `/recipes/${res.slug ?? res.id}`;
+        // Create then finalize, then publish that record
+        const created = await publishRecipe(snapshot());
+        await finalizeCoverIfNeeded(created.id);
+        window.location.href = `/view/${created.slug ?? created.id}`;
       }
     } catch {
       setToast("Failed to publish");
@@ -167,36 +325,36 @@ export default function AddRecipeClient() {
 
   const onPasteMulti =
     (setter: React.Dispatch<React.SetStateAction<string[]>>, idx: number) =>
-    (e: React.ClipboardEvent<HTMLInputElement>) => {
-      const text = e.clipboardData.getData("text");
-      if (text.includes("\n")) {
-        e.preventDefault();
-        const lines = sanitizeLines(text.split("\n"));
-        setter((xs) => {
-          const copy = [...xs];
-          copy[idx] = (copy[idx] || "") + lines[0];
-          if (lines.length > 1) copy.splice(idx + 1, 0, ...lines.slice(1));
-          return copy;
-        });
-      }
-    };
+      (e: React.ClipboardEvent<HTMLInputElement>) => {
+        const text = e.clipboardData.getData("text");
+        if (text.includes("\n")) {
+          e.preventDefault();
+          const lines = sanitizeLines(text.split("\n"));
+          setter((xs) => {
+            const copy = [...xs];
+            copy[idx] = (copy[idx] || "") + lines[0];
+            if (lines.length > 1) copy.splice(idx + 1, 0, ...lines.slice(1));
+            return copy;
+          });
+        }
+      };
 
   const handleEnter =
     (setter: React.Dispatch<React.SetStateAction<string[]>>, idx: number, selector: string) =>
-    (e: React.KeyboardEvent<HTMLInputElement>) => {
-      if (e.key === "Enter") {
-        e.preventDefault();
-        setter((xs) => {
-          const copy = [...xs];
-          copy.splice(idx + 1, 0, "");
-          return copy;
-        });
-        requestAnimationFrame(() => {
-          const inputs = document.querySelectorAll<HTMLInputElement>(selector);
-          inputs[idx + 1]?.focus();
-        });
-      }
-    };
+      (e: React.KeyboardEvent<HTMLInputElement>) => {
+        if (e.key === "Enter") {
+          e.preventDefault();
+          setter((xs) => {
+            const copy = [...xs];
+            copy.splice(idx + 1, 0, "");
+            return copy;
+          });
+          requestAnimationFrame(() => {
+            const inputs = document.querySelectorAll<HTMLInputElement>(selector);
+            inputs[idx + 1]?.focus();
+          });
+        }
+      };
 
   const scrollTo = (key: SectionKey) => {
     const el = sectionsRef[key].current;
@@ -204,6 +362,68 @@ export default function AddRecipeClient() {
     el.scrollIntoView({ behavior: "smooth", block: "start", inline: "nearest" });
     const heading = el.querySelector("h2") as HTMLElement | null;
     setTimeout(() => heading?.focus?.(), 350);
+  };
+
+  // ──────────────────────────────────────────────────────────────────────────
+  // Upload flow
+  // ──────────────────────────────────────────────────────────────────────────
+  const onPick = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    setUploadError(null);
+    setImageNotice(null);
+
+    const raw = e.target.files?.[0];
+    if (!raw) return;
+
+    // 1) Instant preview swap (optimistic)
+    const localUrl = URL.createObjectURL(raw);
+    setImagePreview(localUrl);
+
+    // 2) If there was a *pending* previous upload, remove it silently (no "Deleting…" UI)
+    if (coverDraft) {
+      deletePendingCoverSilent(); // don't await; keep UI snappy
+    }
+
+    // 3) Begin upload (show only "Uploading…")
+    setUploading(true);
+    try {
+      const compressed = await compressImageFile(raw, {
+        maxWidth: 1600,
+        maxHeight: 1600,
+        maxBytes: MAX_SIZE_BYTES,
+        preferWebP: true,
+      });
+      if (compressed.size > MAX_SIZE_BYTES) {
+        throw new Error(`File too large (max ${Math.floor(MAX_SIZE_BYTES / (1024 * 1024))} MB)`);
+      }
+
+      const signRes = await fetch("/api/images/sign-upload", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ contentType: compressed.type, size: compressed.size }),
+      });
+      if (!signRes.ok) throw new Error(`Sign failed: ${signRes.status}`);
+      const { method, url, key, uploadId, requiredHeaders } = (await signRes.json()) as SignUploadResponse;
+
+      const putOnce = async () => {
+        const r = await fetch(url, { method, headers: requiredHeaders, body: compressed });
+        if (!r.ok) throw new Error(`Upload failed: ${r.status}`);
+      };
+      try { await putOnce(); } catch { await putOnce(); }
+
+      // Hold pending cover; keep input populated with the *new* (compressed) file
+      setCoverDraft({ key, uploadId });
+
+      const fileName = (raw.name.replace(/\.\w+$/, "") || "image") + extFromMime(compressed.type);
+      const compressedFile = new File([compressed], fileName, { type: compressed.type });
+      setFileInputTo(compressedFile);
+
+      setUploadError(null);
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : "Upload failed";
+      setUploadError(message);
+    } finally {
+      setUploading(false);
+    }
   };
 
   // ──────────────────────────────────────────────────────────────────────────
@@ -400,39 +620,68 @@ export default function AddRecipeClient() {
                 </div>
               </Panel>
 
-              {/* Photos */}
+              {/* Cover Image */}
               <Panel
                 ref={sectionsRef.photos}
-                id="photos"
-                title="Photos"
-                subtitle="Hook your uploader here later. For now, paste an image URL."
+                id="cover-image"
+                title="Cover Image"
+                subtitle="Choose a photo (JPEG, PNG, WebP)"
               >
-                <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-                  <div className="sm:col-span-2">
-                    <Label>Image URL (optional)</Label>
-                    <input
-                      type="url"
-                      className="w-full rounded-lg border border-zinc-300 bg-white/95 px-3 py-2 outline-none focus:ring-2 focus:ring-orange-400"
-                      placeholder="https://example.com/cover.jpg"
-                      value={imageUrl ?? ""}
-                      onChange={(e) => setImageUrl(e.target.value || null)}
-                    />
-                  </div>
-                  <div className="overflow-hidden rounded-xl border border-zinc-200 bg-white/90">
-                    {imageUrl ? (
-                      <Image
-                        src={imageUrl}
-                        alt="Cover"
-                        width={800}
-                        height={320}
-                        className="h-40 w-full object-cover"
-                        unoptimized
-                        sizes="(max-width: 640px) 100vw, 600px"
-                      />
-                    ) : (
-                      <div className="flex h-40 items-center justify-center text-zinc-400">No image selected</div>
+                <div className="sm:col-span-2">
+                  <input
+                    ref={fileInputRef}
+                    type="file"
+                    accept="image/jpeg,image/png,image/webp"
+                    onChange={onPick}
+                    className="block w-full rounded-lg border border-zinc-300 bg-white/95 px-3 py-2"
+                    disabled={uploading}
+                  />
+
+                  {/* Upload status + inline delete (under the file input) */}
+                  <div className="mt-2 flex flex-wrap items-center gap-3 text-sm">
+                    {(uploading || deleting) && (
+                      <span className="flex items-center gap-2 text-zinc-600">
+                        <span className="animate-spin h-4 w-4 border-2 border-orange-500 border-t-transparent rounded-full"></span>
+                        {uploading ? "Uploading…" : "Deleting…"}
+                      </span>
                     )}
+
+                    {!uploading && !deleting && (coverDraft || imageKey) && !uploadError && (
+                      <div className="flex items-center gap-3">
+                        <span className="text-emerald-600">Uploaded successfully</span>
+                        <button
+                          type="button"
+                          disabled={uploading || deleting}
+                          onClick={async () => {
+                            // This path is an explicit *delete*; shows "Deleting…"
+                            try {
+                              if (coverDraft) await deletePendingCover();      // the *non-silent* version
+                              else if (imageKey && draftId) await deleteAttachedCover();
+                            } catch { /* helpers set notices */ }
+                          }}
+                          className="rounded-md border border-zinc-300 bg-white px-2 py-1 text-xs hover:bg-zinc-50 disabled:opacity-50"
+                        >
+                          Remove
+                        </button>
+                      </div>
+                    )}
+
+                    {uploadError && <span className="text-red-600">Upload failed: {uploadError}</span>}
+                    {imageNotice && <span className="text-zinc-700">{imageNotice}</span>}
                   </div>
+
+                  {/* Preview image */}
+                  {imagePreview && (
+                    <div className="mt-3 relative aspect-video w-full overflow-hidden rounded-lg border">
+                      <Image
+                        src={imagePreview}
+                        alt="Cover image preview"
+                        fill
+                        sizes="100vw"
+                        className={`object-cover ${uploadError ? "opacity-70 grayscale" : ""}`}
+                      />
+                    </div>
+                  )}
                 </div>
               </Panel>
 

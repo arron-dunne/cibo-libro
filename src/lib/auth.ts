@@ -1,6 +1,8 @@
 // src/lib/auth.ts
 import 'server-only';
 
+export const runtime = 'nodejs';
+
 import NextAuth from 'next-auth';
 import Credentials from 'next-auth/providers/credentials';
 import { PrismaAdapter } from '@auth/prisma-adapter';
@@ -8,14 +10,14 @@ import { prisma } from '@/lib/prisma';
 import { z } from 'zod';
 import type { JWT } from 'next-auth/jwt';
 import type { Session } from 'next-auth';
+import { verify } from 'argon2';
 
 const credsSchema = z.object({
-  email: z.string().email(),
+  email: z.email(),
   password: z.string().min(8),
 });
 
 async function verifyPassword(hash: string, password: string): Promise<boolean> {
-  const { verify } = await import('argon2');
   return verify(hash, password);
 }
 
@@ -67,5 +69,5 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     },
   },
 
-  pages: { signIn: '/signin' },
+  // pages: { signIn: '/signin' },
 });

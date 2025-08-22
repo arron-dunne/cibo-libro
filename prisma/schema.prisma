@@ -37,6 +37,8 @@ model User {
   importJobs ImportJob[] // ← add this line
   accounts   Account[]
   sessions   Session[]
+
+  uploads Upload[]
 }
 
 model Recipe {
@@ -64,6 +66,19 @@ model Recipe {
 
   @@index([ownerId])
   @@index([isPublic])
+}
+
+model Upload {
+  id          String   @id @default(cuid()) // "uploadId" returned to client
+  userId      String
+  key         String   @unique // e.g. user/<userId>/<uuid>.<ext>
+  size        Int // bytes (after client compression)
+  contentType String // image/jpeg | image/png | image/webp
+  createdAt   DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
 }
 
 model ImportJob {
