@@ -58,6 +58,7 @@ export default function AddRecipeClient() {
   const [uploading, setUploading] = useState(false);
   const [uploadError, setUploadError] = useState<string | null>(null);
   const [imageNotice, setImageNotice] = useState<string | null>(null);
+  const [deleting, setDeleting] = useState(false);
 
   // Form lists
   const [ingredients, setIngredients] = useState<string[]>([""]);
@@ -165,30 +166,103 @@ export default function AddRecipeClient() {
 
   async function deletePendingCover() {
     if (!coverDraft) return;
-    const res = await fetch("/api/images/delete", {
-      method: "POST",
-      headers: { "content-type": "application/json" },
-      body: JSON.stringify({ key: coverDraft.key }),
-    });
-    if (!res.ok) throw new Error(`Delete failed: ${res.status}`);
-    setCoverDraft(null);
+    // optimistic UI: hide immediately
+    const prevPreview = imagePreview;
+    const prevDraft = coverDraft;
+
+    setDeleting(true);
     setImagePreview(null);
-    setToast("Image removed");
-    setTimeout(() => setToast(null), 1500);
+    setCoverDraft(null);
+    setImageNotice("Deleting…");
+
+    try {
+      const res = await fetch("/api/images/delete", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ key: prevDraft.key }),
+      });
+      if (!res.ok) throw new Error(String(res.status));
+
+      // success
+      if (fileInputRef.current) fileInputRef.current.value = "";
+      setImageNotice("Image removed");
+      setTimeout(() => setImageNotice(null), 1500);
+    } catch {
+      // revert on failure
+      setCoverDraft(prevDraft);
+      setImagePreview(prevPreview);
+      setImageNotice("Failed to remove image");
+      setTimeout(() => setImageNotice(null), 2000);
+    } finally {
+      setDeleting(false);
+    }
   }
 
   async function deleteAttachedCover() {
     if (!imageKey || !draftId) return;
-    const res = await fetch("/api/images/delete", {
+    // optimistic UI: hide immediately
+    const prevPreview = imagePreview;
+    const prevImageKey = imageKey;
+
+    setDeleting(true);
+    setImagePreview(null);
+    setImageKey(null);
+    setImageNotice("Deleting…");
+
+    try {
+      const res = await fetch("/api/images/delete", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ key: prevImageKey, recipeId: draftId }),
+      });
+      if (!res.ok) throw new Error(String(res.status));
+
+      if (fileInputRef.current) fileInputRef.current.value = "";
+      setImageNotice("Image removed");
+      setTimeout(() => setImageNotice(null), 1500);
+    } catch {
+      // revert on failure
+      setImageKey(prevImageKey);
+      setImagePreview(prevPreview);
+      setImageNotice("Failed to remove image");
+      setTimeout(() => setImageNotice(null), 2000);
+    } finally {
+      setDeleting(false);
+    }
+  }
+
+  // Silent delete used only during "swap" (don't show Deleting…, don't clear preview/input)
+  async function deletePendingCoverSilent() {
+    if (!coverDraft) return;
+    const key = coverDraft.key;
+
+    // Clear just the draft key so UI no longer offers "Remove selected image"
+    setCoverDraft(null);
+
+    // Fire-and-forget the server cleanup; no UI updates here
+    fetch("/api/images/delete", {
       method: "POST",
       headers: { "content-type": "application/json" },
-      body: JSON.stringify({ key: imageKey, recipeId: draftId }),
-    });
-    if (!res.ok) throw new Error(`Delete failed: ${res.status}`);
-    setImageKey(null);
-    setImagePreview(null);
-    setToast("Image removed");
-    setTimeout(() => setToast(null), 1500);
+      body: JSON.stringify({ key }),
+    }).catch(() => { });
+  }
+
+
+  // helper: set the <input type="file"> to a given File (so it isn't left empty)
+  function setFileInputTo(file: File) {
+    try {
+      const dt = new DataTransfer();
+      dt.items.add(file);
+      if (fileInputRef.current) fileInputRef.current.files = dt.files;
+    } catch {
+      // Not critical; some environments might block programmatic assignment
+    }
+  }
+
+  function extFromMime(mime: string) {
+    if (mime === "image/webp") return ".webp";
+    if (mime === "image/png") return ".png";
+    return ".jpg";
   }
 
   // ──────────────────────────────────────────────────────────────────────────
@@ -296,29 +370,22 @@ export default function AddRecipeClient() {
   const onPick = async (e: React.ChangeEvent<HTMLInputElement>) => {
     setUploadError(null);
     setImageNotice(null);
+
     const raw = e.target.files?.[0];
     if (!raw) return;
 
-    // If there’s an existing *pending* upload, remove it first to avoid orphans
-    if (coverDraft) {
-      try {
-        await deletePendingCover(); // your helper; idempotent server-side
-        // Clear the old input value (we’re about to set a new file anyway)
-        if (fileInputRef.current) fileInputRef.current.value = "";
-        setImageNotice("Image removed"); // shows under the input
-        setTimeout(() => setImageNotice(null), 1800);
-      } catch {
-        // Non-fatal; continue with new upload
-      }
-    }
-
-    // Local preview of the *new* file
+    // 1) Instant preview swap (optimistic)
     const localUrl = URL.createObjectURL(raw);
     setImagePreview(localUrl);
 
+    // 2) If there was a *pending* previous upload, remove it silently (no "Deleting…" UI)
+    if (coverDraft) {
+      deletePendingCoverSilent(); // don't await; keep UI snappy
+    }
+
+    // 3) Begin upload (show only "Uploading…")
     setUploading(true);
     try {
-      // 1) Compress client-side
       const compressed = await compressImageFile(raw, {
         maxWidth: 1600,
         maxHeight: 1600,
@@ -329,7 +396,6 @@ export default function AddRecipeClient() {
         throw new Error(`File too large (max ${Math.floor(MAX_SIZE_BYTES / (1024 * 1024))} MB)`);
       }
 
-      // 2) Ask server to mint key + sign PUT
       const signRes = await fetch("/api/images/sign-upload", {
         method: "POST",
         headers: { "content-type": "application/json" },
@@ -338,24 +404,26 @@ export default function AddRecipeClient() {
       if (!signRes.ok) throw new Error(`Sign failed: ${signRes.status}`);
       const { method, url, key, uploadId, requiredHeaders } = (await signRes.json()) as SignUploadResponse;
 
-      // 3) PUT compressed file to R2 (retry once)
       const putOnce = async () => {
         const r = await fetch(url, { method, headers: requiredHeaders, body: compressed });
         if (!r.ok) throw new Error(`Upload failed: ${r.status}`);
       };
       try { await putOnce(); } catch { await putOnce(); }
 
-      // 4) Hold pending cover until finalize
+      // Hold pending cover; keep input populated with the *new* (compressed) file
       setCoverDraft({ key, uploadId });
+
+      const fileName = (raw.name.replace(/\.\w+$/, "") || "image") + extFromMime(compressed.type);
+      const compressedFile = new File([compressed], fileName, { type: compressed.type });
+      setFileInputTo(compressedFile);
+
       setUploadError(null);
-      setImageNotice(null); // clear any old “removed” message
     } catch (err: any) {
       setUploadError(err?.message ?? "Upload failed");
     } finally {
       setUploading(false);
     }
   };
-
 
   // ──────────────────────────────────────────────────────────────────────────
   // Render
@@ -570,36 +638,27 @@ export default function AddRecipeClient() {
 
                   {/* Upload status + inline delete (under the file input) */}
                   <div className="mt-2 flex flex-wrap items-center gap-3 text-sm">
-                    {uploading && (
+                    {(uploading || deleting) && (
                       <span className="flex items-center gap-2 text-zinc-600">
                         <span className="animate-spin h-4 w-4 border-2 border-orange-500 border-t-transparent rounded-full"></span>
-                        Uploading…
+                        {uploading ? "Uploading…" : "Deleting…"}
                       </span>
                     )}
 
-                    {!uploading && (coverDraft || imageKey) && !uploadError && (
+                    {!uploading && !deleting && (coverDraft || imageKey) && !uploadError && (
                       <div className="flex items-center gap-3">
                         <span className="text-emerald-600">Uploaded successfully</span>
                         <button
                           type="button"
+                          disabled={uploading || deleting}
                           onClick={async () => {
+                            // This path is an explicit *delete*; shows "Deleting…"
                             try {
-                              if (coverDraft) await deletePendingCover();
+                              if (coverDraft) await deletePendingCover();      // the *non-silent* version
                               else if (imageKey && draftId) await deleteAttachedCover();
-
-                              // Clear the <input type="file" />
-                              if (fileInputRef.current) fileInputRef.current.value = "";
-
-                              // Clear preview + show message locally
-                              setImagePreview(null);
-                              setImageNotice("Image removed");
-                              setTimeout(() => setImageNotice(null), 1800);
-                            } catch {
-                              setImageNotice("Failed to remove image");
-                              setTimeout(() => setImageNotice(null), 2000);
-                            }
+                            } catch { /* helpers set notices */ }
                           }}
-                          className="rounded-md border border-zinc-300 bg-white px-2 py-1 text-xs hover:bg-zinc-50"
+                          className="rounded-md border border-zinc-300 bg-white px-2 py-1 text-xs hover:bg-zinc-50 disabled:opacity-50"
                         >
                           Remove
                         </button>
@@ -607,11 +666,8 @@ export default function AddRecipeClient() {
                     )}
 
                     {uploadError && <span className="text-red-600">Upload failed: {uploadError}</span>}
-
-                    {/* Local notice area for “Image removed” etc. */}
                     {imageNotice && <span className="text-zinc-700">{imageNotice}</span>}
                   </div>
-
 
                   {/* Preview image */}
                   {imagePreview && (
