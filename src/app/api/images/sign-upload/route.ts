@@ -74,6 +74,6 @@ export async function POST(req: Request) {
     // Optional: handle Prisma unique errors gracefully if you ever reuse keys
     // if ((err as any)?.code === "P2002") { ... }
 
-    return NextResponse.json({ error: (err as any)?.message ?? "Server error" }, { status: 500 });
+    return NextResponse.json({ error: (err as Error)?.message ?? "Server error" }, { status: 500 });
   }
 }

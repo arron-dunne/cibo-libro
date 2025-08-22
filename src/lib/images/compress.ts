@@ -39,7 +39,7 @@ export async function compressImageFile(input: File, opts: CompressOpts): Promis
   applyOrientation(ctx, orientation, tw, th);
   // After transform, draw source into transformed space
   const [dx, dy, dw, dh] = drawRectForOrientation(orientation, tw, th);
-  ctx.drawImage(imageBitmap as any, dx, dy, dw, dh);
+  ctx.drawImage(imageBitmap as ImageBitmap, dx, dy, dw, dh);
 
   // Determine format
   const hasAlpha = await detectsAlpha(canvas);

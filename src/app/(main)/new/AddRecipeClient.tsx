@@ -288,7 +288,7 @@ export default function AddRecipeClient() {
       }
 
       setToast("Draft saved");
-    } catch (e) {
+    } catch {
       setToast("Failed to save draft");
     } finally {
       setSaving(false);
@@ -418,8 +418,9 @@ export default function AddRecipeClient() {
       setFileInputTo(compressedFile);
 
       setUploadError(null);
-    } catch (err: any) {
-      setUploadError(err?.message ?? "Upload failed");
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : "Upload failed";
+      setUploadError(message);
     } finally {
       setUploading(false);
     }

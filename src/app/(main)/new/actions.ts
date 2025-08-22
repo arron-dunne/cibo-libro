@@ -10,7 +10,6 @@ import { auth } from "@/lib/auth";
 // Validation (payload you send from AddRecipeClient.snapshot())
 // NOTE: imageKey is intentionally NOT accepted here — it’s flipped by /api/images/finalize
 // ────────────────────────────────────────────────────────────────────────────
-const line = z.string().trim().min(1);
 const RecipePayload = z.object({
   title: z.string().trim().min(1, "Title is required"),
   description: z.string().trim().min(0).max(10_000).nullable().optional(),

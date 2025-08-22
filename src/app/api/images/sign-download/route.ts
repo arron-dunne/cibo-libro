@@ -27,7 +27,7 @@ export async function POST(req: Request) {
   let body: z.infer<typeof Body>;
   try {
     body = Body.parse(await req.json());
-  } catch (e) {
+  } catch {
     return NextResponse.json({ error: "Bad Request" }, { status: 400 });
   }
 

@@ -3,9 +3,9 @@ import "server-only";
 
 export const runtime = 'nodejs'
 
-import { S3Client, PutObjectCommand, GetObjectCommand, DeleteObjectCommand } from '@aws-sdk/client-s3';
+import { S3Client, PutObjectCommand, GetObjectCommand, DeleteObjectCommand, S3ServiceException } from '@aws-sdk/client-s3';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
-import { ALLOWED_TYPES, AllowedType, MAX_SIZE_BYTES, DEFAULT_TTL_SECONDS } from './constants';
+import { ALLOWED_TYPES, AllowedType, DEFAULT_TTL_SECONDS } from './constants';
 import { randomUUID } from 'crypto';
 
 const {
@@ -32,22 +32,21 @@ export const r2 = new S3Client({
 export function extFromMime(mime: AllowedType) {
   switch (mime) {
     case 'image/jpeg': return 'jpg';
-    case 'image/png':  return 'png';
+    case 'image/png': return 'png';
     case 'image/webp': return 'webp';
     default: throw new Error('Unsupported content type');
   }
 }
 
-export function buildObjectKey(userId: string, mime: AllowedType)
-{
+export function buildObjectKey(userId: string, mime: AllowedType) {
   return `user/${userId}/${randomUUID()}.${extFromMime(mime)}`;
 }
 
 
-export async function signGet({ key, expiresIn = 60 } : 
-  { 
-    key: string; 
-    expiresIn?: number 
+export async function signGet({ key, expiresIn = 60 }:
+  {
+    key: string;
+    expiresIn?: number
   }) {
 
   const Bucket = process.env.R2_BUCKET_NAME!;
@@ -107,10 +106,13 @@ export async function deleteObject(key: string) {
   try {
     await r2.send(new DeleteObjectCommand({ Bucket: R2_BUCKET_NAME, Key: key }));
     return { ok: true };
-  } catch (e: any) {
-    // If NotFound: still ok (idempotent)
-    if (e?.$metadata?.httpStatusCode === 404) return { ok: true };
-    return { ok: false, status: e?.$metadata?.httpStatusCode ?? 500 };
+  } catch (e: unknown) {
+    if (e instanceof S3ServiceException) {
+      const status = e.$metadata?.httpStatusCode ?? 500;
+      if (status === 404) return { ok: true };         // idempotent delete
+      return { ok: false, status };
+    }
+    return { ok: false, status: 500 };
   }
 }
 
