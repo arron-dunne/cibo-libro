@@ -69,7 +69,7 @@ export default function ClientRecipesGrid({
       _q: [r.title, r.description, ...(r.tags ?? [])].join(" ").toLowerCase(),
       _time: ((r.prepMins ?? 0) + (r.cookMins ?? 0)) || undefined,
     })),
-  [recipes]);
+    [recipes]);
 
   const visible = useMemo(() => {
     const q = query.trim().toLowerCase();
@@ -97,69 +97,79 @@ export default function ClientRecipesGrid({
     setSelectedTags((prev) => (prev.includes(tag) ? prev.filter((t) => t !== tag) : [...prev, tag]));
 
   return (
-    <div className="flex flex-col gap-5">
-      {/* Filter Bar */}
-      <div className="sticky top-16 z-10 -mx-2 px-2 py-3 backdrop-blur supports-[backdrop-filter]:bg-white/70 bg-white/95 border-b border-zinc-200">
-        <div className="mx-auto max-w-7xl flex flex-col gap-3">
-          <div className="flex flex-wrap items-center gap-3">
-            {/* Search */}
-            <label className="relative flex-1 min-w-[220px]">
-              <span className="sr-only">Search recipes</span>
-              <input
-                value={query}
-                onChange={(e) => setQuery(e.target.value)}
-                placeholder="Search recipes, tags…"
-                className="w-full rounded-xl border border-zinc-200 bg-white px-4 py-2.5 pr-10 text-sm shadow-sm outline-none focus:ring-2 focus:ring-orange-500/30 focus:border-orange-500"
-                aria-label="Search recipes"
-              />
-              <svg className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 h-5 w-5 text-zinc-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <circle cx="11" cy="11" r="8" />
-                <path d="m21 21-4.3-4.3" />
-              </svg>
-            </label>
+    <div className="mx-auto max-w-screen-2xl px-4 sm:px-6 lg:px-8 py-4 md:py-6 flex flex-col gap-6">
+      {/* Filter Bar (glassy card) */}
+      <div className="sticky top-20 z-10">
+        <div className="rounded-2xl border border-zinc-200/70 bg-white/70 backdrop-blur-md shadow-sm">
+          <div className="p-3 md:p-4 flex flex-col gap-3">
+            <div className="flex flex-wrap items-center gap-3">
+              {/* Search */}
+              <label className="relative flex-1 min-w-[240px]">
+                <span className="sr-only">Search recipes</span>
+                <input
+                  value={query}
+                  onChange={(e) => setQuery(e.target.value)}
+                  placeholder="Search recipes, tags…"
+                  className="w-full rounded-xl border border-zinc-200 bg-white/90 px-4 py-2.5 pr-10 text-sm shadow-sm outline-none focus:ring-2 focus:ring-orange-500/30 focus:border-orange-500"
+                  aria-label="Search recipes"
+                />
+                <svg className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 h-5 w-5 text-zinc-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <circle cx="11" cy="11" r="8" />
+                  <path d="m21 21-4.3-4.3" />
+                </svg>
+              </label>
 
-            {/* Sort */}
-            <div className="flex items-center gap-2">
-              <label htmlFor="sort" className="text-sm text-zinc-600">Sort</label>
-              <select
-                id="sort"
-                className="rounded-xl border border-zinc-200 bg-white px-3 py-2 text-sm shadow-sm outline-none focus:ring-2 focus:ring-orange-500/30 focus:border-orange-500"
-                value={sortBy}
-                onChange={(e) => setSortBy(e.target.value as SortOptionKey)}
-              >
-                {SORT_OPTIONS.map((o) => (
-                  <option key={o.key} value={o.key}>{o.label}</option>
-                ))}
-              </select>
+              {/* Sort */}
+              <div className="flex items-center gap-2">
+                <label htmlFor="sort" className="text-sm text-zinc-600">Sort</label>
+                <select
+                  id="sort"
+                  className="rounded-xl border border-zinc-200 bg-white px-3 py-2 text-sm shadow-sm outline-none focus:ring-2 focus:ring-orange-500/30 focus:border-orange-500"
+                  value={sortBy}
+                  onChange={(e) => setSortBy(e.target.value as SortOptionKey)}
+                >
+                  {SORT_OPTIONS.map((o) => (
+                    <option key={o.key} value={o.key}>{o.label}</option>
+                  ))}
+                </select>
+              </div>
             </div>
-          </div>
 
-          {/* Tags */}
-          {allTags.length > 0 && (
-            <div className="flex items-center gap-2 overflow-x-auto pb-1">
-              {allTags.map((tag) => {
-                const active = selectedTags.includes(tag);
-                return (
+            {/* Tags */}
+            {allTags.length > 0 && (
+              <div className="flex items-center gap-2 overflow-x-auto pb-1">
+                {allTags.map((tag) => {
+                  const active = selectedTags.includes(tag);
+                  return (
+                    <button
+                      key={tag}
+                      onClick={() => toggleTag(tag)}
+                      className={
+                        "whitespace-nowrap rounded-full border px-3 py-1.5 text-sm transition " +
+                        (active
+                          ? "border-orange-500 bg-orange-50 text-orange-700 shadow-sm"
+                          : "border-zinc-200 bg-white text-zinc-700 hover:bg-zinc-50")
+                      }
+                      aria-pressed={active}
+                    >
+                      {tag}
+                    </button>
+                  );
+                })}
+                {selectedTags.length > 0 && (
                   <button
-                    key={tag}
-                    onClick={() => toggleTag(tag)}
-                    className={
-                      "whitespace-nowrap rounded-full border px-3 py-1.5 text-sm transition " +
-                      (active ? "border-orange-500 bg-orange-50 text-orange-700 shadow-sm" : "border-zinc-200 bg-white text-zinc-700 hover:bg-zinc-50")
-                    }
-                    aria-pressed={active}
+                    onClick={() => setSelectedTags([])}
+                    className="ml-1 whitespace-nowrap rounded-full border border-zinc-200 bg-white px-3 py-1.5 text-sm text-zinc-600 hover:bg-zinc-50"
                   >
-                    {tag}
+                    Clear
                   </button>
-                );
-              })}
-              {selectedTags.length > 0 && (
-                <button onClick={() => setSelectedTags([])} className="ml-1 whitespace-nowrap rounded-full border border-zinc-200 bg-white px-3 py-1.5 text-sm text-zinc-600 hover:bg-zinc-50">Clear</button>
-              )}
-            </div>
-          )}
+                )}
+              </div>
+            )}
+          </div>
         </div>
       </div>
+
 
       {/* Results meta */}
       <div className="mx-auto max-w-7xl px-2">
@@ -175,7 +185,7 @@ export default function ClientRecipesGrid({
         )}
 
         {/* Grid */}
-        <ul className="grid auto-rows-[1fr] grid-cols-[repeat(auto-fit,minmax(240px,1fr))] gap-4 md:gap-5" role="list">
+        <ul className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5 md:gap-6" role="list">
           {visible.map((r) => (
             <li key={r.id}>
               <RecipeCard recipe={r} />
@@ -191,7 +201,7 @@ function RecipeCard({ recipe }: { recipe: Recipe }) {
   const minutes = ((recipe.prepMins ?? 0) + (recipe.cookMins ?? 0)) || undefined;
 
   return (
-    <article className="group relative overflow-hidden rounded-2xl border border-zinc-200 bg-white shadow-sm transition hover:shadow-md focus-within:shadow-md" tabIndex={-1}>
+    <article className="group relative flex h-full flex-col overflow-hidden rounded-2xl border border-zinc-200 bg-white shadow-sm transition hover:-translate-y-0.5 hover:shadow-md focus-within:shadow-md" tabIndex={-1}>
       {/* Media */}
       <div className="relative aspect-[4/3] w-full bg-zinc-100">
         <SignedImage imageKey={recipe.imageKey} alt={recipe.title} />
@@ -204,8 +214,8 @@ function RecipeCard({ recipe }: { recipe: Recipe }) {
       </div>
 
       {/* Content */}
-      <div className="p-3 md:p-4">
-        <h3 className="line-clamp-2 text-base font-semibold text-zinc-900">{recipe.title}</h3>
+      <div className="p-3 md:p-4 flex-1 flex flex-col">
+        <h3 className="line-clamp-2 text-base font-semibold text-zinc-900 tracking-tight">{recipe.title}</h3>
         {recipe.description && <p className="mt-1 line-clamp-2 text-sm text-zinc-600">{recipe.description}</p>}
         <div className="mt-3 flex flex-wrap items-center gap-2 text-xs text-zinc-600">
           {minutes ? (
@@ -284,10 +294,10 @@ function useSignedImageUrl(key?: string | null) {
         }
 
         if (key) {
-            signedUrlCache.set(key, signed);
-            setUrl(signed);
+          signedUrlCache.set(key, signed);
+          setUrl(signed);
         } else {
-            throw new Error("No key provided");    
+          throw new Error("No key provided");
         }
         setLoading(false);
       } catch (e: any) {
@@ -324,7 +334,7 @@ function SignedImage({ imageKey, alt }: { imageKey?: string | null; alt: string 
           fill
           sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
           className={`object-cover transition-opacity ${loading ? "opacity-0" : "opacity-100"}`}
-          onLoad={() => {/* natural load transitions */}}
+          onLoad={() => {/* natural load transitions */ }}
           unoptimized
           priority={false}
         />
