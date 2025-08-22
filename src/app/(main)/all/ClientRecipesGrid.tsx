@@ -326,9 +326,13 @@ function useSignedImageUrl(key?: string | null) {
         } else {
           throw new Error("No signed URL in response");
         }
-      } catch (e: any) {
+      } catch (e: unknown) {
         if (controller.signal.aborted) return;
-        setError(e?.message ?? "Failed to obtain signed URL");
+
+        const message =
+          e instanceof Error ? e.message : "Failed to obtain signed URL";
+
+        setError(message);
         setUrl(null);
         setLoading(false);
       }
