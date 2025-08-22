@@ -1,8 +1,7 @@
-// app/new/AddRecipeClient.tsx
 "use client";
 
 import Image from "next/image";
-import React, { useCallback, useEffect, useMemo, useState, useRef } from "react";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { compressImageFile } from "@/lib/images/compress";
 import { MAX_SIZE_BYTES } from "@/lib/images/constants";
 import { saveDraft, updateRecipe, publishRecipe, publishDraft } from "./actions";
@@ -13,17 +12,26 @@ import { saveDraft, updateRecipe, publishRecipe, publishDraft } from "./actions"
 type SectionKey = "details" | "ingredients" | "steps" | "photos";
 
 type Snapshot = {
-  // Keep aligned with your actions.ts/Zod & Prisma schema
+  // Keep aligned with actions.ts & Prisma (NOTE: no imageKey here)
   title: string;
   description?: string | null;
   prepMins?: number | null;
   cookMins?: number | null;
   servings?: number | null;
-  imageKey?: string | null;
   ingredients: string[];
   steps: string[];
   tags: string[];
   sourceUrl?: string | null;
+};
+
+type SignUploadResponse = {
+  method: "PUT";
+  url: string;
+  key: string;
+  uploadId: string;
+  expiresIn: number;
+  requiredHeaders: Record<string, string>;
+  maxBytes: number;
 };
 
 const clsx = (...xs: Array<string | false | null | undefined>) => xs.filter(Boolean).join(" ");
@@ -39,12 +47,18 @@ export default function AddRecipeClient() {
   const [prepMins, setPrepMins] = useState<number | null>(null);
   const [cookMins, setCookMins] = useState<number | null>(null);
   const [servings, setServings] = useState<number | null>(null);
-  const [imageKey, setImageKey] = useState<string | null>(null);
-  const [uploading, setUploading] = useState(false);
-  const [uploadError, setUploadError] = useState<string | null>(null);
+
+  // Image states
+  const [imageKey, setImageKey] = useState<string | null>(null); // finalized pointer on recipe
+  const [coverDraft, setCoverDraft] = useState<{ key: string; uploadId: string } | null>(null); // server-issued, not yet attached
+  const [imagePreview, setImagePreview] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
+  // Upload status
+  const [uploading, setUploading] = useState(false);
+  const [uploadError, setUploadError] = useState<string | null>(null);
 
+  // Form lists
   const [ingredients, setIngredients] = useState<string[]>([""]);
   const [steps, setSteps] = useState<string[]>([""]);
   const [tags, setTags] = useState<string[]>([]);
@@ -57,7 +71,7 @@ export default function AddRecipeClient() {
   const [toast, setToast] = useState<string | null>(null);
   const [undo, setUndo] = useState<Snapshot | null>(null);
 
-  // Section anchors (memoized so the object reference is stable for effects)
+  // Section anchors
   const sectionsRef = useMemo(
     () => ({
       details: React.createRef<HTMLDivElement>(),
@@ -74,7 +88,7 @@ export default function AddRecipeClient() {
     sanitizeLines(ingredients).length > 0 &&
     sanitizeLines(steps).length > 0;
 
-  // Snapshot helpers (this is exactly what we send to your server actions)
+  // Snapshot helpers (exact payload for actions.ts)
   const snapshot = useCallback(
     (): Snapshot => ({
       title: title.trim(),
@@ -82,22 +96,22 @@ export default function AddRecipeClient() {
       prepMins,
       cookMins,
       servings,
-      imageKey: imageKey || null,
       ingredients: sanitizeLines(ingredients),
       steps: sanitizeLines(steps),
       tags: sanitizeLines(tags),
       sourceUrl: sourceUrl || null,
     }),
-    [title, description, prepMins, cookMins, servings, imageKey, ingredients, steps, tags, sourceUrl]
+    [title, description, prepMins, cookMins, servings, ingredients, steps, tags, sourceUrl]
   );
 
-  const setSnapshot = (s: Snapshot) => {
+  const setSnapshot = (s: Snapshot & { imageKey?: string | null }) => {
     setTitle(s.title ?? "");
     setDescription(s.description ?? "");
     setPrepMins(s.prepMins ?? null);
     setCookMins(s.cookMins ?? null);
     setServings(s.servings ?? null);
-    setImageKey(s.imageKey ?? null);
+    // imageKey is owned by finalize flow; set it only if provided from server read
+    if (typeof s.imageKey !== "undefined") setImageKey(s.imageKey);
     setIngredients(s.ingredients?.length ? s.ingredients : [""]);
     setSteps(s.steps?.length ? s.steps : [""]);
     setTags(s.tags ?? []);
@@ -126,12 +140,65 @@ export default function AddRecipeClient() {
     return () => observer.disconnect();
   }, [sectionsRef]);
 
+  // ──────────────────────────────────────────────────────────────────────────
+  // API helpers
+  // ──────────────────────────────────────────────────────────────────────────
+  async function finalizeCoverIfNeeded(recipeId: string) {
+    if (!coverDraft) return;
+    if (imageKey === coverDraft.key) return;
+
+    const res = await fetch("/api/images/finalize", {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ recipeId, newKey: coverDraft.key }),
+    });
+
+    if (!res.ok) {
+      throw new Error(`Finalize failed: ${res.status}`);
+    }
+
+    // Flip local pointer & clear draft
+    setImageKey(coverDraft.key);
+    setCoverDraft(null);
+  }
+
+  async function deletePendingCover() {
+    if (!coverDraft) return;
+    const res = await fetch("/api/images/delete", {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ key: coverDraft.key }),
+    });
+    if (!res.ok) throw new Error(`Delete failed: ${res.status}`);
+    setCoverDraft(null);
+    setImagePreview(null);
+    setToast("Image removed");
+    setTimeout(() => setToast(null), 1500);
+  }
+
+  async function deleteAttachedCover() {
+    if (!imageKey || !draftId) return;
+    const res = await fetch("/api/images/delete", {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ key: imageKey, recipeId: draftId }),
+    });
+    if (!res.ok) throw new Error(`Delete failed: ${res.status}`);
+    setImageKey(null);
+    setImagePreview(null);
+    setToast("Image removed");
+    setTimeout(() => setToast(null), 1500);
+  }
+
+  // ──────────────────────────────────────────────────────────────────────────
   // Actions
+  // ──────────────────────────────────────────────────────────────────────────
   const onSaveDraft = async () => {
     setSaving(true);
     try {
       const data = snapshot();
       let id = draftId;
+
       if (!id) {
         const res = await saveDraft(data);
         id = res.id;
@@ -139,8 +206,14 @@ export default function AddRecipeClient() {
       } else {
         await updateRecipe(id, data);
       }
+
+      // finalize on draft save (if we have a fresh upload)
+      if (id) {
+        await finalizeCoverIfNeeded(id);
+      }
+
       setToast("Draft saved");
-    } catch {
+    } catch (e) {
       setToast("Failed to save draft");
     } finally {
       setSaving(false);
@@ -153,11 +226,15 @@ export default function AddRecipeClient() {
     setPublishing(true);
     try {
       if (draftId) {
+        // Safety: ensure finalize before publish
+        await finalizeCoverIfNeeded(draftId);
         const res = await publishDraft(draftId);
         window.location.href = `/view/${res.slug ?? res.id}`;
       } else {
-        const res = await publishRecipe(snapshot());
-        window.location.href = `/view/${res.slug ?? res.id}`;
+        // Create then finalize, then publish that record
+        const created = await publishRecipe(snapshot());
+        await finalizeCoverIfNeeded(created.id);
+        window.location.href = `/view/${created.slug ?? created.id}`;
       }
     } catch {
       setToast("Failed to publish");
@@ -173,36 +250,36 @@ export default function AddRecipeClient() {
 
   const onPasteMulti =
     (setter: React.Dispatch<React.SetStateAction<string[]>>, idx: number) =>
-      (e: React.ClipboardEvent<HTMLInputElement>) => {
-        const text = e.clipboardData.getData("text");
-        if (text.includes("\n")) {
-          e.preventDefault();
-          const lines = sanitizeLines(text.split("\n"));
-          setter((xs) => {
-            const copy = [...xs];
-            copy[idx] = (copy[idx] || "") + lines[0];
-            if (lines.length > 1) copy.splice(idx + 1, 0, ...lines.slice(1));
-            return copy;
-          });
-        }
-      };
+    (e: React.ClipboardEvent<HTMLInputElement>) => {
+      const text = e.clipboardData.getData("text");
+      if (text.includes("\n")) {
+        e.preventDefault();
+        const lines = sanitizeLines(text.split("\n"));
+        setter((xs) => {
+          const copy = [...xs];
+          copy[idx] = (copy[idx] || "") + lines[0];
+          if (lines.length > 1) copy.splice(idx + 1, 0, ...lines.slice(1));
+          return copy;
+        });
+      }
+    };
 
   const handleEnter =
     (setter: React.Dispatch<React.SetStateAction<string[]>>, idx: number, selector: string) =>
-      (e: React.KeyboardEvent<HTMLInputElement>) => {
-        if (e.key === "Enter") {
-          e.preventDefault();
-          setter((xs) => {
-            const copy = [...xs];
-            copy.splice(idx + 1, 0, "");
-            return copy;
-          });
-          requestAnimationFrame(() => {
-            const inputs = document.querySelectorAll<HTMLInputElement>(selector);
-            inputs[idx + 1]?.focus();
-          });
-        }
-      };
+    (e: React.KeyboardEvent<HTMLInputElement>) => {
+      if (e.key === "Enter") {
+        e.preventDefault();
+        setter((xs) => {
+          const copy = [...xs];
+          copy.splice(idx + 1, 0, "");
+          return copy;
+        });
+        requestAnimationFrame(() => {
+          const inputs = document.querySelectorAll<HTMLInputElement>(selector);
+          inputs[idx + 1]?.focus();
+        });
+      }
+    };
 
   const scrollTo = (key: SectionKey) => {
     const el = sectionsRef[key].current;
@@ -212,17 +289,9 @@ export default function AddRecipeClient() {
     setTimeout(() => heading?.focus?.(), 350);
   };
 
-  type SignResponse = {
-    method: 'PUT';
-    url: string;
-    key: string;
-    expiresIn: number;
-    requiredHeaders: Record<string, string>;
-    maxBytes: number;
-  };
-
-  const [imagePreview, setImagePreview] = useState<string | null>(null);
-
+  // ──────────────────────────────────────────────────────────────────────────
+  // Upload flow
+  // ──────────────────────────────────────────────────────────────────────────
   const onPick = async (e: React.ChangeEvent<HTMLInputElement>) => {
     setUploadError(null);
     const raw = e.target.files?.[0];
@@ -242,31 +311,32 @@ export default function AddRecipeClient() {
         preferWebP: true,
       });
 
-      // Too large error
       if (compressed.size > MAX_SIZE_BYTES) {
-        throw new Error(
-          `File too large (max ${Math.floor( MAX_SIZE_BYTES / (1024 * 1024))} MB`
-        );
+        throw new Error(`File too large (max ${Math.floor(MAX_SIZE_BYTES / (1024 * 1024))} MB)`);
       }
 
-      // 2) Sign with compressed metadata
+      // 2) Ask server to mint key + sign PUT
       const signRes = await fetch("/api/images/sign-upload", {
         method: "POST",
         headers: { "content-type": "application/json" },
         body: JSON.stringify({ contentType: compressed.type, size: compressed.size }),
       });
       if (!signRes.ok) throw new Error(`Sign failed: ${signRes.status}`);
-      const { method, url, key, requiredHeaders } = await signRes.json();
+      const { method, url, key, uploadId, requiredHeaders } = (await signRes.json()) as SignUploadResponse;
 
-      // 3) Upload compressed file
+      // 3) PUT compressed file to R2 (retry once)
       const putOnce = async () => {
         const r = await fetch(url, { method, headers: requiredHeaders, body: compressed });
         if (!r.ok) throw new Error(`Upload failed: ${r.status}`);
       };
-      try { await putOnce(); }
-      catch { await putOnce(); } // one retry
+      try {
+        await putOnce();
+      } catch {
+        await putOnce();
+      }
 
-      setImageKey(key);
+      // 4) Hold pending cover until finalize
+      setCoverDraft({ key, uploadId });
       setUploadError(null);
     } catch (err: any) {
       setUploadError(err?.message ?? "Upload failed");
@@ -274,8 +344,6 @@ export default function AddRecipeClient() {
       setUploading(false);
     }
   };
-
-
 
   // ──────────────────────────────────────────────────────────────────────────
   // Render
@@ -496,12 +564,10 @@ export default function AddRecipeClient() {
                         Uploading…
                       </span>
                     )}
-                    {!uploading && imageKey && !uploadError && (
+                    {!uploading && (coverDraft || imageKey) && !uploadError && (
                       <span className="text-emerald-600">Uploaded successfully</span>
                     )}
-                    {uploadError && (
-                      <span className="text-red-600">Upload failed: {uploadError}</span>
-                    )}
+                    {uploadError && <span className="text-red-600">Upload failed: {uploadError}</span>}
                   </div>
 
                   {/* Preview image */}
@@ -516,11 +582,47 @@ export default function AddRecipeClient() {
                       />
                     </div>
                   )}
+
+                  {/* Delete controls */}
+                  {(coverDraft || imageKey) && (
+                    <div className="mt-3 flex gap-2">
+                      {coverDraft && (
+                        <button
+                          type="button"
+                          onClick={async () => {
+                            try {
+                              await deletePendingCover();
+                            } catch (e) {
+                              setToast("Failed to remove image");
+                              setTimeout(() => setToast(null), 1500);
+                            }
+                          }}
+                          className="rounded-md border border-zinc-300 bg-white px-3 py-2 text-sm hover:bg-zinc-50"
+                        >
+                          Remove selected image
+                        </button>
+                      )}
+                      {!coverDraft && imageKey && (
+                        <button
+                          type="button"
+                          disabled={!draftId}
+                          onClick={async () => {
+                            try {
+                              await deleteAttachedCover();
+                            } catch (e) {
+                              setToast("Failed to remove image");
+                              setTimeout(() => setToast(null), 1500);
+                            }
+                          }}
+                          className="rounded-md border border-zinc-300 bg-white px-3 py-2 text-sm hover:bg-zinc-50 disabled:opacity-50"
+                        >
+                          Remove current cover
+                        </button>
+                      )}
+                    </div>
+                  )}
                 </div>
               </Panel>
-
-
-
 
               {/* Bottom bar */}
               <div className="sticky bottom-0 z-40 mt-2 flex items-center justify-between gap-3 rounded-2xl border border-white/60 bg-white/80 px-4 py-3 shadow-md backdrop-blur">
