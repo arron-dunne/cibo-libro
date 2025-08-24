@@ -16,8 +16,12 @@ jobs:
       E2E: "1"
       DATABASE_URL: ${{ secrets.DATABASE_URL_TEST }}
       DIRECT_URL: ${{ secrets.DIRECT_URL_TEST }}
-      
-      # add any other app env here, e.g. APP_SECRET: ${{ secrets.APP_SECRET }}
+      AUTH_SECRET: ${{ secrets.AUTH_SECRET }}
+      R2_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+      R2_ACCOUNT_ID: ${{ secrets.R2_ACCOUNT_ID }}
+      R2_BUCKET_NAME: ${{ secrets.R2_BUCKET_NAME }}
+      R2_ENDPOINT_URL: ${{ secrets.R2_ENDPOINT_URL }}
+      R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
 
     steps:
       - name: Checkout
@@ -31,6 +35,9 @@ jobs:
 
       - name: Install deps
         run: npm ci
+      
+      - name: Build (production)
+        run: npm run build
 
       - name: Install Playwright (browsers + system deps)
         run: npx playwright install --with-deps chromium
