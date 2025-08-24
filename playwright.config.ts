@@ -31,7 +31,6 @@ export default defineConfig({
   ],
   webServer: useBuiltServer
     ? [
-        { command: 'npm run build', reuseExistingServer: true },
         {
           command: `PORT=${PORT} npm run start`,
           url: BASE_URL,
