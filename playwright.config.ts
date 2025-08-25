@@ -6,8 +6,6 @@ const BASE_URL = process.env.PW_BASE_URL ?? `http://localhost:${PORT}`;
 // Use dev server locally for speed; in CI prefer a built server for stability.
 const useBuiltServer = process.env.CI === 'true' || process.env.PW_USE_BUILD === '1';
 
-console.log('Use built server:', useBuiltServer);
-
 export default defineConfig({
   testDir: './src/test/e2e',
   fullyParallel: true,
