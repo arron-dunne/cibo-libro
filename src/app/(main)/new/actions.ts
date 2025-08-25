@@ -1,6 +1,5 @@
 "use server";
 
-import { z } from "zod";
 import { prisma } from "@/lib/prisma";
 import { auth } from "@/lib/auth";
 import { uniqueRecipeSlug } from "@/lib/uniqueSlug";
@@ -43,10 +42,13 @@ export async function createRecipe(recipe: RecipeFormRecipe): Promise<RecipeForm
         return { success: false, error: "Invalid image key format" };
       }
 
-      // Provenance check (check user owns and uploaded image)
-      const upload = await prisma.upload.findUnique({
-        where: { key: data.imageKey }
-      });
+/**
+ * Update an existing draft (owner‑only). Returns void.
+ * Does not accept or mutate imageKey here.
+ */
+export async function updateRecipe(id: string, raw: unknown): Promise<void> {
+  const userId = await requireUserId();
+  const data = RecipeSchema.parse(raw);
 
       if (!upload || upload.userId !== userId) {
         return { success: false, error: "Unauthorized image key" };
