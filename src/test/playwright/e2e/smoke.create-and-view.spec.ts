@@ -1,3 +1,4 @@
+// test/e2e/smoke.create-and-view.spec.ts
 import { test, expect } from "@playwright/test";
 import { uniqueTitle } from "./helpers";
 
@@ -19,7 +20,7 @@ test("@smoke create recipe via manual form, then find it in grid and open detail
   await step.fill("Boil pasta");
 
   // Publish (bottom sticky bar)
-  const publishBtn = page.getByRole("button", { name: "Save" });
+  const publishBtn = page.getByRole("button", { name: "Publish" });
   await expect(publishBtn).toBeEnabled();
   await publishBtn.click();
 
