@@ -9,32 +9,41 @@ export const revalidate = 0; // server component; keep fresh
 export default async function RecipesPage() {
   const session = await auth();
   if (!session?.user) {
-    // Not signed in → send to auth
     redirect("/signin");
   }
 
-  // Adjust these fields to match your exact schema names.
-  // This works even if some are null/undefined—we default sensibly below.
+  // Pull all fields we need for the grid, including the external image URL.
   const rows = await prisma.recipe.findMany({
-    where: { ownerId: (session.user.id as string )},
+    where: { ownerId: session.user.id as string },
     orderBy: { updatedAt: "desc" },
-    // If you have relations for tags/steps/ingredients, you can include/select them here.
-    // include: { tags: true } // e.g. if you have a RecipeTag[] relation
+    select: {
+      id: true,
+      slug: true,
+      title: true,
+      description: true,
+      imageKey: true,
+      imageExternalUrl: true, // ← NEW
+      tags: true,
+      prepMins: true,
+      cookMins: true,
+      servings: true,
+      sourceUrl: true,
+    },
   });
 
-  // app/recipes/page.tsx (mapper snippet)
-const recipes: UIRecipe[] = rows.map((r) => ({
-  id: r.id,
-  title: r.title ?? "Untitled recipe",
-  slug: r.slug ?? null,
-  description: r.description ?? "",
-  imageKey: r.imageKey ?? null,        // ← pass key, not URL
-  tags: r.tags ?? [],
-  prepMins: r.prepMins ?? null,        // ← schema names
-  cookMins: r.cookMins ?? null,
-  servings: r.servings ?? null,
-  sourceUrl: r.sourceUrl ?? null,
-}));
+  const recipes: UIRecipe[] = rows.map((r) => ({
+    id: r.id,
+    title: r.title ?? "Untitled recipe",
+    slug: r.slug ?? null,
+    description: r.description ?? "",
+    imageKey: r.imageKey ?? null,
+    imageExternalUrl: r.imageExternalUrl ?? null, // ← NEW
+    tags: r.tags ?? [],
+    prepMins: r.prepMins ?? null,
+    cookMins: r.cookMins ?? null,
+    servings: r.servings ?? null,
+    sourceUrl: r.sourceUrl ?? null,
+  }));
 
   return <ClientRecipesGrid recipes={recipes} />;
 }
