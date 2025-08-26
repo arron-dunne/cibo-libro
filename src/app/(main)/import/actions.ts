@@ -152,26 +152,31 @@ export async function importRecipe(formData: FormData) {
   const structured = tryParseStructured(html, url.toString());
 
   if (structured) {
-    // Map to DB fields (EXTERNAL, private)
+    // NEW: back-fill missing image from Open Graph/Twitter
+    const structuredEnriched: StructuredRecipe = {
+      ...structured,
+      image: structured.image ?? og?.image ?? undefined,
+    };
+
     const recipe = await createStructuredRecipe({
       userId,
       sourceUrl: url.toString(),
-      data: structured,
+      data: structuredEnriched,
     });
 
-    // Store truncated HTML + parsedJson for diagnostics (optional)
     await prisma.importJob.update({
       where: { id: job.id },
       data: {
         status: "SUCCESS",
         rawHtml: html.slice(0, RAW_HTML_MAX),
-        parsedJson: structured,
+        parsedJson: structuredEnriched,
         errorMsg: null,
       },
     });
 
     return redirect(`/view/${recipe.slug ?? recipe.id}`);
   }
+
 
   // Fallback: link-only card using OG tags if available
   const recipe = await createLinkOnlyRecipe({
@@ -217,14 +222,14 @@ async function createStructuredRecipe({
       ownerId: userId,
       type: "EXTERNAL",
       title,
-      description: sanitizeDescription(data.description ?? ""),       
+      description: sanitizeDescription(data.description ?? ""),
       prepMins: data.prepMins ?? null,
       cookMins: data.cookMins ?? null,
       servings: data.servings ?? null,
       imageExternalUrl: safeExternalImage(data.image),
-      ingredients: (data.ingredients ?? []).map(sanitizeInline).filter(Boolean), 
-      steps: (data.instructions ?? []).map(sanitizeInline).filter(Boolean),      
-      tags: normalizeTags({ raw: data.tags, title }),                         
+      ingredients: (data.ingredients ?? []).map(sanitizeInline).filter(Boolean),
+      steps: (data.instructions ?? []).map(sanitizeInline).filter(Boolean),
+      tags: normalizeTags({ raw: data.tags, title }),
       sourceUrl,
       isPublic: false,
       slug,
@@ -391,6 +396,7 @@ function tryParseStructured(html: string, pageUrl: string): StructuredRecipe | n
 // -----------------------------
 // JSON-LD parsing
 // -----------------------------
+// --- JSON-LD parsing (replace parseJsonLd + mapJsonLdRecipe and add helpers) ---
 function parseJsonLd(html: string): StructuredRecipe | null {
   const $ = loadHtml(html);
   const scripts = $('script[type="application/ld+json"]');
@@ -403,21 +409,89 @@ function parseJsonLd(html: string): StructuredRecipe | null {
     try {
       const obj = JSON.parse(raw);
       tryObjects.push(obj);
-    } catch {
-      /* ignore invalid JSON */
-    }
+    } catch { /* ignore */ }
   });
 
-  // Flatten potential arrays/graphs and find first Recipe
   for (const payload of tryObjects) {
     const nodes = flattenJsonLd(payload);
+    const idIndex = buildIdIndex(nodes);
+
     const recipeNode = nodes.find((n) => hasType(n, "Recipe"));
     if (!recipeNode) continue;
 
-    return mapJsonLdRecipe(recipeNode);
+    return mapJsonLdRecipe(recipeNode, idIndex);
   }
   return null;
 }
+
+function buildIdIndex(nodes: any[]): Map<string, any> {
+  const m = new Map<string, any>();
+  for (const n of nodes) {
+    const id = n && typeof n === "object" ? n["@id"] : undefined;
+    if (id && typeof id === "string") m.set(id, n);
+  }
+  return m;
+}
+
+function resolveImageRef(img: any, idIndex: Map<string, any>): string | undefined {
+  // Accept string, ImageObject, array, or @id reference
+  if (!img) return undefined;
+
+  // Array → first resolvable
+  if (Array.isArray(img)) {
+    for (const item of img) {
+      const r = resolveImageRef(item, idIndex);
+      if (r) return r;
+    }
+    return undefined;
+  }
+
+  // String → assume URL
+  if (typeof img === "string") return String(img);
+
+  // Object → direct URL fields
+  if (img?.url || img?.contentUrl || img?.thumbnailUrl) {
+    return String(img.url ?? img.contentUrl ?? img.thumbnailUrl);
+  }
+
+  // Object with @id → look up referenced node
+  if (img?.["@id"] && typeof img["@id"] === "string") {
+    const target = idIndex.get(String(img["@id"]));
+    if (!target) return undefined;
+    return resolveImageRef(target, idIndex);
+  }
+
+  return undefined;
+}
+
+function mapJsonLdRecipe(node: any, idIndex: Map<string, any>): StructuredRecipe {
+  const imageUrl = resolveImageRef(node?.image, idIndex);
+
+  const ingredients = Array.isArray(node?.recipeIngredient)
+    ? node.recipeIngredient.map(String)
+    : undefined;
+
+  const instructions = parseJsonLdInstructions(node?.recipeInstructions);
+
+  return {
+    title: node?.name ? String(node.name).trim() : "",
+    description: node?.description ? String(node.description) : undefined,
+    image: imageUrl,
+    ingredients,
+    instructions,
+    servings: maybeNumber(node?.recipeYield),
+    prepMins: parseIsoDurationMinutes(node?.prepTime) ?? null,
+    cookMins: parseIsoDurationMinutes(node?.cookTime) ?? null,
+    tags: parseKeywords(node?.keywords),
+    author:
+      typeof node?.author === "string"
+        ? node.author
+        : node?.author?.name
+          ? String(node.author.name)
+          : undefined,
+  };
+}
+
 
 function flattenJsonLd(obj: any): any[] {
   const out: any[] = [];
@@ -438,39 +512,6 @@ function hasType(node: any, type: string): boolean {
   if (typeof t === "string") return t.toLowerCase() === type.toLowerCase();
   if (Array.isArray(t)) return t.map((x) => String(x).toLowerCase()).includes(type.toLowerCase());
   return false;
-}
-
-function mapJsonLdRecipe(node: any): StructuredRecipe {
-  const get = (k: string) => (node?.[k] ?? "").toString().trim();
-  const image = Array.isArray(node?.image)
-    ? node.image[0]
-    : typeof node?.image === "string"
-      ? node.image
-      : node?.image?.url;
-
-  const ingredients = Array.isArray(node?.recipeIngredient)
-    ? node.recipeIngredient.map(String)
-    : undefined;
-
-  const instructions = parseJsonLdInstructions(node?.recipeInstructions);
-
-  return {
-    title: get("name"),
-    description: node?.description ? String(node.description) : undefined,
-    image: image ? String(image) : undefined,
-    ingredients,
-    instructions,
-    servings: maybeNumber(node?.recipeYield),
-    prepMins: parseIsoDurationMinutes(node?.prepTime) ?? null,
-    cookMins: parseIsoDurationMinutes(node?.cookTime) ?? null,
-    tags: parseKeywords(node?.keywords),
-    author:
-      typeof node?.author === "string"
-        ? node.author
-        : node?.author?.name
-          ? String(node.author.name)
-          : undefined,
-  };
 }
 
 function parseJsonLdInstructions(instr: any): string[] | undefined {
