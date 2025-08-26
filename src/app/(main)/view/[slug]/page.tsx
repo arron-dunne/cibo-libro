@@ -24,8 +24,7 @@ export default async function ViewRecipePage({
       ingredients: true,
       steps: true,
       imageKey: true,
-      // imageKey intentionally ignored for now
-      // imageUrl could exist in legacy data, but we'll use a fixed Unsplash fallback
+      imageExternalUrl: true
     },
   });
 
@@ -42,10 +41,6 @@ export default async function ViewRecipePage({
   const cook = Number(recipe.cookMins ?? 0);
   const total = prep + cook;
 
-
-
-
-
   return (
     <div className="space-y-6">
       {/* HERO CARD */}
@@ -56,6 +51,7 @@ export default async function ViewRecipePage({
             <div className="relative h-72 w-full md:h-full">
               <ClientImage
                 imageKey={recipe.imageKey ?? undefined}
+                externalUrl={recipe.imageExternalUrl ?? undefined}  // ← NEW
                 alt={recipe.title || "Recipe image"}
               />
               <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/20 via-black/0 to-black/0" />
