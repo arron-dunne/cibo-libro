@@ -8,6 +8,7 @@ import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { Prisma } from "@prisma/client"
 import { uniqueRecipeSlug } from "@/lib/uniqueSlug";
+import he from "he";
 
 // -----------------------------
 // Config (ENV + sensible defaults)
@@ -80,9 +81,10 @@ export async function importRecipe(formData: FormData) {
 
   // Create ImportJob (PENDING)
   const job = await prisma.importJob.create({
-    data: { 
-        userId: userId, 
-        sourceUrl: url.toString() },
+    data: {
+      userId: userId,
+      sourceUrl: url.toString()
+    },
     select: { id: true },
   });
 
@@ -208,21 +210,21 @@ async function createStructuredRecipe({
   const slug = await uniqueRecipeSlug(title);
 
   // Prefer explicit times; compute total if present
-//   const { prepMins, cookMins } = normalizeTimes(data);
+  //   const { prepMins, cookMins } = normalizeTimes(data);
 
   const created = await prisma.recipe.create({
     data: {
       ownerId: userId,
       type: "EXTERNAL",
       title,
-      description: data.description ?? "",
+      description: sanitizeDescription(data.description ?? ""),       
       prepMins: data.prepMins ?? null,
       cookMins: data.cookMins ?? null,
       servings: data.servings ?? null,
       imageExternalUrl: safeExternalImage(data.image),
-      ingredients: data.ingredients ?? [],
-      steps: data.instructions ?? [],
-      tags: data.tags ?? [],
+      ingredients: (data.ingredients ?? []).map(sanitizeInline).filter(Boolean), 
+      steps: (data.instructions ?? []).map(sanitizeInline).filter(Boolean),      
+      tags: normalizeTags({ raw: data.tags, title }),                         
       sourceUrl,
       isPublic: false,
       slug,
@@ -248,7 +250,7 @@ async function createLinkOnlyRecipe({
   const title =
     (og?.title && og.title.trim()) ||
     humanizeUrl(sourceUrl) +
-      (robotsBlocked ? " (link only — site blocked importing)" : "");
+    (robotsBlocked ? " (link only — site blocked importing)" : "");
   const slug = await uniqueRecipeSlug(title);
 
   const created = await prisma.recipe.create({
@@ -443,8 +445,8 @@ function mapJsonLdRecipe(node: any): StructuredRecipe {
   const image = Array.isArray(node?.image)
     ? node.image[0]
     : typeof node?.image === "string"
-    ? node.image
-    : node?.image?.url;
+      ? node.image
+      : node?.image?.url;
 
   const ingredients = Array.isArray(node?.recipeIngredient)
     ? node.recipeIngredient.map(String)
@@ -466,8 +468,8 @@ function mapJsonLdRecipe(node: any): StructuredRecipe {
       typeof node?.author === "string"
         ? node.author
         : node?.author?.name
-        ? String(node.author.name)
-        : undefined,
+          ? String(node.author.name)
+          : undefined,
   };
 }
 
@@ -641,3 +643,134 @@ function safeExternalImage(src?: string): string | null {
 //   }
 //   return { prepMins: data.prepMins ?? null, cookMins: data.cookMins ?? null };
 // }
+
+// --- Text cleansing ---------------------------------------------------------
+
+/** Cleans long-form fields like description. */
+function sanitizeDescription(input: string): string {
+  if (!input) return "";
+  let s = he.decode(input);                // &amp; &#39; etc → real characters
+  s = stripHtml(s);                        // remove residual tags if any
+  s = removeBoilerplateSentences(s);       // e.g., "Recipe video above."
+  s = fixMissingSpaceAfterPeriods(s);      // ".Doesn" → ". Doesn"
+  s = s.replace(/\s+/g, " ").trim();       // collapse whitespace
+  return s;
+}
+
+/** Cleans short inline fields (ingredients, step lines). */
+function sanitizeInline(input: string): string {
+  if (!input) return "";
+  let s = he.decode(input);
+  s = stripHtml(s);
+  // keep it light for inline text: just collapse spaces
+  s = s.replace(/\s+/g, " ").trim();
+  return s;
+}
+
+function stripHtml(input: string): string {
+  // very light HTML stripper for safety; JSON-LD is usually plaintext already
+  return input.replace(/<[^>]*>/g, "");
+}
+
+const BOILERPLATE_PATTERNS: RegExp[] = [
+  /\brecipe\s+video\s+(?:above|below)\b[:.]?/i,
+  /\bvideo\s+(?:above|below)\b[:.]?/i,
+  /\bsee\s+(?:notes?|tips?)(?:\s+below)?\b[:.]?/i,
+];
+function removeBoilerplateSentences(input: string): string {
+  // Remove small “utility” sentences that often leak into JSON-LD descriptions
+  let s = input;
+  for (const rx of BOILERPLATE_PATTERNS) {
+    s = s.replace(new RegExp(`(^|\\s)${rx.source}(?=\\s|$)`, "gi"), " ");
+  }
+  return s;
+}
+
+/** Insert a space after a period if the next char is a capital letter and no space present. */
+function fixMissingSpaceAfterPeriods(input: string): string {
+  return input.replace(/\.([A-Z])/g, ". $1");
+}
+
+// --- Tag normalization ------------------------------------------------------
+
+/**
+ * Turn raw keywords (often long phrases) + title signal into friendly, general tags:
+ * e.g., "chicken in white wine sauce" → ["Chicken", maybe "Dinner"], "quick" → "Easy".
+ * Caps at 5 tags, deduped.
+ */
+function normalizeTags({ raw, title }: { raw?: string[]; title?: string }): string[] {
+  const text = `${(title ?? "").toLowerCase()} ${(raw ?? []).join(" ").toLowerCase()}`;
+
+  // Scan in priority order so results feel human: Course → Protein → Diet → Method/Difficulty → Cuisine → Adjectives
+  const out: string[] = [];
+  scanAndPush(out, text, COURSE_KEYS);
+  scanAndPush(out, text, PROTEIN_KEYS);
+  scanAndPush(out, text, DIET_KEYS);
+  scanAndPush(out, text, METHOD_KEYS);
+  scanAndPush(out, text, CUISINE_KEYS);
+  scanAndPush(out, text, ADJECTIVE_KEYS);
+
+  // “Quick/weeknight/30-minute” style → Easy
+  if (/\b(quick|weeknight|easy|simple|fast|under\s*\d+\s*min)/i.test(text)) push(out, "Easy");
+
+  // Keep it tidy
+  return Array.from(new Set(out)).slice(0, 5);
+}
+
+function scanAndPush(out: string[], text: string, keys: string[]) {
+  for (const k of keys) {
+    const re = new RegExp(`\\b${escapeReg(k)}\\b`, "i");
+    if (re.test(text)) push(out, CANONICAL[k]);
+  }
+}
+function push(arr: string[], v?: string) {
+  if (v && !arr.includes(v)) arr.push(v);
+}
+function escapeReg(s: string) {
+  return s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+}
+
+/** Canonical tags (what we *show*) mapped from lots of possible input words/phrases. */
+const CANONICAL: Record<string, string> = {
+  // Course
+  breakfast: "Breakfast", brunch: "Brunch", lunch: "Lunch", dinner: "Dinner",
+  dessert: "Dessert", soup: "Soup", salad: "Salad", side: "Side",
+  appetizer: "Appetizer", starter: "Appetizer", snack: "Snack",
+
+  // Protein (keep high-level; fold shellfish into Seafood)
+  chicken: "Chicken", beef: "Beef", pork: "Pork", lamb: "Lamb",
+  turkey: "Turkey", duck: "Duck", fish: "Fish", seafood: "Seafood",
+  salmon: "Seafood", tuna: "Seafood", shrimp: "Seafood", prawn: "Seafood", prawns: "Seafood",
+  tofu: "Tofu", tempeh: "Tempeh", egg: "Egg",
+
+  // Diets
+  vegan: "Vegan", vegetarian: "Vegetarian",
+  "gluten free": "Gluten-Free", "gluten-free": "Gluten-Free",
+  "dairy free": "Dairy-Free", "dairy-free": "Dairy-Free",
+  keto: "Keto", paleo: "Paleo", "low carb": "Low-Carb", "low-carb": "Low-Carb",
+
+  // Methods / Difficulty / Format
+  easy: "Easy", quick: "Easy", weeknight: "Easy",
+  "one pot": "One-Pot", "one-pot": "One-Pot", "one pan": "One-Pan",
+  "sheet pan": "Sheet-Pan", "sheet-pan": "Sheet-Pan",
+  "slow cooker": "Slow Cooker", "instant pot": "Instant Pot", "air fryer": "Air Fryer",
+  grill: "Grill", bbq: "BBQ", baked: "Baked", roasted: "Roasted",
+  "stir fry": "Stir-Fry", "stir-fry": "Stir-Fry",
+
+  // Cuisines (broad)
+  italian: "Italian", mexican: "Mexican", indian: "Indian", chinese: "Chinese",
+  thai: "Thai", japanese: "Japanese", korean: "Korean", greek: "Greek",
+  french: "French", spanish: "Spanish", lebanese: "Lebanese",
+  "middle eastern": "Middle Eastern", vietnamese: "Vietnamese",
+
+  // Adjectives (only a few useful ones)
+  spicy: "Spicy", healthy: "Healthy", creamy: "Creamy",
+};
+
+const COURSE_KEYS = ["breakfast", "brunch", "lunch", "dinner", "dessert", "soup", "salad", "side", "appetizer", "starter", "snack"];
+const PROTEIN_KEYS = ["chicken", "beef", "pork", "lamb", "turkey", "duck", "fish", "seafood", "salmon", "tuna", "shrimp", "prawn", "prawns", "tofu", "tempeh", "egg"];
+const DIET_KEYS = ["vegan", "vegetarian", "gluten free", "gluten-free", "dairy free", "dairy-free", "keto", "paleo", "low carb", "low-carb"];
+const METHOD_KEYS = ["easy", "quick", "weeknight", "one pot", "one-pot", "one pan", "sheet pan", "sheet-pan", "slow cooker", "instant pot", "air fryer", "grill", "bbq", "baked", "roasted", "stir fry", "stir-fry"];
+const CUISINE_KEYS = ["italian", "mexican", "indian", "chinese", "thai", "japanese", "korean", "greek", "french", "spanish", "lebanese", "middle eastern", "vietnamese"];
+const ADJECTIVE_KEYS = ["spicy", "healthy", "creamy"];
+
