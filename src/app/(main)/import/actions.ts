@@ -62,7 +62,6 @@ export async function importRecipe(formData: FormData) {
     throw new Error("You must be signed in to import recipes.");
   }
   const userId = session.user.id;
-  console.log('userid', userId)
 
   // Parse inputs
   const payload = {
