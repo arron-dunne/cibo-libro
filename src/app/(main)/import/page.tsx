@@ -5,6 +5,7 @@ import { importRecipe } from "./actions"; // we'll implement next
 export const dynamic = "force-dynamic";
 
 export default function ImportPage() {
+    console.log('db_url', process.env.DATABASE_URL)
   return (
     <div className="relative">
       {/* White floating panel */}
@@ -22,7 +23,7 @@ export default function ImportPage() {
         </header>
 
         {/* Form */}
-        <form action={importRecipe} method="post" className="space-y-4">
+        <form action={importRecipe} className="space-y-4">
           {/* Honeypot (simple bot trap) */}
           <div aria-hidden="true" className="hidden">
             <label>
