@@ -42,6 +42,13 @@ export default async function ViewRecipePage({
   const cook = Number(recipe.cookMins ?? 0);
   const total = prep + cook;
 
+  // pretty domain for the badge
+  const domain =
+    recipe.sourceUrl
+      ? new URL(recipe.sourceUrl).hostname.replace(/^www\./, "")
+      : null;
+
+
   return (
     <div className="space-y-6">
       {/* HERO CARD */}
@@ -105,28 +112,44 @@ export default async function ViewRecipePage({
 
             {/* View original (only if we have a sourceUrl) */}
             {recipe.sourceUrl && (
-              <a
-                href={recipe.sourceUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-1.5 rounded-full border border-zinc-300 bg-white/80 px-3 py-1.5 text-sm font-semibold text-zinc-800 shadow-sm transition hover:bg-white hover:shadow"
-              >
-                View original
-                <svg
-                  className="h-4 w-4"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  aria-hidden="true"
+              <div className="mt-5 self-end">
+                <a
+                  href={recipe.sourceUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label={`View original on ${domain ?? "source site"}`}
+                  className="
+        inline-flex items-center gap-2 rounded-full
+        border border-orange-200 bg-orange-50/80
+        px-3 py-1.5 text-sm font-semibold text-orange-800
+        shadow-sm ring-1 ring-black/5
+      "
                 >
-                  <path d="M18 13v6a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
-                  <path d="M15 3h6v6" />
-                  <path d="M10 14 21 3" />
-                </svg>
-              </a>
-            )}
+                  {/* icon */}
+                  <svg
+                    className="h-4 w-4 text-orange-600"
+                    viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true"
+                  >
+                    <path d="M15 3h6v6" />
+                    <path d="M10 14 21 3" />
+                    <path d="M18 13v6a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
+                  </svg>
 
+                  <span className="tracking-tight">View original</span>
+
+                  {domain && (
+                    <span
+                      className="
+            ml-1 rounded-full border border-orange-200
+            bg-white/80 px-2 py-0.5 text-xs font-medium text-orange-700
+          "
+                    >
+                      {domain}
+                    </span>
+                  )}
+                </a>
+              </div>
+            )}
           </div>
         </div>
       </section>
