@@ -1,11 +1,12 @@
 // app/(main)/import/page.tsx
 import Link from "next/link";
-import { importRecipe } from "./actions"; // we'll implement next
+import { importRecipe } from "./actions";
+import { SubmitButton } from "./SubmitButton";
 
 export const dynamic = "force-dynamic";
 
 export default function ImportPage() {
-    console.log('db_url', process.env.DATABASE_URL)
+  console.log('db_url', process.env.DATABASE_URL)
   return (
     <div className="relative">
       {/* White floating panel */}
@@ -53,12 +54,7 @@ export default function ImportPage() {
           </div>
 
           <div className="flex items-center gap-3 pt-2">
-            <button
-              type="submit"
-              className="inline-flex items-center justify-center rounded-xl bg-orange-600 px-4 py-2 text-sm font-semibold text-white shadow-[0_8px_18px_rgba(234,88,12,0.35)] transition hover:-translate-y-0.5 hover:bg-orange-700"
-            >
-              Import
-            </button>
+            <SubmitButton />
             <Link
               href="/recipes"
               className="text-sm font-medium text-orange-800 underline-offset-4 hover:underline"
