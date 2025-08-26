@@ -24,7 +24,8 @@ export default async function ViewRecipePage({
       ingredients: true,
       steps: true,
       imageKey: true,
-      imageExternalUrl: true
+      imageExternalUrl: true,
+      sourceUrl: true
     },
   });
 
@@ -101,6 +102,31 @@ export default async function ViewRecipePage({
               <StatChip label="Total" value={`${total}m`} />
               <StatChip label="Serves" value={String(recipe.servings ?? 1)} />
             </div>
+
+            {/* View original (only if we have a sourceUrl) */}
+            {recipe.sourceUrl && (
+              <a
+                href={recipe.sourceUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-1.5 rounded-full border border-zinc-300 bg-white/80 px-3 py-1.5 text-sm font-semibold text-zinc-800 shadow-sm transition hover:bg-white hover:shadow"
+              >
+                View original
+                <svg
+                  className="h-4 w-4"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  aria-hidden="true"
+                >
+                  <path d="M18 13v6a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
+                  <path d="M15 3h6v6" />
+                  <path d="M10 14 21 3" />
+                </svg>
+              </a>
+            )}
+
           </div>
         </div>
       </section>
