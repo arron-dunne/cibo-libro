@@ -15,7 +15,7 @@ export default function Page() {
       {/* Logo above panel */}
       <div className="absolute top-10 left-0 right-0 z-10 flex justify-center">
         <Image
-          src="/images/logo.png"
+          src="/logo.png"
           alt="Cibo Libro"
           width={280}  // bigger than before
           height={70}

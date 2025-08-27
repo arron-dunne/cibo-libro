@@ -42,3 +42,11 @@ next-env.d.ts
 
 .idea/
 .vscode/
+
+prompt.md
+
+test/e2e/.auth/*
+
+test-results/
+playwright-report/
+.auth/

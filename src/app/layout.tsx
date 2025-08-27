@@ -6,6 +6,9 @@ export const metadata: Metadata = {
   title: "Cibo Libro",
   description: "We’re cooking something tasty. Back soon!",
   robots: { index: true, follow: true },
+  icons: {
+    icon: "/icon.png",
+  },
 };
 
 export default function ComingSoonLayout({ children }: { children: React.ReactNode }) {
