@@ -48,7 +48,7 @@ export default async function Layout({ children }: { children: React.ReactNode }
             {/* Main shortcuts */}
             <div className="mx-auto hidden gap-1 sm:flex">
               <NavLink href="/" label="Home" icon="M3.75 12h16.5M4.5 12l7.5-7.5L19.5 12" />
-              <NavLink href="/al" label="All recipes" icon="M4 6h16M4 12h16M4 18h16" />
+              <NavLink href="/all" label="All recipes" icon="M4 6h16M4 12h16M4 18h16" />
               <NavLink href="/new" label="Add" icon="M12 4v16M4 12h16" />
               <NavLink href="/import" label="Import" icon="M12 4v16M4 12h16" />
               <NavLink href="/settings" label="Settings" icon="M10.325 4.317L9.257 6.5M19 12a7 7 0 11-14 0 7 7 0 0114 0z" />
