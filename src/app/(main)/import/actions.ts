@@ -9,6 +9,7 @@ import { prisma } from "@/lib/prisma";
 import { Prisma } from "@prisma/client"
 import { uniqueRecipeSlug } from "@/lib/uniqueSlug";
 import he from "he";
+import { isDenylisted } from "@/lib/denylist";
 
 // -----------------------------
 // Config (ENV + sensible defaults)
@@ -18,12 +19,6 @@ const IMPORTER_USER_AGENT =
   "CiboLibroBot/0.1 (+https://cibolibro.com; contact support@cibolibro.com)";
 
 const IMPORTER_TIMEOUT_MS = Number(process.env.IMPORTER_TIMEOUT_MS ?? 7000);
-
-// CSV list like: "example.com,recipetineats.com,someblog.net"
-const DENYLIST = (process.env.IMPORTER_DENYLIST ?? "")
-  .split(",")
-  .map((s) => s.trim().toLowerCase())
-  .filter(Boolean);
 
 // Keep at most 200KB of raw HTML for debug, purge later via cron
 const RAW_HTML_MAX = 200_000;
@@ -95,10 +90,7 @@ export async function importRecipe(formData: FormData) {
     select: { id: true },
   });
 
-  // Compliance: denylist short-circuit
-  const isDenylisted = DENYLIST.includes(hostname);
-
-  if (isDenylisted) {
+  if (isDenylisted(hostname)) {
     return redirect(buildPromptUrl(url, undefined, "DENYLISTED"));
   }
 
