@@ -40,6 +40,13 @@ const ImportSchema = z.object({
   website: z.string().optional().refine((v) => !v, "Bot detected"),
 });
 
+const SaveLinkSchema = z.object({
+  url: z.url().max(2000),
+  title: z.string().min(2).max(120),
+  image: z.url().max(2000).optional().or(z.literal("")).transform(v => v || undefined),
+  tags: z.string().max(200).optional(), // comma list, optional
+});
+
 type StructuredRecipe = {
   title: string;
   description?: string;
@@ -90,53 +97,23 @@ export async function importRecipe(formData: FormData) {
 
   // Compliance: denylist short-circuit
   const isDenylisted = DENYLIST.includes(hostname);
+
   if (isDenylisted) {
-    const recipe = await createLinkOnlyRecipe({
-      userId,
-      sourceUrl: url.toString(),
-      // We will NOT fetch HTML on denylist; we’ll synthesize a decent title from URL.
-      og: undefined,
-      robotsBlocked: false,
-    });
-    await prisma.importJob.update({
-      where: { id: job.id },
-      data: {
-        status: "SUCCESS",
-        parsedJson: Prisma.DbNull,
-        rawHtml: null,
-        errorMsg: null,
-      },
-    });
-    return redirect(`/view/${recipe.slug ?? recipe.id}`);
+    return redirect(buildPromptUrl(url, undefined, "DENYLISTED"));
   }
 
   // Compliance: respect robots.txt (conservative)
   const robots = await checkRobotsAllowed(url, IMPORTER_TIMEOUT_MS);
+
   if (!robots.allowed) {
-    // No fetch of HTML; create link-only card with minimal info
-    const recipe = await createLinkOnlyRecipe({
-      userId,
-      sourceUrl: url.toString(),
-      og: undefined,
-      robotsBlocked: true,
-    });
-    await prisma.importJob.update({
-      where: { id: job.id },
-      data: { status: "SUCCESS", parsedJson: Prisma.DbNull, rawHtml: null, errorMsg: "ROBOTS_BLOCKED" },
-    });
-    return redirect(`/view/${recipe.slug ?? recipe.id}`);
+    return redirect(buildPromptUrl(url, undefined, "ROBOTS_BLOCKED"));
   }
 
   // Try fetching the page (polite UA, timeout)
   const { ok, status, html, og } = await fetchHtmlWithMeta(url.toString(), IMPORTER_TIMEOUT_MS);
   if (!ok || !html) {
-    // On network error/timeouts, still save a link card with OG if we have it
-    const recipe = await createLinkOnlyRecipe({
-      userId,
-      sourceUrl: url.toString(),
-      og,
-      robotsBlocked: false,
-    });
+    // No HTML available (network error / timeout / blocked mid-fetch).
+    // Do NOT auto-create a link card — send the user to the prompt with context.
     await prisma.importJob.update({
       where: { id: job.id },
       data: {
@@ -145,14 +122,18 @@ export async function importRecipe(formData: FormData) {
         errorMsg: `FETCH_FAILED_${status ?? "0"}`,
       },
     });
-    return redirect(`/view/${recipe.slug ?? recipe.id}`);
+
+    // Build a prompt URL that pre-fills a humanized title and includes any OG we managed to see
+    return redirect(buildPromptUrl(url, og, "FETCH_FAILED"));
   }
 
   // Attempt structured parse (JSON-LD → Microdata)
   const structured = tryParseStructured(html, url.toString());
+  console.log('structured')
+  console.log(structured)
 
   if (structured) {
-    // NEW: back-fill missing image from Open Graph/Twitter
+    // back-fill missing image from Open Graph/Twitter
     const structuredEnriched: StructuredRecipe = {
       ...structured,
       image: structured.image ?? og?.image ?? undefined,
@@ -173,30 +154,57 @@ export async function importRecipe(formData: FormData) {
         errorMsg: null,
       },
     });
-
+    
     return redirect(`/view/${recipe.slug ?? recipe.id}`);
   }
+  // No structured data → show prompt
+  return redirect(buildPromptUrl(url, og, "NO_SCHEMA"));
+}
 
 
-  // Fallback: link-only card using OG tags if available
-  const recipe = await createLinkOnlyRecipe({
-    userId,
-    sourceUrl: url.toString(),
-    og,
-    robotsBlocked: false,
-  });
+export async function saveLinkOnly(formData: FormData) {
+  const session = await auth();
+  if (!session?.user?.id) throw new Error("You must be signed in.");
 
-  await prisma.importJob.update({
-    where: { id: job.id },
+  const payload = {
+    url: (formData.get("url") || "").toString(),
+    title: (formData.get("title") || "").toString(),
+    image: (formData.get("image") || "").toString(),
+    tags: (formData.get("tags") || "").toString(),
+  };
+  const parsed = SaveLinkSchema.safeParse(payload);
+  if (!parsed.success) throw new Error(parsed.error.issues[0]?.message ?? "Invalid input.");
+
+  const url = new URL(parsed.data.url);
+  const title = parsed.data.title.trim() || synthesizeTitleFromUrl(url);
+  const imageExternalUrl = safeExternalImage(parsed.data.image);
+
+  // simple tags parsing
+  const tags = parsed.data.tags
+    ? parsed.data.tags.split(",").map(s => s.trim()).filter(Boolean).slice(0, 6)
+    : [];
+
+  const slug = await uniqueRecipeSlug(title);
+
+  const created = await prisma.recipe.create({
     data: {
-      status: "SUCCESS",
-      rawHtml: html.slice(0, RAW_HTML_MAX),
-      parsedJson: Prisma.DbNull,
-      errorMsg: "NO_STRUCTURED_DATA",
+      ownerId: session.user.id,
+      type: "EXTERNAL",
+      title,
+      description: "",
+      imageExternalUrl,
+      ingredients: [],
+      steps: [],
+      tags,
+      sourceUrl: url.toString(),
+      isPublic: false,
+      slug,
+      status: "PUBLISHED",
     },
+    select: { slug: true, id: true },
   });
 
-  return redirect(`/view/${recipe.slug ?? recipe.id}`);
+  return redirect(`/view/${created.slug ?? created.id}`);
 }
 
 // -----------------------------
@@ -280,6 +288,25 @@ async function createLinkOnlyRecipe({
   });
   // Analytics hook could go here: RecipeImported (link)
   return created;
+}
+
+function buildPromptUrl(u: URL, og?: OpenGraphMeta, reason?: string) {
+  const t = (og?.title?.trim() || synthesizeTitleFromUrl(u)).slice(0, 120);
+  const params = new URLSearchParams({
+    prompt: "1",
+    u: u.toString(),
+    t,
+    d: u.hostname.replace(/^www\./, ""),
+  });
+  if (og?.image) params.set("i", og.image);
+  if (reason) params.set("reason", reason);
+  return `/import?${params.toString()}`;
+}
+
+function synthesizeTitleFromUrl(u: URL): string {
+  const last = decodeURIComponent(u.pathname.split("/").filter(Boolean).pop() || u.hostname);
+  const s = last.replace(/\.(html?|php|aspx?)$/i, "").replace(/[-_]+/g, " ").replace(/\s+/g, " ").trim();
+  return s ? s.replace(/\b\w/g, c => c.toUpperCase()) : u.hostname.replace(/^www\./, "");
 }
 
 // -----------------------------
