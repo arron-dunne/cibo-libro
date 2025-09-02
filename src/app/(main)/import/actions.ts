@@ -6,7 +6,6 @@ import { z } from "zod";
 import { load as loadHtml } from "cheerio";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
-import { Prisma } from "@prisma/client"
 import { uniqueRecipeSlug } from "@/lib/uniqueSlug";
 import he from "he";
 import { isDenylisted } from "@/lib/denylist";
@@ -35,7 +34,7 @@ const ImportSchema = z.object({
   website: z.string().optional().refine((v) => !v, "Bot detected"),
 });
 
-const SaveLinkSchema = z.object({
+const LinkRecipeSchema = z.object({
   url: z.url().max(2000),
   title: z.string().min(2).max(120),
   image: z.url().max(2000).optional().or(z.literal("")).transform(v => v || undefined),
@@ -91,6 +90,10 @@ export async function importRecipe(formData: FormData) {
   });
 
   if (isDenylisted(hostname)) {
+    await prisma.importJob.update({
+      where: { id: job.id },
+      data: { status: 'FAILED', errorMsg: 'DENYLISTED' },
+    });
     return redirect(buildPromptUrl(url, undefined, "DENYLISTED"));
   }
 
@@ -98,6 +101,10 @@ export async function importRecipe(formData: FormData) {
   const robots = await checkRobotsAllowed(url, IMPORTER_TIMEOUT_MS);
 
   if (!robots.allowed) {
+    await prisma.importJob.update({
+      where: { id: job.id },
+      data: { status: 'FAILED', errorMsg: 'ROBOTS_BLOCKED' },
+    });
     return redirect(buildPromptUrl(url, undefined, "ROBOTS_BLOCKED"));
   }
 
@@ -105,7 +112,6 @@ export async function importRecipe(formData: FormData) {
   const { ok, status, html, og } = await fetchHtmlWithMeta(url.toString(), IMPORTER_TIMEOUT_MS);
   if (!ok || !html) {
     // No HTML available (network error / timeout / blocked mid-fetch).
-    // Do NOT auto-create a link card — send the user to the prompt with context.
     await prisma.importJob.update({
       where: { id: job.id },
       data: {
@@ -119,10 +125,17 @@ export async function importRecipe(formData: FormData) {
     return redirect(buildPromptUrl(url, og, "FETCH_FAILED"));
   }
 
+  // Paywall/access guard from JSON-LD
+  if (detectPaywalledFromJsonLd(html)) {
+    await prisma.importJob.update({
+      where: { id: job.id },
+      data: { status: "FAILED", errorMsg: "PAYWALLED" },
+    });
+    return redirect(buildPromptUrl(url, og, "PAYWALLED"));
+  }
+
   // Attempt structured parse (JSON-LD → Microdata)
   const structured = tryParseStructured(html, url.toString());
-  console.log('structured')
-  console.log(structured)
 
   if (structured) {
     // back-fill missing image from Open Graph/Twitter
@@ -141,12 +154,11 @@ export async function importRecipe(formData: FormData) {
       where: { id: job.id },
       data: {
         status: "SUCCESS",
-        rawHtml: html.slice(0, RAW_HTML_MAX),
         parsedJson: structuredEnriched,
         errorMsg: null,
       },
     });
-    
+
     return redirect(`/view/${recipe.slug ?? recipe.id}`);
   }
   // No structured data → show prompt
@@ -154,7 +166,7 @@ export async function importRecipe(formData: FormData) {
 }
 
 
-export async function saveLinkOnly(formData: FormData) {
+export async function createLinkOnlyRecipe(formData: FormData) {
   const session = await auth();
   if (!session?.user?.id) throw new Error("You must be signed in.");
 
@@ -164,7 +176,7 @@ export async function saveLinkOnly(formData: FormData) {
     image: (formData.get("image") || "").toString(),
     tags: (formData.get("tags") || "").toString(),
   };
-  const parsed = SaveLinkSchema.safeParse(payload);
+  const parsed = LinkRecipeSchema.safeParse(payload);
   if (!parsed.success) throw new Error(parsed.error.issues[0]?.message ?? "Invalid input.");
 
   const url = new URL(parsed.data.url);
@@ -238,47 +250,6 @@ async function createStructuredRecipe({
     select: { id: true, slug: true },
   });
   // Analytics hook could go here: RecipeImported (structured)
-  return created;
-}
-
-async function createLinkOnlyRecipe({
-  userId,
-  sourceUrl,
-  og,
-  robotsBlocked,
-}: {
-  userId: string;
-  sourceUrl: string;
-  og?: Partial<OpenGraphMeta>;
-  robotsBlocked: boolean;
-}) {
-  const title =
-    (og?.title && og.title.trim()) ||
-    humanizeUrl(sourceUrl) +
-    (robotsBlocked ? " (link only — site blocked importing)" : "");
-  const slug = await uniqueRecipeSlug(title);
-
-  const created = await prisma.recipe.create({
-    data: {
-      ownerId: userId,
-      type: "EXTERNAL",
-      title,
-      description: "",
-      prepMins: null,
-      cookMins: null,
-      servings: null,
-      imageExternalUrl: safeExternalImage(og?.image),
-      ingredients: [],
-      steps: [],
-      tags: [],
-      sourceUrl,
-      isPublic: false,
-      slug,
-      status: "PUBLISHED",
-    },
-    select: { id: true, slug: true },
-  });
-  // Analytics hook could go here: RecipeImported (link)
   return created;
 }
 
@@ -415,6 +386,51 @@ function tryParseStructured(html: string, pageUrl: string): StructuredRecipe | n
 // -----------------------------
 // JSON-LD parsing
 // -----------------------------
+function falseyFlag(v: any): boolean {
+  if (v === false) return true;
+  if (typeof v === "string") return /^(false|no|0)$/i.test(v.trim());
+  return false;
+}
+
+/**
+ * Looks for schema.org's isAccessibleForFree=false flag in any JSON-LD block.
+ * Many publishers put it on WebPage/CreativeWork or in isPartOf; we consider any false → paywalled.
+ */
+function detectPaywalledFromJsonLd(html: string): boolean {
+  const $ = loadHtml(html);
+  const scripts = $('script[type="application/ld+json"]');
+  if (!scripts.length) return false;
+
+  const tryObjects: any[] = [];
+  scripts.each((_, el) => {
+    const raw = $(el).contents().text().trim();
+    if (!raw) return;
+    try {
+      const obj = JSON.parse(raw);
+      tryObjects.push(obj);
+    } catch { /* ignore malformed JSON-LD blocks */ }
+  });
+
+  for (const payload of tryObjects) {
+    const nodes = flattenJsonLd(payload);
+
+    for (const n of nodes) {
+      // Direct flag on any node
+      if (falseyFlag(n?.isAccessibleForFree)) return true;
+
+      // Nested under isPartOf (common)
+      if (falseyFlag(n?.isPartOf?.isAccessibleForFree)) return true;
+
+      // (Optional) If you want to be stricter only for Recipe/WebPage/Article types, uncomment:
+      if ((hasType(n, "Recipe") || hasType(n, "WebPage") || hasType(n, "Article")) &&
+          (falseyFlag(n?.isAccessibleForFree) || falseyFlag(n?.isPartOf?.isAccessibleForFree))) {
+        return true;
+      }
+    }
+  }
+  return false;
+}
+
 // --- JSON-LD parsing (replace parseJsonLd + mapJsonLdRecipe and add helpers) ---
 function parseJsonLd(html: string): StructuredRecipe | null {
   const $ = loadHtml(html);

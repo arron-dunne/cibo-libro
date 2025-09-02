@@ -1,6 +1,6 @@
 // app/(main)/import/page.tsx
 import Link from "next/link";
-import { importRecipe, saveLinkOnly } from "./actions";
+import { importRecipe, createLinkOnlyRecipe } from "./actions";
 import { SubmitButton } from "./SubmitButton";
 
 export const dynamic = "force-dynamic";
@@ -122,6 +122,7 @@ function PromptPanel({
   const message = {
     ROBOTS_BLOCKED: "This site doesn’t allow importing. You can still save the link or add it manually.",
     DENYLISTED: "We don’t copy from this site, but you can save a link card or add a manual recipe.",
+    PAYWALLED: "We don’t copy from this site, but you can save a link card or add a manual recipe.",
     NO_SCHEMA: "We couldn’t find recipe details to import. You can still save a link or add it manually.",
     NOT_RECIPE: "That doesn’t look like a recipe page. You can save it as a link or discard.",
   }[reason ?? "NO_SCHEMA"];
@@ -146,7 +147,6 @@ function PromptPanel({
                   alt={preTitle || "Link cover"}
                   className="absolute inset-0 h-full w-full object-cover"
                   referrerPolicy="no-referrer"
-                  onError={(e) => ((e.currentTarget as HTMLImageElement).src = PLACEHOLDER)}
                 />
               ) : (
                 <img src={PLACEHOLDER} alt="" className="absolute inset-0 h-full w-full object-cover" />
@@ -178,7 +178,7 @@ function PromptPanel({
 
           {/* Actions form */}
           <div className="flex flex-col">
-            <form action={saveLinkOnly} className="rounded-2xl border border-zinc-200 bg-white p-4 shadow-sm">
+            <form action={createLinkOnlyRecipe} className="rounded-2xl border border-zinc-200 bg-white p-4 shadow-sm">
               <input type="hidden" name="url" value={url} />
               <input type="hidden" name="image" value={image ?? ""} />
 
