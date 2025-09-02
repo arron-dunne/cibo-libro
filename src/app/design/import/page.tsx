@@ -125,7 +125,7 @@ export default function Page() {
                     <div className="pointer-events-none absolute right-0 top-0 h-full w-10 bg-gradient-to-l from-orange-50 to-transparent" />
 
                     <div
-                        className="no-scrollbar flex snap-x snap-mandatory gap-3 overflow-x-auto rounded-2xl border border-stone-200 bg-white p-3 shadow-sm"
+                        className="no-scrollbar flex snap-x snap-mandatory gap-4 overflow-x-auto rounded-2xl border border-stone-200 bg-white p-3 shadow-sm"
                         aria-label="Recipe sites carousel"
                     >
                         {SITES.map((site) => (
@@ -134,27 +134,22 @@ export default function Page() {
                                 href={site.href}
                                 target="_blank"
                                 rel="noreferrer"
-                                className="group inline-flex snap-start items-center gap-3 rounded-2xl border border-stone-200 bg-white px-3 py-2 shadow-sm transition hover:border-orange-300 hover:shadow-md"
+                                className="group inline-flex snap-start items-center justify-center rounded-xl border border-stone-200 bg-white p-2 shadow-sm transition hover:border-orange-300 hover:shadow-md"
                                 aria-label={`Open ${site.name} in a new tab`}
                             >
-                                <div className="grid h-10 w-10 place-items-center overflow-hidden rounded-xl bg-orange-50 ring-1 ring-orange-100">
-                                    {site.logoSrc ? (
-                                        <img
-                                            src={site.logoSrc}
-                                            alt={`${site.name} logo`}
-                                            width={40}
-                                            height={40}
-                                            className="object-contain"
-                                        />
-                                    ) : (
-                                        <span className="text-xs font-extrabold text-orange-700">
-                                            {monogram(site.name)}
-                                        </span>
-                                    )}
-                                </div>
-                                <span className="text-sm font-medium text-stone-800">
-                                    {site.name}
-                                </span>
+                                {site.logoSrc ? (
+                                    <img
+                                        src={site.logoSrc}
+                                        alt={`${site.name} logo`}
+                                        width={200}
+                                        height={60}
+                                        className="object-contain max-h-12 max-w-[160px]"
+                                    />
+                                ) : (
+                                    <span className="px-4 py-2 text-sm font-semibold text-orange-700">
+                                        {site.name}
+                                    </span>
+                                )}
                             </a>
                         ))}
                     </div>
@@ -165,6 +160,7 @@ export default function Page() {
                     </p>
                 </div>
             </section>
+
 
             {/* Footer microcopy */}
             <section className="mx-auto max-w-4xl px-4 pb-16">
