@@ -1,174 +1,145 @@
 // app/(main)/import/page.tsx
 /* 
-  Cibo Libro — Importer Page (Design-only)
-  - Purely presentational: no handlers, no backend calls
-  - TailwindCSS for styling; lucide-react for icons (optional)
-  - Friendly copy, subtle animations, and accessible markup
-  - Drop this file into your route and adjust paths if needed
+  Cibo Libro — Importer Page (Design-only, Draft 2)
+  - Focus: the URL input as the hero element
+  - Clear, friendly copy; playful brand accents
+  - "How it works" cards simplified & tightened
+  - Bottom "Discover sites" horizontal logo carousel (links only; static)
+  - No functionality wired up — purely presentational
 */
-
-import { ArrowRight, Link2, ShieldAlert, Cookie, Sparkles, CheckCircle2, BookOpenText } from "lucide-react";
 
 export default function Page() {
   return (
     <main className="min-h-[100svh] bg-gradient-to-br from-orange-50 via-white to-amber-50">
-      {/* Top banner */}
-      <section className="mx-auto max-w-4xl px-4 pt-10 pb-6">
+      {/* Hero */}
+      <section className="mx-auto max-w-4xl px-4 pt-12 pb-6">
         <div className="flex items-center gap-3">
-          <div className="h-10 w-10 rounded-2xl bg-orange-500/90 text-white grid place-items-center shadow-lg shadow-orange-500/20">
+          <div className="h-11 w-11 rounded-2xl bg-orange-500 text-white grid place-items-center shadow-lg shadow-orange-500/25">
             <ChefHatIcon className="h-6 w-6" />
           </div>
           <div>
-            <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-stone-900">
+            <h1 className="text-3xl font-extrabold tracking-tight text-stone-900">
               Import a Recipe
             </h1>
             <p className="text-stone-600">
-              Paste a link. We’ll do the heavy lifting. ✨
+              Paste a link. We’ll sort the rest — the friendly way.
             </p>
           </div>
         </div>
       </section>
 
-      {/* Import card */}
+      {/* Import Card */}
       <section className="mx-auto max-w-4xl px-4">
         <div className="relative overflow-hidden rounded-3xl border border-orange-200/60 bg-white shadow-xl shadow-orange-200/30">
-          {/* Decorative corner */}
-          <div className="pointer-events-none absolute -right-10 -top-10 h-40 w-40 rounded-full bg-gradient-to-br from-orange-100 to-transparent blur-2xl" />
-          <div className="pointer-events-none absolute -left-10 -bottom-10 h-40 w-40 rounded-full bg-gradient-to-tr from-amber-100 to-transparent blur-2xl" />
+          {/* soft glows */}
+          <div className="pointer-events-none absolute -right-12 -top-12 h-48 w-48 rounded-full bg-gradient-to-br from-orange-100 to-transparent blur-3xl" />
+          <div className="pointer-events-none absolute -left-12 -bottom-12 h-48 w-48 rounded-full bg-gradient-to-tr from-amber-100 to-transparent blur-3xl" />
 
-          <div className="grid gap-8 p-6 sm:p-8 lg:grid-cols-[1.2fr_1fr]">
-            {/* Left: Form */}
-            <div>
-              <div className="mb-6 space-y-2">
-                <label htmlFor="importUrl" className="block text-sm font-medium text-stone-700">
-                  Recipe URL
-                </label>
-                <div className="flex items-center gap-3 rounded-2xl border border-stone-200 bg-white/70 p-2 pr-2 shadow-inner focus-within:ring-2 focus-within:ring-orange-300">
-                  <div className="grid h-10 w-10 place-items-center rounded-xl bg-stone-50 text-stone-500">
-                    <Link2 className="h-5 w-5" />
+          <div className="p-6 sm:p-8">
+            {/* Primary input zone */}
+            <div className="mb-6 space-y-2">
+              <label htmlFor="importUrl" className="block text-sm font-medium text-stone-700">
+                Recipe URL
+              </label>
+
+              <div className="rounded-2xl border border-stone-200 bg-white/80 p-2 shadow-inner focus-within:ring-2 focus-within:ring-orange-300">
+                <div className="flex flex-col gap-2 sm:flex-row sm:gap-3">
+                  <div className="flex items-center gap-3 rounded-xl bg-stone-50 px-3 py-2 text-stone-500 sm:w-44 sm:shrink-0">
+                    <LinkIcon className="h-5 w-5" />
+                    <span className="text-sm font-medium">Paste link</span>
                   </div>
+
                   <input
                     id="importUrl"
                     name="importUrl"
                     type="url"
-                    placeholder="e.g. https://example.com/your-favourite-lasagne"
-                    className="w-full appearance-none rounded-xl border-0 bg-transparent px-1 py-3 text-stone-900 placeholder:text-stone-400 focus:outline-none"
+                    placeholder="https://example.com/best-lasagne-ever"
+                    className="w-full appearance-none rounded-xl border-0 bg-transparent px-3 py-3 text-stone-900 placeholder:text-stone-400 focus:outline-none"
                     aria-describedby="import-helptext"
                   />
+
                   <button
                     type="button"
-                    className="group inline-flex items-center gap-2 rounded-xl bg-orange-500 px-4 py-2.5 text-white font-semibold shadow-sm shadow-orange-500/30 transition hover:bg-orange-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-orange-400"
+                    className="inline-flex items-center justify-center gap-2 rounded-xl bg-orange-500 px-5 py-3 text-white font-semibold shadow-sm shadow-orange-500/30 transition hover:bg-orange-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-orange-400 sm:w-auto"
                     aria-label="Start import"
                   >
                     Import
-                    <ArrowRight className="h-4 w-4 transition group-hover:translate-x-0.5" />
+                    <ArrowRightIcon className="h-4 w-4" />
                   </button>
                 </div>
-                <p id="import-helptext" className="text-sm text-stone-500">
-                  We’ll try to import the full recipe automatically. If we can’t, you’ll get friendly options.
-                </p>
               </div>
 
-              {/* How it works */}
-              <ol className="mt-6 grid gap-4 sm:grid-cols-3">
-                <Step
-                  icon={<Sparkles className="h-5 w-5" />}
-                  title="Auto-import"
-                  desc="If the page has recipe schema, we’ll create it in a snap."
-                />
-                <Step
-                  icon={<ShieldAlert className="h-5 w-5" />}
-                  title="If blocked"
-                  desc="Paywalls or robots? No stress — we’ll show a preview."
-                />
-                <Step
-                  icon={<CheckCircle2 className="h-5 w-5" />}
-                  title="You choose"
-                  desc="Import a link, add manually, or discard. Your call."
-                />
-              </ol>
-
-              {/* Micro trust row */}
-              <div className="mt-6 flex flex-wrap items-center gap-3 text-xs text-stone-500">
-                <span className="inline-flex items-center gap-1 rounded-full bg-stone-100 px-3 py-1">
-                  <Cookie className="h-3.5 w-3.5" />
-                  No tracking on imported content
-                </span>
-                <span className="inline-flex items-center gap-1 rounded-full bg-stone-100 px-3 py-1">
-                  <BookOpenText className="h-3.5 w-3.5" />
-                  Keep your recipes, your way
-                </span>
-              </div>
+              <p id="import-helptext" className="text-sm text-stone-500">
+                If we can import it fully, you’ll get a new recipe instantly. If not, we’ll offer friendly options.
+              </p>
             </div>
 
-            {/* Right: Illustration / Support panel */}
-            <aside className="relative">
-              <div className="rounded-2xl border border-stone-200/80 bg-gradient-to-b from-white to-stone-50 p-5 shadow-sm">
-                <div className="mb-4 flex items-center gap-2">
-                  <div className="grid h-9 w-9 place-items-center rounded-xl bg-orange-100 text-orange-700">
-                    <Sparkles className="h-5 w-5" />
-                  </div>
-                  <h3 className="text-sm font-semibold text-stone-800">Tips for best results</h3>
-                </div>
-                <ul className="space-y-3 text-sm text-stone-600">
-                  <li>Use the original recipe page, not a social media link.</li>
-                  <li>Clean URLs work best (avoid “print” views or AMP versions).</li>
-                  <li>If import is blocked, you’ll still get a quick preview screen.</li>
-                </ul>
-
-                {/* Supported sites badges (visual only) */}
-                <div className="mt-5">
-                  <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-stone-500">
-                    Often works great with:
-                  </p>
-                  <div className="flex flex-wrap gap-2">
-                    {["Allrecipes", "BBC Good Food", "Bon Appétit", "Epicurious", "Serious Eats", "Sally’s Baking", "Feasting At Home"].map(
-                      (name) => (
-                        <span
-                          key={name}
-                          className="inline-flex items-center rounded-full border border-stone-200 bg-white px-3 py-1 text-xs text-stone-700 shadow-sm"
-                        >
-                          {name}
-                        </span>
-                      )
-                    )}
-                  </div>
-                </div>
-
-                {/* Mascot */}
-                <div className="mt-6">
-                  <div className="mx-auto aspect-[4/3] w-full max-w-xs rounded-2xl border border-orange-200 bg-orange-50/60 p-4 shadow-inner">
-                    <ChefMascot className="h-full w-full" />
-                  </div>
-                </div>
-              </div>
-
-              {/* Corner ribbon */}
-              <div className="pointer-events-none absolute -right-2 -top-2 rounded-full bg-gradient-to-br from-orange-400 to-amber-400 px-3 py-1 text-xs font-bold text-white shadow-md">
-                New ✨
-              </div>
-            </aside>
+            {/* How it Works */}
+            <div className="mt-8">
+              <h2 className="sr-only">How importing works</h2>
+              <ol className="grid gap-4 sm:grid-cols-3">
+                <Step
+                  badge="One-click import"
+                  icon={<SparkleIcon className="h-5 w-5" />}
+                  desc="When a page has recipe data, we pull title, ingredients, steps, time, and more in a snap."
+                />
+                <Step
+                  badge="Respectful & safe"
+                  icon={<ShieldIcon className="h-5 w-5" />}
+                  desc="If a site is paywalled or blocks bots, we won't copy content — but we won’t leave you stuck."
+                />
+                <Step
+                  badge="You’re in control"
+                  icon={<CheckIcon className="h-5 w-5" />}
+                  desc="Choose to save a link card, add manually, or discard. Simple, transparent, and quick."
+                />
+              </ol>
+            </div>
           </div>
         </div>
       </section>
 
-      {/* FAQ (native details/summary for no-JS accessibility) */}
-      <section className="mx-auto max-w-4xl px-4 py-10">
-        <h2 className="mb-4 text-lg font-bold text-stone-900">Common questions</h2>
-        <div className="divide-y divide-stone-200 rounded-2xl border border-stone-200 bg-white">
-          <FAQ
-            q="What happens if a site is paywalled or blocks importing?"
-            a="We’ll show you a friendly preview screen with simple choices: import a link card (so you can find it later), add the recipe manually, or discard it."
-          />
-          <FAQ
-            q="Will importing copy everything?"
-            a="When possible, we pull the key bits: title, ingredients, steps, timings, yields, and images. Some sites limit what we can access, so results may vary."
-          />
-          <FAQ
-            q="Can I edit the imported recipe?"
-            a="Absolutely. After import, it’s yours to tweak—add notes, adjust steps, swap images, and save to collections."
-          />
+      {/* Discover sites carousel */}
+      <section className="mx-auto max-w-5xl px-4 py-10">
+        <div className="mb-3 flex items-center justify-between">
+          <h3 className="text-base font-bold text-stone-900">Discover great recipe sites</h3>
+          <p className="text-xs text-stone-500">Tap a logo to explore</p>
         </div>
+
+        <div className="relative">
+          {/* gradient edges */}
+          <div className="pointer-events-none absolute left-0 top-0 h-full w-10 bg-gradient-to-r from-orange-50 to-transparent" />
+          <div className="pointer-events-none absolute right-0 top-0 h-full w-10 bg-gradient-to-l from-orange-50 to-transparent" />
+
+          <div
+            className="no-scrollbar flex snap-x snap-mandatory gap-3 overflow-x-auto rounded-2xl border border-stone-200 bg-white p-3 shadow-sm"
+            aria-label="Recipe sites carousel"
+          >
+            {SITES.map((site) => (
+              <a
+                key={site.name}
+                href={site.href}
+                target="_blank"
+                rel="noreferrer"
+                className="group inline-flex snap-start items-center gap-3 rounded-2xl border border-stone-200 bg-white px-3 py-2 shadow-sm hover:border-orange-300 hover:shadow-md"
+                aria-label={`Open ${site.name} in a new tab`}
+              >
+                <span className="grid h-10 w-10 place-items-center rounded-xl bg-orange-50 text-orange-700 ring-1 ring-orange-100">
+                  {/* Simple monogram “logo” — keeps file self-contained */}
+                  <span className="text-sm font-extrabold">{site.logo}</span>
+                </span>
+                <span className="text-sm font-medium text-stone-800">{site.name}</span>
+              </a>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Footer microcopy */}
+      <section className="mx-auto max-w-4xl px-4 pb-16">
+        <p className="text-center text-xs text-stone-500">
+          Built with care by Cibo Libro — your playful, privacy-friendly cookbook.
+        </p>
       </section>
     </main>
   );
@@ -177,19 +148,19 @@ export default function Page() {
 /* ---------- Small UI bits (presentational only) ---------- */
 
 function Step({
+  badge,
   icon,
-  title,
   desc,
 }: {
+  badge: string;
   icon: React.ReactNode;
-  title: string;
   desc: string;
 }) {
   return (
     <li className="group relative rounded-2xl border border-stone-200 bg-white p-4 shadow-sm transition hover:shadow-md">
-      <div className="mb-2 inline-flex items-center gap-2 rounded-xl bg-orange-50 px-2.5 py-1 text-xs font-semibold text-orange-700">
+      <div className="mb-2 inline-flex items-center gap-2 rounded-xl bg-orange-50 px-2.5 py-1 text-xs font-semibold text-orange-700 ring-1 ring-orange-100">
         <span className="grid h-5 w-5 place-items-center">{icon}</span>
-        {title}
+        {badge}
       </div>
       <p className="text-sm text-stone-600">{desc}</p>
       <div className="pointer-events-none absolute inset-x-0 -bottom-1 mx-4 h-px bg-gradient-to-r from-transparent via-orange-200 to-transparent opacity-0 transition group-hover:opacity-100" />
@@ -197,70 +168,72 @@ function Step({
   );
 }
 
-function FAQ({ q, a }: { q: string; a: string }) {
-  return (
-    <details className="group p-4">
-      <summary className="flex cursor-pointer list-none items-center justify-between gap-3">
-        <span className="text-sm font-medium text-stone-900">{q}</span>
-        <span className="shrink-0 rounded-full border border-stone-200 bg-stone-50 p-1 text-stone-500 transition group-open:rotate-45">
-          <PlusIcon className="h-4 w-4" />
-        </span>
-      </summary>
-      <p className="mt-3 text-sm text-stone-600">{a}</p>
-    </details>
-  );
-}
-
-/* ---------- Icons (inline SVG for portability) ---------- */
+/* ---------- Inline icons (portable) ---------- */
 
 function ChefHatIcon(props: React.SVGProps<SVGSVGElement>) {
   return (
     <svg viewBox="0 0 24 24" fill="none" {...props} aria-hidden="true">
-      <path
-        d="M8 10c-2.8 0-3.5-3.8-.9-4.9A4 4 0 0 1 15 5c2.6.8 2.3 5-1 5h-6Z"
-        stroke="currentColor"
-        strokeWidth="1.5"
-        strokeLinecap="round"
-      />
+      <path d="M8 10c-2.8 0-3.5-3.8-.9-4.9A4 4 0 0 1 15 5c2.6.8 2.3 5-1 5h-6Z" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
       <path d="M7 10v6a2 2 0 0 0 2 2h6" stroke="currentColor" strokeWidth="1.5" />
       <path d="M5 18h10a2 2 0 0 0 2-2v-6" stroke="currentColor" strokeWidth="1.5" />
     </svg>
   );
 }
-
-function PlusIcon(props: React.SVGProps<SVGSVGElement>) {
+function LinkIcon(props: React.SVGProps<SVGSVGElement>) {
   return (
     <svg viewBox="0 0 24 24" fill="none" {...props} aria-hidden="true">
-      <path d="M12 5v14M5 12h14" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+      <path d="M10 14a3 3 0 0 0 4 0l3-3a3 3 0 1 0-4-4l-.5.5" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
+      <path d="M14 10a3 3 0 0 0-4 0l-3 3a3 3 0 0 0 4 4l.5-.5" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
+    </svg>
+  );
+}
+function ArrowRightIcon(props: React.SVGProps<SVGSVGElement>) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" {...props} aria-hidden="true">
+      <path d="M5 12h14M13 6l6 6-6 6" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
+    </svg>
+  );
+}
+function SparkleIcon(props: React.SVGProps<SVGSVGElement>) {
+  return (
+    <svg viewBox="0 0 24 24" fill="currentColor" {...props} aria-hidden="true">
+      <path d="M12 3l1.6 3.8L17 8.4l-3.4 1.6L12 14l-1.6-4-3.4-1.6 3.4-1.6L12 3Z" />
+      <path d="M6 16l.8 1.8L8.6 19l-1.8.8L6 22l-.8-2.2L3 19l2.2-.8L6 16Z" />
+      <path d="M18 15l.9 2 2.1.9-2.1.9L18 21l-.9-2.2L15 18l2.1-.9L18 15Z" />
+    </svg>
+  );
+}
+function ShieldIcon(props: React.SVGProps<SVGSVGElement>) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" {...props} aria-hidden="true">
+      <path d="M12 3l8 3v5c0 5-3.5 8.6-8 10-4.5-1.4-8-5-8-10V6l8-3Z" stroke="currentColor" strokeWidth="1.5" />
+      <path d="M9 12l2 2 4-4" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
+    </svg>
+  );
+}
+function CheckIcon(props: React.SVGProps<SVGSVGElement>) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" {...props} aria-hidden="true">
+      <path d="M20 7l-9 9-5-5" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
     </svg>
   );
 }
 
-function ChefMascot(props: React.SVGProps<SVGSVGElement>) {
-  // Cute line-art chef with a spoon — friendly & brand-aligned; no external asset needed.
-  return (
-    <svg viewBox="0 0 160 120" fill="none" {...props} role="img" aria-label="Cibo Libro chef illustration">
-      <defs>
-        <linearGradient id="g" x1="0" x2="1" y1="0" y2="1">
-          <stop stopColor="#FDBA74" offset="0" />
-          <stop stopColor="#FB923C" offset="1" />
-        </linearGradient>
-      </defs>
-      <rect x="10" y="10" width="140" height="100" rx="18" fill="url(#g)" opacity="0.12" />
-      <circle cx="60" cy="56" r="20" stroke="#EA580C" strokeWidth="2.5" fill="white" />
-      <path d="M42 90c5-10 31-10 36 0" stroke="#EA580C" strokeWidth="2.5" strokeLinecap="round" />
-      <path d="M52 54h4M64 54h4" stroke="#EA580C" strokeWidth="2.5" strokeLinecap="round" />
-      <path d="M54 63c4 4 12 4 16 0" stroke="#EA580C" strokeWidth="2.5" strokeLinecap="round" />
-      <path d="M48 40c0-8 24-8 24 0" stroke="#EA580C" strokeWidth="2.5" />
-      {/* Hat */}
-      <path d="M64 30c8 0 10-10 0-12-2-6-14-6-16 0-10 2-8 12 0 12h16Z" fill="white" stroke="#EA580C" strokeWidth="2.5" />
-      {/* Spoon */}
-      <path d="M110 36c8 0 12 6 12 12s-6 10-12 10-10-4-10-10 2-12 10-12Z" fill="white" stroke="#EA580C" strokeWidth="2.5" />
-      <path d="M100 58l-6 26" stroke="#EA580C" strokeWidth="2.5" strokeLinecap="round" />
-      <circle cx="93.5" cy="85" r="3" fill="#EA580C" />
-      {/* Sparkles */}
-      <path d="M132 24l2 5 5 2-5 2-2 5-2-5-5-2 5-2 2-5Z" fill="#FDBA74" opacity="0.7" />
-      <path d="M22 28l1.5 4 4 1.5-4 1.5-1.5 4-1.5-4L16 34l4-1.5 1.5-4Z" fill="#FDE68A" opacity="0.8" />
-    </svg>
-  );
-}
+/* ---------- Site data for the carousel (static) ---------- */
+
+const SITES = [
+  { name: "Allrecipes",       href: "https://www.allrecipes.com",        logo: "AR" },
+  { name: "BBC Good Food",    href: "https://www.bbcgoodfood.com",       logo: "BB" },
+  { name: "Bon Appétit",      href: "https://www.bonappetit.com",        logo: "BA" },
+  { name: "Epicurious",       href: "https://www.epicurious.com",        logo: "E"  },
+  { name: "Serious Eats",     href: "https://www.seriouseats.com",       logo: "SE" },
+  { name: "Taste (AU)",       href: "https://www.taste.com.au",          logo: "T"  },
+  { name: "Food52",           href: "https://food52.com",                logo: "F52"},
+  { name: "Simply Recipes",   href: "https://www.simplyrecipes.com",     logo: "SR" },
+  { name: "Sally’s Baking",   href: "https://sallysbakingaddiction.com", logo: "SB" },
+  { name: "Feasting At Home", href: "https://www.feastingathome.com",    logo: "FAH"},
+  { name: "Minimalist Baker", href: "https://minimalistbaker.com",       logo: "MB" },
+  { name: "RecipeTin Eats",   href: "https://www.recipetineats.com",     logo: "RTE"},
+  { name: "Delicious (AU)",   href: "https://www.delicious.com.au",      logo: "D"  },
+  { name: "Cookie and Kate",  href: "https://cookieandkate.com",         logo: "C+K"},
+];
