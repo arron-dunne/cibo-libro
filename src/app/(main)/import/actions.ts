@@ -92,9 +92,9 @@ export async function importRecipe(formData: FormData) {
   if (isDenylisted(hostname)) {
     await prisma.importJob.update({
       where: { id: job.id },
-      data: { status: 'FAILED', errorMsg: 'DENYLISTED' },
+      data: { status: 'FAILED', errorMsg: 'DENYLIST' },
     });
-    return redirect(buildPromptUrl(url, undefined, "DENYLISTED"));
+    return redirect(buildPromptUrl(url, undefined, "DENYLIST"));
   }
 
   // Compliance: respect robots.txt (conservative)
