@@ -12,15 +12,15 @@ import {
   Clock,
   Flame,
   Users,
-  Maximize2,
-  Minimize2,
-  Share2,
-  Bookmark,
   Palette,
   UtensilsCrossed,
+  Globe,
+  ExternalLink,
+  Link2,
+  Image as ImageIcon,
 } from "lucide-react";
 
-/* ---------- Types ---------- */
+/* ---------- Types (unchanged) ---------- */
 type Step = { text: string };
 type ServeWithItem = string | { label: string; href?: string };
 
@@ -38,10 +38,10 @@ export type Recipe = {
   steps: Step[] | string[];
   notes?: string;
   serveWith?: ServeWithItem[];
-  sourceUrl?: string | null;
+  sourceUrl?: string | null; // present for link cards (external)
 };
 
-/* ---------- Themes (CSS Variables) ---------- */
+/* ---------- Theme tokens ---------- */
 type ThemeKey = "citrus" | "emerald" | "blueberry" | "raspberry" | "lavender" | "ocean";
 
 const THEMES: Record<
@@ -165,6 +165,39 @@ const TIME_FILTERS = [
   { key: "gt60", label: "> 60m", test: (t: number) => t > 60 },
 ] as const;
 
+/* ---------- Two mock Link Cards (UI-only) ---------- */
+const MOCK_LINK_CARDS: Recipe[] = [
+  {
+    id: "link-nyt-1",
+    title: "Crispy Baked Tofu with Chili Oil",
+    description: "Saved as a Link Card. Visit the original for full details.",
+    imageUrl:
+      "https://images.unsplash.com/photo-1490645935967-10de6ba17061?q=80&w=1471&auto=format&fit=crop",
+    tags: ["Vegan", "Quick"],
+    prepMinutes: 0,
+    cookMinutes: 0,
+    totalMinutes: 0,
+    servings: 0,
+    ingredients: [],
+    steps: [],
+    sourceUrl: "https://cooking.nytimes.com/recipes/12345-crispy-tofu",
+  },
+  {
+    id: "link-blog-2",
+    title: "Creamy Mushroom Pasta",
+    description: "Link Card — metadata only; open the source to cook.",
+    imageUrl: "",
+    tags: ["Pasta", "Comfort"],
+    prepMinutes: 0,
+    cookMinutes: 0,
+    totalMinutes: 0,
+    servings: 0,
+    ingredients: [],
+    steps: [],
+    sourceUrl: "https://www.examplefoodblog.com/creamy-mushroom-pasta",
+  },
+];
+
 /* ---------- Component ---------- */
 export default function ClientRecipesGrid({ recipes }: { recipes: Recipe[] }) {
   const [theme, setTheme] = useState<ThemeKey>("citrus");
@@ -172,13 +205,15 @@ export default function ClientRecipesGrid({ recipes }: { recipes: Recipe[] }) {
   const [sort, setSort] = useState<(typeof SORTS)[number]["key"]>("recent");
   const [timeKey, setTimeKey] = useState<(typeof TIME_FILTERS)[number]["key"]>("any");
   const [activeTags, setActiveTags] = useState<string[]>([]);
-  const [expanded, setExpanded] = useState<Record<string, boolean>>({});
+
+  // Append mock link cards for visual QA
+  const dataset = useMemo(() => [...(recipes || []), ...MOCK_LINK_CARDS], [recipes]);
 
   const allTags = useMemo(() => {
     const s = new Set<string>();
-    recipes?.forEach((r) => r.tags?.forEach((t) => s.add(t)));
+    dataset.forEach((r) => r.tags?.forEach((t) => s.add(t)));
     return Array.from(s).sort((a, b) => a.localeCompare(b));
-  }, [recipes]);
+  }, [dataset]);
 
   const styleVars = useMemo((): CSSProperties => {
     const t = THEMES[theme];
@@ -199,7 +234,7 @@ export default function ClientRecipesGrid({ recipes }: { recipes: Recipe[] }) {
 
   const filtered = useMemo(() => {
     const timeTest = TIME_FILTERS.find((t) => t.key === timeKey)?.test ?? (() => true);
-    let list = (recipes || []).filter((r) => {
+    let list = dataset.filter((r) => {
       const matchesQuery = r.title.toLowerCase().includes(query.toLowerCase());
       const matchesTime = timeTest(r.totalMinutes);
       const matchesTags = activeTags.length === 0 || activeTags.every((t) => r.tags?.includes(t));
@@ -223,7 +258,7 @@ export default function ClientRecipesGrid({ recipes }: { recipes: Recipe[] }) {
         break;
     }
     return list;
-  }, [recipes, query, sort, timeKey, activeTags]);
+  }, [dataset, query, sort, timeKey, activeTags]);
 
   const clearFilters = () => {
     setActiveTags([]);
@@ -234,20 +269,17 @@ export default function ClientRecipesGrid({ recipes }: { recipes: Recipe[] }) {
 
   return (
     <div style={styleVars} className="relative min-h-dvh text-slate-900">
-      {/* FIXED, NON-SCROLLING BACKGROUND */}
+      {/* FIXED, NON-SCROLLING ORANGE BACKGROUND */}
       <div
         aria-hidden
         className="pointer-events-none fixed inset-0 -z-10 bg-gradient-to-br from-[var(--bg-from)] via-[var(--bg-via)] to-[var(--bg-to)]"
       />
 
-      {/* Sticky toolbar */}
+      {/* Navbar / Filters */}
       <div className="sticky top-4 z-40">
         <div className="mx-auto max-w-6xl">
           <div className="flex flex-wrap items-center gap-3 rounded-full border border-white/30 bg-white/80 px-3 py-2 shadow-lg backdrop-blur supports-[backdrop-filter]:bg-white/70">
-            {/* Brand dot */}
-            <div className="grid h-9 w-9 place-items-center rounded-full bg-[var(--accent)] text-white shadow">
-              🍊
-            </div>
+            <div className="grid h-9 w-9 place-items-center rounded-full bg-[var(--accent)] text-white shadow">🍊</div>
 
             {/* Search */}
             <div className="mx-1 flex min-w-[220px] flex-1 items-center gap-2 rounded-full border border-[var(--chip-border)] bg-white px-3 py-1.5">
@@ -335,12 +367,10 @@ export default function ClientRecipesGrid({ recipes }: { recipes: Recipe[] }) {
               </select>
             </div>
 
-            {/* Clear */}
             {(activeTags.length || timeKey !== "any" || query || sort !== "recent") && (
               <button
                 onClick={clearFilters}
                 className="inline-flex items-center gap-1 rounded-full border border-[var(--chip-border)] bg-[var(--button-bg)] px-3 py-1.5 text-sm font-semibold text-[var(--button-ink)] hover:bg-[var(--button-hover-bg)]"
-                title="Clear filters"
               >
                 <X className="h-4 w-4" /> Clear
               </button>
@@ -361,45 +391,81 @@ export default function ClientRecipesGrid({ recipes }: { recipes: Recipe[] }) {
           "
         >
           {filtered.map((r) => {
-            const isOpen = !!expanded[r.id];
+            const isLinkCard =
+              !!r.sourceUrl &&
+              (!r.ingredients || r.ingredients.length === 0) &&
+              (!r.steps || r.steps.length === 0);
+
             return (
               <article
                 key={r.id}
-                className={
-                  "group relative overflow-hidden rounded-3xl border border-white/40 bg-white shadow-xl transition-transform duration-300 hover:-translate-y-0.5 hover:shadow-2xl " +
-                  (isOpen ? "sm:col-span-2 sm:row-span-2" : "")
-                }
+                className="group relative overflow-hidden rounded-3xl border border-white/40 bg-white shadow-xl transition-transform duration-300 hover:-translate-y-0.5 hover:shadow-2xl"
               >
-                {/* Image */}
-                <div className={"relative w-full " + (isOpen ? "h-64" : "h-40")}>
-                  <Image
-                    src={
-                      r.imageUrl ||
-                      "https://images.unsplash.com/photo-1498579150354-977475b7ea0b?q=80&w=1471&auto=format&fit=crop"
-                    }
-                    alt={r.title}
-                    fill
-                    sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
-                    className="object-cover"
-                  />
+                {/* IMAGE (or placeholder) */}
+                <div className="relative h-40 w-full">
+                  {r.imageUrl ? (
+                    <Image
+                      src={r.imageUrl}
+                      alt={r.title}
+                      fill
+                      sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
+                      className="object-cover"
+                    />
+                  ) : (
+                    <div className="grid h-full w-full place-items-center bg-gradient-to-br from-orange-100 via-white to-rose-100">
+                      <div className="inline-flex items-center gap-2 rounded-xl border border-orange-200/70 bg-white/70 px-3 py-1 text-xs text-orange-800 backdrop-blur">
+                        <ImageIcon className="h-4 w-4" />
+                        No preview image
+                      </div>
+                    </div>
+                  )}
                   <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/40 via-black/10 to-black/0" />
+
+                  {/* Badge for link cards */}
+                  {isLinkCard && (
+                    <div className="absolute left-3 top-3 inline-flex items-center gap-1 rounded-full bg-white/90 px-2.5 py-1 text-[11px] font-semibold text-slate-700 backdrop-blur">
+                      <Link2 className="h-3.5 w-3.5 text-[var(--accent)]" />
+                      Link Card
+                    </div>
+                  )}
                 </div>
 
-                {/* Content */}
+                {/* CONTENT */}
                 <div className="space-y-3 p-4">
                   <h3 className="text-lg font-extrabold leading-tight">
-                    <Link
-                      href={`/recipes/${r.id}`}
-                      className="outline-none transition hover:opacity-90 focus:opacity-90"
-                    >
-                      {r.title}
-                    </Link>
+                    {isLinkCard && r.sourceUrl ? (
+                      <a
+                        href={r.sourceUrl}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="inline-flex items-center gap-2 outline-none transition hover:opacity-90 focus:opacity-90"
+                        title="View original"
+                      >
+                        {r.title}
+                        <ExternalLink className="h-4 w-4 text-[var(--accent)]" />
+                      </a>
+                    ) : (
+                      <Link
+                        href={`/recipes/${r.id}`}
+                        className="outline-none transition hover:opacity-90 focus:opacity-90"
+                      >
+                        {r.title}
+                      </Link>
+                    )}
                   </h3>
+
+                  {/* Domain row for link cards */}
+                  {isLinkCard && r.sourceUrl && (
+                    <div className="flex items-center gap-2 text-xs text-slate-600">
+                      <Globe className="h-3.5 w-3.5 text-[var(--accent)]" />
+                      <span className="truncate">{safeHostname(r.sourceUrl)}</span>
+                    </div>
+                  )}
 
                   {/* Tags */}
                   {!!r.tags?.length && (
                     <div className="flex flex-wrap gap-2">
-                      {r.tags!.slice(0, isOpen ? 6 : 3).map((t) => (
+                      {r.tags!.slice(0, 3).map((t) => (
                         <span
                           key={t}
                           className="inline-flex items-center gap-2 rounded-full border border-[var(--chip-border)] bg-[var(--chip-bg)] px-2.5 py-0.5 text-[11px] font-semibold text-[var(--chip-ink)]"
@@ -411,37 +477,39 @@ export default function ClientRecipesGrid({ recipes }: { recipes: Recipe[] }) {
                   )}
 
                   {/* Description */}
-                  <p className={"text-sm text-slate-600 " + (isOpen ? "" : "line-clamp-2")}>
-                    {r.description}
-                  </p>
-
-                  {/* Extra meta (only when expanded) */}
-                  {isOpen && (
-                    <div className="mt-3 grid grid-cols-3 gap-2">
-                      <Chip icon={<Clock className="h-4 w-4" />} label="Prep" value={`${r.prepMinutes}m`} />
-                      <Chip icon={<Flame className="h-4 w-4" />} label="Cook" value={`${r.cookMinutes}m`} />
-                      <Chip icon={<Clock className="h-4 w-4" />} label="Total" value={`${r.totalMinutes}m`} />
-                      <Chip icon={<Users className="h-4 w-4" />} label="Serves" value={`${r.servings}`} />
-                      <Chip icon={<Bookmark className="h-4 w-4" />} label="Saved" value="—" />
-                      <Chip icon={<Share2 className="h-4 w-4" />} label="Share" value="link" />
-                    </div>
-                  )}
+                  {r.description ? (
+                    <p className="line-clamp-2 text-sm text-slate-600">{r.description}</p>
+                  ) : isLinkCard ? (
+                    <p className="text-sm text-slate-600">
+                      Saved with safe metadata—open the source to view details.
+                    </p>
+                  ) : null}
                 </div>
 
-                {/* Bottom-right expand button */}
-                <div className="absolute bottom-3 right-3">
-                  <button
-                    onClick={() => setExpanded((m) => ({ ...m, [r.id]: !m[r.id] }))}
-                    className="inline-flex items-center gap-2 rounded-full border border-[var(--button-border)] bg-[var(--button-bg)] px-3 py-1.5 text-sm font-semibold text-[var(--button-ink)] shadow hover:bg-[var(--button-hover-bg)]"
-                    title={isOpen ? "Collapse" : "Expand"}
-                  >
-                    {isOpen ? (
-                      <Minimize2 className="h-4 w-4 text-[var(--accent)]" />
-                    ) : (
-                      <Maximize2 className="h-4 w-4 text-[var(--accent)]" />
-                    )}
-                    {isOpen ? "Collapse" : "Expand"}
-                  </button>
+                {/* FOOTER */}
+                <div className="flex items-center justify-between border-t px-4 py-3 text-sm">
+                  {isLinkCard && r.sourceUrl ? (
+                    <a
+                      href={r.sourceUrl}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="inline-flex items-center gap-2 rounded-full border border-[var(--button-border)] bg-[var(--button-bg)] px-3 py-1.5 font-semibold text-[var(--button-ink)] hover:bg-[var(--button-hover-bg)]"
+                    >
+                      <ExternalLink className="h-4 w-4 text-[var(--accent)]" />
+                      View original
+                    </a>
+                  ) : (
+                    <div className="grid grid-cols-3 gap-2">
+                      <Chip icon={<Clock className="h-4 w-4" />} label="Prep" value={`${r.prepMinutes}m`} />
+                      <Chip icon={<Flame className="h-4 w-4" />} label="Cook" value={`${r.cookMinutes}m`} />
+                      <Chip icon={<Users className="h-4 w-4" />} label="Serves" value={`${r.servings}`} />
+                    </div>
+                  )}
+
+                  {/* Gentle hint when link card has no image */}
+                  {isLinkCard && !r.imageUrl && (
+                    <span className="text-xs text-slate-400">Preview image may be unavailable</span>
+                  )}
                 </div>
               </article>
             );
@@ -449,7 +517,7 @@ export default function ClientRecipesGrid({ recipes }: { recipes: Recipe[] }) {
         </section>
       </main>
 
-      {/* Footer */}
+      {/* Footer (kept) */}
       <footer className="mt-12 border-t border-white/30 bg-white/10 py-8 text-white backdrop-blur">
         <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-4 px-4">
           <div className="flex items-center gap-2">
@@ -503,4 +571,13 @@ function emojiFor(tag: string) {
   if (t.includes("soup")) return "🥣";
   if (t.includes("dessert")) return "🍰";
   return "🏷️";
+}
+
+function safeHostname(url: string) {
+  try {
+    const u = new URL(url);
+    return u.hostname.replace(/^www\./, "");
+  } catch {
+    return url;
+  }
 }
