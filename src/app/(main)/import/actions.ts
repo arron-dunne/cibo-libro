@@ -254,16 +254,14 @@ async function createStructuredRecipe({
 }
 
 function buildPromptUrl(u: URL, og?: OpenGraphMeta, reason?: string) {
-  const t = (og?.title?.trim() || synthesizeTitleFromUrl(u)).slice(0, 120);
+  const title = (og?.title?.trim() || synthesizeTitleFromUrl(u)).slice(0, 120);
   const params = new URLSearchParams({
-    prompt: "1",
-    u: u.toString(),
-    t,
-    d: u.hostname.replace(/^www\./, ""),
+    url: u.toString(),
+    title,
   });
-  if (og?.image) params.set("i", og.image);
+  if (og?.image) params.set("image", og.image);
   if (reason) params.set("reason", reason);
-  return `/import?${params.toString()}`;
+  return `/import/link?${params.toString()}`;
 }
 
 function synthesizeTitleFromUrl(u: URL): string {
