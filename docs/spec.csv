@@ -7,9 +7,9 @@ R005,Users shall be able to create an account with email and password,Auth,MVP
 R006,Users shall be able to log in or out and maintain sessions securely with HTTP-only cookies and CSRF protection,Security,MVP
 R007,Users shall be able to add recipes manually via a guided multi-step form including title description ingredients steps tags and image,Feature,MVP
 R008,Users shall be able to import a recipe from a URL using JSON-LD or Microdata parse first,Feature,MVP
-R009,If import fails the system shall store a link-only card with image title attribution and a View Original link,Feature,MVP
-R010,Importer shall respect robots txt timeouts rate limits and set a custom user-agent,Compliance,MVP
-R011,Importer shall store full parsed content privately for personal use and allow public publishing only for owned recipes,Compliance,MVP
+R009,"Importer MUST create a Link Card instead of importing whenever: (a) domain matches denylist; (b) JSON-LD isAccessibleForFree === false; (c) response indicates paywall (e.g., 402/403 or known markers); (d) robots or site Terms prohibit scraping. Link Card persists only URL, domain and user-authored metadata; no publisher recipe text or ingredient/instruction lists are stored.",Compliance,MVP
+R010,"Importer shall respect robots.txt/ACAP, site Terms, and our denylist. Server-side fetches must validate isAccessibleForFree when present and abort import if false. If any policy gate fails, do not fetch or persist recipe content; create a Link Card (R060-R066).",Compliance,MVP
+R011,"For sources allowed by policy AND where isAccessibleForFree !== false, the importer may store normalized Recipe fields (e.g., name, image, times, ingredients, instructions, yields, author, nutrition, source_url). For denylisted/paywalled/blocked sources, persist Link Card only; never store publisher recipe content.",Data,MVP
 R012,Library page shall display recipes as cards with image title tags and quick metadata,UI,MVP
 R013,Users shall be able to search recipes by keyword,Feature,MVP
 R014,Users shall be able to filter recipes by tags such as Dinner Vegan Chicken,Feature,MVP
@@ -22,12 +22,12 @@ R020,Cook Mode shall attempt wake lock to prevent screen sleep where supported,F
 R021,Users shall be able to edit and delete their own recipes,Feature,MVP
 R022,Users shall be able to export their data in JSON or CSV format on demand,Data Portability,MVP
 R023,Public recipe pages shall be available for user-owned recipes only with a shareable link,Feature,Release1
-R024,Public pages shall exclude imported full text and present attribution or source with a View Original link,Compliance,Release1
+R024,"Public pages shall exclude imported full text unless the user created it. For Link Cards, render only user-authored metadata. Any enrichment from remote JSON-LD must be ephemeral (client-rendered at view time) and not persisted for denylisted/paywalled sources.",Compliance,MVP
 R025,Creator Mode shall support schema-based ingestion for creator sites with canonical links,Feature,Release1
 R026,Creator Mode shall offer an embeddable card that links back to the creator site,Feature,Release1
-R027,New URL imports shall land in a Recipe Inbox for cleanup and tagging,Feature,Release1
-R028,Auto-tagging suggestions shall be offered on imported recipes using NLP heuristics,Feature,Release1
-R029,Users shall be able to upload images for manual recipes and imports where permitted,Storage,Release1
+R027,"New URL imports land in a Recipe Inbox with status: Imported, LinkCard, Needs-Review. If policy gates block import, status=LinkCard with blocked_reason.",Product,MVP
+R028,"Auto-tagging suggestions shall infer cuisine, meal-type, appliance, and source brand from URL and, when allowed, from JSON-LD. For Link Cards, limit inference to URL/domain and user input.",AI/ML,Release1
+R029,Bulk import supports up to 50 URLs per batch; applies policy gates per URL. Disallowed URLs auto-create Link Cards; allowed URLs import Recipe records.,Product,Release1
 R030,Importer version 2 shall support OCR for image uploads from books or screenshots,Feature,Release1
 R031,Shopping Brain version 1 shall generate a single shopping list from selected recipes,Feature,Release1
 R032,Shopping Brain version 1 shall normalize and dedupe ingredients and convert units between US and metric,Feature,Release1
@@ -57,4 +57,13 @@ R055,Accessibility shall respect prefers-reduced-motion and provide visible focu
 R056,Data model shall support recipe types owned or external with public flag tags array steps array and ingredients array,Data,MVP
 R057,Routes shall include slash recipes for library slash recipes slash id for detail and slash cook slash id for cook mode,Data,MVP
 R058,Public share routes shall be slash r slash slug for read-only pages,Data,Release1
-R059,Users can sign in with Google and Apple,Auth,Release1
+R059,"Link Card entity: persist url, domain, created_at, updated_at, user_title (optional), user_notes[], user_tags[], user_rating(1-5), made_count, last_made_at, blocked_reason enum[denylist,paywalled,robots,tos,unknown,null].",Data,MVP
+R060,"Link Card UI: visually distinct cards in library with source domain, favicon, user title, tags, rating, and quick actions (Open, Add Note, Tag, Rate, Plan, Add to List).",UI/UX,MVP
+R061,"Link Card enrichment: when viewing a Link Card, the client MAY fetch JSON-LD to display ephemeral prep/cook time, yield, and author only if not denylisted/paywalled; never persist remote ingredient/instruction text.",Compliance,MVP
+R062,"Denylist file: newline-separated domains at config/denylist.txt; loader validates and exposes a check(domain)->{blocked:boolean, reason}. Server actions MUST call this before any fetch.",Security,MVP
+R063,Importer policy gates order: 1) denylist; 2) robots/ACAP; 3) fetch head; 4) parse JSON-LD isAccessibleForFree; 5) ToS heuristics/paywall markers. First failure halts import and creates Link Card.,Compliance,MVP
+R064,"Notes & variants: users can attach freeform notes and structured variants (ingredient swaps, time adjustments) to Link Cards; variants are user-authored only.",Feature,Release1
+R065,Meal planning with Link Cards: allow scheduling a Link Card into the planner; shopping list is based on user-entered ingredients or notes.,Feature,Release1
+R066,Telemetry: log policy outcomes (imported vs linkcard + blocked_reason). No logging of publisher content.,Telemetry,MVP
+R067,Export: users can export Link Cards (CSV/JSON) containing only user-authored metadata and source URLs.,Data Portability,Release2
+R068,Legal affordance: Link Cards display 'From <domain>' and an 'Open Original' primary action; avoid hotlinking blocked assets; prefer favicon over hotlinked hero images for denied sources.,Compliance,MVP
