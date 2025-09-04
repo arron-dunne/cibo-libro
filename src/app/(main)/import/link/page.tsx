@@ -1,35 +1,30 @@
-// app/import/link/page.tsx
+// app/(main)/import/link/page.tsx
 import Link from "next/link";
 import { z } from "zod";
 import { Suspense } from "react";
-import {
-  Globe,
-  ExternalLink,
-  Link2,
-  Image as ImageIcon,
-  AlertTriangle,
-  ShieldAlert,
-} from "lucide-react";
+import { Globe, ExternalLink, Link2, Image as ImageIcon, AlertTriangle, ShieldAlert } from "lucide-react";
 import ClientLinkCardForm from "./ClientLinkCardForm";
 
-// Do NOT change param names or enum values; kept UPPERCASE as requested
+/** Canonical reasons we display; we also accept legacy synonyms (see normalizeReason) */
+const ReasonSchema = z.enum(["ROBOTS", "DENYLIST", "PAYWALL", "NO_SCHEMA", "ERROR"]);
+
 const ParamsSchema = z.object({
   url: z.url(),
   title: z.string().min(1).max(280),
-  reason: z.enum(["ROBOTS", "DENYLIST", "PAYWALL", "NO_SCHEMA", "ERROR"]).default("NO_SCHEMA"),
-  image: z.url().optional().or(z.literal("")).optional(),
+  // Accept empty string for optional image
+  image: z.url().optional().or(z.literal("")).transform((v) => (v || undefined)),
   siteName: z.string().optional(),
+  reason: z.string().optional().transform((v) => normalizeReason(v)),
 });
 
-type ReasonKey = z.infer<typeof ParamsSchema>["reason"];
+type ReasonKey = z.infer<typeof ReasonSchema>;
 
-// Keep searchParams awaiting style exactly as in your app
 export default async function Page({
   searchParams,
 }: {
-  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
+  searchParams?: Record<string, string | string[] | undefined>;
 }) {
-  const params = await searchParams;
+  const params = (await searchParams) ?? {};
 
   const parsed = ParamsSchema.safeParse({
     url: normalizeParam(params.url),
@@ -62,13 +57,13 @@ export default async function Page({
     );
   }
 
-  const { url, title, reason, image, siteName } = parsed.data;
+  const { url, title, image, siteName, reason } = parsed.data;
   const site = (siteName || safeHostname(url)).trim();
   const badge = reasonBadge(reason);
 
   return (
     <div className="mx-auto w-[min(1150px,95%)]">
-      {/* Floating status panel (no page-level background here; layout provides gradient) */}
+      {/* Status panel */}
       <div className="mt-2 mb-6 flex items-start gap-3 rounded-2xl border border-orange-200/70 bg-white/85 p-4 shadow-sm backdrop-blur supports-[backdrop-filter]:bg-white/65">
         <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-orange-100 text-orange-700">
           <AlertTriangle className="h-5 w-5" />
@@ -86,9 +81,9 @@ export default async function Page({
         </span>
       </div>
 
-      {/* Two floating white panels on the gradient background */}
+      {/* Preview + Form */}
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
-        {/* Left: static preview (server-rendered) */}
+        {/* Preview */}
         <section aria-labelledby="preview-title" className="rounded-2xl border bg-white shadow-sm">
           <header className="flex items-center justify-between border-b px-5 py-4">
             <div className="flex items-center gap-2 text-sm text-gray-600">
@@ -98,7 +93,7 @@ export default async function Page({
               <a
                 href={url}
                 target="_blank"
-                rel="noreferrer"
+                rel="noopener noreferrer"
                 className="inline-flex items-center gap-1 text-gray-700 underline decoration-gray-300 underline-offset-2 hover:text-gray-900"
               >
                 View original <ExternalLink className="h-3.5 w-3.5" />
@@ -110,7 +105,6 @@ export default async function Page({
             </div>
           </header>
 
-          {/* Image / placeholder – still server-side, no remotePatterns needed */}
           <div className="relative">
             {image ? (
               <img
@@ -135,17 +129,15 @@ export default async function Page({
             <h2 id="preview-title" className="text-xl font-semibold text-gray-900">
               {title}
             </h2>
-            <p className="text-sm text-gray-500">
-              This is a link preview. Full recipe remains on the original site.
-            </p>
+            <p className="text-sm text-gray-500">This is a link preview. The full recipe remains on the original site.</p>
           </div>
 
           <footer className="border-t px-5 py-4 text-xs text-gray-500">
-            We only save safe metadata and your own inputs. Full recipes from other sites aren’t copied. You’ll always have a link back to the original.
+            We only save safe metadata and your inputs. Full recipes from other sites aren’t copied. There’s always a link back to the original.
           </footer>
         </section>
 
-        {/* Right: client-only form (no duplication of metadata in preview) */}
+        {/* Form */}
         <Suspense fallback={<div className="h-[560px] rounded-2xl border bg-white shadow-sm" />}>
           <ClientLinkCardForm initialUrl={url} title={title} image={image} />
         </Suspense>
@@ -156,10 +148,8 @@ export default async function Page({
 
 /* -------- utils -------- */
 function normalizeParam(v: string | string[] | undefined) {
-  if (!v) return undefined;
   return Array.isArray(v) ? v[0] : v;
 }
-
 function safeHostname(u: string) {
   try {
     const x = new URL(u);
@@ -167,6 +157,16 @@ function safeHostname(u: string) {
   } catch {
     return u;
   }
+}
+
+/** Map legacy reasons to canonical keys. */
+function normalizeReason(v?: string): ReasonKey {
+  const raw = (v ?? "").toUpperCase();
+  if (ReasonSchema.safeParse(raw).success) return raw as ReasonKey;
+  if (raw === "ROBOTS_BLOCKED") return "ROBOTS";
+  if (raw === "PAYWALLED") return "PAYWALL";
+  if (raw === "FETCH_FAILED") return "ERROR";
+  return "NO_SCHEMA";
 }
 
 function reasonBadge(reason: ReasonKey) {
