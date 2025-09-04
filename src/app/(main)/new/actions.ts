@@ -5,6 +5,7 @@
 import { z } from "zod";
 import { prisma } from "@/lib/prisma";
 import { auth } from "@/lib/auth";
+import { uniqueRecipeSlug } from "@/lib/uniqueSlug";
 
 // ────────────────────────────────────────────────────────────────────────────
 // Validation (payload you send from AddRecipeClient.snapshot())
@@ -30,16 +31,6 @@ async function requireUserId(): Promise<string> {
   return session.user.id;
 }
 
-// Optional slugger (safe if you have a slug column; otherwise we just don’t use it)
-function slugify(input: string) {
-  return input
-    .toLowerCase()
-    .replace(/[^a-z0-9\s-]/g, "")
-    .replace(/\s+/g, "-")
-    .replace(/-+/g, "-")
-    .slice(0, 80);
-}
-
 // ────────────────────────────────────────────────────────────────────────────
 // ACTIONS
 // ────────────────────────────────────────────────────────────────────────────
@@ -51,6 +42,7 @@ function slugify(input: string) {
 export async function saveDraft(raw: unknown): Promise<{ id: string; slug?: string }> {
   const userId = await requireUserId();
   const data = RecipePayload.parse(raw);
+  const slug = await uniqueRecipeSlug(data.title);
 
   // Create a record; imageKey intentionally left null (finalize API will set it)
   // Adjust fields to your schema names if they differ.
@@ -69,7 +61,7 @@ export async function saveDraft(raw: unknown): Promise<{ id: string; slug?: stri
       sourceUrl: data.sourceUrl ?? null,
       imageKey: null,
       isPublic: false,
-      slug: slugify(data.title),
+      slug
     },
     select: { id: true, slug: true },
   });
@@ -116,6 +108,7 @@ export async function updateRecipe(id: string, raw: unknown): Promise<void> {
 export async function publishRecipe(raw: unknown): Promise<{ id: string; slug?: string }> {
   const userId = await requireUserId();
   const data = RecipePayload.parse(raw);
+  const slug = await uniqueRecipeSlug(data.title);
 
   const created = await prisma.recipe.create({
     data: {
@@ -132,7 +125,7 @@ export async function publishRecipe(raw: unknown): Promise<{ id: string; slug?: 
       sourceUrl: data.sourceUrl ?? null,
       imageKey: null, // finalized separately
       isPublic: true, // if your flow wants immediate publish; set false if publish == finalize editing only
-      slug: slugify(data.title),
+      slug
     },
     select: { id: true, slug: true },
   });

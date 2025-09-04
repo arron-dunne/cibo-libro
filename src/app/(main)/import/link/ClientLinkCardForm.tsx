@@ -3,12 +3,13 @@
 import { useState } from "react";
 import Link from "next/link";
 import { Save, Tag as TagIcon, X, Star, Trash2 } from "lucide-react";
+import { saveLinkCard } from "./actions";
 
-export default function ClientLinkCardForm({ initialUrl }: { initialUrl: string }) {
+export default function ClientLinkCardForm({ initialUrl, title, image }: { initialUrl: string, title: string, image?: string }) {
   const [tags, setTags] = useState<string[]>(["Dinner", "Easy"]);
   const [inputTag, setInputTag] = useState("");
   const [rating, setRating] = useState<number>(0);
-  const [notes, setNotes] = useState("");
+  const [note, setNote] = useState("");
 
   function addTag(v: string) {
     const clean = v.trim();
@@ -32,7 +33,14 @@ export default function ClientLinkCardForm({ initialUrl }: { initialUrl: string 
         </p>
       </header>
 
-      <div className="space-y-6 px-5 py-5">
+      <form action={saveLinkCard} className="space-y-6 px-5 py-5">
+        {/* Hidden fields */}
+        <div id="link-meta" className="hidden">
+          <input name="url" defaultValue={initialUrl} />
+          <input name="title" defaultValue={title} />
+          <input name="image" defaultValue={image ?? ""} />
+        </div>
+
         {/* Rating */}
         <div>
           <label className="mb-2 block text-sm font-medium text-gray-900">Rating</label>
@@ -86,46 +94,42 @@ export default function ClientLinkCardForm({ initialUrl }: { initialUrl: string 
 
         {/* Notes */}
         <div>
-          <label htmlFor="notes" className="mb-2 block text-sm font-medium text-gray-900">
-            Notes
+          <label htmlFor="note" className="mb-2 block text-sm font-medium text-gray-900">
+            Note
           </label>
           <textarea
-            id="notes"
+            id="note"
             rows={5}
-            value={notes}
-            onChange={(e) => setNotes(e.target.value)}
+            value={note}
+            onChange={(e) => setNote(e.target.value)}
             placeholder="e.g., Use 2 lemons, add rosemary; reduce salt."
             className="block w-full resize-none rounded-xl border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 outline-none ring-0 placeholder:text-gray-400 focus:border-orange-400 focus:ring-2 focus:ring-orange-200"
           />
           <p className="mt-1 text-xs text-gray-500">Private to you.</p>
         </div>
-      </div>
 
-      {/* Actions */}
-      <div className="sticky bottom-0 border-t bg-white/85 px-5 py-4 backdrop-blur supports-[backdrop-filter]:bg-white/60">
-        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-end">
-          <Link
-            href="/import"
-            className="inline-flex items-center justify-center gap-2 rounded-xl border border-gray-300 bg-white px-4 py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-50 active:translate-y-px"
-          >
-            <Trash2 className="h-4 w-4" />
-            Discard
-          </Link>
+        {/* Actions */}
+        <div className="sticky bottom-0 border-t bg-white/85 px-5 py-4 backdrop-blur supports-[backdrop-filter]:bg-white/60">
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-end">
+            <Link
+              href="/import"
+              className="inline-flex items-center justify-center gap-2 rounded-xl border border-gray-300 bg-white px-4 py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-50 active:translate-y-px"
+            >
+              <Trash2 className="h-4 w-4" />
+              Discard
+            </Link>
 
-          {/* TODO: replace with server action */}
-          <button
-            type="button"
-            onClick={() => {
-              const payload = { sourceUrl: initialUrl, rating, tags, notes };
-              alert(`Save (mock)\n\n${JSON.stringify(payload, null, 2)}`);
-            }}
-            className="inline-flex items-center justify-center gap-2 rounded-xl bg-orange-500 px-4 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-orange-600 active:translate-y-px"
-          >
-            <Save className="h-4 w-4" />
-            Save Link Card
-          </button>
+            {/* Server action post */}
+            <button
+              type="submit"
+              className="inline-flex items-center justify-center gap-2 rounded-xl bg-orange-500 px-4 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-orange-600 active:translate-y-px"
+            >
+              <Save className="h-4 w-4" />
+              Save Link Card
+            </button>
+          </div>
         </div>
-      </div>
+      </form>
     </section>
   );
 }
@@ -158,9 +162,8 @@ function Stars({
             className="rounded-md p-1 focus:outline-none focus:ring-2 focus:ring-orange-300"
           >
             <Star
-              className={`h-6 w-6 transition ${
-                active ? "fill-yellow-400 stroke-yellow-500" : "stroke-gray-300 text-gray-300"
-              }`}
+              className={`h-6 w-6 transition ${active ? "fill-yellow-400 stroke-yellow-500" : "stroke-gray-300 text-gray-300"
+                }`}
             />
           </button>
         );

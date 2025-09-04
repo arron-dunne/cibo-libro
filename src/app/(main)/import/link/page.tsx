@@ -147,7 +147,7 @@ export default async function Page({
 
         {/* Right: client-only form (no duplication of metadata in preview) */}
         <Suspense fallback={<div className="h-[560px] rounded-2xl border bg-white shadow-sm" />}>
-          <ClientLinkCardForm initialUrl={url} />
+          <ClientLinkCardForm initialUrl={url} title={title} image={image} />
         </Suspense>
       </div>
     </div>
