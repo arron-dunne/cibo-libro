@@ -1,12 +1,7 @@
 import { importRecipe } from "./actions";
 import { SubmitButton } from "./SubmitButton";
 import Link from "next/link";
-import {
-  ChefHat,
-  Link2,
-  ShieldCheck,
-  CheckCircle2,
-} from "lucide-react";
+import { ChefHat, Link2, ShieldCheck, Zap, StickyNote } from "lucide-react";
 
 export const dynamic = "force-dynamic";
 
@@ -85,19 +80,19 @@ export default function ImportPage() {
           {/* Feature cards */}
           <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
             <InfoCard
-              icon={<SparkIcon />}
-              title="One-click import"
-              desc="We grab the essentials fast — title, ingredients, steps, timings."
+              icon={<Zap className="h-5 w-5" />}
+              title="Import in one click"
+              desc="Paste a recipe link and we’ll grab the essentials—title, ingredients, steps, and timings—straight into your cookbook."
+            />
+            <InfoCard
+              icon={<StickyNote className="h-5 w-5" />}
+              title="No recipe? No problem"
+              desc="If a site won’t share, we’ll save a handy card with the title and link so you can always find it again."
             />
             <InfoCard
               icon={<ShieldCheck className="h-5 w-5" />}
-              title="Respectful & safe"
-              desc="Paywalls or robots? We won’t copy content — you’ll see a clean preview."
-            />
-            <InfoCard
-              icon={<CheckCircle2 className="h-5 w-5" />}
-              title="You’re in control"
-              desc="Save a link card, add manually, or discard. Simple and transparent."
+              title="We play nice"
+              desc="We follow the rules—no paywall dodging or sneaky scraping. Everything stays tidy, safe, and fair."
             />
           </div>
 
@@ -112,22 +107,6 @@ export default function ImportPage() {
           </div>
         </form>
       </div>
-    </div>
-  );
-}
-
-/** Small star/spark glyph that echoes your playful orange branding */
-function SparkIcon() {
-  return (
-    <div className="relative">
-      <svg
-        className="h-5 w-5"
-        viewBox="0 0 24 24"
-        fill="currentColor"
-        aria-hidden="true"
-      >
-        <path d="M12 2l1.9 4.7L18 8.6l-4.1 1.9L12 15l-1.9-4.5L6 8.6l4.1-1.9L12 2z" />
-      </svg>
     </div>
   );
 }
