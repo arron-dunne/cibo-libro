@@ -54,7 +54,7 @@ export default function ImportPage() {
                 type="url"
                 required
                 inputMode="url"
-                placeholder="Paste a recipe link"
+                placeholder="https://example.com/best-lasagne-ever"
                 pattern="https?://.+"
                 autoFocus
                 maxLength={2000}
@@ -67,15 +67,7 @@ export default function ImportPage() {
                 Import
               </button>
             </div>
-            <p className="mt-2 text-xs text-gray-500">
-              Example: <code>https://example.com/best-lasagne-ever</code>
-            </p>
           </div>
-
-          {/* Helper sentence */}
-          <p className="text-sm text-gray-600">
-            If import works, your recipe is created instantly. If not, we’ll offer simple options.
-          </p>
 
           {/* Feature cards */}
           <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
@@ -94,16 +86,6 @@ export default function ImportPage() {
               title="We play nice"
               desc="We follow the rules—no paywall dodging or sneaky scraping. Everything stays tidy, safe, and fair."
             />
-          </div>
-
-          {/* Small back link */}
-          <div className="pt-1">
-            <Link
-              href="/recipes"
-              className="text-sm font-medium text-orange-800 underline-offset-4 hover:underline"
-            >
-              Back to recipes
-            </Link>
           </div>
         </form>
       </div>
