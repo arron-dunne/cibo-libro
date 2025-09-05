@@ -58,7 +58,7 @@ export default function ImportPage() {
                 pattern="https?://.+"
                 autoFocus
                 maxLength={2000}
-                className="flex-1 border-0 bg-transparent px-5 py-3 text-[15px] text-gray-900 placeholder:text-gray-400 focus:outline-none"
+                className="flex-1 border-0 bg-transparent px-5 py-3 text-lg text-gray-900 placeholder:text-gray-400 focus:outline-none"
               />
               <button
                 type="submit"
