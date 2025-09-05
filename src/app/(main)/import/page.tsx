@@ -50,27 +50,32 @@ export default function ImportPage() {
             </label>
           </div>
 
-          {/* Big URL input row */}
-          <div className="rounded-2xl border border-orange-100/60 bg-white p-2 shadow-sm">
-            <div className="flex items-center gap-3 rounded-xl bg-gray-50/70 px-3 py-2.5 ring-1 ring-inset ring-gray-200 focus-within:bg-white focus-within:ring-orange-300 md:px-4">
-              <Link2 className="h-5 w-5 shrink-0 text-gray-500" aria-hidden="true" />
+          {/* URL field with pill layout */}
+          <div className="w-full">
+            <div className="flex w-full items-center overflow-hidden rounded-full bg-white shadow-sm ring-1 ring-gray-200 focus-within:ring-2 focus-within:ring-orange-400">
               <input
                 id="url"
                 name="url"
                 type="url"
-                inputMode="url"
                 required
-                placeholder="https://example.com/best-lasagne-ever"
-                maxLength={2000}
+                inputMode="url"
+                placeholder="Paste a recipe link"
                 pattern="https?://.+"
-                className="min-w-0 flex-1 bg-transparent text-[15px] text-gray-900 placeholder:text-gray-400 outline-none"
-                aria-label="Recipe URL"
+                maxLength={2000}
+                className="flex-1 border-0 bg-transparent px-5 py-3 text-[15px] text-gray-900 placeholder:text-gray-400 focus:outline-none"
               />
-              <div className="shrink-0">
-                <SubmitButton />
-              </div>
+              <button
+                type="submit"
+                className="m-1 inline-flex shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-orange-500 to-orange-600 px-6 py-2.5 text-sm font-semibold text-white shadow-sm hover:from-orange-600 hover:to-orange-700 active:translate-y-px"
+              >
+                Import
+              </button>
             </div>
+            <p className="mt-2 text-xs text-gray-500">
+              Example: <code>https://example.com/best-lasagne-ever</code>
+            </p>
           </div>
+
 
           {/* Helper sentence below the field */}
           <p className="text-sm text-gray-600">
