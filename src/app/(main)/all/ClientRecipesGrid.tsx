@@ -389,6 +389,7 @@ function SignedImage({
         {showSkeleton && (
           <div className="absolute inset-0 animate-pulse bg-gradient-to-br from-zinc-200 to-zinc-100" aria-hidden />
         )}
+        {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
           src={normalizedExternal}
           alt={alt}
@@ -396,7 +397,7 @@ function SignedImage({
           loading="lazy"
           referrerPolicy="no-referrer"
           onError={(e) => {
-            (e.currentTarget as HTMLImageElement).src = PLACEHOLDER;
+            (e.currentTarget as HTMLImageElement).src = "recipe-image-placeholder.png";
           }}
         />
       </>
@@ -405,10 +406,10 @@ function SignedImage({
 
   // Final placeholder
   return (
-    <img
-      src={PLACEHOLDER}
-      alt={alt}
-      className="absolute inset-0 h-full w-full object-cover"
+    <Image
+      src="/recipe-image-placeholder.png"
+      alt="recipe image placeholder"
+      fill={true}
     />
   );
 }
@@ -482,21 +483,3 @@ function BookIcon(props: React.SVGProps<SVGSVGElement>) {
     </svg>
   );
 }
-
-const PLACEHOLDER =
-  "data:image/svg+xml;utf8," +
-  encodeURIComponent(`
-  <svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 300'>
-    <defs>
-      <linearGradient id='g' x1='0' y1='0' x2='1' y2='1'>
-        <stop offset='0%' stop-color='#f4f4f5'/>
-        <stop offset='100%' stop-color='#e4e4e7'/>
-      </linearGradient>
-    </defs>
-    <rect width='400' height='300' fill='url(#g)' />
-    <g fill='#a1a1aa'>
-      <circle cx='200' cy='120' r='36'/>
-      <rect x='140' y='180' width='120' height='14' rx='7'/>
-    </g>
-  </svg>
-`);

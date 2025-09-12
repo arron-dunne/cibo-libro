@@ -127,7 +127,6 @@ export default async function Layout({ children }: { children: React.ReactNode }
 function NavLink({
   href,
   label,
-  icon,
   highlight = false,
 }: {
   href: string;

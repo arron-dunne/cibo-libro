@@ -1,7 +1,6 @@
 import { importRecipe } from "./actions";
 import { SubmitButton } from "./SubmitButton";
-import Link from "next/link";
-import { Download, Link2, ShieldCheck, Zap, StickyNote } from "lucide-react";
+import { Download, ShieldCheck, Zap, StickyNote } from "lucide-react";
 
 export const dynamic = "force-dynamic";
 
@@ -60,12 +59,7 @@ export default function ImportPage() {
                 maxLength={2000}
                 className="flex-1 border-0 bg-transparent px-5 py-3 text-lg text-gray-900 placeholder:text-gray-400 focus:outline-none"
               />
-              <button
-                type="submit"
-                className="m-1 inline-flex shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-orange-500 to-orange-600 px-6 py-2.5 text-sm font-semibold text-white shadow-sm hover:from-orange-600 hover:to-orange-700 active:translate-y-px"
-              >
-                Import
-              </button>
+              <SubmitButton />
             </div>
           </div>
 

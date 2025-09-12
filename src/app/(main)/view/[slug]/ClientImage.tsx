@@ -75,6 +75,7 @@ export function ClientImage({ imageKey, externalUrl, alt }: ClientImageProps) {
   // If signed flow failed or not present, try external
   if ((!imageKey || status === "error") && normalizedExternal) {
     return (
+      // eslint-disable-next-line @next/next/no-img-element
       <img
         src={normalizedExternal}
         alt={alt || "Recipe image"}
@@ -83,7 +84,7 @@ export function ClientImage({ imageKey, externalUrl, alt }: ClientImageProps) {
         referrerPolicy="no-referrer"
         onError={(e) => {
           // graceful fallback
-          (e.currentTarget as HTMLImageElement).src = PLACEHOLDER;
+          (e.currentTarget as HTMLImageElement).src = "/recipe-image-placeholder.png";
         }}
       />
     );
@@ -107,19 +108,13 @@ export function ClientImage({ imageKey, externalUrl, alt }: ClientImageProps) {
 
   // Final fallback
   return (
-    <img
-      src={PLACEHOLDER}
+    <Image
+      src="/recipe-image-placeholder.png"
       alt={alt || "Recipe image"}
-      className="absolute inset-0 h-full w-full object-cover"
+      fill={true}
     />
   );
 }
-
-const PLACEHOLDER =
-  "data:image/svg+xml;utf8," +
-  encodeURIComponent(
-    `<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 4 3'><rect width='4' height='3' fill='#f3f4f6'/></svg>`
-  );
 
 function normalizeUrl(src?: string | null): string | null {
   if (!src) return null;

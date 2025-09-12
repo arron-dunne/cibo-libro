@@ -22,9 +22,15 @@ type ReasonKey = z.infer<typeof ReasonSchema>;
 export default async function Page({
   searchParams,
 }: {
-  searchParams?: Record<string, string | string[] | undefined>;
+  searchParams: Promise<{ 
+    url?: string; 
+    title?: string; 
+    image?: string; 
+    siteName?: string; 
+    reason?: string 
+  }>;
 }) {
-  const params = (await searchParams) ?? {};
+  const params = await searchParams
 
   const parsed = ParamsSchema.safeParse({
     url: normalizeParam(params.url),
@@ -107,6 +113,7 @@ export default async function Page({
 
           <div className="relative">
             {image ? (
+              // eslint-disable-next-line @next/next/no-img-element
               <img
                 src={image}
                 alt={title}
