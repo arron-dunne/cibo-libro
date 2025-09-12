@@ -5,9 +5,9 @@ import Image from "next/image";
 import Link from "next/link";
 
 /**
- * ClientRecipesGrid — R2-aware recipe grid (no expanding cards)
- * - Uses `imageKey` → POST /api/images/sign-download to get a signed URL
- * - Schema fields: slug, prepMins, cookMins, tags[]
+ * ClientRecipesGrid — R2 + External-aware recipe grid (no expanding cards)
+ * - Uses `imageKey` → POST /api/images/sign-download to get a signed URL (preferred)
+ * - Falls back to `imageExternalUrl` (plain <img>, avoids Next allow-list)
  * - Equal-height cards, 1→4 responsive columns, glassy filter bar
  */
 
@@ -17,6 +17,7 @@ export type Recipe = {
   title: string;
   description?: string | null;
   imageKey?: string | null;           // R2 object key
+  imageExternalUrl?: string | null;   // NEW: external image from importer
   tags?: string[] | null;
   prepMins?: number | null;
   cookMins?: number | null;
@@ -223,7 +224,11 @@ function RecipeCard({ recipe }: { recipe: Recipe }) {
 
       {/* Media */}
       <div className="relative aspect-[4/3] w-full bg-zinc-100">
-        <SignedImage imageKey={recipe.imageKey} alt={recipe.title} />
+        <SignedImage
+          imageKey={recipe.imageKey}
+          externalUrl={recipe.imageExternalUrl}  // ← NEW
+          alt={recipe.title}
+        />
       </div>
 
       {/* Content */}
@@ -260,10 +265,10 @@ function RecipeCard({ recipe }: { recipe: Recipe }) {
 }
 
 /**
- * SignedImage — POSTs `imageKey` to /api/images/sign-download to get a signed URL.
- * - No GET fallback (API is POST-only)
- * - Caches by key to avoid duplicate calls
- * - Graceful skeleton + placeholder
+ * SignedImage — prefers R2 signed URL via /api/images/sign-download.
+ * Falls back to external image URL if no key or signing fails.
+ * - Plain <img> for external (bypasses Next allow-list)
+ * - Skeleton + placeholder for nice loading
  */
 
 const signedUrlCache = new Map<string, string>();
@@ -328,10 +333,7 @@ function useSignedImageUrl(key?: string | null) {
         }
       } catch (e: unknown) {
         if (controller.signal.aborted) return;
-
-        const message =
-          e instanceof Error ? e.message : "Failed to obtain signed URL";
-
+        const message = e instanceof Error ? e.message : "Failed to obtain signed URL";
         setError(message);
         setUrl(null);
         setLoading(false);
@@ -345,29 +347,85 @@ function useSignedImageUrl(key?: string | null) {
   return { url, loading, error } as const;
 }
 
-function SignedImage({ imageKey, alt }: { imageKey?: string | null; alt: string }) {
-  const { url, loading } = useSignedImageUrl(imageKey);
-  const showSkeleton = loading || !url;
+function SignedImage({
+  imageKey,
+  externalUrl,
+  alt,
+}: {
+  imageKey?: string | null;
+  externalUrl?: string | null;
+  alt: string;
+}) {
+  const { url, loading, error } = useSignedImageUrl(imageKey);
+  const normalizedExternal = normalizeUrl(externalUrl);
 
-  return (
-    <>
-      {showSkeleton && (
-        <div
-          className="absolute inset-0 animate-pulse bg-gradient-to-br from-zinc-200 to-zinc-100"
-          aria-hidden
+  // Show skeleton while trying to sign an R2 image
+  const showSkeleton = !!imageKey && (loading || (!url && !error));
+
+  // If we have a signed R2 URL, use Next/Image (optimized for your host or unoptimized)
+  if (url) {
+    return (
+      <>
+        {showSkeleton && (
+          <div className="absolute inset-0 animate-pulse bg-gradient-to-br from-zinc-200 to-zinc-100" aria-hidden />
+        )}
+        <Image
+          src={url}
+          alt={alt}
+          fill
+          sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+          className="object-cover"
+          unoptimized
+          priority={false}
         />
-      )}
-      <Image
-        src={url || PLACEHOLDER}
-        alt={alt}
-        fill
-        sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-        className="object-cover"
-        unoptimized
-        priority={false}
-      />
-    </>
+      </>
+    );
+  }
+
+  // No signed URL (no key or failed) → try external <img>
+  if (normalizedExternal) {
+    return (
+      <>
+        {showSkeleton && (
+          <div className="absolute inset-0 animate-pulse bg-gradient-to-br from-zinc-200 to-zinc-100" aria-hidden />
+        )}
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src={normalizedExternal}
+          alt={alt}
+          className="absolute inset-0 h-full w-full object-cover"
+          loading="lazy"
+          referrerPolicy="no-referrer"
+          onError={(e) => {
+            (e.currentTarget as HTMLImageElement).src = "recipe-image-placeholder.png";
+          }}
+        />
+      </>
+    );
+  }
+
+  // Final placeholder
+  return (
+    <Image
+      src="/recipe-image-placeholder.png"
+      alt="recipe image placeholder"
+      fill={true}
+    />
   );
+}
+
+function normalizeUrl(src?: string | null): string | null {
+  if (!src) return null;
+  let s = src.trim();
+  if (!s) return null;
+  if (s.startsWith("//")) s = "https:" + s;
+  try {
+    const u = new URL(s);
+    if (!/^https?:$/i.test(u.protocol)) return null;
+    return u.toString();
+  } catch {
+    return null;
+  }
 }
 
 function EmptyState({
@@ -425,21 +483,3 @@ function BookIcon(props: React.SVGProps<SVGSVGElement>) {
     </svg>
   );
 }
-
-const PLACEHOLDER =
-  "data:image/svg+xml;utf8," +
-  encodeURIComponent(`
-  <svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 300'>
-    <defs>
-      <linearGradient id='g' x1='0' y1='0' x2='1' y2='1'>
-        <stop offset='0%' stop-color='#f4f4f5'/>
-        <stop offset='100%' stop-color='#e4e4e7'/>
-      </linearGradient>
-    </defs>
-    <rect width='400' height='300' fill='url(#g)' />
-    <g fill='#a1a1aa'>
-      <circle cx='200' cy='120' r='36'/>
-      <rect x='140' y='180' width='120' height='14' rx='7'/>
-    </g>
-  </svg>
-`);

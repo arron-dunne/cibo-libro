@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { z } from "zod";
 
 // Response validation
@@ -10,35 +10,37 @@ const SignedUrlResponse = z.object({
 });
 
 type ClientImageProps = {
-  imageKey?: string;
+  imageKey?: string | null;
+  externalUrl?: string | null; // NEW
   alt?: string;
 };
 
-export function ClientImage({ imageKey, alt }: ClientImageProps) {
+export function ClientImage({ imageKey, externalUrl, alt }: ClientImageProps) {
   const [imageSrc, setImageSrc] = useState<string | null>(null);
-  const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
+  const [status, setStatus] =
+    useState<"idle" | "loading" | "success" | "error">("idle");
   const [retry, setRetry] = useState(false);
 
-  useEffect(() => {
-    if (!imageKey) return;
+  // Normalize external URLs (handle //cdn... and only allow http/https)
+  const normalizedExternal = useMemo(() => normalizeUrl(externalUrl), [externalUrl]);
 
+  useEffect(() => {
     let aborted = false;
-    const fetchUrl = async (attempt = 1) => {
+
+    // If we have an imageKey, prefer signed URL flow
+    const run = async (attempt = 1) => {
+      if (!imageKey) return;
       try {
         setStatus("loading");
-        const res = await fetch(
-          `${process.env.NEXT_PUBLIC_VERCEL_URL}/api/images/sign-download`,
-          {
-            method: "POST",
-            headers: { "content-type": "application/json" },
-            body: JSON.stringify({ key: imageKey }),
-            cache: "no-store",
-          }
-        );
+        // Use a relative URL so this works in all envs
+        const res = await fetch("/api/images/sign-download", {
+          method: "POST",
+          headers: { "content-type": "application/json" },
+          body: JSON.stringify({ key: imageKey }),
+          cache: "no-store",
+        });
 
-        if (!res.ok) {
-          throw new Error(`Error fetching signed URL: ${res.status}`);
-        }
+        if (!res.ok) throw new Error(`Error fetching signed URL: ${res.status}`);
 
         const data = SignedUrlResponse.parse(await res.json());
         if (!aborted) {
@@ -48,44 +50,82 @@ export function ClientImage({ imageKey, alt }: ClientImageProps) {
       } catch (err) {
         console.error(`Image fetch attempt ${attempt} failed:`, err);
         if (attempt === 1 && !retry) {
-          // retry once
           setRetry(true);
-          fetchUrl(2);
+          run(2);
         } else {
           setStatus("error");
         }
       }
     };
 
-    fetchUrl();
+    // Signed flow only if imageKey exists
+    if (imageKey) run();
 
+    // Cleanup
     return () => {
       aborted = true;
     };
   }, [imageKey, retry]);
 
-  if (status === "loading") {
-    return (
-      <div className = "h-full w-full animate-pulse rounded-3xl bg-white/50" />
-        );
+  // Loading state (only for signed flow)
+  if (imageKey && status === "loading") {
+    return <div className="h-full w-full animate-pulse rounded-3xl bg-white/50" />;
   }
 
-  if (status === "error" || !imageSrc) {
+  // If signed flow failed or not present, try external
+  if ((!imageKey || status === "error") && normalizedExternal) {
     return (
-      <div className="flex h-full w-full items-center justify-center bg-gray-200 text-gray-500">
-        <span className="text-sm">Image unavailable</span>
-      </div>
+      // eslint-disable-next-line @next/next/no-img-element
+      <img
+        src={normalizedExternal}
+        alt={alt || "Recipe image"}
+        className="absolute inset-0 h-full w-full object-cover"
+        loading="lazy"
+        referrerPolicy="no-referrer"
+        onError={(e) => {
+          // graceful fallback
+          (e.currentTarget as HTMLImageElement).src = "/recipe-image-placeholder.png";
+        }}
+      />
     );
   }
 
+  // If we have a signed URL, render with Next/Image (optimized for your host)
+  if (imageKey && imageSrc) {
+    return (
+      <Image
+        src={imageSrc}
+        alt={alt || "Recipe image"}
+        fill
+        priority
+        sizes="(max-width: 768px) 100vw, 60vw"
+        className="object-cover"
+        // If you haven't whitelisted your R2 host yet, temporarily enable:
+        // unoptimized
+      />
+    );
+  }
+
+  // Final fallback
   return (
     <Image
-      src={imageSrc}
+      src="/recipe-image-placeholder.png"
       alt={alt || "Recipe image"}
-      fill
-      priority
-      sizes="(max-width: 768px) 100vw, 60vw"
-      className="object-cover"
+      fill={true}
     />
   );
+}
+
+function normalizeUrl(src?: string | null): string | null {
+  if (!src) return null;
+  let s = src.trim();
+  if (!s) return null;
+  if (s.startsWith("//")) s = "https:" + s;
+  try {
+    const u = new URL(s);
+    if (!/^https?:$/i.test(u.protocol)) return null;
+    return u.toString();
+  } catch {
+    return null;
+  }
 }

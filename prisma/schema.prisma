@@ -52,9 +52,10 @@ model Recipe {
   servings         Int?
   imageKey         String?
   imageExternalUrl String?
-  ingredients      String[] // Postgres text[]
+  ingredients      String[]
   steps            String[]
   tags             String[]
+  note             String?
   sourceUrl        String?
   slug             String?      @unique
   isPublic         Boolean      @default(false)

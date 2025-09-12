@@ -1,5 +1,4 @@
 import { prisma } from "@/lib/prisma";
-import { slugify } from "@/lib/slugify";
 
 export async function uniqueRecipeSlug(baseTitle: string) {
   const base = slugify(baseTitle) || "recipe";
@@ -9,4 +8,13 @@ export async function uniqueRecipeSlug(baseTitle: string) {
     candidate = `${base}-${n++}`;
   }
   return candidate;
+}
+
+function slugify(input: string) {
+  return input
+    .toLowerCase()
+    .normalize("NFKD").replace(/[\u0300-\u036f]/g, "") // strip accents
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/(^-|-$)/g, "")
+    .slice(0, 80);
 }

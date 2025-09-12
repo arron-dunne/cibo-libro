@@ -24,8 +24,8 @@ export default async function ViewRecipePage({
       ingredients: true,
       steps: true,
       imageKey: true,
-      // imageKey intentionally ignored for now
-      // imageUrl could exist in legacy data, but we'll use a fixed Unsplash fallback
+      imageExternalUrl: true,
+      sourceUrl: true
     },
   });
 
@@ -42,8 +42,11 @@ export default async function ViewRecipePage({
   const cook = Number(recipe.cookMins ?? 0);
   const total = prep + cook;
 
-
-
+  // pretty domain for the badge
+  const domain =
+    recipe.sourceUrl
+      ? new URL(recipe.sourceUrl).hostname.replace(/^www\./, "")
+      : null;
 
 
   return (
@@ -56,6 +59,7 @@ export default async function ViewRecipePage({
             <div className="relative h-72 w-full md:h-full">
               <ClientImage
                 imageKey={recipe.imageKey ?? undefined}
+                externalUrl={recipe.imageExternalUrl ?? undefined}  // ← NEW
                 alt={recipe.title || "Recipe image"}
               />
               <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/20 via-black/0 to-black/0" />
@@ -105,6 +109,47 @@ export default async function ViewRecipePage({
               <StatChip label="Total" value={`${total}m`} />
               <StatChip label="Serves" value={String(recipe.servings ?? 1)} />
             </div>
+
+            {/* View original (only if we have a sourceUrl) */}
+            {recipe.sourceUrl && (
+              <div className="mt-5 self-end">
+                <a
+                  href={recipe.sourceUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label={`View original on ${domain ?? "source site"}`}
+                  className="
+        inline-flex items-center gap-2 rounded-full
+        border border-orange-200 bg-orange-50/80
+        px-3 py-1.5 text-sm font-semibold text-orange-800
+        shadow-sm ring-1 ring-black/5
+      "
+                >
+                  {/* icon */}
+                  <svg
+                    className="h-4 w-4 text-orange-600"
+                    viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true"
+                  >
+                    <path d="M15 3h6v6" />
+                    <path d="M10 14 21 3" />
+                    <path d="M18 13v6a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
+                  </svg>
+
+                  <span className="tracking-tight">View original</span>
+
+                  {domain && (
+                    <span
+                      className="
+            ml-1 rounded-full border border-orange-200
+            bg-white/80 px-2 py-0.5 text-xs font-medium text-orange-700
+          "
+                    >
+                      {domain}
+                    </span>
+                  )}
+                </a>
+              </div>
+            )}
           </div>
         </div>
       </section>
