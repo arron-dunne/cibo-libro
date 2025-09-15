@@ -34,33 +34,39 @@ export default function Page() {
   return (
     <div className="min-h-dvh text-gray-900">
       {/* Sticky header (glassy card over gradient) */}
-      <header className="sticky top-0 z-20 bg-white/70 backdrop-blur-xl ring-1 ring-white/50 shadow-sm">
-        <div className="mx-auto max-w-screen-lg px-4 sm:px-6 py-3 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="inline-flex h-10 w-10 items-center justify-center rounded-xl bg-white/90 ring-1 ring-white/60 shadow-sm">
-              <ArrowLeft className="h-5 w-5 text-gray-700" aria-hidden />
-            </div>
-            <div className="flex items-center gap-2">
-              <UtensilsCrossed className="h-5 w-5 text-orange-600 drop-shadow-[0_0_8px_rgba(255,255,255,0.5)]" aria-hidden />
-              <div className="leading-tight">
-                <p className="text-sm text-gray-600">Cook Mode</p>
-                <h1 className="text-base font-semibold">{recipeTitle}</h1>
+      <header className="sticky top-0 z-20">
+        <div className="mx-auto max-w-screen-lg px-4 sm:px-6 py-2">
+          {/* Glassy pill navbar */}
+          <div className="rounded-[28px] bg-white/35 backdrop-blur-xl ring-1 ring-white/60 shadow-[0_6px_24px_rgba(0,0,0,0.08)] px-3 sm:px-4 py-2 sm:py-3">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className="inline-flex h-10 w-10 items-center justify-center rounded-xl bg-white/90 ring-1 ring-white/60 shadow-sm">
+                  <ArrowLeft className="h-5 w-5 text-gray-700" aria-hidden />
+                </div>
+                <div className="flex items-center gap-2">
+                  <UtensilsCrossed className="h-5 w-5 text-orange-600 drop-shadow-[0_0_8px_rgba(255,255,255,0.5)]" aria-hidden />
+                  <div className="leading-tight">
+                    <p className="text-sm text-gray-700/90">Cook Mode</p>
+                    <h1 className="text-base font-semibold">{recipeTitle}</h1>
+                  </div>
+                </div>
               </div>
-            </div>
-          </div>
 
-          {/* Right side: Step indicator + wake-lock hint (static) */}
-          <div className="hidden sm:flex items-center gap-4">
-            <span className="text-sm text-gray-700">
-              Step <strong className="font-semibold">{stepIndex}</strong> of {totalSteps}
-            </span>
-            <div className="inline-flex items-center gap-2 rounded-full bg-emerald-50/90 ring-1 ring-emerald-200 px-3 py-1">
-              <Lock className="h-4 w-4 text-emerald-700" aria-hidden />
-              <span className="text-sm text-emerald-800">Screen awake</span>
+              {/* Right side: unchanged content, softened styling */}
+              <div className="hidden sm:flex items-center gap-4">
+                <span className="text-sm text-gray-800/90">
+                  Step <strong className="font-semibold">{stepIndex}</strong> of {totalSteps}
+                </span>
+                <div className="inline-flex items-center gap-2 rounded-full bg-emerald-50/90 ring-1 ring-emerald-200 px-3 py-1">
+                  <Lock className="h-4 w-4 text-emerald-700" aria-hidden />
+                  <span className="text-sm text-emerald-800">Screen awake</span>
+                </div>
+              </div>
             </div>
           </div>
         </div>
       </header>
+
 
       {/* Main content area */}
       <main className="mx-auto max-w-screen-lg px-4 sm:px-6 pt-4 sm:pt-6 pb-[calc(240px+env(safe-area-inset-bottom))] grid lg:grid-cols-[1fr_320px] gap-6">
@@ -137,73 +143,71 @@ export default function Page() {
       </div>
 
       {/* Sticky bottom section with informational timer + nav (glassy footer) */}
-      <nav
-        aria-label="Step navigation"
-        className="fixed inset-x-0 bottom-0 z-20 bg-white/75 backdrop-blur-xl ring-1 ring-white/60"
-      >
-        <div className="mx-auto max-w-screen-lg px-4 sm:px-6 py-3">
-          {/* Timer row — informational pill + primary Start button */}
-          <div className="flex items-stretch gap-3">
-            {/* Informational time pill */}
-            <div
-              role="status"
-              className="flex-1 rounded-2xl bg-white/85 backdrop-blur-xl ring-1 ring-orange-200 px-4 py-4 shadow-sm
-                         flex items-center justify-center gap-2"
-            >
-              <TimerIcon className="h-5 w-5 text-orange-600" aria-hidden />
-              <span className="tabular-nums text-lg sm:text-xl font-semibold text-gray-900">
-                {stepTimer}
-              </span>
+      <nav aria-label="Step navigation" className="fixed inset-x-0 bottom-0 z-20">
+        <div className="mx-auto max-w-screen-lg px-4 sm:px-6 pb-[env(safe-area-inset-bottom)]">
+          {/* Glassy pill footer container */}
+          <div className="rounded-[28px] bg-white/35 backdrop-blur-xl ring-1 ring-white/60 shadow-[0_10px_28px_rgba(0,0,0,0.12)] p-3">
+            {/* Timer row (info pill + Start) — content unchanged, just styling */}
+            <div className="flex items-stretch gap-3">
+              {/* Informational time pill */}
+              <div
+                role="status"
+                className="flex-1 rounded-2xl bg-white/90 ring-1 ring-orange-200 px-4 py-4 shadow-sm
+                     flex items-center justify-center gap-2"
+              >
+                <TimerIcon className="h-5 w-5 text-orange-600" aria-hidden />
+                <span className="tabular-nums text-lg sm:text-xl font-semibold text-gray-900">
+                  {stepTimer}
+                </span>
+              </div>
+
+              {/* Primary Start button (matches brand Next) */}
+              <button
+                type="button"
+                aria-label="Start timer"
+                className="rounded-2xl bg-orange-600 text-white px-5 py-4 font-semibold shadow-md shadow-orange-900/10
+                     hover:bg-orange-600/90 active:bg-orange-700
+                     focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-300 focus-visible:ring-offset-2
+                     inline-flex items-center justify-center gap-2 min-w-[9rem]"
+              >
+                <Play className="h-5 w-5" aria-hidden />
+                <span className="text-base">Start</span>
+              </button>
             </div>
 
-            {/* Primary Start button (matches Next) */}
-            <button
-              type="button"
-              aria-label="Start timer"
-              className="rounded-2xl bg-orange-600 text-white px-5 py-4 font-semibold shadow-md shadow-orange-900/10
-                         hover:bg-orange-600/90 active:bg-orange-700
-                         focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-300 focus-visible:ring-offset-2
-                         inline-flex items-center justify-center gap-2 min-w-[9rem]"
-            >
-              <Play className="h-5 w-5" aria-hidden />
-              <span className="text-base">Start</span>
-            </button>
-          </div>
+            {/* Prev / Next / All steps — content unchanged, glassy buttons to match */}
+            <div className="mt-3 grid grid-cols-3 gap-3 items-stretch">
+              <button
+                type="button"
+                className="col-span-1 rounded-xl bg-white/90 ring-1 ring-white/60 text-gray-900 py-3 font-medium shadow-sm"
+              >
+                Previous
+              </button>
+              <button
+                type="button"
+                className="col-span-1 rounded-xl bg-orange-600 text-white py-3 font-semibold shadow-md shadow-orange-900/10"
+              >
+                Next
+              </button>
+              <button
+                type="button"
+                className="col-span-1 rounded-xl bg-white/90 ring-1 ring-white/60 text-gray-900 py-3 font-medium shadow-sm"
+              >
+                All steps
+              </button>
+            </div>
 
-          {/* Prev / Next / All steps */}
-          <div className="mt-3 grid grid-cols-3 gap-3 items-stretch">
-            <button
-              type="button"
-              className="col-span-1 rounded-xl bg-white/85 backdrop-blur-xl ring-1 ring-white/60 text-gray-900 py-3 font-medium shadow-sm"
-            >
-              Previous
-            </button>
-            <button
-              type="button"
-              className="col-span-1 rounded-xl bg-orange-600 text-white py-3 font-semibold shadow-md shadow-orange-900/10"
-            >
-              Next
-            </button>
-            <button
-              type="button"
-              className="col-span-1 rounded-xl bg-white/85 backdrop-blur-xl ring-1 ring-white/60 text-gray-900 py-3 font-medium shadow-sm"
-            >
-              All steps
-            </button>
-          </div>
-
-          {/* Mobile-only wake-lock status */}
-          <div className="mt-3 flex items-center justify-center gap-2 sm:hidden">
-            <div className="inline-flex items-center gap-2 rounded-full bg-emerald-50/90 ring-1 ring-emerald-200 px-3 py-1">
-              <Lock className="h-4 w-4 text-emerald-700" aria-hidden />
-              <span className="text-sm text-emerald-800">Screen awake</span>
+            {/* Mobile-only wake-lock status (unchanged) */}
+            <div className="mt-3 flex items-center justify-center gap-2 sm:hidden">
+              <div className="inline-flex items-center gap-2 rounded-full bg-emerald-50/90 ring-1 ring-emerald-200 px-3 py-1">
+                <Lock className="h-4 w-4 text-emerald-700" aria-hidden />
+                <span className="text-sm text-emerald-800">Screen awake</span>
+              </div>
             </div>
           </div>
-
-          {/* Safe-area spacer */}
-          <div className="pt-[env(safe-area-inset-bottom)]" />
         </div>
       </nav>
+
     </div>
   );
 }
