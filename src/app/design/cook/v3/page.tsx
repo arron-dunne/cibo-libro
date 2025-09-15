@@ -135,20 +135,33 @@ export default function Page() {
       >
         <div className="mx-auto max-w-screen-lg px-4 sm:px-6 py-3">
           {/* Timer */}
-          <div className="flex gap-2">
+          <div className="flex items-stretch gap-3">
+            {/* Informational time pill */}
             <div
-              className="w-1/2 flex-grow rounded-2xl bg-gray-900 text-white py-4 shadow flex items-center justify-center gap-3"
+              role="status"
+              className="flex-1 rounded-2xl border border-orange-200 bg-white px-4 py-4 shadow-sm
+               flex items-center justify-center gap-2"
             >
-              <Timer className="h-5 w-5" aria-hidden />
-              <span className="tabular-nums text-base sm:text-lg font-semibold">{stepTimer}</span>
+              <Timer className="h-5 w-5 text-orange-600" aria-hidden />
+              <span className="tabular-nums text-lg sm:text-xl font-semibold text-gray-900">
+                {stepTimer}
+              </span>
             </div>
-            <div 
-              className="w-1/4 rounded-2xl bg-gray-900 text-white py-4 shadow flex items-center justify-center gap-3"
+
+            {/* Primary Start button */}
+            <button
+              type="button"
+              aria-label="Start timer"
+              className="rounded-2xl bg-orange-600 text-white px-5 py-4 font-semibold shadow
+               hover:bg-orange-600/90 active:bg-orange-700/90
+               focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-400 focus-visible:ring-offset-2
+               inline-flex items-center justify-center gap-2 min-w-[9rem]"
             >
               <Play className="h-5 w-5" aria-hidden />
-              <span className="tabular-nums text-base sm:text-lg font-semibold">Start</span>
-            </div>
+              <span className="text-base">Start</span>
+            </button>
           </div>
+
 
           {/* Prev / Next / All steps */}
           <div className="mt-3 grid grid-cols-3 gap-3 items-stretch">
