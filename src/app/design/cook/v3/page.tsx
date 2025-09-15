@@ -4,7 +4,7 @@
 // - Ingredients bar offset adjusted so it won't clip on mobile
 // - No interactivity; layout only
 
-import { ArrowLeft, Timer, ListChecks, Lock, UtensilsCrossed } from "lucide-react";
+import { ArrowLeft, Timer, ListChecks, Lock, UtensilsCrossed, Play } from "lucide-react";
 
 export default function Page() {
   // --- Static mock data for layout preview ---
@@ -134,16 +134,21 @@ export default function Page() {
         className="fixed inset-x-0 bottom-0 z-20 border-t border-orange-200 bg-white/90 backdrop-blur supports-[backdrop-filter]:bg-white/70"
       >
         <div className="mx-auto max-w-screen-lg px-4 sm:px-6 py-3">
-          {/* Big Timer button */}
-          <button
-            type="button"
-            aria-label="Start timer"
-            className="w-full rounded-2xl bg-gray-900 text-white py-4 shadow flex items-center justify-center gap-3"
-          >
-            <Timer className="h-5 w-5" aria-hidden />
-            <span className="tabular-nums text-base sm:text-lg font-semibold">{stepTimer}</span>
-            <span className="text-base sm:text-lg font-semibold">Start Timer</span>
-          </button>
+          {/* Timer */}
+          <div className="flex gap-2">
+            <div
+              className="w-1/2 flex-grow rounded-2xl bg-gray-900 text-white py-4 shadow flex items-center justify-center gap-3"
+            >
+              <Timer className="h-5 w-5" aria-hidden />
+              <span className="tabular-nums text-base sm:text-lg font-semibold">{stepTimer}</span>
+            </div>
+            <div 
+              className="w-1/4 rounded-2xl bg-gray-900 text-white py-4 shadow flex items-center justify-center gap-3"
+            >
+              <Play className="h-5 w-5" aria-hidden />
+              <span className="tabular-nums text-base sm:text-lg font-semibold">Start</span>
+            </div>
+          </div>
 
           {/* Prev / Next / All steps */}
           <div className="mt-3 grid grid-cols-3 gap-3 items-stretch">
