@@ -152,7 +152,7 @@ export default function Page() {
               {/* Informational time pill */}
               <div
                 role="status"
-                className="flex-1 rounded-2xl bg-white/90 ring-1 ring-orange-200 px-4 py-4 shadow-sm
+                className="w-2/3 rounded-2xl bg-white/90 ring-1 ring-orange-200 px-4 py-4 shadow-sm
                      flex items-center justify-center gap-2"
               >
                 <TimerIcon className="h-5 w-5 text-orange-600" aria-hidden />
@@ -168,7 +168,7 @@ export default function Page() {
                 className="rounded-2xl bg-orange-600 text-white px-5 py-4 font-semibold shadow-md shadow-orange-900/10
                      hover:bg-orange-600/90 active:bg-orange-700
                      focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-300 focus-visible:ring-offset-2
-                     inline-flex items-center justify-center gap-2 min-w-[9rem]"
+                     w-1/3 inline-flex items-center justify-center gap-2 min-w-[9rem]"
               >
                 <Play className="h-5 w-5" aria-hidden />
                 <span className="text-base">Start</span>
