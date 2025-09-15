@@ -1,18 +1,10 @@
 // app/cook/page.tsx
-// Cibo Libro — Cook Mode (wireframe, static) — Draft 2
-// - Mobile-first, no interactivity (pure layout)
-// - Timer pill redesigned with prominent "Start" button
-// - Mobile Ingredients bar repositioned to avoid clipping
-// - Tailwind + lucide-react
+// Cibo Libro — Cook Mode (wireframe, static) — Draft 3
+// - Timer moved to bottom as a large full-width button (mobile), constrained on desktop
+// - Ingredients bar offset adjusted so it won't clip on mobile
+// - No interactivity; layout only
 
-import {
-  ArrowLeft,
-  Timer,
-  ListChecks,
-  Lock,
-  UtensilsCrossed,
-  PlayCircle,
-} from "lucide-react";
+import { ArrowLeft, Timer, ListChecks, Lock, UtensilsCrossed } from "lucide-react";
 
 export default function Page() {
   // --- Static mock data for layout preview ---
@@ -64,13 +56,13 @@ export default function Page() {
       </header>
 
       {/* Main content area */}
-      <main className="mx-auto max-w-screen-lg px-4 sm:px-6 pb-[calc(92px+env(safe-area-inset-bottom))] pt-4 sm:pt-6 grid lg:grid-cols-[1fr_320px] gap-6">
+      <main className="mx-auto max-w-screen-lg px-4 sm:px-6 pb-[calc(220px+env(safe-area-inset-bottom))] pt-4 sm:pt-6 grid lg:grid-cols-[1fr_320px] gap-6">
         {/* Step card */}
         <section
           aria-label={`Step ${stepIndex} instructions`}
           className="rounded-2xl border border-orange-100 bg-white shadow-sm"
         >
-          {/* Step meta */}
+          {/* Step meta (timer removed from here) */}
           <div className="flex items-center justify-between px-4 sm:px-6 py-3 border-b border-orange-100">
             <div className="flex items-center gap-3">
               <span className="inline-flex items-center justify-center h-9 w-9 rounded-xl bg-orange-100 text-orange-700 font-bold">
@@ -79,22 +71,6 @@ export default function Page() {
               <div className="text-sm text-gray-600">
                 Step {stepIndex} of {totalSteps}
               </div>
-            </div>
-
-            {/* Timer pill with Start button (static) */}
-            <div className="inline-flex items-center gap-2 rounded-full bg-gray-900 text-white ps-3 pe-1 py-1.5 shadow">
-              <div className="flex items-center gap-2">
-                <Timer className="h-4 w-4" aria-hidden />
-                <span className="tabular-nums text-sm">{stepTimer}</span>
-              </div>
-              <button
-                type="button"
-                className="inline-flex items-center gap-1.5 rounded-full bg-white text-gray-900 px-3 py-1.5 text-sm font-semibold shadow-sm"
-                aria-label="Start timer"
-              >
-                <PlayCircle className="h-4 w-4" aria-hidden />
-                Start
-              </button>
             </div>
           </div>
 
@@ -131,9 +107,11 @@ export default function Page() {
         </aside>
       </main>
 
-      {/* Mobile Ingredients bar — lifted further above bottom nav to prevent clipping */}
-      <div className="lg:hidden fixed inset-x-0 z-10 px-4 sm:px-6"
-           style={{ bottom: "calc(120px + env(safe-area-inset-bottom))" }}>
+      {/* Mobile Ingredients bar — positioned above the enlarged bottom nav */}
+      <div
+        className="lg:hidden fixed inset-x-0 z-10 px-4 sm:px-6"
+        style={{ bottom: "calc(196px + env(safe-area-inset-bottom))" }} // tuned to avoid clipping
+      >
         <div className="mx-auto max-w-screen-sm rounded-2xl border border-orange-200 bg-white shadow-md">
           <button
             type="button"
@@ -150,13 +128,25 @@ export default function Page() {
         </div>
       </div>
 
-      {/* Sticky bottom nav */}
+      {/* Sticky bottom section with Timer + Nav */}
       <nav
         aria-label="Step navigation"
         className="fixed inset-x-0 bottom-0 z-20 border-t border-orange-200 bg-white/90 backdrop-blur supports-[backdrop-filter]:bg-white/70"
       >
         <div className="mx-auto max-w-screen-lg px-4 sm:px-6 py-3">
-          <div className="grid grid-cols-3 gap-3 items-stretch">
+          {/* Big Timer button */}
+          <button
+            type="button"
+            aria-label="Start timer"
+            className="w-full rounded-2xl bg-gray-900 text-white py-4 shadow flex items-center justify-center gap-3"
+          >
+            <Timer className="h-5 w-5" aria-hidden />
+            <span className="tabular-nums text-base sm:text-lg font-semibold">{stepTimer}</span>
+            <span className="text-base sm:text-lg font-semibold">Start Timer</span>
+          </button>
+
+          {/* Prev / Next / All steps */}
+          <div className="mt-3 grid grid-cols-3 gap-3 items-stretch">
             <button
               type="button"
               className="col-span-1 rounded-xl border border-gray-300 bg-white py-3 text-base font-medium"
