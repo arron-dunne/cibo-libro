@@ -16,139 +16,7 @@ import {
   BadgeCheck,
 } from "lucide-react";
 
-// ---------- helpers ----------
-type StepItem = {
-  title?: string | null;
-  body: string;
-  durationSec?: number | null;
-};
 
-function getFirstString(val: unknown): string | undefined {
-  return typeof val === "string" ? val : undefined;
-}
-
-// Ingredients can be: string[], array of objects, or a newline string
-function normalizeIngredients(ingredients: unknown, fallbackRaw?: string | null): string[] {
-  const lines: string[] = [];
-
-  if (Array.isArray(ingredients)) {
-    for (const item of ingredients) {
-      if (typeof item === "string") {
-        const t = item.trim();
-        if (t) lines.push(t);
-      } else if (item && typeof item === "object") {
-        const obj = item as Record<string, unknown>;
-        const name =
-          getFirstString(obj.text) ??
-          getFirstString(obj.name) ??
-          getFirstString(obj.ingredient) ??
-          "";
-        const qty =
-          getFirstString(obj.quantity) ??
-          getFirstString(obj.qty) ??
-          getFirstString(obj.amount) ??
-          "";
-        const unit = getFirstString(obj.unit) ?? "";
-        const note = getFirstString(obj.note) ?? "";
-        const composed = [qty, unit, name, note].filter(Boolean).join(" ").trim();
-        if (composed) lines.push(composed);
-      }
-    }
-  } else if (typeof ingredients === "string") {
-    lines.push(
-      ...ingredients.split(/\r?\n/).map((s) => s.trim()).filter(Boolean)
-    );
-  }
-
-  if (!lines.length && typeof fallbackRaw === "string" && fallbackRaw) {
-    lines.push(
-      ...fallbackRaw.split(/\r?\n/).map((s) => s.trim()).filter(Boolean)
-    );
-  }
-
-  return lines;
-}
-
-// Steps can be: relation `steps[]`, array of strings/objects, or newline text
-function normalizeSteps(recipe: any): StepItem[] {
-  const out: StepItem[] = [];
-
-  // 1) Relation (common): recipe.steps[{ index,text,title,minutes,seconds,durationSec }]
-  const rel = Array.isArray(recipe?.steps) ? recipe.steps : undefined;
-  if (rel?.length) {
-    rel
-      .slice()
-      .sort((a: any, b: any) => (a.index ?? a.order ?? 0) - (b.index ?? b.order ?? 0))
-      .forEach((s: any) => {
-        const minutes = Number.isFinite(s?.minutes) ? Number(s.minutes) : 0;
-        const seconds = Number.isFinite(s?.seconds) ? Number(s.seconds) : 0;
-        const durationSec = Number.isFinite(s?.durationSec)
-          ? Number(s.durationSec)
-          : minutes * 60 + seconds || undefined;
-
-        const body =
-          getFirstString(s?.text) ??
-          getFirstString(s?.body) ??
-          getFirstString(s?.content) ??
-          "";
-        if (body?.trim()) {
-          out.push({ title: getFirstString(s?.title), body: body.trim(), durationSec });
-        }
-      });
-  }
-
-  // 2) JSON fields: instructionsJson / stepsJson / directionsJson
-  const jsonLike =
-    recipe?.instructionsJson ?? recipe?.stepsJson ?? recipe?.directionsJson ?? recipe?.methodJson;
-
-  if (!out.length && Array.isArray(jsonLike)) {
-    for (const s of jsonLike) {
-      if (typeof s === "string") {
-        const t = s.trim();
-        if (t) out.push({ body: t });
-      } else if (s && typeof s === "object") {
-        const obj = s as Record<string, unknown>;
-        const body =
-          getFirstString(obj.text) ??
-          getFirstString(obj.body) ??
-          getFirstString(obj.content) ??
-          "";
-        const minutes = Number(obj.minutes) || 0;
-        const seconds = Number(obj.seconds) || 0;
-        const durationSec =
-          Number.isFinite(obj.durationSec as number)
-            ? Number(obj.durationSec)
-            : minutes * 60 + seconds || undefined;
-        if (body?.trim()) {
-          out.push({ title: getFirstString(obj.title), body: body.trim(), durationSec });
-        }
-      }
-    }
-  }
-
-  // 3) Plain text: instructions / directions / method / rawSteps
-  const txt =
-    getFirstString(recipe?.instructions) ??
-    getFirstString(recipe?.directions) ??
-    getFirstString(recipe?.method) ??
-    getFirstString(recipe?.rawSteps);
-
-  if (!out.length && txt) {
-    const lines = txt.split(/\n{2,}|\r?\n-\s+|\r?\n/).map((s) => s.trim()).filter(Boolean);
-    for (const t of lines) out.push({ body: t });
-  }
-
-  return out;
-}
-
-function formatDuration(sec?: number | null) {
-  if (!sec || sec < 1) return "";
-  const m = Math.floor(sec / 60);
-  const s = sec % 60;
-  return `${m}:${String(s).padStart(2, "0")}`;
-}
-
-// ---------- page ----------
 export default async function Page({ params, searchParams }: {
   params: { slug: string };
   searchParams?: Promise<{ step?: string }>;
@@ -170,13 +38,9 @@ export default async function Page({ params, searchParams }: {
 
   const title: string = recipe.title ?? "Untitled Recipe";
 
-  const ingredients = normalizeIngredients(
-    (recipe as any).ingredients ?? (recipe as any).ingredientsJson,
-    (recipe as any).rawIngredients
-  );
-
-  // const steps: StepItem[] = normalizeSteps(recipe);
-  const steps = recipe.steps ?? []
+  const ingredients: string[] = recipe.ingredients ?? [];
+  
+  const steps: string[] = recipe.steps ?? []
   const totalSteps = steps.length;
 
   const normalized = (stepParam ?? "ings").toString().toLowerCase();
@@ -334,18 +198,6 @@ export default async function Page({ params, searchParams }: {
               {currentStep ? (
                 <h2 className="text-lg font-semibold text-orange-900">{currentStep}</h2>
               ) : null}
-              {/* <p className="mt-2 text-2xl md:text-3xl leading-snug text-orange-950/95">
-                {currentStep.body}
-              </p>
-
-              {currentStep.durationSec ? (
-                <div className="mt-6">
-                  <div className="rounded-full bg-gradient-to-b from-orange-500 to-orange-600 text-white ring-1 ring-orange-700/40 shadow flex items-center justify-center gap-2 h-12 md:h-14 px-6 md:px-8 font-semibold">
-                    <Timer className="size-5" />
-                    Start {formatDuration(currentStep.durationSec)}
-                  </div>
-                </div>
-              ) : null} */}
             </div>
           </div>
         )}
