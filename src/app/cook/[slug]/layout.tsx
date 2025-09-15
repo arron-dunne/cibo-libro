@@ -1,9 +1,14 @@
 import { Nunito } from "next/font/google";
+import type { ReactNode } from "react";
 
+/**
+ * Cook Mode route layout
+ * - Provides brand gradient background and font variable
+ * - Keeps content constrained for readability
+ */
 const nunito = Nunito({ subsets: ["latin"], variable: "--font-nunito" });
 
-export default function Layout({ children }: { children: React.ReactNode }) {
-
+export default function Layout({ children }: { children: ReactNode }) {
   return (
     <div className={`min-h-screen text-gray-900 antialiased ${nunito.variable}`}>
       {/* Brand gradient background + soft glow */}
@@ -19,8 +24,8 @@ export default function Layout({ children }: { children: React.ReactNode }) {
         <div className="absolute inset-0 bg-[radial-gradient(140%_80%_at_50%_0%,rgba(0,0,0,0.12),transparent_60%)]" />
       </div>
 
+      {/* Page container */}
       <main className="mx-auto w-[min(1150px,95%)] py-8">{children}</main>
-
     </div>
   );
 }

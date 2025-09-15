@@ -12,53 +12,56 @@ import {
   CheckCircle2,
   ChevronLeft,
   ChevronRight,
-  Timer,
   BadgeCheck,
 } from "lucide-react";
 
+type SearchParams = Record<string, string | string[] | undefined>;
 
-export default async function Page({ params, searchParams }: {
+export default async function Page({
+  params,
+  searchParams,
+}: {
   params: { slug: string };
-  searchParams?: Promise<{ step?: string }>;
+  searchParams: Promise<SearchParams>;
 }) {
   const { slug } = params;
-  const stepParam = await searchParams?.then(p => p.step)
 
+  const sp = ((await searchParams) ?? {}) as SearchParams;
+  const stepParamRaw = Array.isArray(sp.step) ? sp.step[0] : sp.step;
+  const normalized = (stepParamRaw ?? "ings").toString().toLowerCase();
+
+  // Fetch only what Cook Mode needs
   const recipe = await prisma.recipe.findUnique({
     where: { slug },
-    select: { 
+    select: {
       id: true,
       title: true,
-      ingredients: true,
-      steps: true 
+      ingredients: true, // string[]
+      steps: true,       // string[]
     },
   });
 
   if (!recipe) notFound();
 
-  const title: string = recipe.title ?? "Untitled Recipe";
-
-  const ingredients: string[] = recipe.ingredients ?? [];
-  
-  const steps: string[] = recipe.steps ?? []
+  const title = recipe.title ?? "Untitled Recipe";
+  const ingredients: string[] = Array.isArray(recipe.ingredients) ? recipe.ingredients : [];
+  const steps: string[] = Array.isArray(recipe.steps) ? recipe.steps : [];
   const totalSteps = steps.length;
 
-  const normalized = (stepParam ?? "ings").toString().toLowerCase();
   const isFinish = normalized === "finish";
   const isIngredients = normalized === "ings";
 
-  // We treat numbers as 1-based indexes in the URL (user-friendly).
+  // Interpret numeric step as 1-based index; clamp safely
   let currentIdx = 0;
   if (!isIngredients && !isFinish) {
     const n = Number.parseInt(normalized, 10);
     if (!Number.isNaN(n)) {
-      currentIdx = Math.min(Math.max(n, 1), Math.max(totalSteps, 1)) - 1; // clamp
+      currentIdx = Math.min(Math.max(n, 1), Math.max(totalSteps, 1)) - 1;
     }
   }
+  const currentStep = !isIngredients && !isFinish ? steps[currentIdx] : undefined;
 
-  const currentStep = !isIngredients && !isFinish && steps[currentIdx];
-
-  // Build Prev/Next hrefs
+  // URL-driven Prev/Next (no client state)
   const base = `/cook/${slug}`;
   const hrefIngs = `${base}?step=ings`;
   const hrefFirst = `${base}?step=1`;
@@ -75,8 +78,7 @@ export default async function Page({ params, searchParams }: {
     prevHref = totalSteps ? hrefLast : hrefIngs;
     nextHref = null;
   } else {
-    // step view
-    prevHref = currentIdx > 0 ? `${base}?step=${currentIdx}` : hrefIngs; // back to ingredients from step 1
+    prevHref = currentIdx > 0 ? `${base}?step=${currentIdx}` : hrefIngs;
     nextHref = currentIdx < totalSteps - 1 ? `${base}?step=${currentIdx + 2}` : hrefFinish;
   }
 
@@ -96,7 +98,10 @@ export default async function Page({ params, searchParams }: {
                   <ArrowLeft className="h-5 w-5" aria-hidden />
                 </Link>
                 <div className="flex items-center gap-2">
-                  <UtensilsCrossed className="h-5 w-5 text-orange-600 drop-shadow-[0_0_8px_rgba(255,255,255,0.5)]" aria-hidden />
+                  <UtensilsCrossed
+                    className="h-5 w-5 text-orange-600 drop-shadow-[0_0_8px_rgba(255,255,255,0.5)]"
+                    aria-hidden
+                  />
                   <div className="leading-tight">
                     <p className="text-sm text-gray-700/90">Cook Mode</p>
                     <h1 className="text-base text-black font-semibold">{title}</h1>
@@ -128,7 +133,7 @@ export default async function Page({ params, searchParams }: {
                 : "bg-white/35 text-white ring-white/50 backdrop-blur shadow hover:bg-white/40",
             ].join(" ")}
           >
-            <List className="size-4" />
+            <List className="h-4 w-4" />
             Ingredients
           </Link>
           <Link
@@ -141,12 +146,12 @@ export default async function Page({ params, searchParams }: {
                 : "bg-white/35 text-white ring-white/50 backdrop-blur shadow hover:bg-white/40",
             ].join(" ")}
           >
-            <ListOrdered className="size-4" />
+            <ListOrdered className="h-4 w-4" />
             All Steps
           </Link>
         </div>
 
-        {/* Panel */}
+        {/* Ingredients panel */}
         {isIngredients && (
           <div className="mt-5 rounded-3xl p-5 md:p-6 bg-[rgba(255,246,240,0.96)] text-orange-950 ring-1 ring-[rgba(253,216,180,0.9)] shadow-[0_10px_30px_rgba(0,0,0,0.12)]">
             <div className="flex items-center justify-center pb-3 border-b border-[rgba(253,216,180,0.7)]/60">
@@ -163,6 +168,7 @@ export default async function Page({ params, searchParams }: {
                         htmlFor={id}
                         className="group grid grid-cols-[auto_1fr] items-center gap-3 rounded-2xl bg-white/90 ring-1 ring-black/5 shadow-sm px-4 py-3 cursor-pointer focus-within:ring-2 focus-within:ring-orange-400"
                       >
+                        {/* Native checkbox for a11y; state is local to the session */}
                         <input id={id} type="checkbox" className="peer sr-only" />
                         <span className="inline-flex h-6 w-6 items-center justify-center text-gray-400 peer-checked:hidden">
                           <Circle className="h-5 w-5" aria-hidden />
@@ -179,13 +185,12 @@ export default async function Page({ params, searchParams }: {
                 })}
               </ul>
             ) : (
-              <p className="mt-4 text-sm text-orange-900/80">
-                No ingredients found for this recipe yet.
-              </p>
+              <p className="mt-4 text-sm text-orange-900/80">No ingredients found for this recipe yet.</p>
             )}
           </div>
         )}
 
+        {/* Step panel */}
         {!isIngredients && !isFinish && currentStep && (
           <div className="mt-5 rounded-3xl p-5 md:p-7 bg-[rgba(255,246,240,0.96)] text-orange-950 ring-1 ring-[rgba(253,216,180,0.9)] shadow-[0_10px_30px_rgba(0,0,0,0.12)]">
             <div className="flex items-center justify-center pb-4 border-b border-[rgba(253,216,180,0.7)]/60">
@@ -193,27 +198,21 @@ export default async function Page({ params, searchParams }: {
                 Step {currentIdx + 1} of {totalSteps}
               </p>
             </div>
-
             <div className="mt-4">
-              {currentStep ? (
-                <h2 className="text-lg font-semibold text-orange-900">{currentStep}</h2>
-              ) : null}
+              <p className="text-2xl md:text-3xl leading-snug text-orange-950/95">{currentStep}</p>
             </div>
           </div>
         )}
 
+        {/* Finish panel */}
         {isFinish && (
           <div className="mt-5 rounded-3xl p-6 md:p-8 bg-[rgba(255,246,240,0.96)] text-orange-950 ring-1 ring-[rgba(253,216,180,0.9)] shadow-[0_10px_30px_rgba(0,0,0,0.12)] text-center">
             <div className="flex items-center justify-center gap-3 text-emerald-700">
-              <BadgeCheck className="size-7" />
+              <BadgeCheck className="h-7 w-7" />
               <p className="text-sm font-semibold">Finished</p>
             </div>
-            <h2 className="mt-3 text-2xl md:text-3xl font-semibold text-orange-900">
-              Bon appétit!
-            </h2>
-            <p className="mt-2 text-orange-900/80">
-              You’ve completed all the steps. Enjoy your meal.
-            </p>
+            <h2 className="mt-3 text-2xl md:text-3xl font-semibold text-orange-900">Bon appétit!</h2>
+            <p className="mt-2 text-orange-900/80">You’ve completed all the steps. Enjoy your meal.</p>
             <div className="mt-6">
               <Link
                 href={`/view/${slug}`}
@@ -236,7 +235,7 @@ export default async function Page({ params, searchParams }: {
                 role="button"
                 className="h-14 rounded-full bg-white/70 text-orange-900 text-lg font-semibold ring-1 ring-orange-700/40 shadow flex items-center justify-center gap-2 hover:bg-white/80 transition"
               >
-                <ChevronLeft className="size-5" /> Prev
+                <ChevronLeft className="h-5 w-5" /> Prev
               </Link>
             ) : (
               <button
@@ -244,7 +243,7 @@ export default async function Page({ params, searchParams }: {
                 aria-disabled="true"
                 disabled
               >
-                <ChevronLeft className="size-5" /> Prev
+                <ChevronLeft className="h-5 w-5" /> Prev
               </button>
             )}
 
@@ -254,7 +253,7 @@ export default async function Page({ params, searchParams }: {
                 role="button"
                 className="h-14 rounded-full bg-orange-600 text-white text-lg font-semibold ring-1 ring-orange-700/40 shadow flex items-center justify-center gap-2 hover:bg-orange-700 active:bg-orange-800 active:translate-y-px transition"
               >
-                Next <ChevronRight className="size-5" />
+                Next <ChevronRight className="h-5 w-5" />
               </Link>
             ) : (
               <button
@@ -262,7 +261,7 @@ export default async function Page({ params, searchParams }: {
                 aria-disabled="true"
                 disabled
               >
-                Next <ChevronRight className="size-5" />
+                Next <ChevronRight className="h-5 w-5" />
               </button>
             )}
           </div>
