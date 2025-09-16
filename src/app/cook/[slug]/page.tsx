@@ -85,9 +85,9 @@ export default async function Page({
   return (
     <main className="min-h-dvh text-white flex flex-col">
       {/* Header */}
-      <header className="sticky top-0 z-20">
-        <div className="mx-auto max-w-screen-sm px-4 sm:px-6 py-2">
-          <div className="rounded-full bg-white/35 backdrop-blur-xl ring-1 ring-white/60 shadow-[0_6px_24px_rgba(0,0,0,0.08)] px-3 sm:px-4 py-2 sm:py-3">
+      <header className="sticky top-4 z-20">
+        <div className="mx-auto max-w-screen-sm">
+          <div className="rounded-full border border-white/80 bg-white/60 backdrop-blur px-3 sm:px-4 py-2 sm:py-3">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
                 <Link
@@ -155,7 +155,7 @@ export default async function Page({
         {isIngredients && (
           <div className="mt-5 rounded-3xl p-5 md:p-6 bg-[rgba(255,246,240,0.96)] text-orange-950 ring-1 ring-[rgba(253,216,180,0.9)] shadow-[0_10px_30px_rgba(0,0,0,0.12)]">
             <div className="flex items-center justify-center pb-3 border-b border-[rgba(253,216,180,0.7)]/60">
-              <p className="text-xs font-medium text-orange-700/80">Gather &amp; prep ingredients</p>
+              <p className="font-medium text-slate-600">Gather &amp; Prepare Ingredients</p>
             </div>
 
             {ingredients.length ? (

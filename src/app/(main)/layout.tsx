@@ -32,7 +32,7 @@ export default async function Layout({ children }: { children: React.ReactNode }
       {/* Floating navbar */}
       <nav className="sticky top-4 z-40">
         <div className="mx-auto w-[min(1150px,95%)]">
-          <div className="flex h-14 items-center gap-3 rounded-full border border-white/60 bg-white/85 px-3 sm:px-4 shadow-[0_10px_30px_rgba(0,0,0,0.10)] backdrop-blur supports-[backdrop-filter]:bg-white/65">
+          <div className="flex h-14 items-center gap-3 rounded-full border border-white/80 bg-white/60 px-3 sm:px-4 shadow-sm backdrop-blur">
             {/* Brand */}
             <Link href="/" className="flex items-center gap-2" aria-label="cibo libro home">
               <Image

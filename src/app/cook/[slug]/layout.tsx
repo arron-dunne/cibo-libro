@@ -25,7 +25,7 @@ export default function Layout({ children }: { children: ReactNode }) {
       </div>
 
       {/* Page container */}
-      <main className="mx-auto w-[min(1150px,95%)] py-8">{children}</main>
+      <main className="mx-auto w-[min(1150px,95%)] py-4">{children}</main>
     </div>
   );
 }
