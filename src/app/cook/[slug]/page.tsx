@@ -151,32 +151,53 @@ export default async function Page({
           </Link>
         </div>
 
-        {/* Ingredients panel */}
+        {/* Ingredients panel — improved colors/contrast */}
         {isIngredients && (
-          <div className="mt-5 rounded-3xl p-5 md:p-6 bg-white ring-1 ring-[rgba(253,216,180,0.9)] shadow-md">
-            <div className="flex items-center justify-center pb-3 border-b border-[rgba(253,216,180,0.7)]/60">
-              <p className="font-medium text-zinc-600">Gather &amp; Prepare Ingredients</p>
+          <div
+            className="
+              mt-5 rounded-3xl p-5 md:p-6
+              bg-[radial-gradient(120%_140%_at_50%_0%,rgba(255,253,250,0.98),rgba(255,244,230,0.98))]
+              ring-1 ring-orange-200/80 shadow-[0_10px_28px_rgba(0,0,0,0.12)]
+              text-stone-900
+            "
+          >
+            {/* Header */}
+            <div className="flex items-center justify-center pb-3 border-b border-orange-200/70">
+              <p className="text-[13px] sm:text-sm font-semibold tracking-wide text-orange-800">
+                Gather &amp; Prepare Ingredients
+              </p>
             </div>
 
             {ingredients.length ? (
-              <ul className="my-4 mx-2 space-y-4">
+              <ul className="mt-4 space-y-3.5">
                 {ingredients.map((line, i) => {
                   const id = `ing-${i}`;
                   return (
                     <li key={id}>
                       <label
                         htmlFor={id}
-                        className="group grid grid-cols-[auto_1fr] items-center gap-3 cursor-pointer"
+                        className="
+                          group grid grid-cols-[auto_1fr] items-center gap-3
+                          rounded-2xl px-4 py-3
+                          bg-white/85 hover:bg-white/95
+                          ring-1 ring-orange-100 shadow-sm
+                          cursor-pointer focus-within:ring-2 focus-within:ring-orange-300
+                        "
                       >
                         {/* Native checkbox for a11y; state is local to the session */}
                         <input id={id} type="checkbox" className="peer sr-only" />
-                        <span className="inline-flex h-6 w-6 items-center justify-center text-gray-400 peer-checked:hidden">
+
+                        {/* Unchecked */}
+                        <span className="inline-flex h-6 w-6 items-center justify-center text-orange-400 peer-checked:hidden">
                           <Circle className="h-5 w-5" aria-hidden />
                         </span>
+                        {/* Checked */}
                         <span className="hidden h-6 w-6 items-center justify-center text-emerald-600 peer-checked:inline-flex">
                           <CheckCircle2 className="h-5 w-5" aria-hidden />
                         </span>
-                        <span className="text-[15px] text-orange-900/90 peer-checked:text-gray-400 peer-checked:line-through">
+
+                        {/* Text */}
+                        <span className="text-[15px] leading-6 text-stone-800 peer-checked:text-stone-400 peer-checked:line-through">
                           {line}
                         </span>
                       </label>
@@ -185,12 +206,14 @@ export default async function Page({
                 })}
               </ul>
             ) : (
-              <p className="mt-4 text-sm text-orange-900/80">No ingredients found for this recipe yet.</p>
+              <p className="mt-4 text-sm text-stone-700">
+                No ingredients found for this recipe yet.
+              </p>
             )}
           </div>
         )}
 
-        {/* Step panel */}
+        {/* Step panel (unchanged) */}
         {!isIngredients && !isFinish && currentStep && (
           <div className="mt-5 rounded-3xl p-5 md:p-7 bg-[rgba(255,246,240,0.96)] text-orange-950 ring-1 ring-[rgba(253,216,180,0.9)] shadow-[0_10px_30px_rgba(0,0,0,0.12)]">
             <div className="flex items-center justify-center pb-4 border-b border-[rgba(253,216,180,0.7)]/60">
@@ -204,7 +227,7 @@ export default async function Page({
           </div>
         )}
 
-        {/* Finish panel */}
+        {/* Finish panel (unchanged) */}
         {isFinish && (
           <div className="mt-5 rounded-3xl p-6 md:p-8 bg-[rgba(255,246,240,0.96)] text-orange-950 ring-1 ring-[rgba(253,216,180,0.9)] shadow-[0_10px_30px_rgba(0,0,0,0.12)] text-center">
             <div className="flex items-center justify-center gap-3 text-emerald-700">
@@ -225,7 +248,7 @@ export default async function Page({
         )}
       </section>
 
-      {/* Bottom nav */}
+      {/* Bottom nav (unchanged) */}
       <nav className="fixed inset-x-0 bottom-0 z-30">
         <div className="mx-auto max-w-screen-sm w-full px-4 pb-4">
           <div className="rounded-full p-3 bg-white/14 backdrop-blur ring-1 ring-white/35 shadow-[0_8px_30px_rgba(0,0,0,0.12)] grid grid-cols-2 gap-4">
