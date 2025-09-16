@@ -153,20 +153,20 @@ export default async function Page({
 
         {/* Ingredients panel */}
         {isIngredients && (
-          <div className="mt-5 rounded-3xl p-5 md:p-6 bg-[rgba(255,246,240,0.96)] text-orange-950 ring-1 ring-[rgba(253,216,180,0.9)] shadow-[0_10px_30px_rgba(0,0,0,0.12)]">
+          <div className="mt-5 rounded-3xl p-5 md:p-6 bg-white ring-1 ring-[rgba(253,216,180,0.9)] shadow-md">
             <div className="flex items-center justify-center pb-3 border-b border-[rgba(253,216,180,0.7)]/60">
-              <p className="font-medium text-slate-600">Gather &amp; Prepare Ingredients</p>
+              <p className="font-medium text-zinc-600">Gather &amp; Prepare Ingredients</p>
             </div>
 
             {ingredients.length ? (
-              <ul className="mt-4 space-y-3">
+              <ul className="my-4 mx-2 space-y-4">
                 {ingredients.map((line, i) => {
                   const id = `ing-${i}`;
                   return (
                     <li key={id}>
                       <label
                         htmlFor={id}
-                        className="group grid grid-cols-[auto_1fr] items-center gap-3 rounded-2xl bg-white/90 ring-1 ring-black/5 shadow-sm px-4 py-3 cursor-pointer focus-within:ring-2 focus-within:ring-orange-400"
+                        className="group grid grid-cols-[auto_1fr] items-center gap-3 cursor-pointer"
                       >
                         {/* Native checkbox for a11y; state is local to the session */}
                         <input id={id} type="checkbox" className="peer sr-only" />
