@@ -41,19 +41,11 @@ export default function CookModeClient({
     const stepParam = searchParams.get('step');
     if (stepParam) {
       const newStep = stepParam.toString().toLowerCase();
-      
-      // Determine animation direction
-      if (getStepIndex(newStep) > getStepIndex(currentStep)) {
-        setDirection(0); // Forward
-      } else {
-        setDirection(1); // Backward
-      }
-      
       setCurrentStep(newStep);
     } else {
       setCurrentStep("ings");
     }
-  }, [searchParams, currentStep]);
+  }, [searchParams]);
 
   // Helper function to get step index for direction calculation
   const getStepIndex = (step: string): number => {
@@ -63,7 +55,14 @@ export default function CookModeClient({
     return isNaN(n) ? 0 : n;
   };
 
-  // URL-driven Prev/Next (no client state)
+  // Determine animation direction based on navigation
+  const getDirection = (newStep: string, oldStep: string): number => {
+    const newIndex = getStepIndex(newStep);
+    const oldIndex = getStepIndex(oldStep);
+    return newIndex > oldIndex ? 0 : 1; // 0: forward, 1: backward
+  };
+
+  // URL-driven Prev/Next
   const base = `/cook/${slug}`;
   const hrefIngs = `${base}?step=ings`;
   const hrefFirst = `${base}?step=1`;
@@ -85,10 +84,10 @@ export default function CookModeClient({
     nextHref = currentIdx < totalSteps - 1 ? `${base}?step=${currentIdx + 2}` : hrefFinish;
   }
 
-  // Animation variants
+  // Animation variants - fixed direction
   const slideVariants = {
     enter: (direction: number) => ({
-      x: direction === 0 ? 300 : -300,
+      x: direction === 0 ? 300 : -300, // Enter from right for forward, left for backward
       opacity: 0
     }),
     center: {
@@ -96,7 +95,7 @@ export default function CookModeClient({
       opacity: 1
     },
     exit: (direction: number) => ({
-      x: direction === 0 ? -300 : 300,
+      x: direction === 0 ? -300 : 300, // Exit to left for forward, right for backward
       opacity: 0
     })
   };
@@ -171,17 +170,17 @@ export default function CookModeClient({
         </div>
 
         {/* Animated content area */}
-        <AnimatePresence mode="wait" custom={direction}>
+        <AnimatePresence mode="wait" initial={false}>
           {/* Ingredients panel */}
           {isIngredients && (
             <motion.div
               key="ings"
-              custom={direction}
               variants={slideVariants}
               initial="enter"
               animate="center"
               exit="exit"
               transition={{ type: "tween", duration: 0.3 }}
+              custom={getDirection("ings", currentStep)}
               className="
                 mt-5 rounded-3xl p-5 md:p-6
                 bg-[radial-gradient(120%_140%_at_50%_0%,rgba(255,253,250,0.98),rgba(255,244,230,0.98))]
@@ -245,12 +244,12 @@ export default function CookModeClient({
           {!isIngredients && !isFinish && (
             <motion.div
               key={`step-${currentStep}`}
-              custom={direction}
               variants={slideVariants}
               initial="enter"
               animate="center"
               exit="exit"
               transition={{ type: "tween", duration: 0.3 }}
+              custom={getDirection(currentStep, searchParams.get('step') || "ings")}
               className="mt-5 rounded-3xl p-5 md:p-7 bg-[rgba(255,246,240,0.96)] text-orange-950 ring-1 ring-[rgba(253,216,180,0.9)] shadow-[0_10px_30px_rgba(0,0,0,0.12)]"
             >
               <div className="flex items-center justify-center pb-4 border-b border-[rgba(253,216,180,0.7)]/60">
@@ -270,12 +269,12 @@ export default function CookModeClient({
           {isFinish && (
             <motion.div
               key="finish"
-              custom={direction}
               variants={slideVariants}
               initial="enter"
               animate="center"
               exit="exit"
               transition={{ type: "tween", duration: 0.3 }}
+              custom={getDirection("finish", currentStep)}
               className="mt-5 rounded-3xl p-6 md:p-8 bg-[rgba(255,246,240,0.96)] text-orange-950 ring-1 ring-[rgba(253,216,180,0.9)] shadow-[0_10px_30px_rgba(0,0,0,0.12)] text-center"
             >
               <div className="flex items-center justify-center gap-3 text-emerald-700">
