@@ -21,10 +21,10 @@ export default async function Page({
   params,
   searchParams,
 }: {
-  params: { slug: string };
+  params: Promise<{ slug: string }>
   searchParams: Promise<SearchParams>;
 }) {
-  const { slug } = params;
+  const slug = await params.then(p => p.slug);
 
   const sp = ((await searchParams) ?? {}) as SearchParams;
   const stepParamRaw = Array.isArray(sp.step) ? sp.step[0] : sp.step;
