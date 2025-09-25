@@ -27,10 +27,10 @@ interface CookModeClientProps {
 
 type StepType = "ings" | "finish" | number;
 
-export default function CookModeClient({ 
-  slug, title, ingredients, steps, initialStep 
+export default function CookModeClient({
+  slug, title, ingredients, steps, initialStep
 }: CookModeClientProps) {
-  
+
   const router = useRouter();
   const [currentStep, setCurrentStep] = useState<StepType>(parseStep(initialStep));
   const [direction, setDirection] = useState<number>(0);
@@ -54,7 +54,7 @@ export default function CookModeClient({
   function navigateToStep(newStep: StepType) {
     const oldStepIndex = getStepIndex(currentStep);
     const newStepIndex = getStepIndex(newStep);
-    
+
     setDirection(newStepIndex > oldStepIndex ? 1 : 0); // 1 = forward, 0 = backward
     setCurrentStep(newStep);
     updateUrl(newStep);
@@ -178,7 +178,7 @@ export default function CookModeClient({
 
         {/* Animated content area */}
         <AnimatePresence mode="wait" initial={false} custom={direction}>
-          
+
           {/* Ingredients panel */}
           {currentStep === "ings" && (
             <motion.div
@@ -234,11 +234,48 @@ export default function CookModeClient({
               custom={direction}
               className="mt-5 rounded-3xl p-5 md:p-7 bg-[rgba(255,246,240,0.96)] text-orange-950 ring-1 ring-[rgba(253,216,180,0.9)] shadow-[0_10px_30px_rgba(0,0,0,0.12)]"
             >
+              {/* Step indicator and progress bar */}
               <div className="flex items-center justify-center pb-4 border-b border-[rgba(253,216,180,0.7)]/60">
-                <p className="text-xs font-medium text-orange-700/80">
-                  Step {currentStep} of {steps.length}
-                </p>
+                <div className="text-center">
+                  <p className="text-xs font-medium text-orange-700/80 mb-3">
+                    Step {currentStep} of {steps.length}
+                  </p>
+
+                  {/* Progress bar with nodes */}
+                  <div className="flex items-center justify-center space-x-2">
+                    {steps.map((_, index) => {
+                      const stepNumber = index + 1;
+                      const isCurrent = stepNumber === currentStep;
+                      const isCompleted = stepNumber < currentStep;
+
+                      return (
+                        <div key={stepNumber} className="flex items-center">
+                          {/* Node */}
+                          <div
+                            className={`w-3 h-3 rounded-full border-2 transition-all duration-300 ${isCurrent
+                                ? "bg-orange-500 border-orange-600 scale-125"
+                                : isCompleted
+                                  ? "bg-emerald-500 border-emerald-600"
+                                  : "bg-white border-orange-300"
+                              }`}
+                            aria-label={isCurrent ? `Current step ${stepNumber}` : `Step ${stepNumber}`}
+                          />
+
+                          {/* Connector line (except after last step) */}
+                          {stepNumber < steps.length && (
+                            <div
+                              className={`w-6 h-0.5 mx-1 transition-all duration-300 ${isCompleted ? "bg-emerald-500" : "bg-orange-200"
+                                }`}
+                            />
+                          )}
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
               </div>
+
+              {/* Step content */}
               <div className="mt-4">
                 <p className="text-2xl md:text-3xl leading-snug text-orange-950/95">
                   {steps[currentStep - 1]}
