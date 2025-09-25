@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   ArrowLeft,
@@ -25,84 +25,91 @@ interface CookModeClientProps {
   initialStep: string;
 }
 
+type StepType = "ings" | "finish" | number;
+
 export default function CookModeClient({ 
   slug, title, ingredients, steps, initialStep 
 }: CookModeClientProps) {
-  const [currentStep, setCurrentStep] = useState(initialStep);
-  const [direction, setDirection] = useState(0); // 0: forward, 1: backward
-  const searchParams = useSearchParams();
   
-  const totalSteps = steps.length;
-  const isFinish = currentStep === "finish";
-  const isIngredients = currentStep === "ings";
+  const router = useRouter();
+  const [currentStep, setCurrentStep] = useState<StepType>(parseStep(initialStep));
+  const [direction, setDirection] = useState<number>(0);
 
-  // Update current step when URL changes
-  useEffect(() => {
-    const stepParam = searchParams.get('step');
-    if (stepParam) {
-      const newStep = stepParam.toString().toLowerCase();
-      setCurrentStep(newStep);
-    } else {
-      setCurrentStep("ings");
-    }
-  }, [searchParams]);
-
-  // Helper function to get step index for direction calculation
-  const getStepIndex = (step: string): number => {
-    if (step === "ings") return 0;
-    if (step === "finish") return totalSteps + 1;
-    const n = parseInt(step, 10);
-    return isNaN(n) ? 0 : n;
-  };
-
-  // Determine animation direction based on navigation
-  const getDirection = (newStep: string, oldStep: string): number => {
-    const newIndex = getStepIndex(newStep);
-    const oldIndex = getStepIndex(oldStep);
-    return newIndex > oldIndex ? 0 : 1; // 0: forward, 1: backward
-  };
-
-  // URL-driven Prev/Next
-  const base = `/cook/${slug}`;
-  const hrefIngs = `${base}?step=ings`;
-  const hrefFirst = `${base}?step=1`;
-  const hrefLast = `${base}?step=${Math.max(totalSteps, 1)}`;
-  const hrefFinish = `${base}?step=finish`;
-
-  let prevHref: string | null = null;
-  let nextHref: string | null = null;
-
-  if (isIngredients) {
-    prevHref = null;
-    nextHref = totalSteps ? hrefFirst : hrefFinish;
-  } else if (isFinish) {
-    prevHref = totalSteps ? hrefLast : hrefIngs;
-    nextHref = null;
-  } else {
-    const currentIdx = parseInt(currentStep, 10) - 1;
-    prevHref = currentIdx > 0 ? `${base}?step=${currentIdx}` : hrefIngs;
-    nextHref = currentIdx < totalSteps - 1 ? `${base}?step=${currentIdx + 2}` : hrefFinish;
+  // Parse step from string to proper type
+  function parseStep(step: string): StepType {
+    if (step === "ings") return "ings";
+    if (step === "finish") return "finish";
+    const num = parseInt(step, 10);
+    return isNaN(num) ? "ings" : Math.max(1, Math.min(num, steps.length));
   }
 
-  // Animation variants - fixed direction
+  // Update URL without page reload (shallow routing)
+  function updateUrl(step: StepType) {
+    const stepParam = step === "ings" ? "ings" : step === "finish" ? "finish" : step.toString();
+    const newUrl = `/cook/${slug}?step=${stepParam}`;
+    router.push(newUrl);
+  }
+
+  // Navigate to specific step
+  function navigateToStep(newStep: StepType) {
+    const oldStepIndex = getStepIndex(currentStep);
+    const newStepIndex = getStepIndex(newStep);
+    
+    setDirection(newStepIndex > oldStepIndex ? 1 : 0); // 1 = forward, 0 = backward
+    setCurrentStep(newStep);
+    updateUrl(newStep);
+  }
+
+  // Navigate to next step
+  function goToNext() {
+    if (currentStep === "ings") {
+      navigateToStep(steps.length > 0 ? 1 : "finish");
+    } else if (typeof currentStep === "number") {
+      navigateToStep(currentStep < steps.length ? currentStep + 1 : "finish");
+    }
+    // "finish" has no next step
+  }
+
+  // Navigate to previous step
+  function goToPrevious() {
+    if (currentStep === "finish") {
+      navigateToStep(steps.length > 0 ? steps.length : "ings");
+    } else if (typeof currentStep === "number") {
+      navigateToStep(currentStep > 1 ? currentStep - 1 : "ings");
+    }
+    // "ings" has no previous step
+  }
+
+  // Get numeric index for animation direction calculation
+  function getStepIndex(step: StepType): number {
+    if (step === "ings") return 0;
+    if (step === "finish") return steps.length + 1;
+    return step;
+  }
+
+  // Check if navigation is possible
+  const canGoPrevious = currentStep !== "ings";
+  const canGoNext = currentStep !== "finish";
+
+  // Animation variants
   const slideVariants = {
-    enter: (direction: number) => ({
-      x: direction === 0 ? 300 : -300, // Enter from right for forward, left for backward
+    enter: (dir: number) => ({
+      x: dir === 1 ? 300 : -300,
       opacity: 0
     }),
     center: {
       x: 0,
       opacity: 1
     },
-    exit: (direction: number) => ({
-      x: direction === 0 ? -300 : 300, // Exit to left for forward, right for backward
+    exit: (dir: number) => ({
+      x: dir === 1 ? -300 : 300,
       opacity: 0
     })
   };
 
   return (
     <main className="min-h-dvh text-white flex flex-col">
-      {/* Header - unchanged */}
+      {/* Header */}
       <header className="sticky top-4 z-20">
         <div className="mx-auto max-w-screen-sm">
           <div className="rounded-full border border-white/80 bg-white/60 backdrop-blur px-3 sm:px-4 py-2 sm:py-3">
@@ -138,57 +145,52 @@ export default function CookModeClient({
         </div>
       </header>
 
-      {/* Tabs - unchanged */}
+      {/* Tabs */}
       <section className="mx-auto max-w-screen-sm w-full px-4 pt-4 pb-28">
         <div className="grid grid-cols-2 gap-4">
-          <Link
-            href={hrefIngs}
-            aria-current={isIngredients ? "page" : undefined}
+          <button
+            onClick={() => navigateToStep("ings")}
+            aria-current={currentStep === "ings" ? "page" : undefined}
             className={[
               "h-12 rounded-full ring-1 font-semibold text-[13px] flex items-center justify-center gap-2 transition",
-              isIngredients
+              currentStep === "ings"
                 ? "bg-[rgba(255,255,255,0.95)] text-orange-900 ring-black/5 shadow"
                 : "bg-white/35 text-white ring-white/50 backdrop-blur shadow hover:bg-white/40",
             ].join(" ")}
           >
             <List className="h-4 w-4" />
             Ingredients
-          </Link>
-          <Link
-            href={hrefFirst}
-            aria-current={!isIngredients && !isFinish ? "page" : undefined}
+          </button>
+          <button
+            onClick={() => navigateToStep(1)}
+            aria-current={typeof currentStep === "number" ? "page" : undefined}
             className={[
               "h-12 rounded-full ring-1 font-semibold text-[13px] flex items-center justify-center gap-2 transition",
-              !isIngredients && !isFinish
+              typeof currentStep === "number"
                 ? "bg-[rgba(255,255,255,0.95)] text-orange-900 ring-black/5 shadow"
                 : "bg-white/35 text-white ring-white/50 backdrop-blur shadow hover:bg-white/40",
             ].join(" ")}
           >
             <ListOrdered className="h-4 w-4" />
             All Steps
-          </Link>
+          </button>
         </div>
 
         {/* Animated content area */}
-        <AnimatePresence mode="wait" initial={false}>
+        <AnimatePresence mode="wait" initial={false} custom={direction}>
+          
           {/* Ingredients panel */}
-          {isIngredients && (
+          {currentStep === "ings" && (
             <motion.div
               key="ings"
               variants={slideVariants}
               initial="enter"
               animate="center"
               exit="exit"
-              transition={{ type: "tween", duration: 0.3 }}
-              custom={getDirection("ings", currentStep)}
-              className="
-                mt-5 rounded-3xl p-5 md:p-6
-                bg-[radial-gradient(120%_140%_at_50%_0%,rgba(255,253,250,0.98),rgba(255,244,230,0.98))]
-                ring-1 ring-orange-200/80 shadow-[0_10px_28px_rgba(0,0,0,0.12)]
-                text-stone-900
-              "
+              transition={{ duration: 0.2 }}
+              custom={direction}
+              className="mt-5 rounded-3xl p-5 md:p-6 bg-[radial-gradient(120%_140%_at_50%_0%,rgba(255,253,250,0.98),rgba(255,244,230,0.98))] ring-1 ring-orange-200/80 shadow-[0_10px_28px_rgba(0,0,0,0.12)] text-stone-900"
             >
-              {/* Header */}
               <div className="flex items-center justify-center pb-3 border-b border-orange-200/70">
                 <p className="text-[13px] sm:text-sm font-semibold tracking-wide text-orange-800">
                   Gather &amp; Prepare Ingredients
@@ -197,84 +199,64 @@ export default function CookModeClient({
 
               {ingredients.length ? (
                 <ul className="mt-4 space-y-3.5">
-                  {ingredients.map((line, i) => {
-                    const id = `ing-${i}`;
-                    return (
-                      <li key={id}>
-                        <label
-                          htmlFor={id}
-                          className="
-                            group grid grid-cols-[auto_1fr] items-center gap-3
-                            rounded-2xl px-4 py-3
-                            bg-white/85 hover:bg-white/95
-                            ring-1 ring-orange-100 shadow-sm
-                            cursor-pointer focus-within:ring-2 focus-within:ring-orange-300
-                          "
-                        >
-                          {/* Native checkbox for a11y; state is local to the session */}
-                          <input id={id} type="checkbox" className="peer sr-only" />
-
-                          {/* Unchecked */}
-                          <span className="inline-flex h-6 w-6 items-center justify-center text-orange-400 peer-checked:hidden">
-                            <Circle className="h-5 w-5" aria-hidden />
-                          </span>
-                          {/* Checked */}
-                          <span className="hidden h-6 w-6 items-center justify-center text-emerald-600 peer-checked:inline-flex">
-                            <CheckCircle2 className="h-5 w-5" aria-hidden />
-                          </span>
-
-                          {/* Text */}
-                          <span className="text-[15px] leading-6 text-stone-800 peer-checked:text-stone-400 peer-checked:line-through">
-                            {line}
-                          </span>
-                        </label>
-                      </li>
-                    );
-                  })}
+                  {ingredients.map((line, i) => (
+                    <li key={`ing-${i}`}>
+                      <label className="group grid grid-cols-[auto_1fr] items-center gap-3 rounded-2xl px-4 py-3 bg-white/85 hover:bg-white/95 ring-1 ring-orange-100 shadow-sm cursor-pointer focus-within:ring-2 focus-within:ring-orange-300">
+                        <input type="checkbox" className="peer sr-only" />
+                        <span className="inline-flex h-6 w-6 items-center justify-center text-orange-400 peer-checked:hidden">
+                          <Circle className="h-5 w-5" aria-hidden />
+                        </span>
+                        <span className="hidden h-6 w-6 items-center justify-center text-emerald-600 peer-checked:inline-flex">
+                          <CheckCircle2 className="h-5 w-5" aria-hidden />
+                        </span>
+                        <span className="text-[15px] leading-6 text-stone-800 peer-checked:text-stone-400 peer-checked:line-through">
+                          {line}
+                        </span>
+                      </label>
+                    </li>
+                  ))}
                 </ul>
               ) : (
-                <p className="mt-4 text-sm text-stone-700">
-                  No ingredients found for this recipe yet.
-                </p>
+                <p className="mt-4 text-sm text-stone-700">No ingredients found for this recipe yet.</p>
               )}
             </motion.div>
           )}
 
           {/* Step panel */}
-          {!isIngredients && !isFinish && (
+          {typeof currentStep === "number" && (
             <motion.div
               key={`step-${currentStep}`}
               variants={slideVariants}
               initial="enter"
               animate="center"
               exit="exit"
-              transition={{ type: "tween", duration: 0.3 }}
-              custom={getDirection(currentStep, searchParams.get('step') || "ings")}
+              transition={{ duration: 0.2 }}
+              custom={direction}
               className="mt-5 rounded-3xl p-5 md:p-7 bg-[rgba(255,246,240,0.96)] text-orange-950 ring-1 ring-[rgba(253,216,180,0.9)] shadow-[0_10px_30px_rgba(0,0,0,0.12)]"
             >
               <div className="flex items-center justify-center pb-4 border-b border-[rgba(253,216,180,0.7)]/60">
                 <p className="text-xs font-medium text-orange-700/80">
-                  Step {currentStep} of {totalSteps}
+                  Step {currentStep} of {steps.length}
                 </p>
               </div>
               <div className="mt-4">
                 <p className="text-2xl md:text-3xl leading-snug text-orange-950/95">
-                  {steps[parseInt(currentStep, 10) - 1]}
+                  {steps[currentStep - 1]}
                 </p>
               </div>
             </motion.div>
           )}
 
           {/* Finish panel */}
-          {isFinish && (
+          {currentStep === "finish" && (
             <motion.div
               key="finish"
               variants={slideVariants}
               initial="enter"
               animate="center"
               exit="exit"
-              transition={{ type: "tween", duration: 0.3 }}
-              custom={getDirection("finish", currentStep)}
+              transition={{ duration: 0.2 }}
+              custom={direction}
               className="mt-5 rounded-3xl p-6 md:p-8 bg-[rgba(255,246,240,0.96)] text-orange-950 ring-1 ring-[rgba(253,216,180,0.9)] shadow-[0_10px_30px_rgba(0,0,0,0.12)] text-center"
             >
               <div className="flex items-center justify-center gap-3 text-emerald-700">
@@ -296,45 +278,25 @@ export default function CookModeClient({
         </AnimatePresence>
       </section>
 
-      {/* Bottom nav - unchanged */}
+      {/* Bottom navigation */}
       <nav className="fixed inset-x-0 bottom-0 z-30">
         <div className="mx-auto max-w-screen-sm w-full px-4 pb-4">
           <div className="rounded-full p-3 bg-white/14 backdrop-blur ring-1 ring-white/35 shadow-[0_8px_30px_rgba(0,0,0,0.12)] grid grid-cols-2 gap-4">
-            {prevHref ? (
-              <Link
-                href={prevHref}
-                role="button"
-                className="h-14 rounded-full bg-white/70 text-orange-900 text-lg font-semibold ring-1 ring-orange-700/40 shadow flex items-center justify-center gap-2 hover:bg-white/80 transition"
-              >
-                <ChevronLeft className="h-5 w-5" /> Prev
-              </Link>
-            ) : (
-              <button
-                className="h-14 rounded-full bg-white/60 text-orange-900/70 text-lg font-semibold ring-1 ring-orange-700/20 shadow flex items-center justify-center gap-2 cursor-not-allowed"
-                aria-disabled="true"
-                disabled
-              >
-                <ChevronLeft className="h-5 w-5" /> Prev
-              </button>
-            )}
+            <button
+              onClick={goToPrevious}
+              disabled={!canGoPrevious}
+              className="h-14 rounded-full bg-white/70 text-orange-900 text-lg font-semibold ring-1 ring-orange-700/40 shadow flex items-center justify-center gap-2 hover:bg-white/80 disabled:bg-white/60 disabled:text-orange-900/70 disabled:ring-orange-700/20 disabled:cursor-not-allowed transition"
+            >
+              <ChevronLeft className="h-5 w-5" /> Prev
+            </button>
 
-            {nextHref ? (
-              <Link
-                href={nextHref}
-                role="button"
-                className="h-14 rounded-full bg-orange-600 text-white text-lg font-semibold ring-1 ring-orange-700/40 shadow flex items-center justify-center gap-2 hover:bg-orange-700 active:bg-orange-800 active:translate-y-px transition"
-              >
-                Next <ChevronRight className="h-5 w-5" />
-              </Link>
-            ) : (
-              <button
-                className="h-14 rounded-full bg-orange-500/50 text-white/80 text-lg font-semibold ring-1 ring-orange-700/30 shadow flex items-center justify-center gap-2 cursor-not-allowed"
-                aria-disabled="true"
-                disabled
-              >
-                Next <ChevronRight className="h-5 w-5" />
-              </button>
-            )}
+            <button
+              onClick={goToNext}
+              disabled={!canGoNext}
+              className="h-14 rounded-full bg-orange-600 text-white text-lg font-semibold ring-1 ring-orange-700/40 shadow flex items-center justify-center gap-2 hover:bg-orange-700 active:bg-orange-800 disabled:bg-orange-500/50 disabled:text-white/80 disabled:ring-orange-700/30 disabled:cursor-not-allowed transition"
+            >
+              Next <ChevronRight className="h-5 w-5" />
+            </button>
           </div>
         </div>
       </nav>
