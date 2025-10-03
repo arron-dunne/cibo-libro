@@ -17,6 +17,7 @@ export default async function ViewRecipePage({
     select: {
       id: true,
       title: true,
+      type: true,
       description: true,
       tags: true,
       prepMins: true,
@@ -69,23 +70,26 @@ export default async function ViewRecipePage({
 
           {/* Title + meta */}
           <div className="relative p-5 md:p-8 flex flex-col justify-center">
-            {/* Cook Mode (prominent CTA) */}
-            <div className="absolute right-4 top-4 md:right-6 md:top-6 z-10">
-              <Link
-                href={`/cook/${slug}`}
-                aria-label="Open Cook Mode"
-                data-testid="cook-mode-button"
-                className="group inline-flex items-center gap-2 rounded-full
-               bg-orange-600 px-4 py-2 text-sm font-semibold text-white
-               shadow-sm ring-1 ring-black/5 transition
-               hover:bg-orange-700 active:bg-orange-800
-               focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-600/50
-               active:translate-y-px"
-              >
-                <ChefHat className="h-4 w-4 transition-transform group-hover:rotate-6" aria-hidden="true" />
-                <span>Cook Mode</span>
-              </Link>
-            </div>
+            
+            {/* Cook Mode button */}
+            { recipe.type != "EXTERNAL_LINK" && 
+              <div className="absolute right-4 top-4 md:right-6 md:top-6 z-10">
+                <Link
+                  href={`/cook/${slug}`}
+                  aria-label="Open Cook Mode"
+                  data-testid="cook-mode-button"
+                  className="group inline-flex items-center gap-2 rounded-full
+                bg-orange-600 px-4 py-2 text-sm font-semibold text-white
+                shadow-sm ring-1 ring-black/5 transition
+                hover:bg-orange-700 active:bg-orange-800
+                focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-600/50
+                active:translate-y-px"
+                >
+                  <ChefHat className="h-4 w-4 transition-transform group-hover:rotate-6" aria-hidden="true" />
+                  <span>Cook Mode</span>
+                </Link>
+              </div>
+            }
 
             <div className="absolute -right-12 -top-12 h-40 w-40 rounded-full bg-orange-200/50 blur-3xl" />
             <div className="absolute bottom-6 right-10 h-28 w-28 rounded-full bg-rose-200/60 blur-2xl" />

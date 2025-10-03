@@ -236,42 +236,34 @@ export default function CookModeClient({
             >
               {/* Step indicator and progress bar */}
               <div className="flex items-center justify-center pb-4 border-b border-[rgba(253,216,180,0.7)]/60">
-                <div className="text-center">
+                <div className="w-full text-center">
                   <p className="text-xs font-medium text-orange-700/80 mb-3">
                     Step {currentStep} of {steps.length}
                   </p>
 
                   {/* Progress bar with nodes */}
-                  <div className="flex items-center justify-center space-x-2">
-                    {steps.map((_, index) => {
-                      const stepNumber = index + 1;
-                      const isCurrent = stepNumber === currentStep;
-                      const isCompleted = stepNumber < currentStep;
-
-                      return (
-                        <div key={stepNumber} className="flex items-center">
-                          {/* Node */}
-                          <div
-                            className={`w-3 h-3 rounded-full border-2 transition-all duration-300 ${isCurrent
-                                ? "bg-orange-500 border-orange-600 scale-125"
-                                : isCompleted
-                                  ? "bg-emerald-500 border-emerald-600"
-                                  : "bg-white border-orange-300"
-                              }`}
-                            aria-label={isCurrent ? `Current step ${stepNumber}` : `Step ${stepNumber}`}
-                          />
-
-                          {/* Connector line (except after last step) */}
-                          {stepNumber < steps.length && (
-                            <div
-                              className={`w-6 h-0.5 mx-1 transition-all duration-300 ${isCompleted ? "bg-emerald-500" : "bg-orange-200"
-                                }`}
-                            />
-                          )}
-                        </div>
-                      );
+                  <svg height={30} width="100%" preserveAspectRatio="xMidYMid slice" role="img">
+                    <line x1="5%" x2="95%" y1="50%" y2="50%" stroke="orange" strokeWidth={3}/>
+                    { Array.from({ length: steps.length }).map((_, i) => { 
+                      const xPercent = ((i * (90 / (steps.length - 1))) + 5).toString() + "%";
+                      console.log(xPercent)
+                      // current step
+                      if (getStepIndex(currentStep) === i + 1 ) {
+                        return  (
+                          <div key={i}>
+                            <circle cx={xPercent} cy="50%" r={12} stroke="orange" strokeWidth={3} fill="white" />
+                            <circle cx={xPercent} cy="50%" r={6} stroke="orange" strokeWidth={3} fill="orange" />
+                          </div>
+                        )
+                      }
+                      // completed steps
+                      if (getStepIndex(currentStep) > i + 1) {
+                        return <circle key={i} cx={xPercent} cy="50%" r={6} stroke="green" strokeWidth={3} fill="white" />
+                      }
+                      // still to do steps
+                      return <circle key={i} cx={xPercent} cy="50%" r={6} stroke="orange" strokeWidth={3} fill="white" />
                     })}
-                  </div>
+                  </svg>
                 </div>
               </div>
 
