@@ -130,7 +130,7 @@ async function createStructuredRecipe({
   const created = await prisma.recipe.create({
     data: {
       ownerId: userId,
-      type: "EXTERNAL",
+      type: "EXTERNAL_FULL",
       title,
       description: sanitizeDescription(data.description ?? ""),
       prepMins: data.prepMins ?? null,
