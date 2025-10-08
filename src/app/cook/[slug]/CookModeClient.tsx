@@ -189,11 +189,11 @@ export default function CookModeClient({
               exit="exit"
               transition={{ duration: 0.2 }}
               custom={direction}
-              className="mt-5 rounded-3xl p-5 md:p-6 bg-[radial-gradient(120%_140%_at_50%_0%,rgba(255,253,250,0.98),rgba(255,244,230,0.98))] ring-1 ring-orange-200/80 shadow-[0_10px_28px_rgba(0,0,0,0.12)] text-stone-900"
+              className="mt-5 rounded-3xl p-5 md:p-6 bg-orange-50 border-white shadow-lg text-stone-900"
             >
               <div className="flex items-center justify-center pb-3 border-b border-orange-200/70">
                 <p className="text-[13px] sm:text-sm font-semibold tracking-wide text-orange-800">
-                  Gather &amp; Prepare Ingredients
+                  Prepare Ingredients
                 </p>
               </div>
 
@@ -201,15 +201,15 @@ export default function CookModeClient({
                 <ul className="mt-4 space-y-3.5">
                   {ingredients.map((line, i) => (
                     <li key={`ing-${i}`}>
-                      <label className="group grid grid-cols-[auto_1fr] items-center gap-3 rounded-2xl px-4 py-3 bg-white/85 hover:bg-white/95 ring-1 ring-orange-100 shadow-sm cursor-pointer focus-within:ring-2 focus-within:ring-orange-300">
-                        <input type="checkbox" className="peer sr-only" />
-                        <span className="inline-flex h-6 w-6 items-center justify-center text-orange-400 peer-checked:hidden">
+                      <label className="group flex items-center gap-3 px-4 py-3 cursor-pointer">
+                        <input type="checkbox" className="sr-only" />
+                        <span className="inline-flex h-6 w-6 items-center justify-center text-orange-400 group-has-checked:hidden">
                           <Circle className="h-5 w-5" aria-hidden />
                         </span>
-                        <span className="hidden h-6 w-6 items-center justify-center text-emerald-600 peer-checked:inline-flex">
+                        <span className="hidden h-6 w-6 items-center justify-center text-emerald-600 group-has-checked:inline-flex">
                           <CheckCircle2 className="h-5 w-5" aria-hidden />
                         </span>
-                        <span className="text-[15px] leading-6 text-stone-800 peer-checked:text-stone-400 peer-checked:line-through">
+                        <span className="text-[15px] leading-6 text-stone-800 group-has-checked:text-stone-400">
                           {line}
                         </span>
                       </label>
@@ -232,7 +232,7 @@ export default function CookModeClient({
               exit="exit"
               transition={{ duration: 0.2 }}
               custom={direction}
-              className="mt-5 rounded-3xl p-5 md:p-7 bg-[rgba(255,246,240,0.96)] text-orange-950 ring-1 ring-[rgba(253,216,180,0.9)] shadow-[0_10px_30px_rgba(0,0,0,0.12)]"
+              className="mt-5 rounded-3xl p-5 md:p-6 bg-orange-50 border-white shadow-lg text-stone-900"
             >
               {/* Step indicator and progress bar */}
               <div className="flex items-center justify-center pb-4 border-b border-[rgba(253,216,180,0.7)]/60">
@@ -243,17 +243,18 @@ export default function CookModeClient({
 
                   {/* Progress bar with nodes */}
                   <svg height={30} width="100%" preserveAspectRatio="xMidYMid slice" role="img">
-                    <line x1="5%" x2="95%" y1="50%" y2="50%" stroke="orange" strokeWidth={3}/>
+                    <line x1="0%" x2="100%" y1="50%" y2="50%" stroke="orange" strokeWidth={1}/>
                     { Array.from({ length: steps.length }).map((_, i) => { 
                       const xPercent = ((i * (90 / (steps.length - 1))) + 5).toString() + "%";
-                      console.log(xPercent)
+
                       // current step
                       if (getStepIndex(currentStep) === i + 1 ) {
                         return  (
-                          <div key={i}>
-                            <circle cx={xPercent} cy="50%" r={12} stroke="orange" strokeWidth={3} fill="white" />
-                            <circle cx={xPercent} cy="50%" r={6} stroke="orange" strokeWidth={3} fill="orange" />
-                          </div>
+                          // <div key={i}>
+                          //   <circle cx={xPercent} cy="50%" r={12} stroke="orange" strokeWidth={3} fill="white" />
+                          //   <circle cx={xPercent} cy="50%" r={6} stroke="orange" strokeWidth={3} fill="orange" />
+                          // </div>
+                          <CheckCircle2/>
                         )
                       }
                       // completed steps
