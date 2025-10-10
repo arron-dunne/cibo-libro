@@ -1,4 +1,3 @@
-// prisma/schema.prisma
 generator client {
   provider = "prisma-client-js"
 }
@@ -46,7 +45,7 @@ model Recipe {
   id               String       @id @default(cuid())
   ownerId          String
   type             RecipeType
-  title            String
+  title            String       @default("")
   description      String       @default("")
   prepMins         Int?
   cookMins         Int?
@@ -56,7 +55,7 @@ model Recipe {
   ingredients      String[]
   steps            String[]
   tags             String[]
-  note             String?
+  note             String       @default("")
   sourceUrl        String?
   slug             String?      @unique
   isPublic         Boolean      @default(false)
