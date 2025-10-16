@@ -1,4 +1,3 @@
-// app/api/images/finalize/route.ts
 "use server";
 
 import { NextResponse } from "next/server";
