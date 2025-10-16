@@ -50,7 +50,7 @@ model Recipe {
   prepMins         Int?
   cookMins         Int?
   servings         Int?
-  imageKey         String?
+  imageKey         String?      @unique
   imageExternalUrl String?
   ingredients      String[]
   steps            String[]
