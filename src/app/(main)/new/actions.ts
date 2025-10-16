@@ -4,6 +4,7 @@ import { z } from "zod";
 import { prisma } from "@/lib/prisma";
 import { auth } from "@/lib/auth";
 import { uniqueRecipeSlug } from "@/lib/uniqueSlug";
+import { redirect } from "next/navigation";
 
 // ────────────────────────────────────────────────────────────────────────────
 // Validation
@@ -68,29 +69,38 @@ async function requireUserId(): Promise<string> {
  * Save a new recipe (create + return id/slug).
  * We still finalize the cover in the client right after this (if there is a pending upload).
  */
-export async function createRecipe(raw: unknown): Promise<{ id: string; slug?: string }> {
-  const userId = await requireUserId();
-  const data = RecipePayload.parse(raw);
-  const slug = await uniqueRecipeSlug(data.title ?? "untitled");
+export async function createRecipe(recipe: RecipeFormRecipe): Promise<{succes: boolean, slug?: string, error?: string}> {
+  
+  try {
 
-  const created = await prisma.recipe.create({
-    data: {
-      ownerId: userId,
-      type: "OWNED",
-      title: data.title ?? undefined,
-      description: data.description ?? undefined,
-      prepMins: data.prepMins ?? null,
-      cookMins: data.cookMins ?? null,
-      servings: data.servings ?? null,
-      ingredients: data.ingredients,
-      steps: data.steps,
-      tags: data.tags,
-      note: data.note ?? undefined,
-      imageKey: null, // finalized separately
-      slug
-    },
-    select: { id: true, slug: true },
-  });
+    const userId = await requireUserId();
+    const data = RecipePayload.parse(recipe);
+    const slug = await uniqueRecipeSlug(data.title ?? "untitled");
+    
+    const created = await prisma.recipe.create({
+      data: {
+        ownerId: userId,
+        type: "OWNED",
+        title: data.title ?? undefined,
+        description: data.description ?? undefined,
+        prepMins: data.prepMins ?? null,
+        cookMins: data.cookMins ?? null,
+        servings: data.servings ?? null,
+        ingredients: data.ingredients,
+        steps: data.steps,
+        tags: data.tags,
+        note: data.note ?? undefined,
+        imageKey: null, // finalized separately
+        slug
+      },
+      select: { id: true, slug: true },
+    });
 
-  return { id: created.id, slug: created.slug ?? undefined };
+    return { succes: true, slug: created.slug };
+    
+  } catch (error) {
+    return { succes: false, error: (error as Error).message };
+  }
+
+  
 }
