@@ -5,7 +5,7 @@ import { useState, useMemo, useRef, useCallback, useEffect, useActionState } fro
 import { redirect } from "next/navigation";
 import { compressImageFile } from "@/lib/images/compress";
 import { MAX_SIZE_BYTES } from "@/lib/images/constants";
-import { error } from "console";
+import { RecipeFormRecipe } from "@/types/recipe";
 
 // ────────────────────────────────────────────────────────────────────────────
 // Types
@@ -14,7 +14,7 @@ import { error } from "console";
 interface RecipeFormProps {
   mode: "new" | "edit";
   recipe?: Recipe; // optional existing recipe data
-  action: (recipe: RecipeFormRecipe) => Promise<{succes: boolean, slug?: string, error?: string}> | void; // server action for handling submitted recipe
+  action: (recipe: RecipeFormRecipe) => Promise<{success: boolean, slug?: string, error?: string}>; // server action for handling submitted recipe
 }
 
 type SectionKey = "details" | "ingredients" | "steps" | "pictures";
@@ -66,8 +66,8 @@ export default function RecipeForm({ mode, recipe, action }: RecipeFormProps) {
   const [pending, setPending] = useState(false);
 
   // picture states
-  const [imageKey, setImageKey] = useState<string | null>(null); // finalized pointer on recipe
-  const [unattachedImage, setUnattachedImage] = useState<{ key: string; uploadId: string } | null>(null); // server-issued, not yet attached
+  const [imageKey, setImageKey] = useState<string | null>(null);
+  const [unattachedImage, setUnattachedImage] = useState<{ key: string; uploadId: string } | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const [uploading, setUploading] = useState(false);
@@ -99,11 +99,11 @@ export default function RecipeForm({ mode, recipe, action }: RecipeFormProps) {
       steps: sanitizeLines(steps),
       tags,
       note,
+      imageKey
     });
-
-    // should redirect in server action before this
-    // setPending(false);
-
+  
+    setPending(false);
+    
     if (result.success && result.slug) {
       // toast.success(mode === "new" ? "Recipe created!" : "Recipe updated!");
       redirect(`/view/${result.slug}`);
@@ -111,7 +111,27 @@ export default function RecipeForm({ mode, recipe, action }: RecipeFormProps) {
       // toast.error(result.error || "Something went wrong");
       console.log(result.error)
     }
+    
   };
+
+    async function finalizeCoverIfNeeded() {
+    if (!unattachedImage) return;
+    if (imageKey === unattachedImage.key) return;
+
+    const res = await fetch("/api/images/finalize", {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ recipeId, newKey: coverDraft.key }),
+    });
+
+    if (!res.ok) {
+      throw new Error(`Finalize failed: ${res.status}`);
+    }
+
+    // Flip local pointer & clear draft
+    setImageKey(coverDraft.key);
+    setCoverDraft(null);
+  }
 
   const scrollTo = (key: SectionKey) => {
     const el = sectionsRef[key].current;
@@ -165,7 +185,7 @@ export default function RecipeForm({ mode, recipe, action }: RecipeFormProps) {
 
   // If an image exists, fetch it for the preview
   useEffect(() => {
-    if (mode != 'edit' || !recipe?.imageKey) return;
+    if (mode != "edit" || !recipe?.imageKey) return;
 
     const fetchImage = async () => {
       try {

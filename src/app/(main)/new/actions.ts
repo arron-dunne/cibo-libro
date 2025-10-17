@@ -4,7 +4,7 @@ import { z } from "zod";
 import { prisma } from "@/lib/prisma";
 import { auth } from "@/lib/auth";
 import { uniqueRecipeSlug } from "@/lib/uniqueSlug";
-import { redirect } from "next/navigation";
+import { RecipeFormRecipe, RecipeFormActionResponse } from "@/types/recipe";
 
 // ────────────────────────────────────────────────────────────────────────────
 // Validation
@@ -69,7 +69,7 @@ async function requireUserId(): Promise<string> {
  * Save a new recipe (create + return id/slug).
  * We still finalize the cover in the client right after this (if there is a pending upload).
  */
-export async function createRecipe(recipe: RecipeFormRecipe): Promise<{succes: boolean, slug?: string, error?: string}> {
+export async function createRecipe(recipe: RecipeFormRecipe): Promise<RecipeFormActionResponse> {
   
   try {
 
@@ -96,10 +96,10 @@ export async function createRecipe(recipe: RecipeFormRecipe): Promise<{succes: b
       select: { id: true, slug: true },
     });
 
-    return { succes: true, slug: created.slug };
+    return { success: true, slug: created.slug };
     
   } catch (error) {
-    return { succes: false, error: (error as Error).message };
+    return { success: false, error: (error as Error).message };
   }
 
   
