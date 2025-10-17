@@ -19,6 +19,7 @@ const RecipePayload = z.object({
   steps: z.array(z.string()).transform((xs) => xs.map((s) => s.trim()).filter(Boolean)),
   tags: z.array(z.string()).transform((xs) => xs.map((s) => s.trim()).filter(Boolean)),
   note: z.string().trim().min(0).max(10000).nullable().optional(),
+  imageKey: z.string().min(3).max(512).nullable().optional()
 });
 export type RecipePayload = z.infer<typeof RecipePayload>;
 
@@ -67,7 +68,6 @@ async function requireUserId(): Promise<string> {
 
 /**
  * Save a new recipe (create + return id/slug).
- * We still finalize the cover in the client right after this (if there is a pending upload).
  */
 export async function createRecipe(recipe: RecipeFormRecipe): Promise<RecipeFormActionResponse> {
   
@@ -75,8 +75,39 @@ export async function createRecipe(recipe: RecipeFormRecipe): Promise<RecipeForm
 
     const userId = await requireUserId();
     const data = RecipePayload.parse(recipe);
-    const slug = await uniqueRecipeSlug(data.title ?? "untitled");
-    
+
+    // Verifiy imageKey is provided
+    if (data.imageKey) {
+
+      // Format validation (prevent path traversal)
+      const SAFE_KEY_RE = /^user\/[a-zA-Z0-9_-]{10,}\/[a-f0-9-]{8,}\.(jpg|jpeg|png|webp)$/;
+
+      if (!SAFE_KEY_RE.test(data.imageKey) || data.imageKey.includes("..")) {
+        return { success: false, error: "Invalid image key format" };
+      }
+
+      // Provenance check (check user owns and uploaded image)
+      const upload = await prisma.upload.findUnique({
+        where: { key: data.imageKey }
+      });
+
+      if (!upload || upload.userId !== userId) {
+        return { success: false, error: "Unauthorized image key" };
+      }
+      
+      // Check imageKey is not already attached to another recipe
+      const existing = await prisma.recipe.findFirst({ 
+        where: { imageKey: data.imageKey },
+        select: { id: true }
+      });
+
+      if (existing) {
+        return { success: false, error: "Image key already in use"}
+      }
+    }
+
+    const slug = await uniqueRecipeSlug(data.title ?? "recipe");
+
     const created = await prisma.recipe.create({
       data: {
         ownerId: userId,
@@ -90,7 +121,7 @@ export async function createRecipe(recipe: RecipeFormRecipe): Promise<RecipeForm
         steps: data.steps,
         tags: data.tags,
         note: data.note ?? undefined,
-        imageKey: null, // finalized separately
+        imageKey: data.imageKey ?? null,
         slug
       },
       select: { id: true, slug: true },
@@ -99,8 +130,8 @@ export async function createRecipe(recipe: RecipeFormRecipe): Promise<RecipeForm
     return { success: true, slug: created.slug };
     
   } catch (error) {
-    return { success: false, error: (error as Error).message };
-  }
 
+    return { success: false, error: (error as Error).message };
   
+  }
 }

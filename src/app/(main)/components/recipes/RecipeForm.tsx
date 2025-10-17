@@ -1,8 +1,8 @@
 "use client";
 
 import Image from "next/image";
-import { useState, useMemo, useRef, useCallback, useEffect, useActionState } from "react";
 import { redirect } from "next/navigation";
+import { useState, useRef, useEffect } from "react";
 import { compressImageFile } from "@/lib/images/compress";
 import { MAX_SIZE_BYTES } from "@/lib/images/constants";
 import { RecipeFormRecipe } from "@/types/recipe";
@@ -14,22 +14,10 @@ import { RecipeFormRecipe } from "@/types/recipe";
 interface RecipeFormProps {
   mode: "new" | "edit";
   recipe?: Recipe; // optional existing recipe data
-  action: (recipe: RecipeFormRecipe) => Promise<{success: boolean, slug?: string, error?: string}>; // server action for handling submitted recipe
+  action: (recipe: RecipeFormRecipe) => Promise<{ success: boolean, slug?: string, error?: string }>; // server action for handling submitted recipe
 }
 
 type SectionKey = "details" | "ingredients" | "steps" | "pictures";
-
-// type Snapshot = {
-//   title: string;
-//   description?: string | null;
-//   prepMins?: number | null;
-//   cookMins?: number | null;
-//   servings?: number | null;
-//   ingredients: string[];
-//   steps: string[];
-//   tags: string[];
-//   imageKey?: string | null;
-// };
 
 type SignUploadResponse = {
   method: "PUT";
@@ -63,11 +51,10 @@ export default function RecipeForm({ mode, recipe, action }: RecipeFormProps) {
   const [steps, setSteps] = useState<string[]>(recipe?.steps ?? []);
   const [tags, setTags] = useState<string[]>(recipe?.tags ?? []);
   const [note, setNote] = useState<string>(recipe?.note ?? "");
-  const [pending, setPending] = useState(false);
+  const [saving, setSaving] = useState(false);
 
   // picture states
   const [imageKey, setImageKey] = useState<string | null>(null);
-  const [unattachedImage, setUnattachedImage] = useState<{ key: string; uploadId: string } | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const [uploading, setUploading] = useState(false);
@@ -87,7 +74,7 @@ export default function RecipeForm({ mode, recipe, action }: RecipeFormProps) {
   // Handle form submission
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setPending(true);
+    setSaving(true);
 
     const result = await action({
       title,
@@ -101,37 +88,17 @@ export default function RecipeForm({ mode, recipe, action }: RecipeFormProps) {
       note,
       imageKey
     });
-  
-    setPending(false);
+
     
     if (result.success && result.slug) {
-      // toast.success(mode === "new" ? "Recipe created!" : "Recipe updated!");
       redirect(`/view/${result.slug}`);
     } else {
-      // toast.error(result.error || "Something went wrong");
       console.log(result.error)
     }
     
+    setSaving(false);
+
   };
-
-    async function finalizeCoverIfNeeded() {
-    if (!unattachedImage) return;
-    if (imageKey === unattachedImage.key) return;
-
-    const res = await fetch("/api/images/finalize", {
-      method: "POST",
-      headers: { "content-type": "application/json" },
-      body: JSON.stringify({ recipeId, newKey: coverDraft.key }),
-    });
-
-    if (!res.ok) {
-      throw new Error(`Finalize failed: ${res.status}`);
-    }
-
-    // Flip local pointer & clear draft
-    setImageKey(coverDraft.key);
-    setCoverDraft(null);
-  }
 
   const scrollTo = (key: SectionKey) => {
     const el = sectionsRef[key].current;
@@ -187,12 +154,14 @@ export default function RecipeForm({ mode, recipe, action }: RecipeFormProps) {
   useEffect(() => {
     if (mode != "edit" || !recipe?.imageKey) return;
 
-    const fetchImage = async () => {
+    const scopedImageKey = recipe.imageKey;
+
+    async function loadPreview() {
       try {
         const res = await fetch("/api/images/sign-download", {
           method: "POST",
           headers: { "content-type": "application/json" },
-          body: JSON.stringify({ key: recipe.imageKey }),
+          body: JSON.stringify({ key: scopedImageKey }),
         });
         if (!res.ok) throw new Error("Failed to sign image URL");
         const { url } = (await res.json()) as { url: string };
@@ -202,9 +171,10 @@ export default function RecipeForm({ mode, recipe, action }: RecipeFormProps) {
         setImagePreview(null);
       }
     }
-    fetchImage();
 
-  }, [])
+    loadPreview();
+
+  }, [mode, recipe?.imageKey])
 
   const onPick = async (e: React.ChangeEvent<HTMLInputElement>) => {
     setUploadError(null);
@@ -217,12 +187,15 @@ export default function RecipeForm({ mode, recipe, action }: RecipeFormProps) {
     const localUrl = URL.createObjectURL(raw);
     setImagePreview(localUrl);
 
-    // 2) If there was a pending previous upload, remove it silently
-    if (unattachedImage) {
-      deleteUnattachedImageSilent(); // don't await; keep UI snappy
+    // 2) If there was a previous image, remove it silently
+    const previousKey = imageKey;
+    if (previousKey) {
+      // Fire-and-forget delete (cleanup handled by background job if it fails)
+      deleteImageSilent(previousKey);
+      setImageKey(null)
     }
 
-    // 3) Begin upload (show only "Uploading…")
+    // 3) Upload new image
     setUploading(true);
     try {
       const compressed = await compressImageFile(raw, {
@@ -264,23 +237,9 @@ export default function RecipeForm({ mode, recipe, action }: RecipeFormProps) {
     }
   };
 
-  // Silent delete used only during "swap" (don't show Deleting…, don't clear preview/input)
-  async function deleteUnattachedImageSilent() {
-    if (!unattachedImage) return;
-    const key = unattachedImage.key;
 
-    // Clear just the draft key so UI no longer offers "Remove selected image"
-    setUnattachedImage(null);
 
-    // Fire-and-forget the server cleanup; no UI updates here
-    fetch("/api/images/delete", {
-      method: "POST",
-      headers: { "content-type": "application/json" },
-      body: JSON.stringify({ key }),
-    }).catch(() => { });
-  }
-
-  // helper: set the <input type="file"> to a given File (so it isn't left empty)
+  // Set the <input type="file"> to a given File (so it isn't left empty)
   function setFileInput(file: File) {
     try {
       const dt = new DataTransfer();
@@ -291,81 +250,7 @@ export default function RecipeForm({ mode, recipe, action }: RecipeFormProps) {
     }
   }
 
-  function extFromMime(mime: string) {
-    if (mime === "image/webp") return ".webp";
-    if (mime === "image/png") return ".png";
-    return ".jpg";
-  }
-
-  // async function deletePendingCover() {
-  //   if (!coverDraft) return;
-  //   // optimistic UI: hide immediately
-  //   const prevPreview = imagePreview;
-  //   const prevDraft = coverDraft;
-
-  //   setDeleting(true);
-  //   setImagePreview(null);
-  //   setCoverDraft(null);
-  //   setImageNotice("Deleting…");
-
-  //   try {
-  //     const res = await fetch("/api/images/delete", {
-  //       method: "POST",
-  //       headers: { "content-type": "application/json" },
-  //       body: JSON.stringify({ key: prevDraft.key }),
-  //     });
-  //     if (!res.ok) throw new Error(String(res.status));
-
-  //     // success
-  //     if (fileInputRef.current) fileInputRef.current.value = "";
-  //     setImageNotice("Image removed");
-  //     setTimeout(() => setImageNotice(null), 1500);
-  //   } catch {
-  //     // revert on failure
-  //     setCoverDraft(prevDraft);
-  //     setImagePreview(prevPreview);
-  //     setImageNotice("Failed to remove image");
-  //     setTimeout(() => setImageNotice(null), 2000);
-  //   } finally {
-  //     setDeleting(false);
-  //   }
-  // }
-
-  async function deleteUnattachedImage() {
-    if (!unattachedImage) return;
-    // optimistic UI: hide immediately
-    const prevPreview = imagePreview;
-    const prevUnattachedImage = unattachedImage;
-
-    setDeleting(true);
-    setImagePreview(null);
-    setUnattachedImage(null);
-    setImageNotice("Deleting…");
-
-    try {
-      const res = await fetch("/api/images/delete", {
-        method: "POST",
-        headers: { "content-type": "application/json" },
-        body: JSON.stringify({ key: prevUnattachedImage.key }),
-      });
-      if (!res.ok) throw new Error(String(res.status));
-
-      // success
-      if (fileInputRef.current) fileInputRef.current.value = "";
-      setImageNotice("Image removed");
-      setTimeout(() => setImageNotice(null), 1500);
-    } catch {
-      // revert on failure
-      setUnattachedImage(prevUnattachedImage);
-      setImagePreview(prevPreview);
-      setImageNotice("Failed to remove image");
-      setTimeout(() => setImageNotice(null), 2000);
-    } finally {
-      setDeleting(false);
-    }
-  }
-
-  async function deleteAttachedImage() {
+  async function deleteImage() {
     if (!imageKey) return;
     // optimistic UI: hide immediately
     const prevPreview = imagePreview;
@@ -396,6 +281,18 @@ export default function RecipeForm({ mode, recipe, action }: RecipeFormProps) {
     } finally {
       setDeleting(false);
     }
+  }
+
+  // Silent delete used only during "swap" (don't show Deleting…, don't clear preview/input)
+  async function deleteImageSilent(key: string) {
+    if (!key) return;
+
+    // Fire-and-forget the server cleanup; no UI updates here
+    fetch("/api/images/delete", {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ key }),
+    }).catch(() => { });
   }
 
   // ──────────────────────────────────────────────────────────────────────────
@@ -616,7 +513,7 @@ export default function RecipeForm({ mode, recipe, action }: RecipeFormProps) {
                       </span>
                     )}
 
-                    {!uploading && !deleting && (unattachedImage || imageKey) && !uploadError && (
+                    {!uploading && !deleting && imageKey && !uploadError && (
                       <div className="flex items-center gap-3">
                         <span className="text-emerald-600">Uploaded successfully</span>
                         <button
@@ -625,8 +522,7 @@ export default function RecipeForm({ mode, recipe, action }: RecipeFormProps) {
                           onClick={async () => {
                             // This path is an explicit *delete*; shows "Deleting…"
                             try {
-                              if (unattachedImage) await deleteUnattachedImage(); // the non-silent version
-                              else if (imageKey && recipe) await deleteAttachedImage();
+                              await deleteImage();
                             } catch { /* helpers set notices */ }
                           }}
                           className="rounded-md border border-zinc-300 bg-white px-2 py-1 text-xs hover:bg-zinc-50 disabled:opacity-50"
@@ -672,9 +568,17 @@ export default function RecipeForm({ mode, recipe, action }: RecipeFormProps) {
                 <button
                   type="submit"
                   className="rounded-lg border border-black/10 bg-orange-500 px-3.5 py-2 font-semibold text-white shadow disabled:opacity-50 hover:cursor-pointer"
-                  disabled={pending}
+                  disabled={saving}
                 >
-                  {pending ? "Saving…" : "Save"}
+                  <span className="flex items-center gap-2">
+                    {saving ? 
+                    <>
+                      <span className="animate-spin h-4 w-4 border-2 border-white border-t-transparent rounded-full"></span>
+                      <span>Saving…</span>
+                    </>
+                    : <span>Save</span> 
+                    }
+                  </span>
                 </button>
               </div>
             </form>
@@ -757,3 +661,8 @@ const Label = ({ children }: { children: React.ReactNode }) => (
 
 const sanitizeLines = (xs: string[]) => xs.map((s) => s.trim()).filter(Boolean);
 
+function extFromMime(mime: string) {
+  if (mime === "image/webp") return ".webp";
+  if (mime === "image/png") return ".png";
+  return ".jpg";
+}
