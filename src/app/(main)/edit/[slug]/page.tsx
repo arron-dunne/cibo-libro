@@ -1,24 +1,27 @@
 import { notFound, redirect } from "next/navigation";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
-import EditRecipeForm from "./EditRecipeForm";
+import RecipeForm from "@/app/(main)/components/recipes/RecipeForm";
+import { updateRecipe } from "./actions";
 
-export default async function EditRecipePage({ params }: { params: { slug: string } }) {
+export const dynamic = "force-dynamic";
+
+export default async function EditRecipePage({ params }: 
+  { params: Promise<{ slug: string }> }
+) {
+  
+  const slug = await params.then((p) => p.slug);
 
   const session = await auth();
   if (!session?.user?.id) redirect("/login");
 
   const recipe = await prisma.recipe.findUnique({
-    where: { slug: params.slug },
+    where: { slug: slug },
   });
 
-  if (!recipe) notFound();
-  if (recipe.ownerId !== session.user.id) redirect("/");
+  if (!recipe || recipe.ownerId !== session.user.id) notFound();
 
   return (
-    <main className="max-w-3xl mx-auto px-4 py-8">
-      <h1 className="text-2xl font-semibold mb-6">Edit Recipe</h1>
-      <EditRecipeForm recipe={recipe} />
-    </main>
+    <RecipeForm mode="edit" recipe={recipe} action={updateRecipe} />
   );
 }

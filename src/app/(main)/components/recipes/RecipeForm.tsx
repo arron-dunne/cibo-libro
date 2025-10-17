@@ -77,6 +77,7 @@ export default function RecipeForm({ mode, recipe, action }: RecipeFormProps) {
     setSaving(true);
 
     const result = await action({
+      id: recipe?.id ?? null,
       title,
       description,
       prepMins: prepMins ? Number(prepMins) : null,

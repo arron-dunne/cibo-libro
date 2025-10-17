@@ -28,6 +28,7 @@ declare global {
 
 // Recipe used by RecipeForm (not all recipe fields)
 interface RecipeFormRecipe {
+  id: string | null;
   title?: string | null;
   description?: string | null;
   prepMins?: number | null;
