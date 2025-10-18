@@ -1,8 +1,9 @@
-// src/app/view/[slug]/page.tsx
-
 import { notFound } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import { ClientImage } from "./ClientImage";
+import Link from "next/link";
+import { Pencil } from "lucide-react";
+
 
 export default async function ViewRecipePage({
   params,
@@ -70,6 +71,22 @@ export default async function ViewRecipePage({
           <div className="relative p-5 md:p-8 flex flex-col justify-center">
             <div className="absolute -right-12 -top-12 h-40 w-40 rounded-full bg-orange-200/50 blur-3xl" />
             <div className="absolute bottom-6 right-10 h-28 w-28 rounded-full bg-rose-200/60 blur-2xl" />
+
+            {/* Edit button (top-right corner) */}
+            <Link
+              href={`/edit/${slug}`}
+              aria-label="Edit recipe"
+              className="
+    absolute top-4 right-4
+    inline-flex h-10 w-10 items-center justify-center
+    rounded-full bg-orange-500 text-white shadow-lg
+    hover:bg-orange-600 transition-colors
+    ring-1 ring-black/5
+  "
+            >
+              <Pencil className="h-5 w-5" />
+            </Link>
+
 
             <h1 className="text-3xl font-extrabold leading-tight md:text-5xl">
               {recipe.title || "Untitled recipe"}

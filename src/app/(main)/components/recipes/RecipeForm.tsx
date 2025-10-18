@@ -167,6 +167,7 @@ export default function RecipeForm({ mode, recipe, action }: RecipeFormProps) {
         if (!res.ok) throw new Error("Failed to sign image URL");
         const { url } = (await res.json()) as { url: string };
         setImagePreview(url);
+        setImageKey(scopedImageKey);
       } catch (err) {
         console.error("Error fetching signed image URL:", err);
         setImagePreview(null);
