@@ -43,11 +43,13 @@ export async function POST(req: Request) {
     select: { id: true},
   });
 
+  const finalRecipeId: string | null = recipeId ?? recipeIdFromKey?.id ?? null;
+
   // --- Authorization paths ---------------------------------------------------
   // Path A: Tied to a recipe (preferred for normal viewing)
-  if (recipeId) {
+  if (finalRecipeId) {
     const recipe = await prisma.recipe.findUnique({
-      where: { id: recipeId },
+      where: { id: finalRecipeId },
       select: { ownerId: true, isPublic: true, imageKey: true },
     });
 

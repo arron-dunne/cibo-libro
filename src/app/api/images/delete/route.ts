@@ -1,10 +1,10 @@
-// app/api/images/delete/route.ts
-"use server";
+"server only";
 
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { deleteObject } from "@/lib/images/r2";
 
 // Only allow user-scoped keys we generate; block traversal.
 const SAFE_KEY_RE = /^user\/[a-zA-Z0-9_-]{10,}\/[a-f0-9-]{8,}\.(jpg|jpeg|png|webp)$/;
@@ -35,30 +35,35 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "Invalid key" }, { status: 400 });
   }
 
+  // If no recipeId is given, check to see if imageKey is attached to a recipe
+  const recipeIdFromKey = await prisma.recipe.findUnique({
+    where: { imageKey: key },
+    select: { id: true },
+  });
+
+  const finalRecipeId: string | null = recipeId ?? recipeIdFromKey?.id ?? null;
+
   // Attached delete path (requires recipeId)
-  if (recipeId) {
+  if (finalRecipeId) {
     const recipe = await prisma.recipe.findUnique({
-      where: { id: recipeId },
+      where: { id: finalRecipeId },
       select: { ownerId: true, imageKey: true },
     });
-    if (!recipe || recipe.ownerId !== userId) {
-      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
-    }
-    if (recipe.imageKey !== key) {
-      // Don’t leak whether key exists anywhere else
+
+    // If recipe missing or not pointing at this key, don't leak existence
+    if (!recipe || recipe.imageKey !== key || recipe.ownerId !== userId) {
       return NextResponse.json({ error: "Not found" }, { status: 404 });
     }
 
     // Flip pointer to null first; then best-effort delete the object.
     await prisma.recipe.update({
-      where: { id: recipeId },
+      where: { id: finalRecipeId },
       data: { imageKey: null },
       select: { id: true },
     });
 
     try {
-      const { deleteObject } = await import("@/lib/images/r2");
-      await deleteObject(key).catch(() => {});
+      await deleteObject(key);
     } catch {
       // ignore; idempotent
     }
@@ -68,9 +73,9 @@ export async function POST(req: Request) {
 
   // Unattached (pending) delete path — must belong to user and not be attached
   const issued = await prisma.upload.findUnique({ where: { key } });
+  
   if (!issued || issued.userId !== userId) {
-    // Hide existence
-    return NextResponse.json({ ok: true }, { status: 200 });
+    return NextResponse.json({ error: "Not found" }, { status: 404 });
   }
 
   // Ensure no recipe currently points at this key (paranoia)
@@ -85,14 +90,10 @@ export async function POST(req: Request) {
 
   // Best-effort delete
   try {
-    const { deleteObject } = await import("@/lib/images/r2");
-    await deleteObject(key).catch(() => {});
+    await deleteObject(key)
   } catch {
     // ignore
   }
-
-  // Keep Upload row for audit, or delete it if you prefer:
-  // await prisma.upload.delete({ where: { key } }).catch(() => {});
 
   return NextResponse.json({ ok: true }, { status: 200 });
 }

@@ -74,6 +74,12 @@ export default function RecipeForm({ mode, recipe, action }: RecipeFormProps) {
   // Handle form submission
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    if (uploading || deleting) {
+      alert("Please wait until the image processing finishes before saving.");
+      return;
+    }
+
     setSaving(true);
 
     const result = await action({
@@ -90,13 +96,13 @@ export default function RecipeForm({ mode, recipe, action }: RecipeFormProps) {
       imageKey
     });
 
-    
+
     if (result.success && result.slug) {
       redirect(`/view/${result.slug}`);
     } else {
       console.log(result.error)
     }
-    
+
     setSaving(false);
 
   };
@@ -570,15 +576,15 @@ export default function RecipeForm({ mode, recipe, action }: RecipeFormProps) {
                 <button
                   type="submit"
                   className="rounded-lg border border-black/10 bg-orange-500 px-3.5 py-2 font-semibold text-white shadow disabled:opacity-50 hover:cursor-pointer"
-                  disabled={saving}
+                  disabled={saving || uploading || deleting}
                 >
                   <span className="flex items-center gap-2">
-                    {saving ? 
-                    <>
-                      <span className="animate-spin h-4 w-4 border-2 border-white border-t-transparent rounded-full"></span>
-                      <span>Saving…</span>
-                    </>
-                    : <span>Save</span> 
+                    {saving ?
+                      <>
+                        <span className="animate-spin h-4 w-4 border-2 border-white border-t-transparent rounded-full"></span>
+                        <span>Saving…</span>
+                      </>
+                      : <span>Save</span>
                     }
                   </span>
                 </button>
