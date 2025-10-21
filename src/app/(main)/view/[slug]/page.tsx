@@ -235,7 +235,7 @@ export default async function ViewRecipePage({
               <ol className="relative ml-3 space-y-6 before:absolute before:left-0 before:top-0 before:h-full before:w-1 before:rounded before:bg-gradient-to-b before:from-orange-200 before:to-rose-200">
                 {steps.map((s, i) => (
                   <li key={i} className="relative pl-6">
-                    <div className="absolute left-[-9px] top-1 grid h-5 w-5 place-items-center rounded-full bg-orange-500 text-[11px] font-extrabold text-white shadow">
+                    <div className="absolute left-0 top-1 -translate-x-1/2 grid h-5 w-5 place-items-center rounded-full bg-orange-500 text-[11px] font-extrabold text-white shadow">
                       {i + 1}
                     </div>
                     <p className="text-base leading-relaxed">{s}</p>
