@@ -206,7 +206,7 @@ export default function CookModeClient({
               </h3>
 
               {ingredients.length ? (
-                <ul className="mt-4 space-y-3.5">
+                <ul className="mt-4 space-y-1">
                   {ingredients.map((line, i) => (
                     <motion.li
                       key={i}
