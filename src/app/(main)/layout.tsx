@@ -1,9 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import { Nunito } from "next/font/google";
 import { auth, signOut } from "@/lib/auth";
-
-const nunito = Nunito({ subsets: ["latin"], variable: "--font-nunito" });
 
 export default async function Layout({ children }: { children: React.ReactNode }) {
 
@@ -15,7 +12,7 @@ export default async function Layout({ children }: { children: React.ReactNode }
   }
 
   return (
-    <div className={`min-h-screen text-gray-900 antialiased ${nunito.variable}`}>
+    <div className="min-h-screen text-gray-900 antialiased">
       
       {/* Background */}
       <div className="fixed h-screen w-full -z-10 overscroll-none inset-0">
