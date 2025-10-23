@@ -18,11 +18,11 @@ export default async function Layout({ children }: { children: React.ReactNode }
     <div className={`min-h-screen text-gray-900 antialiased ${nunito.variable}`}>
       
       {/* Background */}
-      <div className="fixed h-screen w-full overscroll-none inset-0">
-        <div className="absolute w-full h-full -z-100 inset-0 bg-gradient-to-br from-orange-400 via-orange-500 to-rose-500" />
+      <div className="fixed h-screen w-full -z-10 overscroll-none inset-0">
+        <div className="absolute w-full h-full inset-0 bg-gradient-to-br from-orange-400 via-orange-500 to-rose-500" />
         <div
           aria-hidden
-          className="absolute -z-90 -top-24 -left-24 h-72 w-72 rounded-full bg-orange-200/35 blur-3xl pointer-events-none "
+          className="absolute -top-24 -left-24 h-72 w-72 rounded-full bg-orange-200/35 blur-3xl pointer-events-none "
         />
       </div>
 
@@ -84,7 +84,7 @@ export default async function Layout({ children }: { children: React.ReactNode }
       </nav>
 
       {/* Page container */}
-      <main className="mx-auto w-[min(1150px,95%)] py-8">{children}</main>
+      <main className="z-0 mx-auto w-[min(1150px,95%)] py-8">{children}</main>
 
       {/* Footer (rounded icon removed) */}
       <footer className="mt-auto border-t border-white/30 bg-white/10 py-8 text-white backdrop-blur">

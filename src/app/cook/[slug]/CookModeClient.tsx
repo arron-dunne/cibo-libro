@@ -1,7 +1,7 @@
 'use client';
 
 import Link from "next/link";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import type { Variants } from "framer-motion";
@@ -26,6 +26,8 @@ interface CookModeClientProps {
 
 type StepType = "ings" | "finish" | number;
 
+type ScreenType = "desktop" | "mobile";
+
 // Bezier easings (type-safe for Framer Motion)
 const EASE_OUT = [0.22, 1, 0.36, 1] as const;
 const EASE_IN = [0.12, 0, 0.39, 0] as const;
@@ -38,6 +40,30 @@ export default function CookModeClient({
   const [currentStep, setCurrentStep] = useState<StepType>(parseStep(initialStep));
   const [direction, setDirection] = useState<number>(0);
   const [checked, setChecked] = useState<Record<number, boolean>>({});
+  const [screen, setScreen] = useState<ScreenType>("mobile")
+
+  // Detect the screen size
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+
+    const checkScreen = () => {
+      const isDesktop = window.matchMedia("(min-width: 768px)").matches;
+      setScreen(isDesktop ? "desktop" : "mobile");
+    };
+
+    checkScreen(); // run once
+    window.addEventListener("resize", checkScreen);
+    return () => window.removeEventListener("resize", checkScreen);
+  }, []);
+
+  // Skip ingredients step entirely for desktop users
+  useEffect(() => {
+    if (screen === "desktop" && currentStep === "ings") {
+      navigateToStep(1);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [screen]);
+
 
   // Parse step from string to proper type
   function parseStep(step: string): StepType {
@@ -74,7 +100,12 @@ export default function CookModeClient({
     if (currentStep === "finish") {
       navigateToStep(steps.length > 0 ? steps.length : "ings");
     } else if (typeof currentStep === "number") {
-      navigateToStep(currentStep > 1 ? currentStep - 1 : "ings");
+      if (currentStep > 1) {
+        navigateToStep(currentStep - 1);
+      } else if (screen === "mobile") {
+        // dont allow navigation to ings page on desktop
+        navigateToStep("ings");
+      }
     }
   }
 
@@ -190,9 +221,8 @@ export default function CookModeClient({
 
                     {/* tighter copy */}
                     <span
-                      className={`text-[14px] leading-5 ${
-                        checked[i] ? "text-stone-400 line-through" : "text-stone-800"
-                      }`}
+                      className={`text-[14px] leading-5 ${checked[i] ? "text-stone-400 line-through" : "text-stone-800"
+                        }`}
                     >
                       {line}
                     </span>
@@ -247,11 +277,10 @@ export default function CookModeClient({
                             <Circle className="h-5 w-5 text-orange-400" />
                           )}
                           <span
-                            className={`text-[15px] leading-6 ${
-                              checked[i]
-                                ? "text-stone-400 line-through"
-                                : "text-stone-800"
-                            }`}
+                            className={`text-[15px] leading-6 ${checked[i]
+                              ? "text-stone-400 line-through"
+                              : "text-stone-800"
+                              }`}
                           >
                             {line}
                           </span>
