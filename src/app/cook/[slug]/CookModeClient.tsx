@@ -9,8 +9,6 @@ import {
   ArrowLeft,
   UtensilsCrossed,
   Lock,
-  List,
-  ListOrdered,
   Circle,
   CheckCircle2,
   ChevronLeft,
@@ -31,7 +29,6 @@ type StepType = "ings" | "finish" | number;
 // Bezier easings (type-safe for Framer Motion)
 const EASE_OUT = [0.22, 1, 0.36, 1] as const;
 const EASE_IN = [0.12, 0, 0.39, 0] as const;
-const EASE_IN_OUT = [0.4, 0, 0.2, 1] as const;
 
 export default function CookModeClient({
   slug, title, ingredients, steps, initialStep
@@ -116,7 +113,7 @@ export default function CookModeClient({
       {/* Header */}
       <header className="sticky top-4 z-20">
         <motion.div
-          className="mx-auto max-w-screen-sm"
+          className="mx-auto max-w-screen-xl px-4"
           initial={{ opacity: 0, y: -15 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, ease: "easeOut" }}
@@ -159,178 +156,187 @@ export default function CookModeClient({
         </motion.div>
       </header>
 
-      {/* Tabs */}
-      <section className="mx-auto max-w-screen-sm w-full px-4 pt-4 pb-28">
-        <div className="flex justify-center mb-3">
-          <motion.div
-            layout
-            className="inline-flex rounded-full bg-orange-100 p-1 shadow-inner"
-          >
-            <button
-              onClick={() => navigateToStep("ings")}
-              className={`px-4 py-2 rounded-full font-semibold text-sm transition-all ${
-                currentStep === "ings"
-                  ? "bg-white text-orange-700 shadow"
-                  : "text-orange-700/70 hover:bg-orange-200/70"
-              }`}
-            >
-              Ingredients
-            </button>
-            <button
-              onClick={() => navigateToStep(1)}
-              className={`px-4 py-2 rounded-full font-semibold text-sm transition-all ${
-                typeof currentStep === "number"
-                  ? "bg-white text-orange-700 shadow"
-                  : "text-orange-700/70 hover:bg-orange-200/70"
-              }`}
-            >
-              Steps
-            </button>
-          </motion.div>
+      {/* Main content area */}
+      <section className="mx-auto w-full max-w-screen-xl flex-1 px-4 pt-4 pb-28 flex flex-col md:flex-row md:gap-6">
+        {/* Left panel: Ingredients (desktop-visible) */}
+        <div
+          className="
+            hidden md:block md:w-[42%]
+            bg-white/90 rounded-3xl p-5
+            border border-white/40 shadow-lg text-stone-900
+          "
+        >
+          <h3 className="text-center text-[13px] font-semibold tracking-tight text-orange-800 border-b border-orange-200/70 pb-2">
+            Ingredients
+          </h3>
+
+          {ingredients.length ? (
+            <ul className="mt-3 space-y-0.5">
+              {ingredients.map((line, i) => (
+                <li key={i}>
+                  <label className="group flex items-center gap-2.5 px-3 py-2 rounded-lg hover:bg-orange-50 transition">
+                    {/* checkbox */}
+                    <input
+                      type="checkbox"
+                      className="sr-only"
+                      checked={!!checked[i]}
+                      onChange={() => setChecked({ ...checked, [i]: !checked[i] })}
+                    />
+                    {checked[i] ? (
+                      <CheckCircle2 className="h-4 w-4 text-emerald-600" />
+                    ) : (
+                      <Circle className="h-4 w-4 text-orange-400" />
+                    )}
+
+                    {/* tighter copy */}
+                    <span
+                      className={`text-[14px] leading-5 ${
+                        checked[i] ? "text-stone-400 line-through" : "text-stone-800"
+                      }`}
+                    >
+                      {line}
+                    </span>
+                  </label>
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <p className="mt-3 text-sm text-stone-700">
+              No ingredients found for this recipe yet.
+            </p>
+          )}
         </div>
 
-        {/* Animated panels */}
-        <AnimatePresence mode="wait" initial={false} custom={direction}>
-          {currentStep === "ings" && (
-            <motion.div
-              key="ings"
-              variants={slideVariants}
-              initial="enter"
-              animate="center"
-              exit="exit"
-              custom={direction}
-              className="mt-5 rounded-3xl p-6 bg-white/90 border-white/40 shadow-xl text-stone-900"
-            >
-              <h3 className="text-center text-sm font-semibold text-orange-800 border-b border-orange-200/70 pb-3">
-                Prepare Ingredients
-              </h3>
-
-              {ingredients.length ? (
-                <ul className="mt-4 space-y-1">
-                  {ingredients.map((line, i) => (
-                    <motion.li
-                      key={i}
-                      initial={{ opacity: 0, y: 10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: i * 0.05 }}
-                    >
-                      <label className="group flex items-center gap-3 px-4 py-3 cursor-pointer rounded-xl hover:bg-orange-50 transition">
-                        <input
-                          type="checkbox"
-                          className="sr-only"
-                          checked={!!checked[i]}
-                          onChange={() =>
-                            setChecked({ ...checked, [i]: !checked[i] })
-                          }
-                        />
-                        <motion.span
-                          animate={{
-                            scale: checked[i] ? 0 : 1,
-                            opacity: checked[i] ? 0 : 1,
-                          }}
-                        >
-                          <Circle className="h-5 w-5 text-orange-400" />
-                        </motion.span>
-                        <motion.span
-                          animate={{
-                            scale: checked[i] ? 1 : 0,
-                            opacity: checked[i] ? 1 : 0,
-                          }}
-                        >
-                          <CheckCircle2 className="h-5 w-5 text-emerald-600" />
-                        </motion.span>
-                        <span
-                          className={`text-[15px] leading-6 ${
-                            checked[i]
-                              ? "text-stone-400 line-through"
-                              : "text-stone-800"
-                          }`}
-                        >
-                          {line}
-                        </span>
-                      </label>
-                    </motion.li>
-                  ))}
-                </ul>
-              ) : (
-                <p className="mt-4 text-sm text-stone-700">
-                  No ingredients found for this recipe yet.
-                </p>
-              )}
-            </motion.div>
-          )}
-
-          {typeof currentStep === "number" && (
-            <motion.div
-              key={`step-${currentStep}`}
-              variants={slideVariants}
-              initial="enter"
-              animate="center"
-              exit="exit"
-              custom={direction}
-              className="mt-5 rounded-3xl p-6 bg-white/90 shadow-xl border border-orange-100 text-stone-900"
-            >
-              <div className="text-center border-b border-orange-200/60 pb-4">
-                <p className="text-xs font-medium text-orange-700/80 mb-2">
-                  Step {currentStep} of {steps.length}
-                </p>
-                <motion.div
-                  className="h-1.5 w-full rounded-full bg-orange-100 overflow-hidden"
-                >
-                  <motion.div
-                    className="h-1.5 bg-orange-500"
-                    animate={{ width: `${(currentStep / steps.length) * 100}%` }}
-                    transition={{ duration: 0.4, ease: "easeInOut" }}
-                  />
-                </motion.div>
-              </div>
-
-              <motion.p
-                key={currentStep}
-                className="mt-6 text-2xl md:text-3xl leading-snug text-orange-950/95"
-                initial={{ opacity: 0, y: 15 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.4 }}
-              >
-                {steps[currentStep - 1]}
-              </motion.p>
-            </motion.div>
-          )}
-
-          {currentStep === "finish" && (
-            <motion.div
-              key="finish"
-              variants={slideVariants}
-              initial="enter"
-              animate="center"
-              exit="exit"
-              custom={direction}
-              className="mt-5 rounded-3xl p-8 bg-white/95 text-orange-950 shadow-2xl border border-orange-100 text-center"
-            >
+        {/* Right panel: Steps */}
+        <div className="w-full md:w-[58%]">
+          <AnimatePresence mode="wait" initial={false} custom={direction}>
+            {/* Mobile-only Ingredients view (unchanged) */}
+            {currentStep === "ings" && (
               <motion.div
-                initial={{ scale: 0.7, opacity: 0 }}
-                animate={{ scale: 1, opacity: 1 }}
-                transition={{ duration: 0.4, type: "spring" }}
-                className="flex items-center justify-center gap-3 text-emerald-700"
+                key="ings"
+                variants={slideVariants}
+                initial="enter"
+                animate="center"
+                exit="exit"
+                custom={direction}
+                className="mt-5 md:mt-0 rounded-3xl p-6 bg-white/90 border-white/40 shadow-xl text-stone-900 md:hidden"
               >
-                <BadgeCheck className="h-7 w-7" />
-                <p className="text-sm font-semibold">Finished</p>
+                <h3 className="text-center text-sm font-semibold text-orange-800 border-b border-orange-200/70 pb-3">
+                  Prepare Ingredients
+                </h3>
+
+                {ingredients.length ? (
+                  <ul className="mt-4 space-y-1">
+                    {ingredients.map((line, i) => (
+                      <motion.li
+                        key={i}
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: i * 0.05 }}
+                      >
+                        <label className="group flex items-center gap-3 px-4 py-3 cursor-pointer rounded-xl hover:bg-orange-50 transition">
+                          <input
+                            type="checkbox"
+                            className="sr-only"
+                            checked={!!checked[i]}
+                            onChange={() => setChecked({ ...checked, [i]: !checked[i] })}
+                          />
+                          {checked[i] ? (
+                            <CheckCircle2 className="h-5 w-5 text-emerald-600" />
+                          ) : (
+                            <Circle className="h-5 w-5 text-orange-400" />
+                          )}
+                          <span
+                            className={`text-[15px] leading-6 ${
+                              checked[i]
+                                ? "text-stone-400 line-through"
+                                : "text-stone-800"
+                            }`}
+                          >
+                            {line}
+                          </span>
+                        </label>
+                      </motion.li>
+                    ))}
+                  </ul>
+                ) : (
+                  <p className="mt-4 text-sm text-stone-700">
+                    No ingredients found for this recipe yet.
+                  </p>
+                )}
               </motion.div>
-              <h2 className="mt-3 text-3xl font-semibold text-orange-900">
-                Bon appétit!
-              </h2>
-              <p className="mt-2 text-orange-900/80">
-                You've completed all the steps. Enjoy your meal.
-              </p>
-              <Link
-                href={`/view/${slug}`}
-                className="mt-6 inline-flex items-center justify-center rounded-full bg-orange-600 text-white ring-1 ring-orange-700/40 shadow px-6 py-3 font-semibold hover:bg-orange-700 transition"
+            )}
+
+            {typeof currentStep === "number" && (
+              <motion.div
+                key={`step-${currentStep}`}
+                variants={slideVariants}
+                initial="enter"
+                animate="center"
+                exit="exit"
+                custom={direction}
+                className="mt-5 md:mt-0 rounded-3xl p-6 bg-white/90 shadow-xl border border-orange-100 text-stone-900"
               >
-                Back to recipe
-              </Link>
-            </motion.div>
-          )}
-        </AnimatePresence>
+                <div className="text-center border-b border-orange-200/60 pb-4">
+                  <p className="text-xs font-medium text-orange-700/80 mb-2">
+                    Step {currentStep} of {steps.length}
+                  </p>
+                  <motion.div className="h-1.5 w-full rounded-full bg-orange-100 overflow-hidden">
+                    <motion.div
+                      className="h-1.5 bg-orange-500"
+                      animate={{ width: `${(currentStep / steps.length) * 100}%` }}
+                      transition={{ duration: 0.4, ease: "easeInOut" }}
+                    />
+                  </motion.div>
+                </div>
+
+                <motion.p
+                  key={currentStep}
+                  className="mt-6 text-2xl md:text-[32px] leading-snug md:leading-[1.35] text-orange-950/95"
+                  initial={{ opacity: 0, y: 15 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.4 }}
+                >
+                  {steps[currentStep - 1]}
+                </motion.p>
+              </motion.div>
+            )}
+
+            {currentStep === "finish" && (
+              <motion.div
+                key="finish"
+                variants={slideVariants}
+                initial="enter"
+                animate="center"
+                exit="exit"
+                custom={direction}
+                className="mt-5 md:mt-0 rounded-3xl p-8 bg-white/95 text-orange-950 shadow-2xl border border-orange-100 text-center"
+              >
+                <motion.div
+                  initial={{ scale: 0.7, opacity: 0 }}
+                  animate={{ scale: 1, opacity: 1 }}
+                  transition={{ duration: 0.4, type: "spring" }}
+                  className="flex items-center justify-center gap-3 text-emerald-700"
+                >
+                  <BadgeCheck className="h-7 w-7" />
+                  <p className="text-sm font-semibold">Finished</p>
+                </motion.div>
+                <h2 className="mt-3 text-3xl font-semibold text-orange-900">
+                  Bon appétit!
+                </h2>
+                <p className="mt-2 text-orange-900/80">
+                  You've completed all the steps. Enjoy your meal.
+                </p>
+                <Link
+                  href={`/view/${slug}`}
+                  className="mt-6 inline-flex items-center justify-center rounded-full bg-orange-600 text-white ring-1 ring-orange-700/40 shadow px-6 py-3 font-semibold hover:bg-orange-700 transition"
+                >
+                  Back to recipe
+                </Link>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
       </section>
 
       {/* Bottom navigation */}
@@ -340,7 +346,7 @@ export default function CookModeClient({
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
       >
-        <div className="mx-auto max-w-screen-sm w-full px-4 pb-4">
+        <div className="mx-auto max-w-screen-xl w-full px-4 pb-4">
           <div className="rounded-full p-3 bg-white/20 backdrop-blur-lg border border-white/30 shadow-[0_8px_30px_rgba(0,0,0,0.12)] grid grid-cols-2 gap-4">
             <motion.button
               whileTap={{ scale: 0.95 }}
