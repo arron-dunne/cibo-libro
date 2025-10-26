@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import type { Variants } from "framer-motion";
 import { extractIngredientKeyword } from "@/lib/ingredients/extractKeywords"
+import { StepText } from "./components/StepText";
 import {
   ArrowLeft,
   UtensilsCrossed,
@@ -16,6 +17,7 @@ import {
   ChevronRight,
   BadgeCheck,
 } from "lucide-react";
+import { toLowerCase } from "zod";
 
 interface CookModeClientProps {
   slug: string;
@@ -340,16 +342,8 @@ export default function CookModeClient({
                   </div>
                 </div>
 
-                <motion.p
-                  key={currentStep}
-                  className="mt-6 text-2xl/6 md:text-3xl/10 tracking-normal text-orange-950/95"
-                  initial={{ opacity: 0, y: 15 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.4 }}
-                  dangerouslySetInnerHTML={{ __html: highlightStepText(steps[currentStep - 1]) }}
-                >
-                  {/* {steps[currentStep - 1]} */}
-                </motion.p>
+                <StepText text={steps[currentStep - 1]} keywords={ingredientKeywords} />
+
               </motion.div>
             )}
 
