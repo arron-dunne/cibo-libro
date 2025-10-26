@@ -5,6 +5,7 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import type { Variants } from "framer-motion";
+import { extractIngredientKeyword } from "@/lib/ingredients/extractKeywords"
 import {
   ArrowLeft,
   UtensilsCrossed,
@@ -41,6 +42,28 @@ export default function CookModeClient({
   const [direction, setDirection] = useState<number>(0);
   const [checked, setChecked] = useState<Record<number, boolean>>({});
   const [screen, setScreen] = useState<ScreenType>("mobile")
+
+  const ingredientKeywords = ingredients
+    .map(extractIngredientKeyword)
+    .filter(Boolean) as string[];
+
+  // Highlight step text with matches
+  function highlightStepText(step: string): string {
+    if (!ingredientKeywords.length) return step;
+
+    const regex = new RegExp(`\\b(${ingredientKeywords.join("|")})\\b`, "gi");
+    return step.replace(regex, (match) =>
+      `<span class="text-orange-950 font-bold">${match}</span>`
+    );
+  }
+
+  // // Check if a given ingredient appears in the current step
+  // function ingredientUsedInStep(ingredient: string, stepText: string): boolean {
+  //   const keyword = extractIngredientKeyword(ingredient)[0];
+  //   if (!keyword) return false;
+  //   const regex = new RegExp(`\\b${keyword}\\b`, "i");
+  //   return regex.test(stepText);
+  // }
 
   // Detect the screen size
   useEffect(() => {
@@ -122,7 +145,6 @@ export default function CookModeClient({
     enter: (dir: number) => ({
       x: dir === 1 ? 200 : -200,
       opacity: 0,
-      scale: 0.95,
       transition: { duration: 0.25, ease: EASE_IN }
     }),
     center: {
@@ -134,7 +156,6 @@ export default function CookModeClient({
     exit: (dir: number) => ({
       x: dir === 1 ? -200 : 200,
       opacity: 0,
-      scale: 0.95,
       transition: { duration: 0.25, ease: EASE_IN }
     })
   };
@@ -240,7 +261,7 @@ export default function CookModeClient({
         {/* Right panel: Steps */}
         <div className="w-full md:w-[58%]">
           <AnimatePresence mode="wait" initial={false} custom={direction}>
-            {/* Mobile-only Ingredients view (unchanged) */}
+            {/* Ingredients panel (mobile only) */}
             {currentStep === "ings" && (
               <motion.div
                 key="ings"
@@ -296,6 +317,7 @@ export default function CookModeClient({
               </motion.div>
             )}
 
+            {/* Step panel */}
             {typeof currentStep === "number" && (
               <motion.div
                 key={`step-${currentStep}`}
@@ -310,27 +332,28 @@ export default function CookModeClient({
                   <p className="text-xs font-medium text-orange-700/80 mb-2">
                     Step {currentStep} of {steps.length}
                   </p>
-                  <motion.div className="h-1.5 w-full rounded-full bg-orange-100 overflow-hidden">
-                    <motion.div
+                  <div className="h-1.5 w-full rounded-full bg-orange-100 overflow-hidden">
+                    <div
                       className="h-1.5 bg-orange-500"
-                      animate={{ width: `${(currentStep / steps.length) * 100}%` }}
-                      transition={{ duration: 0.4, ease: "easeInOut" }}
+                      style={{ width: `${(currentStep / steps.length) * 100}%` }}
                     />
-                  </motion.div>
+                  </div>
                 </div>
 
                 <motion.p
                   key={currentStep}
-                  className="mt-6 text-2xl md:text-[32px] leading-snug md:leading-[1.35] text-orange-950/95"
+                  className="mt-6 text-2xl/6 md:text-3xl/10 tracking-normal text-orange-950/95"
                   initial={{ opacity: 0, y: 15 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.4 }}
+                  dangerouslySetInnerHTML={{ __html: highlightStepText(steps[currentStep - 1]) }}
                 >
-                  {steps[currentStep - 1]}
+                  {/* {steps[currentStep - 1]} */}
                 </motion.p>
               </motion.div>
             )}
 
+            {/* Finish panel */}
             {currentStep === "finish" && (
               <motion.div
                 key="finish"
@@ -381,7 +404,7 @@ export default function CookModeClient({
               whileTap={{ scale: 0.95 }}
               onClick={goToPrevious}
               disabled={!canGoPrevious}
-              className="h-14 rounded-full bg-white/80 text-orange-900 text-lg font-semibold ring-1 ring-orange-700/30 shadow flex items-center justify-center gap-2 hover:bg-white/90 disabled:bg-white/60 disabled:text-orange-900/60 transition"
+              className="h-14 rounded-full bg-teal-400 text-orange-900 text-lg font-semibold ring-1 ring-orange-700/30 shadow flex items-center justify-center gap-2 hover:bg-white/90 disabled:bg-white/60 disabled:text-orange-900/60 transition"
             >
               <ChevronLeft className="h-5 w-5" /> Prev
             </motion.button>
@@ -390,14 +413,14 @@ export default function CookModeClient({
               whileTap={{ scale: 0.95 }}
               onClick={goToNext}
               disabled={!canGoNext}
-              className="relative h-14 rounded-full text-lg font-semibold flex items-center justify-center gap-2 transition disabled:opacity-60 disabled:cursor-not-allowed"
-              style={{
-                background:
-                  "linear-gradient(135deg, #ff7a00 0%, #ff4500 100%)",
-                color: "white",
-                boxShadow:
-                  "0 4px 15px rgba(255, 120, 0, 0.4), 0 0 10px rgba(255, 80, 0, 0.2)",
-              }}
+              className="relative bg-rose-500 h-14 rounded-full text-lg font-semibold flex items-center justify-center gap-2 transition disabled:opacity-60 disabled:cursor-not-allowed"
+              // style={{
+              //   background:
+              //     "linear-gradient(135deg, #ff7a00 0%, #ff4500 100%)",
+              //   color: "white",
+              //   boxShadow:
+              //     "0 4px 15px rgba(255, 120, 0, 0.4), 0 0 10px rgba(255, 80, 0, 0.2)",
+              // }}
             >
               Next <ChevronRight className="h-5 w-5" />
             </motion.button>
