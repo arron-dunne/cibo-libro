@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import type { Variants } from "framer-motion";
 import { extractIngredientKeyword } from "@/lib/ingredients/extractKeywords"
+import { IngredientText } from "./components/IngredientText";
 import { StepText } from "./components/StepText";
 import {
   ArrowLeft,
@@ -17,7 +18,6 @@ import {
   ChevronRight,
   BadgeCheck,
 } from "lucide-react";
-import { toLowerCase } from "zod";
 
 interface CookModeClientProps {
   slug: string;
@@ -49,15 +49,8 @@ export default function CookModeClient({
     .map(extractIngredientKeyword)
     .filter(Boolean) as string[];
 
-  // Highlight step text with matches
-  function highlightStepText(step: string): string {
-    if (!ingredientKeywords.length) return step;
 
-    const regex = new RegExp(`\\b(${ingredientKeywords.join("|")})\\b`, "gi");
-    return step.replace(regex, (match) =>
-      `<span class="text-orange-950 font-bold">${match}</span>`
-    );
-  }
+
 
   // // Check if a given ingredient appears in the current step
   // function ingredientUsedInStep(ingredient: string, stepText: string): boolean {
@@ -212,7 +205,8 @@ export default function CookModeClient({
 
       {/* Main content area */}
       <section className="mx-auto w-full max-w-screen-xl flex-1 px-4 pt-4 pb-28 flex flex-col md:flex-row md:gap-6">
-        {/* Left panel: Ingredients (desktop-visible) */}
+
+        {/* Left panel: Ingredients (desktop-only) */}
         <div
           className="
             hidden md:block md:w-[42%]
@@ -227,35 +221,12 @@ export default function CookModeClient({
           {ingredients.length ? (
             <ul className="mt-3 space-y-0.5">
               {ingredients.map((line, i) => (
-                <li key={i}>
-                  <label className="group flex items-center gap-2.5 px-3 py-2 rounded-lg hover:bg-orange-50 transition">
-                    {/* checkbox */}
-                    <input
-                      type="checkbox"
-                      className="sr-only"
-                      checked={!!checked[i]}
-                      onChange={() => setChecked({ ...checked, [i]: !checked[i] })}
-                    />
-                    {checked[i] ? (
-                      <CheckCircle2 className="h-4 w-4 text-emerald-600" />
-                    ) : (
-                      <Circle className="h-4 w-4 text-orange-400" />
-                    )}
-
-                    {/* tighter copy */}
-                    <span
-                      className={`text-[14px] leading-5 ${checked[i] ? "text-stone-400 line-through" : "text-stone-800"
-                        }`}
-                    >
-                      {line}
-                    </span>
-                  </label>
-                </li>
+                <IngredientText key={i} text={line} stepText={typeof currentStep === "number" ? steps[currentStep - 1] : undefined} size="sidebar" />
               ))}
             </ul>
           ) : (
             <p className="mt-3 text-sm text-stone-700">
-              No ingredients found for this recipe yet.
+              No ingredients found for this recipe.
             </p>
           )}
         </div>
@@ -408,13 +379,13 @@ export default function CookModeClient({
               onClick={goToNext}
               disabled={!canGoNext}
               className="relative bg-rose-500 h-14 rounded-full text-lg font-semibold flex items-center justify-center gap-2 transition disabled:opacity-60 disabled:cursor-not-allowed"
-              // style={{
-              //   background:
-              //     "linear-gradient(135deg, #ff7a00 0%, #ff4500 100%)",
-              //   color: "white",
-              //   boxShadow:
-              //     "0 4px 15px rgba(255, 120, 0, 0.4), 0 0 10px rgba(255, 80, 0, 0.2)",
-              // }}
+            // style={{
+            //   background:
+            //     "linear-gradient(135deg, #ff7a00 0%, #ff4500 100%)",
+            //   color: "white",
+            //   boxShadow:
+            //     "0 4px 15px rgba(255, 120, 0, 0.4), 0 0 10px rgba(255, 80, 0, 0.2)",
+            // }}
             >
               Next <ChevronRight className="h-5 w-5" />
             </motion.button>
