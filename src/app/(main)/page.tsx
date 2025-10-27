@@ -26,8 +26,8 @@ export default async function HomePage() {
             </p>
           ) : (
             <p className="text-slate-800">
-              <a className="font-medium text-orange-700 underline" href="/signin">
-                Sign in
+              <a className="font-medium text-orange-700 underline" href="/login">
+                Login
               </a>{" "}
               to start adding recipes.
             </p>

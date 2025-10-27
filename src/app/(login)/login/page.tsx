@@ -1,6 +1,8 @@
 import { signIn } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import { z } from "zod";
+import Image from "next/image";
+import { ChevronRight } from "lucide-react";
 
 const SigninSchema = z.object({
   email: z.email(),
@@ -30,31 +32,26 @@ export default async function SigninPage({
   }
 
   return (
-    <div className="mx-auto grid w-full place-items-center">
-      {/* Floating panel (no logo here — it lives in the navbar) */}
+    <div className="flex flex-col w-full place-items-center">
+
+      {/* Logo above panel */}
+      <div className="my-10">
+        <Image
+          src="/logo.png"
+          alt="Cibo Libro"
+          width={300}
+          height={70}
+          priority
+        />
+      </div>
+
+      {/* Floating panel */}
       <section
-        className="relative w-full max-w-md overflow-hidden rounded-[28px]
-                   bg-white p-7 sm:p-8 shadow-[0_30px_80px_rgba(0,0,0,0.20)]"
-        style={{
-          // subtle gradient border using mask — feels premium
-          WebkitMaskImage:
-            "linear-gradient(#000, #000) content-box, linear-gradient(#000, #000)",
-          WebkitMaskComposite: "xor",
-          maskComposite: "exclude",
-          boxShadow:
-            "inset 0 0 0 1px rgba(255,255,255,0.75), 0 30px 80px rgba(0,0,0,0.20)",
-          borderRadius: "28px",
-          padding: "1.75rem",
-          background:
-            "linear-gradient(180deg, rgba(255,255,255,1), rgba(255,255,255,0.98)) padding-box, linear-gradient(140deg, rgba(255,255,255,0.85), rgba(255,255,255,0.2)) border-box",
-        }}
+        className="w-full max-w-md overflow-hidden rounded-3xl border border-white/40 bg-white/65 p-10 shadow-2xl backdrop-blur"
       >
-        {/* soft interior glow */}
-        <div className="pointer-events-none absolute -left-10 -top-10 -z-10 h-36 w-36 rounded-full bg-orange-200/45 blur-3xl" />
-        <div className="pointer-events-none absolute right-0 top-24 -z-10 h-24 w-24 rounded-full bg-rose-200/55 blur-2xl" />
 
         <header className="text-center">
-          <h1 className="font-[var(--font-nunito)] text-[28px] tracking-tight">
+          <h1 className="text-4xl font-semibold">
             Welcome back
           </h1>
           <p className="mt-1 text-sm text-gray-600">
@@ -85,10 +82,9 @@ export default async function SigninPage({
               required
               autoComplete="email"
               placeholder="you@example.com"
-              className="block w-full rounded-2xl border border-gray-200 bg-white px-4 py-3
-                         font-[var(--font-nunito)]
+              className="block w-full rounded-2xl border border-white bg-white px-4 py-3
                          outline-none transition
-                         focus:border-orange-500 focus:shadow-[0_0_0_4px_rgba(234,88,12,0.15)]"
+                         focus:border-orange-500 focus:shadow-lg"
             />
           </div>
 
@@ -102,18 +98,14 @@ export default async function SigninPage({
               required
               autoComplete="current-password"
               placeholder="••••••••"
-              className="block w-full rounded-2xl border border-gray-200 bg-white px-4 py-3
-                         font-[var(--font-nunito)]
+              className="block w-full rounded-2xl border border-white bg-white px-4 py-3
                          outline-none transition
-                         focus:border-orange-500 focus:shadow-[0_0_0_4px_rgba(234,88,12,0.15)]"
+                         focus:border-orange-500 focus:shadow-lg"
             />
-            <div className="mt-2 text-xs text-gray-500">
-              Use at least 8 characters with letters and numbers.
-            </div>
           </div>
 
           <div className="flex items-center justify-between text-sm">
-            <a href="#" className="text-gray-500 underline underline-offset-4 transition hover:text-gray-700">
+            <a href="#" className="text-gray-500 hover:underline transition hover:text-gray-700">
               Forgot password
             </a>
             <span className="text-gray-500">
@@ -125,29 +117,18 @@ export default async function SigninPage({
           </div>
 
           <button
-            className="group w-full rounded-2xl bg-orange-600 px-4 py-3
-                       font-[var(--font-nunito)] text-white
-                       shadow-[0_12px_26px_rgba(234,88,12,0.35)]
+            className="w-full rounded-2xl bg-orange-600 px-4 py-3
+                      text-white text-lg font-bold flex items-center justify-center gap-4
+                      shadow-lg
                        transition hover:-translate-y-0.5 hover:bg-orange-700 active:translate-y-0"
-            aria-label="Sign in"
+            aria-label="Login"
           >
-            <span className="inline-flex items-center justify-center gap-2">
-              <span>Sign in</span>
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="h-5 w-5 transition group-hover:translate-x-0.5"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-              >
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 12h14M13 5l7 7-7 7" />
-              </svg>
-            </span>
+            Login <ChevronRight className="h-5 w-5" />
           </button>
 
           <div className="flex items-center justify-center gap-2 text-sm text-gray-600">
             New here?
-            <a href="/signup" className="font-medium text-orange-700 underline">
+            <a href="/register" className="font-medium text-orange-700 underline">
               Create an account
             </a>
           </div>

@@ -34,7 +34,7 @@ export default function SignupPage() {
       data: { email, passwordHash: await argon2.hash(password) },
     });
 
-    redirect("/signin?created=1");
+    redirect("/login?created=1");
   }
 
   return (
@@ -62,6 +62,7 @@ export default function SignupPage() {
           <p className="text-xs text-gray-500 mt-1">
             Use at least 8 characters
           </p>
+          
         </div>
         <button className="w-full rounded-md bg-black text-white py-2">
           Sign up
