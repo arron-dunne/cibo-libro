@@ -1,5 +1,6 @@
 "use server";
 
+import { z } from "zod";
 import { prisma } from "@/lib/prisma";
 import { auth } from "@/lib/auth/auth";
 import { uniqueRecipeSlug } from "@/lib/uniqueSlug";
@@ -48,7 +49,7 @@ export async function createRecipe(recipe: RecipeFormRecipe): Promise<RecipeForm
  */
 export async function updateRecipe(id: string, raw: unknown): Promise<void> {
   const userId = await requireUserId();
-  const data = RecipeSchema.parse(raw);
+  const data = RecipePayload.parse(raw);
 
       if (!upload || upload.userId !== userId) {
         return { success: false, error: "Unauthorized image key" };
