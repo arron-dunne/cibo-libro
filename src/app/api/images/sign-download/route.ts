@@ -1,5 +1,4 @@
-// app/api/images/sign-download/route.ts
-"use server";
+"server only";
 
 import { NextResponse } from "next/server";
 import { z } from "zod";
@@ -38,11 +37,19 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "Invalid key" }, { status: 400 });
   }
 
+  // If no recipeId is given, check to see if imageKey is attached to a recipe
+  const recipeIdFromKey = await prisma.recipe.findUnique({
+    where: { imageKey: key },
+    select: { id: true},
+  });
+
+  const finalRecipeId: string | null = recipeId ?? recipeIdFromKey?.id ?? null;
+
   // --- Authorization paths ---------------------------------------------------
   // Path A: Tied to a recipe (preferred for normal viewing)
-  if (recipeId) {
+  if (finalRecipeId) {
     const recipe = await prisma.recipe.findUnique({
-      where: { id: recipeId },
+      where: { id: finalRecipeId },
       select: { ownerId: true, isPublic: true, imageKey: true },
     });
 

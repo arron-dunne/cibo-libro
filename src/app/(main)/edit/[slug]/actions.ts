@@ -4,10 +4,11 @@ import { z } from "zod";
 import { prisma } from "@/lib/prisma";
 import { auth } from "@/lib/auth";
 import { uniqueRecipeSlug } from "@/lib/uniqueSlug";
-import { RecipeFormRecipe, RecipeFormActionResponse } from "@/types/recipe";
+import { RecipeFormActionResponse, RecipeFormRecipe } from "@/types/recipe";
 
 // Validation
-const NewRecipeSchema = z.object({
+const UpdateRecipeSchema = z.object({
+  id: z.string(),
   title: z.string().trim().min(0).max(1000).nullable().optional(),
   description: z.string().trim().min(0).max(10000).nullable().optional(),
   prepMins: z.number().int().positive().max(24 * 60).nullable().optional(),
@@ -20,18 +21,28 @@ const NewRecipeSchema = z.object({
   imageKey: z.string().min(3).max(512).nullable().optional()
 });
 
-// Save a new recipe (create + return id/slug).
-export async function createRecipe(recipe: RecipeFormRecipe): Promise<RecipeFormActionResponse> {
-  
+// Server Action
+export async function updateRecipe(recipe: RecipeFormRecipe): Promise<RecipeFormActionResponse> {
+
   try {
-    
+
     // Ensure user is signed in
     const session = await auth();
     if (!session?.user?.id) return { success: false, error: "Not authenticated" };
     const userId = session.user.id;
 
     // Validate data format
-    const data = NewRecipeSchema.parse(recipe);
+    const data = UpdateRecipeSchema.parse(recipe);
+
+    // Validate user owns recipe
+    const existingRecipe = await prisma.recipe.findUnique({
+      where: { id: data.id },
+      select: { ownerId: true, title: true, slug: true },
+    });
+
+    if (!existingRecipe || existingRecipe.ownerId !== userId) {
+      return { success: false, error: "Unauthorized" };
+    }
 
     // Verifiy imageKey is provided
     if (data.imageKey) {
@@ -51,44 +62,53 @@ export async function createRecipe(recipe: RecipeFormRecipe): Promise<RecipeForm
       if (!upload || upload.userId !== userId) {
         return { success: false, error: "Unauthorized image key" };
       }
-      
-      // Check imageKey is not already attached to another recipe
-      const existing = await prisma.recipe.findFirst({ 
-        where: { imageKey: data.imageKey },
+
+      // Check imageKey is not attached to another recipe
+      const existing = await prisma.recipe.findFirst({
+        where: {
+          imageKey: data.imageKey,
+          NOT: { id: data.id },
+        },
         select: { id: true }
       });
 
       if (existing) {
-        return { success: false, error: "Image key already in use"}
+        return { success: false, error: "Image key already in use" }
       }
     }
 
-    const slug = await uniqueRecipeSlug(data.title ?? "recipe");
+    let slug = existingRecipe.slug
 
-    const created = await prisma.recipe.create({
+    // Update slug if title changed
+    if (data.title !== existingRecipe.title) {
+      slug = await uniqueRecipeSlug(data.title ?? "recipe");
+    }
+
+    // Perform update
+    const updated = await prisma.recipe.update({
+      where: { id: data.id },
       data: {
-        ownerId: userId,
-        type: "OWNED",
-        title: data.title ?? undefined,
-        description: data.description ?? undefined,
+        title: data.title ?? "",
+        description: data.description ?? "",
         prepMins: data.prepMins ?? null,
         cookMins: data.cookMins ?? null,
         servings: data.servings ?? null,
-        ingredients: data.ingredients,
-        steps: data.steps,
-        tags: data.tags,
-        note: data.note ?? undefined,
+        ingredients: data.ingredients ?? [],
+        steps: data.steps ?? [],
+        tags: data.tags ?? [],
+        note: data.note ?? "",
         imageKey: data.imageKey ?? null,
+        updatedAt: new Date(),
         slug
       },
-      select: { id: true, slug: true },
+      select: { slug: true },
     });
 
-    return { success: true, slug: created.slug };
-    
+    return { success: true, slug: updated.slug };
+
   } catch (error) {
 
     return { success: false, error: (error as Error).message };
-  
+
   }
 }

@@ -1,9 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import { Nunito } from "next/font/google";
 import { auth, signOut } from "@/lib/auth";
-
-const nunito = Nunito({ subsets: ["latin"], variable: "--font-nunito" });
 
 export default async function Layout({ children }: { children: React.ReactNode }) {
 
@@ -15,24 +12,21 @@ export default async function Layout({ children }: { children: React.ReactNode }
   }
 
   return (
-    <div className={`min-h-screen text-gray-900 antialiased ${nunito.variable}`}>
-      {/* Brand gradient background + soft glow */}
-      <div className="fixed inset-0 -z-50">
-        <div className="h-full w-full bg-gradient-to-br from-orange-400 via-orange-500 to-rose-500" />
+    <div className="min-h-screen text-gray-900 antialiased">
+      
+      {/* Background */}
+      <div className="fixed h-screen w-full -z-10 overscroll-none inset-0">
+        <div className="absolute w-full h-full inset-0 bg-gradient-to-br from-orange-400 via-orange-500 to-rose-500" />
         <div
-          className="pointer-events-none absolute inset-0 opacity-60"
-          style={{
-            background:
-              "radial-gradient(700px 320px at 20% 10%, rgba(255,255,255,0.28), transparent 60%), radial-gradient(560px 260px at 82% 0%, rgba(255,255,255,0.18), transparent 60%)",
-          }}
+          aria-hidden
+          className="absolute -top-24 -left-24 h-72 w-72 rounded-full bg-orange-200/35 blur-3xl pointer-events-none "
         />
-        <div className="absolute inset-0 bg-[radial-gradient(140%_80%_at_50%_0%,rgba(0,0,0,0.12),transparent_60%)]" />
       </div>
 
       {/* Floating navbar */}
       <nav className="sticky top-4 z-40">
         <div className="mx-auto w-[min(1150px,95%)]">
-          <div className="flex h-14 items-center gap-3 rounded-full border border-white/60 bg-white/85 px-3 sm:px-4 shadow-[0_10px_30px_rgba(0,0,0,0.10)] backdrop-blur supports-[backdrop-filter]:bg-white/65">
+          <div className="flex h-14 items-center gap-3 rounded-full border border-white/80 bg-white/60 px-3 sm:px-4 shadow-sm backdrop-blur">
             {/* Brand */}
             <Link href="/" className="flex items-center gap-2" aria-label="cibo libro home">
               <Image
@@ -87,7 +81,7 @@ export default async function Layout({ children }: { children: React.ReactNode }
       </nav>
 
       {/* Page container */}
-      <main className="mx-auto w-[min(1150px,95%)] py-8">{children}</main>
+      <main className="z-0 mx-auto w-[min(1150px,95%)] py-8">{children}</main>
 
       {/* Footer (rounded icon removed) */}
       <footer className="mt-auto border-t border-white/30 bg-white/10 py-8 text-white backdrop-blur">

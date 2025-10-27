@@ -155,6 +155,7 @@
 * **Nutrition tracking**:
 
   * Auto-estimate macros + calories from recipe data.
+  * Nutrient and vitamin estimates, alert for low / missing 
 * **Integration ecosystem**:
 
   * Export lists to grocery delivery APIs.

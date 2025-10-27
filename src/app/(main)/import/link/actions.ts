@@ -1,4 +1,3 @@
-// app/(main)/import/link/actions.ts
 "use server";
 
 import { z } from "zod";
@@ -45,7 +44,7 @@ export async function saveLinkCard(formData: FormData) {
     await prisma.recipe.create({
       data: {
         ownerId: session.user.id,
-        type: "EXTERNAL",
+        type: "EXTERNAL_LINK",
         title,
         sourceUrl: url.toString(),
         imageExternalUrl: image,

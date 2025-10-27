@@ -1,28 +1,23 @@
 "use client";
 
 import Image from "next/image";
-import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { redirect } from "next/navigation";
+import { useState, useRef, useEffect } from "react";
 import { compressImageFile } from "@/lib/images/compress";
 import { MAX_SIZE_BYTES } from "@/lib/images/constants";
-import { saveDraft, updateRecipe, publishRecipe, publishDraft } from "./actions";
+import { RecipeFormRecipe } from "@/types/recipe";
 
 // ────────────────────────────────────────────────────────────────────────────
-// Types / utils
+// Types
 // ────────────────────────────────────────────────────────────────────────────
-type SectionKey = "details" | "ingredients" | "steps" | "photos";
 
-type Snapshot = {
-  // Keep aligned with actions.ts & Prisma (NOTE: no imageKey here)
-  title: string;
-  description?: string | null;
-  prepMins?: number | null;
-  cookMins?: number | null;
-  servings?: number | null;
-  ingredients: string[];
-  steps: string[];
-  tags: string[];
-  sourceUrl?: string | null;
-};
+interface RecipeFormProps {
+  mode: "new" | "edit";
+  recipe?: Recipe; // optional existing recipe data
+  action: (recipe: RecipeFormRecipe) => Promise<{ success: boolean, slug?: string, error?: string }>; // server action for handling submitted recipe
+}
+
+type SectionKey = "details" | "ingredients" | "steps" | "pictures";
 
 type SignUploadResponse = {
   method: "PUT";
@@ -34,292 +29,96 @@ type SignUploadResponse = {
   maxBytes: number;
 };
 
-const clsx = (...xs: Array<string | false | null | undefined>) => xs.filter(Boolean).join(" ");
-const sanitizeLines = (xs: string[]) => xs.map((s) => s.trim()).filter(Boolean);
-
 // ────────────────────────────────────────────────────────────────────────────
-// Component
+// Main Component
 // ────────────────────────────────────────────────────────────────────────────
-export default function AddRecipeClient() {
-  // Core state (persisted via actions)
-  const [title, setTitle] = useState("");
-  const [description, setDescription] = useState("");
-  const [prepMins, setPrepMins] = useState<number | null>(null);
-  const [cookMins, setCookMins] = useState<number | null>(null);
-  const [servings, setServings] = useState<number | null>(null);
+export default function RecipeForm({ mode, recipe, action }: RecipeFormProps) {
 
-  // Image states
-  const [imageKey, setImageKey] = useState<string | null>(null); // finalized pointer on recipe
-  const [coverDraft, setCoverDraft] = useState<{ key: string; uploadId: string } | null>(null); // server-issued, not yet attached
+  const SECTIONS: [SectionKey, string][] = [
+    ["details", "Details"],
+    ["ingredients", "Ingredients"],
+    ["steps", "Steps"],
+    ["pictures", "Pictures"],
+  ];
+
+  // form states
+  const [title, setTitle] = useState<string>(recipe?.title ?? "");
+  const [description, setDescription] = useState<string>(recipe?.description ?? "");
+  const [prepMins, setPrepMins] = useState<number | null>(recipe?.prepMins ?? null);
+  const [cookMins, setCookMins] = useState<number | null>(recipe?.cookMins ?? null);
+  const [servings, setServings] = useState<number | null>(recipe?.servings ?? null);
+  const [ingredients, setIngredients] = useState<string[]>(recipe?.ingredients ?? []);
+  const [steps, setSteps] = useState<string[]>(recipe?.steps ?? []);
+  const [tags, setTags] = useState<string[]>(recipe?.tags ?? []);
+  const [note, setNote] = useState<string>(recipe?.note ?? "");
+  const [saving, setSaving] = useState(false);
+
+  // picture states
+  const [imageKey, setImageKey] = useState<string | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
-
-  // Upload status
   const [uploading, setUploading] = useState(false);
   const [uploadError, setUploadError] = useState<string | null>(null);
   const [imageNotice, setImageNotice] = useState<string | null>(null);
   const [deleting, setDeleting] = useState(false);
 
-  // Form lists
-  const [ingredients, setIngredients] = useState<string[]>([""]);
-  const [steps, setSteps] = useState<string[]>([""]);
-  const [tags, setTags] = useState<string[]>([]);
-  const [sourceUrl] = useState<string | null>(null); // manual adds keep this null
-
-  // Draft / publish state
-  const [draftId, setDraftId] = useState<string | null>(null);
-  const [saving, setSaving] = useState(false);
-  const [publishing, setPublishing] = useState(false);
-  const [toast, setToast] = useState<string | null>(null);
-  const [undo, setUndo] = useState<Snapshot | null>(null);
-
   // Section anchors
-  const sectionsRef = useMemo(
-    () => ({
-      details: React.createRef<HTMLDivElement>(),
-      ingredients: React.createRef<HTMLDivElement>(),
-      steps: React.createRef<HTMLDivElement>(),
-      photos: React.createRef<HTMLDivElement>(),
-    }),
-    []
-  );
-  const [active, setActive] = useState<SectionKey>("details");
+  const sectionsRef = {
+    details: useRef<HTMLDivElement>(null),
+    ingredients: useRef<HTMLDivElement>(null),
+    steps: useRef<HTMLDivElement>(null),
+    note: useRef<HTMLDivElement>(null),
+    pictures: useRef<HTMLDivElement>(null),
+  };
+  const [currentSection, setCurrentSection] = useState<SectionKey>("details");
 
-  const canPublish =
-    title.trim().length > 0 &&
-    sanitizeLines(ingredients).length > 0 &&
-    sanitizeLines(steps).length > 0;
+  // Handle form submission
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
 
-  // Snapshot helpers (exact payload for actions.ts)
-  const snapshot = useCallback(
-    (): Snapshot => ({
-      title: title.trim(),
-      description: description.trim() || null,
-      prepMins,
-      cookMins,
-      servings,
+    if (uploading || deleting) {
+      alert("Please wait until the image processing finishes before saving.");
+      return;
+    }
+
+    setSaving(true);
+
+    const result = await action({
+      id: recipe?.id ?? null,
+      title,
+      description,
+      prepMins: prepMins ? Number(prepMins) : null,
+      cookMins: cookMins ? Number(cookMins) : null,
+      servings: servings ? Number(servings) : null,
       ingredients: sanitizeLines(ingredients),
       steps: sanitizeLines(steps),
-      tags: sanitizeLines(tags),
-      sourceUrl: sourceUrl || null,
-    }),
-    [title, description, prepMins, cookMins, servings, ingredients, steps, tags, sourceUrl]
-  );
-
-  const setSnapshot = (s: Snapshot & { imageKey?: string | null }) => {
-    setTitle(s.title ?? "");
-    setDescription(s.description ?? "");
-    setPrepMins(s.prepMins ?? null);
-    setCookMins(s.cookMins ?? null);
-    setServings(s.servings ?? null);
-    // imageKey is owned by finalize flow; set it only if provided from server read
-    if (typeof s.imageKey !== "undefined") setImageKey(s.imageKey);
-    setIngredients(s.ingredients?.length ? s.ingredients : [""]);
-    setSteps(s.steps?.length ? s.steps : [""]);
-    setTags(s.tags ?? []);
-  };
-
-  const pushUndo = () => setUndo(snapshot());
-  const doUndo = () => {
-    if (undo) setSnapshot(undo);
-    setUndo(null);
-  };
-
-  // Active section tracking (for pill highlight)
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      (entries) => {
-        const visible = entries
-          .filter((e) => e.isIntersecting)
-          .sort((a, b) => Math.abs(a.boundingClientRect.top) - Math.abs(b.boundingClientRect.top))[0];
-        if (!visible) return;
-        const id = visible.target.getAttribute("data-section") as SectionKey | null;
-        if (id) setActive(id);
-      },
-      { rootMargin: "-40% 0px -55% 0px", threshold: [0, 0.2, 0.5, 1] }
-    );
-    Object.values(sectionsRef).forEach((r) => r.current && observer.observe(r.current));
-    return () => observer.disconnect();
-  }, [sectionsRef]);
-
-  // ──────────────────────────────────────────────────────────────────────────
-  // API helpers
-  // ──────────────────────────────────────────────────────────────────────────
-  async function finalizeCoverIfNeeded(recipeId: string) {
-    if (!coverDraft) return;
-    if (imageKey === coverDraft.key) return;
-
-    const res = await fetch("/api/images/finalize", {
-      method: "POST",
-      headers: { "content-type": "application/json" },
-      body: JSON.stringify({ recipeId, newKey: coverDraft.key }),
+      tags,
+      note,
+      imageKey
     });
 
-    if (!res.ok) {
-      throw new Error(`Finalize failed: ${res.status}`);
+
+    if (result.success && result.slug) {
+      redirect(`/view/${result.slug}`);
+    } else {
+      console.log(result.error)
     }
 
-    // Flip local pointer & clear draft
-    setImageKey(coverDraft.key);
-    setCoverDraft(null);
-  }
+    setSaving(false);
 
-  async function deletePendingCover() {
-    if (!coverDraft) return;
-    // optimistic UI: hide immediately
-    const prevPreview = imagePreview;
-    const prevDraft = coverDraft;
-
-    setDeleting(true);
-    setImagePreview(null);
-    setCoverDraft(null);
-    setImageNotice("Deleting…");
-
-    try {
-      const res = await fetch("/api/images/delete", {
-        method: "POST",
-        headers: { "content-type": "application/json" },
-        body: JSON.stringify({ key: prevDraft.key }),
-      });
-      if (!res.ok) throw new Error(String(res.status));
-
-      // success
-      if (fileInputRef.current) fileInputRef.current.value = "";
-      setImageNotice("Image removed");
-      setTimeout(() => setImageNotice(null), 1500);
-    } catch {
-      // revert on failure
-      setCoverDraft(prevDraft);
-      setImagePreview(prevPreview);
-      setImageNotice("Failed to remove image");
-      setTimeout(() => setImageNotice(null), 2000);
-    } finally {
-      setDeleting(false);
-    }
-  }
-
-  async function deleteAttachedCover() {
-    if (!imageKey || !draftId) return;
-    // optimistic UI: hide immediately
-    const prevPreview = imagePreview;
-    const prevImageKey = imageKey;
-
-    setDeleting(true);
-    setImagePreview(null);
-    setImageKey(null);
-    setImageNotice("Deleting…");
-
-    try {
-      const res = await fetch("/api/images/delete", {
-        method: "POST",
-        headers: { "content-type": "application/json" },
-        body: JSON.stringify({ key: prevImageKey, recipeId: draftId }),
-      });
-      if (!res.ok) throw new Error(String(res.status));
-
-      if (fileInputRef.current) fileInputRef.current.value = "";
-      setImageNotice("Image removed");
-      setTimeout(() => setImageNotice(null), 1500);
-    } catch {
-      // revert on failure
-      setImageKey(prevImageKey);
-      setImagePreview(prevPreview);
-      setImageNotice("Failed to remove image");
-      setTimeout(() => setImageNotice(null), 2000);
-    } finally {
-      setDeleting(false);
-    }
-  }
-
-  // Silent delete used only during "swap" (don't show Deleting…, don't clear preview/input)
-  async function deletePendingCoverSilent() {
-    if (!coverDraft) return;
-    const key = coverDraft.key;
-
-    // Clear just the draft key so UI no longer offers "Remove selected image"
-    setCoverDraft(null);
-
-    // Fire-and-forget the server cleanup; no UI updates here
-    fetch("/api/images/delete", {
-      method: "POST",
-      headers: { "content-type": "application/json" },
-      body: JSON.stringify({ key }),
-    }).catch(() => { });
-  }
-
-
-  // helper: set the <input type="file"> to a given File (so it isn't left empty)
-  function setFileInputTo(file: File) {
-    try {
-      const dt = new DataTransfer();
-      dt.items.add(file);
-      if (fileInputRef.current) fileInputRef.current.files = dt.files;
-    } catch {
-      // Not critical; some environments might block programmatic assignment
-    }
-  }
-
-  function extFromMime(mime: string) {
-    if (mime === "image/webp") return ".webp";
-    if (mime === "image/png") return ".png";
-    return ".jpg";
-  }
-
-  // ──────────────────────────────────────────────────────────────────────────
-  // Actions
-  // ──────────────────────────────────────────────────────────────────────────
-  const onSaveDraft = async () => {
-    setSaving(true);
-    try {
-      const data = snapshot();
-      let id = draftId;
-
-      if (!id) {
-        const res = await saveDraft(data);
-        id = res.id;
-        setDraftId(id);
-      } else {
-        await updateRecipe(id, data);
-      }
-
-      // finalize on draft save (if we have a fresh upload)
-      if (id) {
-        await finalizeCoverIfNeeded(id);
-      }
-
-      setToast("Draft saved");
-    } catch {
-      setToast("Failed to save draft");
-    } finally {
-      setSaving(false);
-      setTimeout(() => setToast(null), 1600);
-    }
   };
 
-  const onPublish = async () => {
-    if (!canPublish) return;
-    setPublishing(true);
-    try {
-      if (draftId) {
-        // Safety: ensure finalize before publish
-        await finalizeCoverIfNeeded(draftId);
-        const res = await publishDraft(draftId);
-        window.location.href = `/view/${res.slug ?? res.id}`;
-      } else {
-        // Create then finalize, then publish that record
-        const created = await publishRecipe(snapshot());
-        await finalizeCoverIfNeeded(created.id);
-        window.location.href = `/view/${created.slug ?? created.id}`;
-      }
-    } catch {
-      setToast("Failed to publish");
-      setPublishing(false);
-      setTimeout(() => setToast(null), 1800);
-    }
+  const scrollTo = (key: SectionKey) => {
+    const el = sectionsRef[key].current;
+    if (!el) return;
+    setCurrentSection(key);
+    el.scrollIntoView({ behavior: "smooth", block: "start", inline: "nearest" });
+    const heading = el.querySelector("h2") as HTMLElement | null;
+    setTimeout(() => heading?.focus?.(), 350);
   };
 
-  // List editing helpers
   const addRow = (setter: React.Dispatch<React.SetStateAction<string[]>>) => setter((xs) => [...xs, ""]);
+
   const removeRow = (setter: React.Dispatch<React.SetStateAction<string[]>>, idx: number) =>
     setter((xs) => (xs.length > 1 ? xs.filter((_, i) => i !== idx) : xs));
 
@@ -356,17 +155,37 @@ export default function AddRecipeClient() {
         }
       };
 
-  const scrollTo = (key: SectionKey) => {
-    const el = sectionsRef[key].current;
-    if (!el) return;
-    el.scrollIntoView({ behavior: "smooth", block: "start", inline: "nearest" });
-    const heading = el.querySelector("h2") as HTMLElement | null;
-    setTimeout(() => heading?.focus?.(), 350);
-  };
+  // ──────────────────────────────────────────────────────────────────────────
+  // Picture upload flow
+  // ──────────────────────────────────────────────────────────────────────────
 
-  // ──────────────────────────────────────────────────────────────────────────
-  // Upload flow
-  // ──────────────────────────────────────────────────────────────────────────
+  // If an image exists, fetch it for the preview
+  useEffect(() => {
+    if (mode != "edit" || !recipe?.imageKey) return;
+
+    const scopedImageKey = recipe.imageKey;
+
+    async function loadPreview() {
+      try {
+        const res = await fetch("/api/images/sign-download", {
+          method: "POST",
+          headers: { "content-type": "application/json" },
+          body: JSON.stringify({ key: scopedImageKey }),
+        });
+        if (!res.ok) throw new Error("Failed to sign image URL");
+        const { url } = (await res.json()) as { url: string };
+        setImagePreview(url);
+        setImageKey(scopedImageKey);
+      } catch (err) {
+        console.error("Error fetching signed image URL:", err);
+        setImagePreview(null);
+      }
+    }
+
+    loadPreview();
+
+  }, [mode, recipe?.imageKey])
+
   const onPick = async (e: React.ChangeEvent<HTMLInputElement>) => {
     setUploadError(null);
     setImageNotice(null);
@@ -378,12 +197,15 @@ export default function AddRecipeClient() {
     const localUrl = URL.createObjectURL(raw);
     setImagePreview(localUrl);
 
-    // 2) If there was a *pending* previous upload, remove it silently (no "Deleting…" UI)
-    if (coverDraft) {
-      deletePendingCoverSilent(); // don't await; keep UI snappy
+    // 2) If there was a previous image, remove it silently
+    const previousKey = imageKey;
+    if (previousKey) {
+      // Fire-and-forget delete (cleanup handled by background job if it fails)
+      deleteImageSilent(previousKey);
+      setImageKey(null)
     }
 
-    // 3) Begin upload (show only "Uploading…")
+    // 3) Upload new image
     setUploading(true);
     try {
       const compressed = await compressImageFile(raw, {
@@ -402,7 +224,7 @@ export default function AddRecipeClient() {
         body: JSON.stringify({ contentType: compressed.type, size: compressed.size }),
       });
       if (!signRes.ok) throw new Error(`Sign failed: ${signRes.status}`);
-      const { method, url, key, uploadId, requiredHeaders } = (await signRes.json()) as SignUploadResponse;
+      const { method, url, key, requiredHeaders } = (await signRes.json()) as SignUploadResponse;
 
       const putOnce = async () => {
         const r = await fetch(url, { method, headers: requiredHeaders, body: compressed });
@@ -410,12 +232,11 @@ export default function AddRecipeClient() {
       };
       try { await putOnce(); } catch { await putOnce(); }
 
-      // Hold pending cover; keep input populated with the *new* (compressed) file
-      setCoverDraft({ key, uploadId });
+      setImageKey(key);
 
       const fileName = (raw.name.replace(/\.\w+$/, "") || "image") + extFromMime(compressed.type);
       const compressedFile = new File([compressed], fileName, { type: compressed.type });
-      setFileInputTo(compressedFile);
+      setFileInput(compressedFile);
 
       setUploadError(null);
     } catch (err: unknown) {
@@ -425,6 +246,62 @@ export default function AddRecipeClient() {
       setUploading(false);
     }
   };
+
+  // Set the <input type="file"> to a given File (so it isn't left empty)
+  function setFileInput(file: File) {
+    try {
+      const dt = new DataTransfer();
+      dt.items.add(file);
+      if (fileInputRef.current) fileInputRef.current.files = dt.files;
+    } catch {
+      // Not critical; some environments might block programmatic assignment
+    }
+  }
+
+  async function deleteImage() {
+    if (!imageKey) return;
+    // optimistic UI: hide immediately
+    const prevPreview = imagePreview;
+    const prevImageKey = imageKey;
+
+    setDeleting(true);
+    setImagePreview(null);
+    setImageKey(null);
+    setImageNotice("Deleting…");
+
+    try {
+      const res = await fetch("/api/images/delete", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ key: prevImageKey }),
+      });
+      if (!res.ok) throw new Error(String(res.status));
+
+      if (fileInputRef.current) fileInputRef.current.value = "";
+      setImageNotice("Image removed");
+      setTimeout(() => setImageNotice(null), 1500);
+    } catch {
+      // revert on failure
+      setImageKey(prevImageKey);
+      setImagePreview(prevPreview);
+      setImageNotice("Failed to remove image");
+      setTimeout(() => setImageNotice(null), 2000);
+    } finally {
+      setDeleting(false);
+    }
+  }
+
+  // Silent delete used only during "swap" (don't show Deleting…, don't clear preview/input)
+  async function deleteImageSilent(key: string) {
+    if (!key) return;
+
+    // Fire-and-forget the server cleanup; no UI updates here
+    fetch("/api/images/delete", {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ key }),
+    }).catch(() => { });
+  }
 
   // ──────────────────────────────────────────────────────────────────────────
   // Render
@@ -438,10 +315,9 @@ export default function AddRecipeClient() {
             <button
               key={key}
               onClick={() => scrollTo(key)}
-              className={clsx(
-                "shrink-0 rounded-full px-3 py-1.5 text-sm font-medium transition",
-                active === key ? "bg-orange-500 text-white shadow" : "bg-white/90 text-zinc-700 hover:bg-white"
-              )}
+              className={`shrink-0 rounded-full px-3 py-1.5 text-sm font-medium transition
+                ${currentSection === key ? "bg-orange-500 text-white shadow" : "bg-white/90 text-zinc-700 hover:bg-white"}`
+              }
             >
               {label}
             </button>
@@ -459,10 +335,9 @@ export default function AddRecipeClient() {
                 <button
                   key={key}
                   onClick={() => scrollTo(key)}
-                  className={clsx(
-                    "mb-2 w-full rounded-xl px-3 py-2 text-left text-sm font-medium last:mb-0",
-                    active === key ? "bg-orange-500 text-white shadow" : "bg-white text-zinc-700 hover:bg-zinc-50"
-                  )}
+                  className={`mb-2 w-full rounded-xl px-3 py-2 text-left text-sm font-medium last:mb-0
+                    ${currentSection === key ? "bg-orange-500 text-white shadow" : "bg-white text-zinc-700 hover:bg-zinc-50"}
+                    `}
                 >
                   {label}
                 </button>
@@ -472,7 +347,7 @@ export default function AddRecipeClient() {
 
           {/* Form column – expands to fill remaining width */}
           <section className="mt-4 min-w-0 flex-1 md:mt-0">
-            <div className="flex flex-col gap-5">
+            <form className="flex flex-col gap-5" onSubmit={handleSubmit}>
               {/* Details */}
               <Panel ref={sectionsRef.details} id="details" title="Details" subtitle="Title, description, times, servings, and tags.">
                 <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
@@ -620,9 +495,24 @@ export default function AddRecipeClient() {
                 </div>
               </Panel>
 
+              {/* Notes */}
+              <Panel
+                ref={sectionsRef.note}
+                id="note"
+                title="Notes"
+                subtitle="Preparation notes, variations, serving ideas, or any other personal touches."
+              >
+                <textarea
+                  rows={3}
+                  className="w-full rounded-lg border border-zinc-300 bg-white/95 px-3 py-2 outline-none focus:ring-2 focus:ring-orange-400"
+                  value={note}
+                  onChange={(e) => setNote(e.target.value)}
+                />
+              </Panel>
+
               {/* Cover Image */}
               <Panel
-                ref={sectionsRef.photos}
+                ref={sectionsRef.pictures}
                 id="cover-image"
                 title="Cover Image"
                 subtitle="Choose a photo (JPEG, PNG, WebP)"
@@ -646,7 +536,7 @@ export default function AddRecipeClient() {
                       </span>
                     )}
 
-                    {!uploading && !deleting && (coverDraft || imageKey) && !uploadError && (
+                    {!uploading && !deleting && imageKey && !uploadError && (
                       <div className="flex items-center gap-3">
                         <span className="text-emerald-600">Uploaded successfully</span>
                         <button
@@ -655,8 +545,7 @@ export default function AddRecipeClient() {
                           onClick={async () => {
                             // This path is an explicit *delete*; shows "Deleting…"
                             try {
-                              if (coverDraft) await deletePendingCover();      // the *non-silent* version
-                              else if (imageKey && draftId) await deleteAttachedCover();
+                              await deleteImage();
                             } catch { /* helpers set notices */ }
                           }}
                           className="rounded-md border border-zinc-300 bg-white px-2 py-1 text-xs hover:bg-zinc-50 disabled:opacity-50"
@@ -687,7 +576,7 @@ export default function AddRecipeClient() {
 
               {/* Bottom bar */}
               <div className="sticky bottom-0 z-40 mt-2 flex items-center justify-between gap-3 rounded-2xl border border-white/60 bg-white/80 px-4 py-3 shadow-md backdrop-blur">
-                <div className="flex items-center gap-2">
+                {/* <div className="flex items-center gap-2">
                   <button
                     type="button"
                     className="rounded-lg border border-zinc-300 bg-white px-3 py-2 text-sm hover:bg-zinc-50 disabled:opacity-50"
@@ -697,30 +586,25 @@ export default function AddRecipeClient() {
                   >
                     ⟲ Undo
                   </button>
-                  <button
-                    type="button"
-                    className="rounded-lg border border-zinc-300 bg-white px-3 py-2 text-sm hover:bg-zinc-50 disabled:opacity-50"
-                    onClick={() => {
-                      pushUndo();
-                      onSaveDraft();
-                    }}
-                    disabled={saving}
-                  >
-                    {saving ? "Saving…" : "Save draft"}
-                  </button>
-                  {toast && <span className="text-xs text-emerald-600">{toast}</span>}
-                </div>
+                </div> */}
 
                 <button
-                  type="button"
-                  className="rounded-lg border border-black/10 bg-orange-500 px-3.5 py-2 font-semibold text-white shadow disabled:opacity-50"
-                  disabled={!canPublish || publishing}
-                  onClick={onPublish}
+                  type="submit"
+                  className="rounded-lg border border-black/10 bg-orange-500 px-3.5 py-2 font-semibold text-white shadow disabled:opacity-50 hover:cursor-pointer"
+                  disabled={saving || uploading || deleting}
                 >
-                  {publishing ? "Publishing…" : "Publish"}
+                  <span className="flex items-center gap-2">
+                    {saving ?
+                      <>
+                        <span className="animate-spin h-4 w-4 border-2 border-white border-t-transparent rounded-full"></span>
+                        <span>Saving…</span>
+                      </>
+                      : <span>Save</span>
+                    }
+                  </span>
                 </button>
               </div>
-            </div>
+            </form>
           </section>
         </div>
       </div>
@@ -729,18 +613,25 @@ export default function AddRecipeClient() {
 }
 
 // ────────────────────────────────────────────────────────────────────────────
-// Small atoms
+// Components
 // ────────────────────────────────────────────────────────────────────────────
-const SECTIONS: [SectionKey, string][] = [
-  ["details", "Details"],
-  ["ingredients", "Ingredients"],
-  ["steps", "Steps"],
-  ["photos", "Photos"],
-];
 
-const Label = ({ children }: { children: React.ReactNode }) => (
-  <label className="mb-1 block text-sm font-medium">{children}</label>
-);
+// Floating panel wrapper
+function Panel({ id, title, subtitle, children, ref }: { id: string; title: string; subtitle?: string; children: React.ReactNode; ref: React.RefObject<HTMLDivElement | null> }) {
+  return (
+    <div
+      ref={ref}
+      data-section={id}
+      className="w-full scroll-mt-28 rounded-2xl border border-white/60 bg-white/90 p-4 shadow-md backdrop-blur md:p-6"
+    >
+      <h2 tabIndex={-1} className="text-xl font-semibold tracking-tight">
+        {title}
+      </h2>
+      {subtitle && <p className="mt-1 text-sm text-zinc-600">{subtitle}</p>}
+      <div className="mt-4">{children}</div>
+    </div>
+  )
+}
 
 function TagsEditor({ value, onChange }: { value: string[]; onChange: (xs: string[]) => void }) {
   const [draft, setDraft] = useState("");
@@ -783,21 +674,18 @@ function TagsEditor({ value, onChange }: { value: string[]; onChange: (xs: strin
   );
 }
 
-// Floating panel wrapper
-const Panel = React.forwardRef<
-  HTMLDivElement,
-  { id: string; title: string; subtitle?: string; children: React.ReactNode }
->(({ id, title, subtitle, children }, ref) => (
-  <div
-    ref={ref}
-    data-section={id}
-    className="w-full scroll-mt-28 rounded-2xl border border-white/60 bg-white/90 p-4 shadow-md backdrop-blur md:p-6"
-  >
-    <h2 tabIndex={-1} className="text-xl font-semibold tracking-tight">
-      {title}
-    </h2>
-    {subtitle && <p className="mt-1 text-sm text-zinc-600">{subtitle}</p>}
-    <div className="mt-4">{children}</div>
-  </div>
-));
-Panel.displayName = "Panel";
+const Label = ({ children }: { children: React.ReactNode }) => (
+  <label className="mb-1 block text-sm font-medium">{children}</label>
+);
+
+// ────────────────────────────────────────────────────────────────────────────
+// Helpers
+// ────────────────────────────────────────────────────────────────────────────
+
+const sanitizeLines = (xs: string[]) => xs.map((s) => s.trim()).filter(Boolean);
+
+function extFromMime(mime: string) {
+  if (mime === "image/webp") return ".webp";
+  if (mime === "image/png") return ".png";
+  return ".jpg";
+}

@@ -1,8 +1,9 @@
-// src/app/view/[slug]/page.tsx
-
 import { notFound } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import { ClientImage } from "./ClientImage";
+import Link from "next/link";
+import { Pencil } from "lucide-react";
+import { ChefHat } from "lucide-react";
 
 export default async function ViewRecipePage({
   params,
@@ -16,6 +17,7 @@ export default async function ViewRecipePage({
     select: {
       id: true,
       title: true,
+      type: true,
       description: true,
       tags: true,
       prepMins: true,
@@ -68,8 +70,50 @@ export default async function ViewRecipePage({
 
           {/* Title + meta */}
           <div className="relative p-5 md:p-8 flex flex-col justify-center">
-            <div className="absolute -right-12 -top-12 h-40 w-40 rounded-full bg-orange-200/50 blur-3xl" />
-            <div className="absolute bottom-6 right-10 h-28 w-28 rounded-full bg-rose-200/60 blur-2xl" />
+
+            {/* Top-right action buttons */}
+            <div className="absolute right-4 top-4 md:right-6 md:top-6 z-10 flex gap-3">
+              {/* Cook Mode button */}
+              {recipe.type !== "EXTERNAL_LINK" && (
+                <Link
+                  href={`/cook/${slug}`}
+                  aria-label="Open Cook Mode"
+                  data-testid="cook-mode-button"
+                  className="group inline-flex items-center gap-2 rounded-full
+        bg-orange-600 px-4 py-2 text-sm font-semibold text-white
+        shadow-sm ring-1 ring-black/5 transition
+        hover:bg-orange-700 active:bg-orange-800
+        focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-600/50
+        active:translate-y-px"
+                >
+                  <ChefHat
+                    className="h-4 w-4 transition-transform group-hover:rotate-6"
+                    aria-hidden="true"
+                  />
+                  <span>Cook Mode</span>
+                </Link>
+              )}
+
+              {/* Edit Recipe button */}
+              <Link
+                href={`/edit/${slug}`}
+                aria-label="Edit recipe"
+                className="group inline-flex items-center gap-2 rounded-full
+      bg-orange-600 px-4 py-2 text-sm font-semibold text-white
+      shadow-sm ring-1 ring-black/5 transition
+      hover:bg-orange-700 active:bg-orange-800
+      focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-600/50
+      active:translate-y-px"
+              >
+                <Pencil
+                  className="h-4 w-4 transition-transform group-hover:-rotate-6"
+                  aria-hidden="true"
+                />
+                <span>Edit</span>
+              </Link>
+            </div>
+
+
 
             <h1 className="text-3xl font-extrabold leading-tight md:text-5xl">
               {recipe.title || "Untitled recipe"}
@@ -191,7 +235,7 @@ export default async function ViewRecipePage({
               <ol className="relative ml-3 space-y-6 before:absolute before:left-0 before:top-0 before:h-full before:w-1 before:rounded before:bg-gradient-to-b before:from-orange-200 before:to-rose-200">
                 {steps.map((s, i) => (
                   <li key={i} className="relative pl-6">
-                    <div className="absolute left-[-9px] top-1 grid h-5 w-5 place-items-center rounded-full bg-orange-500 text-[11px] font-extrabold text-white shadow">
+                    <div className="absolute left-0 top-1 -translate-x-1/2 grid h-5 w-5 place-items-center rounded-full bg-orange-500 text-[11px] font-extrabold text-white shadow">
                       {i + 1}
                     </div>
                     <p className="text-base leading-relaxed">{s}</p>
