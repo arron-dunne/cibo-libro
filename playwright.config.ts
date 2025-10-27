@@ -7,7 +7,7 @@ const BASE_URL = process.env.PW_BASE_URL ?? `http://localhost:${PORT}`;
 const useBuiltServer = process.env.CI === 'true' || process.env.PW_USE_BUILD === '1';
 
 export default defineConfig({
-  testDir: './src/test/e2e',
+  testDir: './src/test/playwright/e2e',
   fullyParallel: true,
   timeout: 30_000,
   retries: process.env.CI ? 2 : 0,

@@ -1,4 +1,3 @@
-// test/e2e/smoke.auth.spec.ts
 import { test, expect } from "@playwright/test";
 
 test("@smoke signed-in home then sign out", async ({ page }) => {
