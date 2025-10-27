@@ -342,7 +342,7 @@ export default function CookModeClient({
                   Bon appétit!
                 </h2>
                 <p className="mt-2 text-orange-900/80">
-                  You've completed all the steps. Enjoy your meal.
+                  You&apos;ve completed all the steps. Enjoy your meal.
                 </p>
                 <Link
                   href={`/view/${slug}`}

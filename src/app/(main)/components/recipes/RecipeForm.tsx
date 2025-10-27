@@ -67,6 +67,7 @@ export default function RecipeForm({ mode, recipe, action }: RecipeFormProps) {
     details: useRef<HTMLDivElement>(null),
     ingredients: useRef<HTMLDivElement>(null),
     steps: useRef<HTMLDivElement>(null),
+    note: useRef<HTMLDivElement>(null),
     pictures: useRef<HTMLDivElement>(null),
   };
   const [currentSection, setCurrentSection] = useState<SectionKey>("details");
@@ -110,6 +111,7 @@ export default function RecipeForm({ mode, recipe, action }: RecipeFormProps) {
   const scrollTo = (key: SectionKey) => {
     const el = sectionsRef[key].current;
     if (!el) return;
+    setCurrentSection(key);
     el.scrollIntoView({ behavior: "smooth", block: "start", inline: "nearest" });
     const heading = el.querySelector("h2") as HTMLElement | null;
     setTimeout(() => heading?.focus?.(), 350);
@@ -222,7 +224,7 @@ export default function RecipeForm({ mode, recipe, action }: RecipeFormProps) {
         body: JSON.stringify({ contentType: compressed.type, size: compressed.size }),
       });
       if (!signRes.ok) throw new Error(`Sign failed: ${signRes.status}`);
-      const { method, url, key, uploadId, requiredHeaders } = (await signRes.json()) as SignUploadResponse;
+      const { method, url, key, requiredHeaders } = (await signRes.json()) as SignUploadResponse;
 
       const putOnce = async () => {
         const r = await fetch(url, { method, headers: requiredHeaders, body: compressed });
@@ -244,8 +246,6 @@ export default function RecipeForm({ mode, recipe, action }: RecipeFormProps) {
       setUploading(false);
     }
   };
-
-
 
   // Set the <input type="file"> to a given File (so it isn't left empty)
   function setFileInput(file: File) {
@@ -493,6 +493,21 @@ export default function RecipeForm({ mode, recipe, action }: RecipeFormProps) {
                     </button>
                   </div>
                 </div>
+              </Panel>
+
+              {/* Notes */}
+              <Panel
+                ref={sectionsRef.note}
+                id="note"
+                title="Notes"
+                subtitle="Preparation notes, variations, serving ideas, or any other personal touches."
+              >
+                <textarea
+                  rows={3}
+                  className="w-full rounded-lg border border-zinc-300 bg-white/95 px-3 py-2 outline-none focus:ring-2 focus:ring-orange-400"
+                  value={note}
+                  onChange={(e) => setNote(e.target.value)}
+                />
               </Panel>
 
               {/* Cover Image */}
