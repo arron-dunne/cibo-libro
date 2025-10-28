@@ -1,79 +1,103 @@
-// src/app/signup/page.tsx
-import { prisma } from "@/lib/prisma";
-import argon2 from "argon2";
-import { z } from "zod";
-import { redirect } from "next/navigation";
+import { handleRegister } from "./actions"
+import { SubmitButton } from "../components/SubmitButton";
 
-export default function SignupPage() {
-  async function signup(formData: FormData) {
-    "use server";
+export default function SignupPage({
+  searchParams
+}: {
+  searchParams: { error?: string }
+}) {
 
-    const raw = {
-      email: String(formData.get("email") || "").toLowerCase().trim(),
-      password: String(formData.get("password") || ""),
-    };
-
-    const schema = z.object({
-      email: z.string().email(),
-      password: z.string().min(8),
-    });
-
-    const parsed = schema.safeParse(raw);
-    if (!parsed.success) {
-      throw new Error("Invalid email or password");
-    }
-
-    const { email, password } = parsed.data;
-
-    const existing = await prisma.user.findUnique({ where: { email } });
-    if (existing) {
-      throw new Error("An account with that email already exists");
-    }
-
-    await prisma.user.create({
-      data: { email, passwordHash: await argon2.hash(password) },
-    });
-
-    redirect("/login?created=1");
-  }
+  const params = searchParams;
 
   return (
-    <main className="mx-auto max-w-sm px-4 py-16">
-      <h1 className="text-2xl font-semibold mb-6">Create your account</h1>
-      <form action={signup} className="space-y-4">
+    <>
+      {/* Header */}
+      <header className="text-center">
+        <h1 className="text-4xl font-semibold">
+          Create your account
+        </h1>
+        <p className="mt-1 text-sm text-gray-600">
+          Get started with your new digital cookbook.
+        </p>
+      </header>
+
+      {/* Status banners */}
+      {params?.error && (
+        <div className="mt-4 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-800">
+          {params.error === "invalid" ? "Invalid email or password" : "Sign-up failed"}
+        </div>
+      )}
+
+      {/* Form */}
+      <form action={handleRegister} className="mt-6 space-y-5">
         <div>
-          <label className="block text-sm mb-1">Email</label>
+          <label className="mb-1 block text-sm font-medium text-gray-800">
+            Email
+          </label>
           <input
             name="email"
             type="email"
             required
-            className="w-full rounded-md border px-3 py-2"
+            // autoComplete="email"
+            placeholder="you@example.com"
+            className="block w-full rounded-2xl border border-white bg-white px-4 py-3
+                    outline-none transition
+                    focus:border-orange-500 focus:shadow-lg"
           />
         </div>
+
         <div>
-          <label className="block text-sm mb-1">Password</label>
+          <label className="mb-1 block text-sm font-medium text-gray-800">
+            Password (at least 8 characters)
+          </label>
           <input
             name="password"
             type="password"
-            minLength={8}
             required
-            className="w-full rounded-md border px-3 py-2"
+            minLength={8}
+            // autoComplete="current-password"
+            placeholder="••••••••"
+            className="block w-full rounded-2xl border border-white bg-white px-4 py-3
+                    outline-none transition
+                    focus:border-orange-500 focus:shadow-lg"
           />
-          <p className="text-xs text-gray-500 mt-1">
-            Use at least 8 characters
-          </p>
-          
         </div>
-        <button className="w-full rounded-md bg-black text-white py-2">
-          Sign up
-        </button>
-      </form>
-      <p className="text-sm mt-4">
-        Already have an account?{" "}
-        <a href="/signin" className="underline">
-          Sign in
-        </a>
-      </p>
-    </main>
+
+        <div>
+          <label className="mb-1 block text-sm font-medium text-gray-800">
+            Confirm Password
+          </label>
+          <input
+            name="confirm"
+            type="password"
+            required
+            minLength={8}
+            // autoComplete="current-password"
+            placeholder="••••••••"
+            className="block w-full rounded-2xl border border-white bg-white px-4 py-3
+                    outline-none transition
+                    focus:border-orange-500 focus:shadow-lg"
+          />
+        </div>
+
+        <div className="flex items-start justify-between text-sm">
+          <span className="text-gray-500">
+            Need help?{" "}
+            <a href="/support" className="text-orange-700 hover:underline">
+              Support
+            </a>
+          </span>
+        </div>
+
+        <SubmitButton text="Register" pendingText="Signing up..." />
+
+        <div className="flex items-center justify-center gap-2 text-sm text-gray-600">
+          Already have an account?
+          <a href="/login" className="font-medium text-orange-700 underline">
+            Login
+          </a>
+        </div>
+      </form >
+    </>
   );
 }
