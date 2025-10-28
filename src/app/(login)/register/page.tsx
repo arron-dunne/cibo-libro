@@ -1,13 +1,14 @@
 import { handleRegister } from "./actions"
 import { SubmitButton } from "../components/SubmitButton";
+import { CircleAlert } from "lucide-react";
 
-export default function SignupPage({
+export default async function RegisterPage({
   searchParams
 }: {
-  searchParams: { error?: string }
+  searchParams: Promise<{ error: string }>
 }) {
 
-  const params = searchParams;
+  const error = await searchParams.then(params => params.error) ?? null;
 
   return (
     <>
@@ -22,11 +23,15 @@ export default function SignupPage({
       </header>
 
       {/* Status banners */}
-      {params?.error && (
+      {/* {error && (
         <div className="mt-4 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-800">
-          {params.error === "invalid" ? "Invalid email or password" : "Sign-up failed"}
+          {
+            error === "existing" ? "An account with that email already exists" :
+              error === "mismatch" ? "Passwords do not match" :
+                "Invalid email or password"
+          }
         </div>
-      )}
+      )} */}
 
       {/* Form */}
       <form action={handleRegister} className="mt-6 space-y-5">
@@ -38,12 +43,18 @@ export default function SignupPage({
             name="email"
             type="email"
             required
-            // autoComplete="email"
             placeholder="you@example.com"
-            className="block w-full rounded-2xl border border-white bg-white px-4 py-3
-                    outline-none transition
-                    focus:border-orange-500 focus:shadow-lg"
+            className={`block w-full rounded-2xl border  bg-white px-4 py-3
+                    outline-none transition border-white 
+                     focus:shadow-lg focus:scale-105
+                    ${error === "existing" ? "ring-2 ring-red-400" : ""}`}
           />
+          {error === "existing" && (
+            <p className="mt-2 flex items-center gap-2 text-sm font-semibold text-red-600">
+              <CircleAlert height={18} />
+              An account with that email already exists
+            </p>
+          )}
         </div>
 
         <div>
@@ -54,12 +65,13 @@ export default function SignupPage({
             name="password"
             type="password"
             required
+            autoComplete="new-password"
             minLength={8}
-            // autoComplete="current-password"
             placeholder="••••••••"
-            className="block w-full rounded-2xl border border-white bg-white px-4 py-3
-                    outline-none transition
-                    focus:border-orange-500 focus:shadow-lg"
+            className={`block w-full rounded-2xl border  bg-white px-4 py-3
+                    outline-none transition border-white 
+                     focus:shadow-lg focus:scale-105
+                    ${error === "mismatch" ? "ring-2 ring-red-400" : ""}`}
           />
         </div>
 
@@ -71,13 +83,20 @@ export default function SignupPage({
             name="confirm"
             type="password"
             required
+            autoComplete="off"
             minLength={8}
-            // autoComplete="current-password"
             placeholder="••••••••"
-            className="block w-full rounded-2xl border border-white bg-white px-4 py-3
-                    outline-none transition
-                    focus:border-orange-500 focus:shadow-lg"
+            className={`block w-full rounded-2xl border  bg-white px-4 py-3
+                    outline-none transition border-white 
+                     focus:shadow-lg focus:scale-105
+                    ${error === "mismatch" ? "ring-2 ring-red-400" : ""}`}
           />
+          {error === "mismatch" && (
+            <p className="mt-2 flex items-center gap-2 text-sm font-semibold text-red-600">
+              <CircleAlert height={18} />
+              Passwords did not match
+            </p>
+          )}
         </div>
 
         <div className="flex items-start justify-between text-sm">
