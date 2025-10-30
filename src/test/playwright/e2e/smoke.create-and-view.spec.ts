@@ -20,7 +20,7 @@ test("@smoke create recipe via manual form, then find it in grid and open detail
   await step.fill("Boil pasta");
 
   // Publish (bottom sticky bar)
-  const publishBtn = page.getByRole("button", { name: "Publish" });
+  const publishBtn = page.getByRole("button", { name: "Save" });
   await expect(publishBtn).toBeEnabled();
   await publishBtn.click();
 

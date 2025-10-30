@@ -36,10 +36,11 @@ export default async function RegisterPage({
       {/* Form */}
       <form action={handleRegister} className="mt-6 space-y-5">
         <div>
-          <label className="mb-1 block text-sm font-medium text-gray-800">
+          <label htmlFor="email" className="mb-1 block text-sm font-medium text-gray-800">
             Email
           </label>
           <input
+            id="email"
             name="email"
             type="email"
             required
@@ -58,10 +59,11 @@ export default async function RegisterPage({
         </div>
 
         <div>
-          <label className="mb-1 block text-sm font-medium text-gray-800">
+          <label htmlFor="password" className="mb-1 block text-sm font-medium text-gray-800">
             Password (at least 8 characters)
           </label>
           <input
+            id="password"
             name="password"
             type="password"
             required
@@ -76,10 +78,11 @@ export default async function RegisterPage({
         </div>
 
         <div>
-          <label className="mb-1 block text-sm font-medium text-gray-800">
+          <label htmlFor="confirm" className="mb-1 block text-sm font-medium text-gray-800">
             Confirm Password
           </label>
           <input
+            id="confirm"
             name="confirm"
             type="password"
             required

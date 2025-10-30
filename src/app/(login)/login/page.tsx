@@ -26,7 +26,7 @@ export default async function SigninPage({
       </header>
 
       {/* Status banners */}
-      { created && (
+      {created && (
         <div className="mt-4 rounded-xl border border-emerald-300 bg-emerald-100 px-4 py-3 text-sm text-emerald-800">
           Account created. You can sign in now.
         </div>
@@ -35,10 +35,11 @@ export default async function SigninPage({
       {/* Form */}
       <form action={handleSignIn} className="mt-6 space-y-5">
         <div>
-          <label className="mb-1 block text-sm font-medium text-gray-800">
+          <label htmlFor="email" className="mb-1 block text-sm font-medium text-gray-800">
             Email
           </label>
           <input
+            id="email"
             name="email"
             type="email"
             required
@@ -57,10 +58,11 @@ export default async function SigninPage({
         </div>
 
         <div>
-          <label className="mb-1 block text-sm font-medium text-gray-800">
+          <label htmlFor="password" className="mb-1 block text-sm font-medium text-gray-800">
             Password
           </label>
           <input
+            id="password"
             name="password"
             type="password"
             required
