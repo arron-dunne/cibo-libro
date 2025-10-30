@@ -1,42 +1,50 @@
-// test/e2e/smoke.create-and-view.spec.ts
 import { test, expect } from "@playwright/test";
 import { uniqueTitle } from "./helpers";
 
-test("@smoke create recipe via manual form, then find it in grid and open detail", async ({ page }) => {
-  // Start logged-in (storageState from setup)
-  await page.goto("/new");
+test.describe("@smoke create and view recipe", () => {
+  test("@smoke create recipe via manual form, then find it in grid and open detail", async ({ page }) => {
+    // Start logged-in (storageState from setup)
+    await page.goto("/new");
 
-  const title = uniqueTitle();
+    const title = uniqueTitle();
 
-  // Details section — Title (label is present, but the input also has a helpful placeholder)
-  await page.getByPlaceholder("e.g. Grandma’s Best Lasagna").fill(title);
+    // Fill minimal required fields
+    await page.getByLabel("Title").fill(title);
+    await page.getByLabel("Description").fill("A quick test recipe");
 
-  // Ingredients — first input has class 'ingredient-input' and optional placeholder
-  const ing = page.locator("input.ingredient-input").first();
-  await ing.fill("250g dried pasta");
+    // Optional fields (ingredients/steps no longer required)
+    // If inputs exist, fill the first ones for visual confirmation
+    // const ingredient = page.locator("input.ingredient-input").first();
+    // if (await ingredient.count()) {
+    //   await ingredient.fill("1 tbsp olive oil");
+    // }
 
-  // Steps — first input has class 'step-input'
-  const step = page.locator("input.step-input").first();
-  await step.fill("Boil pasta");
+    // const step = page.locator("input.step-input").first();
+    // if (await step.count()) {
+    //   await step.fill("Mix all ingredients together");
+    // }
 
-  // Publish (bottom sticky bar)
-  const publishBtn = page.getByRole("button", { name: "Save" });
-  await expect(publishBtn).toBeEnabled();
-  await publishBtn.click();
+    // Save recipe
+    const saveBtn = page.getByRole("button", { name: "Save" });
+    await expect(saveBtn).toBeEnabled();
+    await saveBtn.click();
 
-  // After publish, client navigates to /view/[slug]
-  await expect(page).toHaveURL(/\/view\//);
-  await expect(page.getByRole("heading", { level: 1, name: title })).toBeVisible();
+    // Expect redirect to view page
+    await expect(page).toHaveURL(/\/view\//);
+    await expect(page.getByRole("heading", { level: 1, name: title })).toBeVisible();
 
-  // Go to the owner's grid page.
-  // (Your grid server component currently lives at /all; it protects unauthenticated users.)
-  await page.goto("/all");
+    // Navigate to recipe library and open card
+    await page.goto("/all");
 
-  // Card shows title as an <h3>, and the whole card is clickable via a Link with aria-label "Open <title>"
-  await expect(page.getByRole("heading", { level: 3, name: title })).toBeVisible();
-  await page.getByRole("link", { name: `Open ${title}` }).click();
+    // Card should exist with heading and accessible link
+    const cardHeading = page.getByRole("heading", { level: 3, name: title });
+    await expect(cardHeading).toBeVisible();
 
-  // Back on the detail page
-  await expect(page).toHaveURL(/\/view\//);
-  await expect(page.getByRole("heading", { level: 1, name: title })).toBeVisible();
+    const openLink = page.getByRole("link", { name: `Open ${title}` });
+    await openLink.click();
+
+    // Back on detail page
+    await expect(page).toHaveURL(/\/view\//);
+    await expect(page.getByRole("heading", { level: 1, name: title })).toBeVisible();
+  });
 });
