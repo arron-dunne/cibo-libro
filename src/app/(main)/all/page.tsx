@@ -9,7 +9,7 @@ export const revalidate = 0; // server component; keep fresh
 export default async function RecipesPage() {
   const session = await auth();
   if (!session?.user) {
-    redirect("/signin");
+    redirect("/login");
   }
 
   // Pull all fields we need for the grid, including the external image URL.
