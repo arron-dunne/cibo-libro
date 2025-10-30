@@ -1,7 +1,7 @@
 import { notFound, redirect } from "next/navigation";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
-import RecipeForm from "@/app/(main)/components/recipes/RecipeForm";
+import RecipeForm from "@/app/components/recipes/RecipeForm";
 import { updateRecipe } from "./actions";
 
 export const dynamic = "force-dynamic";

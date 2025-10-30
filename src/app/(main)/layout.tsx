@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { auth, signOut } from "@/lib/auth";
+import { Footer } from "@/app/components/footer/Footer";
 
 export default async function Layout({ children }: { children: React.ReactNode }) {
 
@@ -45,7 +46,7 @@ export default async function Layout({ children }: { children: React.ReactNode }
                   <span className="hidden sm:inline text-gray-700">{session.user.email}</span>
                   <form action={doSignOut}>
                     <button className="rounded-full border border-orange-200 bg-white px-3 py-1.5 font-medium text-orange-700 shadow transition hover:-translate-y-0.5 hover:bg-orange-50">
-                      Sign out
+                      Logout
                     </button>
                   </form>
                 </>
@@ -73,27 +74,7 @@ export default async function Layout({ children }: { children: React.ReactNode }
       {/* Page container */}
       <main className="z-0 mx-auto w-[min(1150px,95%)] py-8" > {children}</main >
 
-      {/* Footer (rounded icon removed) */}
-      < footer className="mt-auto border-t border-white/30 bg-white/10 py-8 text-white backdrop-blur" >
-        <div className="mx-auto w-[min(1150px,95%)] flex flex-wrap items-center justify-between gap-4">
-          <div className="flex items-center gap-3">
-            <Image
-              src="/images/logo.png"
-              alt="cibo libro"
-              width={140}
-              height={32}
-              className="h-8 w-auto drop-shadow-[0_2px_6px_rgba(0,0,0,0.18)]"
-            />
-          </div>
-          <nav className="flex flex-wrap gap-4 text-sm">
-            <Link className="hover:underline" href="/legal/content-policy">Content Policy</Link>
-            <Link className="hover:underline" href="/legal/privacy">Privacy Policy</Link>
-            <Link className="hover:underline" href="/support">Support</Link>
-            <Link className="hover:underline" href="/contact">Contact</Link>
-          </nav>
-          <div className="text-xs/6 opacity-90">© {new Date().getFullYear()} cibo libro. All rights reserved.</div>
-        </div>
-      </footer >
+      <Footer />
     </>
   );
 }

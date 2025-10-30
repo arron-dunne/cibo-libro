@@ -1,5 +1,6 @@
 import { handleSignIn } from "./actions";
 import { SubmitButton } from "../components/SubmitButton";
+import { CircleAlert } from "lucide-react";
 
 export default async function SigninPage({
   searchParams,
@@ -8,12 +9,16 @@ export default async function SigninPage({
 }) {
   const params = await searchParams;
 
+  const created = params.created === "1";
+
+  const error = params.error ?? null;
+
   return (
     <>
       {/* Header */}
       <header className="text-center">
         <h1 className="text-4xl font-semibold">
-          Welcome back
+          {created ? "Welcome" : "Welcome back"}
         </h1>
         <p className="mt-1 text-sm text-gray-600">
           Sign in to your cookbook to save and cook recipes.
@@ -21,14 +26,9 @@ export default async function SigninPage({
       </header>
 
       {/* Status banners */}
-      {params?.created && (
-        <div className="mt-4 rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-800">
+      { created && (
+        <div className="mt-4 rounded-xl border border-emerald-300 bg-emerald-100 px-4 py-3 text-sm text-emerald-800">
           Account created. You can sign in now.
-        </div>
-      )}
-      {params?.error && (
-        <div className="mt-4 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-800">
-          {params.error === "invalid" ? "Invalid email or password" : "Sign-in failed"}
         </div>
       )}
 
@@ -44,10 +44,16 @@ export default async function SigninPage({
             required
             autoComplete="email"
             placeholder="you@example.com"
-            className="block w-full rounded-2xl border border-white bg-white px-4 py-3
-              outline-none transition
-              focus:border-orange-500 focus:shadow-lg"
+            className={`block w-full rounded-2xl border border-white bg-white px-4 py-3
+              outline-none transition focus:scale-105
+              focus:shadow-lg ${error === "invalid" ? "ring-2 ring-red-400" : ""}`}
           />
+          {error === "invalid" && (
+            <p className="mt-2 flex items-center gap-2 text-sm font-semibold text-red-600">
+              <CircleAlert height={18} />
+              Invalid email or password
+            </p>
+          )}
         </div>
 
         <div>
@@ -60,9 +66,9 @@ export default async function SigninPage({
             required
             autoComplete="current-password"
             placeholder="••••••••"
-            className="block w-full rounded-2xl border border-white bg-white px-4 py-3
+            className={`block w-full rounded-2xl border border-white bg-white px-4 py-3
               outline-none transition
-              focus:border-orange-500 focus:shadow-lg"
+              focus:scale-105 focus:shadow-lg ${error === "invalid" ? "ring-2 ring-red-400" : ""}`}
           />
         </div>
 
