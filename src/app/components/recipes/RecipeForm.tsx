@@ -352,8 +352,9 @@ export default function RecipeForm({ mode, recipe, action }: RecipeFormProps) {
               <Panel ref={sectionsRef.details} id="details" title="Details" subtitle="Title, description, times, servings, and tags.">
                 <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                   <div className="sm:col-span-2">
-                    <Label>Title</Label>
+                    <Label htmlFor="title">Title</Label>
                     <input
+                      id="title"
                       type="text"
                       className="w-full rounded-lg border border-zinc-300 bg-white/95 px-3 py-2 outline-none focus:ring-2 focus:ring-orange-400"
                       placeholder="e.g. Grandma’s Best Lasagna"
@@ -363,8 +364,9 @@ export default function RecipeForm({ mode, recipe, action }: RecipeFormProps) {
                   </div>
 
                   <div className="sm:col-span-2">
-                    <Label>Description</Label>
+                    <Label htmlFor="description">Description</Label>
                     <textarea
+                      id="description"
                       rows={3}
                       className="w-full rounded-lg border border-zinc-300 bg-white/95 px-3 py-2 outline-none focus:ring-2 focus:ring-orange-400"
                       placeholder="Short note about the dish"
@@ -374,8 +376,9 @@ export default function RecipeForm({ mode, recipe, action }: RecipeFormProps) {
                   </div>
 
                   <div>
-                    <Label>Prep time (min)</Label>
+                    <Label htmlFor="prep-time">Prep time (min)</Label>
                     <input
+                      id="prep-time"
                       type="number"
                       inputMode="numeric"
                       className="w-full rounded-lg border border-zinc-300 bg-white/95 px-3 py-2 outline-none focus:ring-2 focus:ring-orange-400"
@@ -384,8 +387,9 @@ export default function RecipeForm({ mode, recipe, action }: RecipeFormProps) {
                     />
                   </div>
                   <div>
-                    <Label>Cook time (min)</Label>
+                    <Label htmlFor="cook-time" >Cook time (min)</Label>
                     <input
+                      id="cook-time"
                       type="number"
                       inputMode="numeric"
                       className="w-full rounded-lg border border-zinc-300 bg-white/95 px-3 py-2 outline-none focus:ring-2 focus:ring-orange-400"
@@ -394,8 +398,9 @@ export default function RecipeForm({ mode, recipe, action }: RecipeFormProps) {
                     />
                   </div>
                   <div>
-                    <Label>Servings</Label>
+                    <Label htmlFor="servings">Servings</Label>
                     <input
+                      id="servings"
                       type="number"
                       inputMode="numeric"
                       className="w-full rounded-lg border border-zinc-300 bg-white/95 px-3 py-2 outline-none focus:ring-2 focus:ring-orange-400"
@@ -674,9 +679,15 @@ function TagsEditor({ value, onChange }: { value: string[]; onChange: (xs: strin
   );
 }
 
-const Label = ({ children }: { children: React.ReactNode }) => (
-  <label className="mb-1 block text-sm font-medium">{children}</label>
-);
+function Label({
+  htmlFor,
+  children
+}: {
+  htmlFor?: string;
+  children: React.ReactNode
+}) {
+  return <label htmlFor={htmlFor} className="mb-1 block text-sm font-medium">{children}</label>;
+}
 
 // ────────────────────────────────────────────────────────────────────────────
 // Helpers
