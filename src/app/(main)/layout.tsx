@@ -2,6 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { auth, signOut } from "@/lib/auth";
 import { Footer } from "@/app/components/footer/Footer";
+import { CirclePlus, CookingPot, Home, Import, LogOut, LucideIcon, Settings } from "lucide-react";
 
 export default async function Layout({ children }: { children: React.ReactNode }) {
 
@@ -17,9 +18,10 @@ export default async function Layout({ children }: { children: React.ReactNode }
       {/* Floating navbar */}
       < nav className="sticky top-4 z-40" >
         <div className="mx-auto w-[min(1150px,95%)]">
-          <div className="flex h-14 items-center gap-3 rounded-full border border-white/80 bg-white/60 px-3 sm:px-4 shadow-sm backdrop-blur">
-            {/* Brand */}
-            <Link href="/" className="flex items-center gap-2" aria-label="cibo libro home">
+          <div className="flex h-14 gap-2 rounded-full border border-white/80 bg-white/60 px-3 sm:px-4 py-2 shadow-sm backdrop-blur">
+            
+            {/* Logo */}
+            <Link href="/" className="grow" aria-label="cibo libro home">
               <Image
                 src="/images/logo.png"
                 alt="cibo libro"
@@ -30,22 +32,23 @@ export default async function Layout({ children }: { children: React.ReactNode }
               />
             </Link>
 
-            {/* Main shortcuts */}
-            <div className="mx-auto hidden gap-1 sm:flex">
-              <NavLink href="/" label="Home" icon="M3.75 12h16.5M4.5 12l7.5-7.5L19.5 12" />
-              <NavLink href="/all" label="All recipes" icon="M4 6h16M4 12h16M4 18h16" />
-              <NavLink href="/new" label="Add" icon="M12 4v16M4 12h16" />
-              <NavLink href="/import" label="Import" icon="M12 4v16M4 12h16" />
-              <NavLink href="/settings" label="Settings" icon="M10.325 4.317L9.257 6.5M19 12a7 7 0 11-14 0 7 7 0 0114 0z" />
+            {/* Navigation */}
+            <div className="hidden gap-6 sm:flex">
+              <NavLink href="/" label="Home" icon={Home} highlight={true}/>
+              <NavLink href="/all" label="Recipes" icon={CookingPot} />
+              <NavLink href="/new" label="Add" icon={CirclePlus} />
+              <NavLink href="/import" label="Import" icon={Import} />
+              <NavLink href="/settings" label="Settings" icon={Settings} />
             </div>
 
-            {/* Auth */}
-            <div className="ml-auto flex items-center gap-2 text-sm">
+            {/* Logout */}
+            <div className="flex grow justify-end items-center gap-2 text-sm">
               {session?.user ? (
                 <>
                   <span className="hidden sm:inline text-gray-700">{session.user.email}</span>
                   <form action={doSignOut}>
-                    <button className="rounded-full border border-orange-200 bg-white px-3 py-1.5 font-medium text-orange-700 shadow transition hover:-translate-y-0.5 hover:bg-orange-50">
+                    <button className="flex gap-2 place-items-center rounded-full bg-gradient-to-r from-orange-500 to-rose-500 text-white px-4 py-2 font-bold shadow transition hover:scale-105 hover:brightness-95">
+                      <LogOut size={16}/>
                       Logout
                     </button>
                   </form>
@@ -83,24 +86,26 @@ export default async function Layout({ children }: { children: React.ReactNode }
 function NavLink({
   href,
   label,
+  icon: Icon,
   highlight = false,
 }: {
   href: string;
   label: string;
-  icon: string;
+  icon: LucideIcon;
   highlight?: boolean;
 }) {
   return (
-    <a
+    <Link
       href={href}
       className={[
-        "flex items-center gap-2 rounded-full px-3 py-1.5 text-sm font-medium shadow transition",
+        "flex items-center gap-1 font-medium rounded-full transition",
         highlight
-          ? "bg-orange-600 text-white hover:-translate-y-0.5 hover:bg-orange-700"
-          : "border border-orange-200 bg-white text-orange-700 hover:-translate-y-0.5 hover:bg-orange-50",
+          ? "bg-gradient-to-r from-orange-500 to-rose-500 text-white px-4 py-2 font-bold shadow"
+          : "text-orange-700 hover:brightness-200",
       ].join(" ")}
     >
-      {label}
-    </a>
+      <Icon size={16} />
+      { label }
+    </Link>
   );
 }
