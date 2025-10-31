@@ -3,6 +3,11 @@ export default function DesignPage() {
         <div className="m-4">
             <h1 className="underline text-lg font-bold">Explore Cibo Libro Designs</h1>
             
+            <h2 className="mt-4 font-semibold">Home</h2>
+            <ul className="ml-4 list-disc list-inside">
+                <li><a href="/design/home/v1">v1</a></li>
+            </ul>
+
             <h2 className="mt-4 font-semibold">All Recipes</h2>
             <ul className="ml-4 list-disc list-inside">
                 <li><a href="/design/all">v1</a></li>
