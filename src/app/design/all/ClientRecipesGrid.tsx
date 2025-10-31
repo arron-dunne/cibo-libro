@@ -157,7 +157,7 @@ const SORTS = [
 ] as const;
 
 const TIME_FILTERS = [
-  { key: "any", label: "Any time", test: (_: number) => true },
+  { key: "any", label: "Any time", test: () => true },
   { key: "t15", label: "≤ 15m", test: (t: number) => t <= 15 },
   { key: "t30", label: "≤ 30m", test: (t: number) => t <= 30 },
   { key: "t45", label: "≤ 45m", test: (t: number) => t <= 45 },
@@ -218,17 +218,17 @@ export default function ClientRecipesGrid({ recipes }: { recipes: Recipe[] }) {
   const styleVars = useMemo((): CSSProperties => {
     const t = THEMES[theme];
     return {
-      ["--bg-from" as any]: t.bgFrom,
-      ["--bg-via" as any]: t.bgVia,
-      ["--bg-to" as any]: t.bgTo,
-      ["--accent" as any]: t.accent,
-      ["--chip-bg" as any]: t.chipBg,
-      ["--chip-border" as any]: t.chipBorder,
-      ["--chip-ink" as any]: t.chipInk,
-      ["--button-bg" as any]: t.buttonBg,
-      ["--button-border" as any]: t.buttonBorder,
-      ["--button-ink" as any]: t.buttonInk,
-      ["--button-hover-bg" as any]: t.buttonHoverBg,
+      ["--bg-from" as string]: t.bgFrom,
+      ["--bg-via" as string]: t.bgVia,
+      ["--bg-to" as string]: t.bgTo,
+      ["--accent" as string]: t.accent,
+      ["--chip-bg" as string]: t.chipBg,
+      ["--chip-border" as string]: t.chipBorder,
+      ["--chip-ink" as string]: t.chipInk,
+      ["--button-bg" as string]: t.buttonBg,
+      ["--button-border" as string]: t.buttonBorder,
+      ["--button-ink" as string]: t.buttonInk,
+      ["--button-hover-bg" as string]: t.buttonHoverBg,
     };
   }, [theme]);
 
@@ -299,6 +299,7 @@ export default function ClientRecipesGrid({ recipes }: { recipes: Recipe[] }) {
               <select
                 className="bg-transparent outline-none"
                 value={sort}
+                // @typescript-eslint/no-explicit-any
                 onChange={(e) => setSort(e.target.value as any)}
               >
                 {SORTS.map((s) => (
@@ -315,6 +316,7 @@ export default function ClientRecipesGrid({ recipes }: { recipes: Recipe[] }) {
               <select
                 className="bg-transparent outline-none"
                 value={timeKey}
+                // @typescript-eslint/no-explicit-any
                 onChange={(e) => setTimeKey(e.target.value as any)}
               >
                 {TIME_FILTERS.map((t) => (

@@ -87,7 +87,7 @@ export default function Page() {
           <div className="flex flex-col md:flex-row items-center justify-between gap-6">
             <div className="flex-1">
               <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-3">
-                What's cooking today?
+                What&apos;s cooking today?
               </h2>
               <p className="text-gray-600 text-lg">
                 Browse your collection or start something delicious
@@ -111,6 +111,7 @@ export default function Page() {
                   key={recipe.id}
                   className="group relative overflow-hidden rounded-xl aspect-[4/3] hover:shadow-xl transition-all transform hover:scale-105"
                 >
+                  {/* @next/next/no-img-element */}
                   <img
                     src={recipe.image}
                     alt={recipe.title}
@@ -168,6 +169,7 @@ export default function Page() {
                 className="group cursor-pointer"
               >
                 <div className="relative overflow-hidden rounded-2xl aspect-[4/3] mb-3 shadow-md group-hover:shadow-2xl transition-all">
+                  {/* @next/next/no-img-element */}
                   <img
                     src={recipe.image}
                     alt={recipe.title}

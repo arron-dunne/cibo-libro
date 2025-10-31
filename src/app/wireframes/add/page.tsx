@@ -108,7 +108,7 @@ export default function Page() {
   const stepsRef = useRef<HTMLDivElement | null>(null);
   const photosRef = useRef<HTMLDivElement | null>(null);
 
-  const refMap: Record<SectionKey, React.RefObject<HTMLDivElement>> = {
+  const refMap: Record<SectionKey, React.RefObject<HTMLDivElement | null>> = {
     details: detailsRef,
     ingredients: ingredientsRef,
     steps: stepsRef,
