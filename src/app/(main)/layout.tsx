@@ -2,10 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { auth, signOut } from "@/lib/auth";
 import { Footer } from "@/app/components/footer/Footer";
-import { DesktopNavLink } from "@/app/components/navbar/DesktopNavLink";
-import { LogoutButton } from "@/app/components/navbar/LogoutButton";
-import { MobileMenu } from "@/app/components/navbar/MobileMenu";
-
+import { CirclePlus, CookingPot, Home, Import, LogOut, LucideIcon, Settings } from "lucide-react";
 
 export default async function Layout({ children }: { children: React.ReactNode }) {
 
@@ -23,7 +20,7 @@ export default async function Layout({ children }: { children: React.ReactNode }
       <nav className="sticky top-4 z-10" >
         <div className="mx-auto w-[min(1150px,95%)]">
           <div className="flex h-14 gap-2 rounded-full border border-white/80 bg-white/60 px-3 sm:px-4 py-2 shadow-sm backdrop-blur">
-
+            
             {/* Logo */}
             <Link href="/" className="grow" aria-label="cibo libro home">
               <Image
@@ -37,23 +34,25 @@ export default async function Layout({ children }: { children: React.ReactNode }
             </Link>
 
             {/* Navigation */}
-            <div className="hidden gap-6 md:flex">
-              <DesktopNavLink type="home" />
-              <DesktopNavLink type="all" />
-              <DesktopNavLink type="new" />
-              <DesktopNavLink type="import" />
-              <DesktopNavLink type="settings" />
+            <div className="hidden gap-6 sm:flex">
+              <NavLink href="/" label="Home" icon={Home} highlight={true}/>
+              <NavLink href="/all" label="Recipes" icon={CookingPot} />
+              <NavLink href="/new" label="Add" icon={CirclePlus} />
+              <NavLink href="/import" label="Import" icon={Import} />
+              <NavLink href="/settings" label="Settings" icon={Settings} />
             </div>
 
+            {/* Logout */}
             <div className="flex grow justify-end items-center gap-2 text-sm">
-              
-              <MobileMenu />
-              
-              {/* Logout */}
               {session?.user ? (
                 <>
-                  <span className="hidden md:inline text-gray-700">{session.user.email}</span>
-                  <LogoutButton action={doSignOut} />
+                  <span className="hidden sm:inline text-gray-700">{session.user.email}</span>
+                  <form action={doSignOut}>
+                    <button className="flex gap-2 place-items-center rounded-full bg-gradient-to-r from-orange-500 to-rose-500 text-white px-4 py-2 font-bold shadow transition hover:scale-105 hover:brightness-95">
+                      <LogOut size={16}/>
+                      Logout
+                    </button>
+                  </form>
                 </>
               ) : (
                 <>
@@ -81,5 +80,33 @@ export default async function Layout({ children }: { children: React.ReactNode }
 
       <Footer />
     </>
+  );
+}
+
+/* Reusable pill-like navbar link */
+function NavLink({
+  href,
+  label,
+  icon: Icon,
+  highlight = false,
+}: {
+  href: string;
+  label: string;
+  icon: LucideIcon;
+  highlight?: boolean;
+}) {
+  return (
+    <Link
+      href={href}
+      className={[
+        "flex items-center gap-1 font-medium rounded-full transition",
+        highlight
+          ? "bg-gradient-to-r from-orange-500 to-rose-500 text-white px-4 py-2 font-bold shadow"
+          : "text-orange-700 hover:brightness-200",
+      ].join(" ")}
+    >
+      <Icon size={16} />
+      { label }
+    </Link>
   );
 }
