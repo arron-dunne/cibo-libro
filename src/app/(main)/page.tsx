@@ -1,10 +1,15 @@
 import { auth } from "@/lib/auth";
+import { redirect } from "next/navigation";
 
 export default async function HomePage() {
+  
   const session = await auth();
+
+  if (!session?.user) { redirect("/login"); }
 
   return (
     <div className="mx-auto grid w-full place-items-center">
+      
       {/* Floating welcome card */}
       <section className="w-full max-w-2xl overflow-hidden rounded-3xl border border-white/70 bg-white/95 p-6 shadow-[0_25px_70px_rgba(0,0,0,0.18)] backdrop-blur sm:p-8">
         <h1 className="font-[var(--font-fredoka)] text-3xl tracking-tight">
