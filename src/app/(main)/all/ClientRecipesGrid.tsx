@@ -3,6 +3,7 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { RecipeCard } from "@/app/components/recipes/RecipeCard";
 
 /**
  * ClientRecipesGrid — R2 + External-aware recipe grid (no expanding cards)
@@ -11,19 +12,19 @@ import Link from "next/link";
  * - Equal-height cards, 1→4 responsive columns, glassy filter bar
  */
 
-export type Recipe = {
-  id: string;
-  slug?: string | null;               // /view/[slug]
-  title: string;
-  description?: string | null;
-  imageKey?: string | null;           // R2 object key
-  imageExternalUrl?: string | null;   // NEW: external image from importer
-  tags?: string[] | null;
-  prepMins?: number | null;
-  cookMins?: number | null;
-  servings?: number | null;
-  sourceUrl?: string | null;
-};
+// export type Recipe = {
+//   id: string;
+//   slug?: string | null;               // /view/[slug]
+//   title: string;
+//   description?: string | null;
+//   imageKey?: string | null;           // R2 object key
+//   imageExternalUrl?: string | null;   // NEW: external image from importer
+//   tags?: string[] | null;
+//   prepMins?: number | null;
+//   cookMins?: number | null;
+//   servings?: number | null;
+//   sourceUrl?: string | null;
+// };
 
 export type ClientRecipesGridProps = {
   recipes: Recipe[];
@@ -209,60 +210,60 @@ export default function ClientRecipesGrid({
   );
 }
 
-function RecipeCard({ recipe }: { recipe: Recipe }) {
-  const minutes = ((recipe.prepMins ?? 0) + (recipe.cookMins ?? 0)) || undefined;
-  const href = recipe.slug ? `/view/${recipe.slug}` : `/view/${recipe.id}`;
+// function RecipeCard({ recipe }: { recipe: Recipe }) {
+//   const minutes = ((recipe.prepMins ?? 0) + (recipe.cookMins ?? 0)) || undefined;
+//   const href = recipe.slug ? `/view/${recipe.slug}` : `/view/${recipe.id}`;
 
-  return (
-    <article className="group relative flex h-full flex-col overflow-hidden rounded-2xl border border-zinc-200 bg-white shadow-sm transition hover:-translate-y-0.5 hover:shadow-md focus-within:shadow-md cursor-pointer">
-      {/* Make whole card clickable + accessible */}
-      <Link
-        href={href}
-        aria-label={`Open ${recipe.title}`}
-        className="absolute inset-0 z-10 focus:outline-none focus-visible:ring-2 focus-visible:ring-orange-500/50"
-      />
+//   return (
+//     <article className="group relative flex h-full flex-col overflow-hidden rounded-2xl border border-zinc-200 bg-white shadow-sm transition hover:-translate-y-0.5 hover:shadow-md focus-within:shadow-md cursor-pointer">
+//       {/* Make whole card clickable + accessible */}
+//       <Link
+//         href={href}
+//         aria-label={`Open ${recipe.title}`}
+//         className="absolute inset-0 z-10 focus:outline-none focus-visible:ring-2 focus-visible:ring-orange-500/50"
+//       />
 
-      {/* Media */}
-      <div className="relative aspect-[4/3] w-full bg-zinc-100">
-        <SignedImage
-          imageKey={recipe.imageKey}
-          externalUrl={recipe.imageExternalUrl}  // ← NEW
-          alt={recipe.title}
-        />
-      </div>
+//       {/* Media */}
+//       <div className="relative aspect-[4/3] w-full bg-zinc-100">
+//         <SignedImage
+//           imageKey={recipe.imageKey}
+//           externalUrl={recipe.imageExternalUrl}  // ← NEW
+//           alt={recipe.title}
+//         />
+//       </div>
 
-      {/* Content */}
-      <div className="p-4 flex-1 flex flex-col">
-        <h3 className="line-clamp-1 text-lg font-semibold text-zinc-900 tracking-tight">{recipe.title}</h3>
-        {recipe.description && (
-          <p className="mt-1 line-clamp-2 text-sm text-zinc-600">{recipe.description}</p>
-        )}
-        <div className="mt-3 flex flex-wrap items-center gap-2 text-xs text-zinc-600">
-          {minutes ? (
-            <span className="inline-flex items-center gap-1 rounded-full bg-zinc-100 px-2 py-1">
-              <ClockIcon className="h-3.5 w-3.5" />
-              {minutes} min
-            </span>
-          ) : null}
-          {typeof recipe.servings === "number" && recipe.servings > 0 ? (
-            <span className="inline-flex items-center gap-1 rounded-full bg-zinc-100 px-2 py-1">
-              <BowlIcon className="h-3.5 w-3.5" />
-              {recipe.servings} servings
-            </span>
-          ) : null}
-          {(recipe.tags ?? []).slice(0, 3).map((t) => (
-            <span
-              key={t}
-              className="inline-flex items-center gap-1 rounded-full bg-orange-50 px-2 py-1 font-medium text-orange-700"
-            >
-              #{t}
-            </span>
-          ))}
-        </div>
-      </div>
-    </article>
-  );
-}
+//       {/* Content */}
+//       <div className="p-4 flex-1 flex flex-col">
+//         <h3 className="line-clamp-1 text-lg font-semibold text-zinc-900 tracking-tight">{recipe.title}</h3>
+//         {recipe.description && (
+//           <p className="mt-1 line-clamp-2 text-sm text-zinc-600">{recipe.description}</p>
+//         )}
+//         <div className="mt-3 flex flex-wrap items-center gap-2 text-xs text-zinc-600">
+//           {minutes ? (
+//             <span className="inline-flex items-center gap-1 rounded-full bg-zinc-100 px-2 py-1">
+//               <ClockIcon className="h-3.5 w-3.5" />
+//               {minutes} min
+//             </span>
+//           ) : null}
+//           {typeof recipe.servings === "number" && recipe.servings > 0 ? (
+//             <span className="inline-flex items-center gap-1 rounded-full bg-zinc-100 px-2 py-1">
+//               <BowlIcon className="h-3.5 w-3.5" />
+//               {recipe.servings} servings
+//             </span>
+//           ) : null}
+//           {(recipe.tags ?? []).slice(0, 3).map((t) => (
+//             <span
+//               key={t}
+//               className="inline-flex items-center gap-1 rounded-full bg-orange-50 px-2 py-1 font-medium text-orange-700"
+//             >
+//               #{t}
+//             </span>
+//           ))}
+//         </div>
+//       </div>
+//     </article>
+//   );
+// }
 
 /**
  * SignedImage — prefers R2 signed URL via /api/images/sign-download.
