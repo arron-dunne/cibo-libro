@@ -1,15 +1,34 @@
 "use client";
 
-import React, { useMemo, useState, useRef, useEffect } from "react";
-import { RecipeCard, RecipeCardProps } from "@/app/components/recipes/RecipeCard";
-import { Search, ChevronDown, Funnel, ArrowUpDown, FileQuestionMark } from "lucide-react";
-import { SORT_OPTIONS, SortOptionKey } from "./options";
-import { RecipeCardRecipe } from "./page";
+import React, { useEffect, useMemo, useRef, useState } from "react";
+import Image from "next/image";
+import Link from "next/link";
+import { RecipeCard } from "@/app/components/recipes/RecipeCard";
 
-type ClientRecipesGridProps = {
-  recipes: RecipeCardRecipe[];
-  initialSort: SortOptionKey;
-  initialSearch: string,
+/**
+ * ClientRecipesGrid — R2 + External-aware recipe grid (no expanding cards)
+ * - Uses `imageKey` → POST /api/images/sign-download to get a signed URL (preferred)
+ * - Falls back to `imageExternalUrl` (plain <img>, avoids Next allow-list)
+ * - Equal-height cards, 1→4 responsive columns, glassy filter bar
+ */
+
+// export type Recipe = {
+//   id: string;
+//   slug?: string | null;               // /view/[slug]
+//   title: string;
+//   description?: string | null;
+//   imageKey?: string | null;           // R2 object key
+//   imageExternalUrl?: string | null;   // NEW: external image from importer
+//   tags?: string[] | null;
+//   prepMins?: number | null;
+//   cookMins?: number | null;
+//   servings?: number | null;
+//   sourceUrl?: string | null;
+// };
+
+export type ClientRecipesGridProps = {
+  recipes: Recipe[];
+  initialQuery?: string;
   initialTags?: string[];
 };
 
@@ -257,6 +276,225 @@ export function ClientRecipesGrid({
       </ul>
     </div >
   );
+}
+
+// function RecipeCard({ recipe }: { recipe: Recipe }) {
+//   const minutes = ((recipe.prepMins ?? 0) + (recipe.cookMins ?? 0)) || undefined;
+//   const href = recipe.slug ? `/view/${recipe.slug}` : `/view/${recipe.id}`;
+
+//   return (
+//     <article className="group relative flex h-full flex-col overflow-hidden rounded-2xl border border-zinc-200 bg-white shadow-sm transition hover:-translate-y-0.5 hover:shadow-md focus-within:shadow-md cursor-pointer">
+//       {/* Make whole card clickable + accessible */}
+//       <Link
+//         href={href}
+//         aria-label={`Open ${recipe.title}`}
+//         className="absolute inset-0 z-10 focus:outline-none focus-visible:ring-2 focus-visible:ring-orange-500/50"
+//       />
+
+//       {/* Media */}
+//       <div className="relative aspect-[4/3] w-full bg-zinc-100">
+//         <SignedImage
+//           imageKey={recipe.imageKey}
+//           externalUrl={recipe.imageExternalUrl}  // ← NEW
+//           alt={recipe.title}
+//         />
+//       </div>
+
+//       {/* Content */}
+//       <div className="p-4 flex-1 flex flex-col">
+//         <h3 className="line-clamp-1 text-lg font-semibold text-zinc-900 tracking-tight">{recipe.title}</h3>
+//         {recipe.description && (
+//           <p className="mt-1 line-clamp-2 text-sm text-zinc-600">{recipe.description}</p>
+//         )}
+//         <div className="mt-3 flex flex-wrap items-center gap-2 text-xs text-zinc-600">
+//           {minutes ? (
+//             <span className="inline-flex items-center gap-1 rounded-full bg-zinc-100 px-2 py-1">
+//               <ClockIcon className="h-3.5 w-3.5" />
+//               {minutes} min
+//             </span>
+//           ) : null}
+//           {typeof recipe.servings === "number" && recipe.servings > 0 ? (
+//             <span className="inline-flex items-center gap-1 rounded-full bg-zinc-100 px-2 py-1">
+//               <BowlIcon className="h-3.5 w-3.5" />
+//               {recipe.servings} servings
+//             </span>
+//           ) : null}
+//           {(recipe.tags ?? []).slice(0, 3).map((t) => (
+//             <span
+//               key={t}
+//               className="inline-flex items-center gap-1 rounded-full bg-orange-50 px-2 py-1 font-medium text-orange-700"
+//             >
+//               #{t}
+//             </span>
+//           ))}
+//         </div>
+//       </div>
+//     </article>
+//   );
+// }
+
+/**
+ * SignedImage — prefers R2 signed URL via /api/images/sign-download.
+ * Falls back to external image URL if no key or signing fails.
+ * - Plain <img> for external (bypasses Next allow-list)
+ * - Skeleton + placeholder for nice loading
+ */
+
+const signedUrlCache = new Map<string, string>();
+
+function useSignedImageUrl(key?: string | null) {
+  const [url, setUrl] = useState<string | null>(null);
+  const [loading, setLoading] = useState<boolean>(!!key);
+  const [error, setError] = useState<string | null>(null);
+  const abortRef = useRef<AbortController | null>(null);
+
+  useEffect(() => {
+    if (!key) {
+      setUrl(null);
+      setLoading(false);
+      setError(null);
+      return;
+    }
+
+    if (signedUrlCache.has(key)) {
+      setUrl(signedUrlCache.get(key)!);
+      setLoading(false);
+      setError(null);
+      return;
+    }
+
+    abortRef.current?.abort();
+    const controller = new AbortController();
+    abortRef.current = controller;
+    setLoading(true);
+    setError(null);
+
+    async function run() {
+      try {
+        const res = await fetch("/api/images/sign-download", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ key }),
+          signal: controller.signal,
+        });
+
+        if (!res.ok) {
+          let message = `sign-download failed (${res.status})`;
+          try {
+            const j = await res.json();
+            message = j?.error || j?.message || message;
+          } catch {
+            /* ignore */
+          }
+          throw new Error(message);
+        }
+
+        const data = await res.json();
+        const signed: string | undefined =
+          data?.url ?? data?.signedUrl ?? data?.signed_url;
+
+        if (key && signed) {
+          signedUrlCache.set(key, signed);
+          setUrl(signed);
+          setLoading(false);
+        } else {
+          throw new Error("No signed URL in response");
+        }
+      } catch (e: unknown) {
+        if (controller.signal.aborted) return;
+        const message = e instanceof Error ? e.message : "Failed to obtain signed URL";
+        setError(message);
+        setUrl(null);
+        setLoading(false);
+      }
+    }
+
+    run();
+    return () => controller.abort();
+  }, [key]);
+
+  return { url, loading, error } as const;
+}
+
+function SignedImage({
+  imageKey,
+  externalUrl,
+  alt,
+}: {
+  imageKey?: string | null;
+  externalUrl?: string | null;
+  alt: string;
+}) {
+  const { url, loading, error } = useSignedImageUrl(imageKey);
+  const normalizedExternal = normalizeUrl(externalUrl);
+
+  // Show skeleton while trying to sign an R2 image
+  const showSkeleton = !!imageKey && (loading || (!url && !error));
+
+  // If we have a signed R2 URL, use Next/Image (optimized for your host or unoptimized)
+  if (url) {
+    return (
+      <>
+        {showSkeleton && (
+          <div className="absolute inset-0 animate-pulse bg-gradient-to-br from-zinc-200 to-zinc-100" aria-hidden />
+        )}
+        <Image
+          src={url}
+          alt={alt}
+          fill
+          sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+          className="object-cover"
+          unoptimized
+          priority={false}
+        />
+      </>
+    );
+  }
+
+  // No signed URL (no key or failed) → try external <img>
+  if (normalizedExternal) {
+    return (
+      <>
+        {showSkeleton && (
+          <div className="absolute inset-0 animate-pulse bg-gradient-to-br from-zinc-200 to-zinc-100" aria-hidden />
+        )}
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src={normalizedExternal}
+          alt={alt}
+          className="absolute inset-0 h-full w-full object-cover"
+          loading="lazy"
+          referrerPolicy="no-referrer"
+          onError={(e) => {
+            (e.currentTarget as HTMLImageElement).src = "recipe-image-placeholder.png";
+          }}
+        />
+      </>
+    );
+  }
+
+  // Final placeholder
+  return (
+    <Image
+      src="/recipe-image-placeholder.png"
+      alt="recipe image placeholder"
+      fill={true}
+    />
+  );
+}
+
+function normalizeUrl(src?: string | null): string | null {
+  if (!src) return null;
+  let s = src.trim();
+  if (!s) return null;
+  if (s.startsWith("//")) s = "https:" + s;
+  try {
+    const u = new URL(s);
+    if (!/^https?:$/i.test(u.protocol)) return null;
+    return u.toString();
+  } catch {
+    return null;
+  }
 }
 
 function EmptyState({
