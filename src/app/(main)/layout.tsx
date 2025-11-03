@@ -1,11 +1,14 @@
 import Image from "next/image";
 import Link from "next/link";
+import { LogOut } from "lucide-react";
 import { auth, signOut } from "@/lib/auth";
 import { Footer } from "@/app/components/footer/Footer";
-import { CirclePlus, CookingPot, Home, Import, LogOut, LucideIcon, Settings } from "lucide-react";
+import { NavLink } from "@/app/components/navbar/NavLink";
+
 
 export default async function Layout({ children }: { children: React.ReactNode }) {
 
+  // needed for logout and navbar email
   const session = await auth();
 
   async function doSignOut() {
@@ -16,10 +19,10 @@ export default async function Layout({ children }: { children: React.ReactNode }
   return (
     <>
       {/* Floating navbar */}
-      < nav className="sticky top-4 z-40" >
+      <nav className="sticky top-4 z-40" >
         <div className="mx-auto w-[min(1150px,95%)]">
           <div className="flex h-14 gap-2 rounded-full border border-white/80 bg-white/60 px-3 sm:px-4 py-2 shadow-sm backdrop-blur">
-            
+
             {/* Logo */}
             <Link href="/" className="grow" aria-label="cibo libro home">
               <Image
@@ -34,11 +37,11 @@ export default async function Layout({ children }: { children: React.ReactNode }
 
             {/* Navigation */}
             <div className="hidden gap-6 sm:flex">
-              <NavLink href="/" label="Home" icon={Home} highlight={true}/>
-              <NavLink href="/all" label="Recipes" icon={CookingPot} />
-              <NavLink href="/new" label="Add" icon={CirclePlus} />
-              <NavLink href="/import" label="Import" icon={Import} />
-              <NavLink href="/settings" label="Settings" icon={Settings} />
+              <NavLink type="home" />
+              <NavLink type="all" />
+              <NavLink type="new" />
+              <NavLink type="import" />
+              <NavLink type="settings" />
             </div>
 
             {/* Logout */}
@@ -48,7 +51,7 @@ export default async function Layout({ children }: { children: React.ReactNode }
                   <span className="hidden sm:inline text-gray-700">{session.user.email}</span>
                   <form action={doSignOut}>
                     <button className="flex gap-2 place-items-center rounded-full bg-gradient-to-r from-orange-500 to-rose-500 text-white px-4 py-2 font-bold shadow transition hover:scale-105 hover:brightness-95">
-                      <LogOut size={16}/>
+                      <LogOut size={16} />
                       Logout
                     </button>
                   </form>
@@ -75,37 +78,11 @@ export default async function Layout({ children }: { children: React.ReactNode }
       </nav >
 
       {/* Page container */}
-      <main className="z-0 mx-auto w-[min(1150px,95%)] py-8" > {children}</main >
+      <main className="z-0 mx-auto w-[min(1150px,95%)] py-8"> {children}</main >
 
       <Footer />
     </>
   );
 }
 
-/* Reusable pill-like navbar link */
-function NavLink({
-  href,
-  label,
-  icon: Icon,
-  highlight = false,
-}: {
-  href: string;
-  label: string;
-  icon: LucideIcon;
-  highlight?: boolean;
-}) {
-  return (
-    <Link
-      href={href}
-      className={[
-        "flex items-center gap-1 font-medium rounded-full transition",
-        highlight
-          ? "bg-gradient-to-r from-orange-500 to-rose-500 text-white px-4 py-2 font-bold shadow"
-          : "text-orange-700 hover:brightness-200",
-      ].join(" ")}
-    >
-      <Icon size={16} />
-      { label }
-    </Link>
-  );
-}
+
