@@ -32,7 +32,7 @@ function getInfo(type: NavLinkType) {
 
   switch (type) {
     case "all":
-      return { label: "Recipes", href: "/all", icon: CookingPot, highlight: pathname === "/all" };
+      return { label: "Recipes", href: "/all", icon: CookingPot, highlight: pathname === "/all" || RegExp("/view/").test(pathname) };
     case "new":
       return { label: "Add", href: "/new", icon: CirclePlus, highlight: pathname === "/new" };
     case "import":
