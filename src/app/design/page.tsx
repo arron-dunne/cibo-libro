@@ -15,6 +15,10 @@ export default function DesignPage() {
             <ul className="ml-4 list-disc list-inside">
                 <li><a href="/design/all/v1">v1</a></li>
                 <li><a href="/design/all/v2">v2</a></li>
+                <li><a href="/design/all/v3">v3</a></li>
+                <li><a href="/design/all/v4">v4</a></li>
+                <li><a href="/design/all/v5">v5</a></li>
+                <li><a href="/design/all/v6">v6</a></li>
             </ul>
 
             <h2 className="mt-4 font-semibold">Cook Mode</h2>
