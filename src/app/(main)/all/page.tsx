@@ -1,6 +1,5 @@
-// app/all/page.tsx
 import { redirect } from "next/navigation";
-import ClientRecipesGrid, { type Recipe as UIRecipe } from "./ClientRecipesGrid";
+import { ClientRecipesGrid } from "./ClientRecipesGrid";
 import { prisma } from "@/lib/prisma";
 import { auth } from "@/lib/auth";
 
@@ -31,7 +30,7 @@ export default async function RecipesPage() {
     },
   });
 
-  const recipes: UIRecipe[] = rows.map((r) => ({
+  const recipes: Recipe[] = rows.map((r) => ({
     id: r.id,
     title: r.title ?? "Untitled recipe",
     slug: r.slug ?? null,
