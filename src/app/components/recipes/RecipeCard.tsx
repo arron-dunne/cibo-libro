@@ -3,7 +3,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { useEffect, useState } from "react";
-// import { Clock, Bowl } from "lucide-react";
+import { Image as ImageIcon } from "lucide-react";
 
 export type RecipeCardProps = {
   title: string,         // required
@@ -108,16 +108,16 @@ function RecipeImage({
           className="object-cover object-center"
           unoptimized
           priority={false}
-          />
+        />
       </div>
-      );
-    }
-    
-    // No signed URL (no key or failed) → try external <img>
-    else if (normalizedExternalUrl) {
-      
-      return (
-        <>
+    );
+  }
+
+  // No signed URL (no key or failed) → try external <img>
+  else if (normalizedExternalUrl) {
+
+    return (
+      <>
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
           src={normalizedExternalUrl}
@@ -125,22 +125,21 @@ function RecipeImage({
           className="w-full h-full object-cover object-center"
           loading="lazy"
           referrerPolicy="no-referrer"
-          />
+        />
       </>
     );
   }
-  
+
   // Final placeholder
   return (
-    <div className="relative w-full h-full">
-      <Image
-      src="/recipe-image-placeholder.png"
-      alt="recipe image placeholder"
-      fill={true}
-      className="object-cover object-center"
-      />
+    <div className="w-full h-full flex flex-col items-center justify-center bg-gradient-to-br from-orange-100 to-rose-100">
+      <div className="text-orange-400">
+        <ImageIcon size={32} />
+      </div>
+      <p className="mt-2 text-xs font-medium text-zinc-500">No image available</p>
     </div>
   );
+
 }
 
 async function getSignedImageUrl(key?: string): Promise<string | null> {
