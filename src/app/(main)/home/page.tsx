@@ -4,6 +4,7 @@ import { BookOpen, CookingPot, Globe, Import, PlusCircle } from "lucide-react";
 import Link from "next/link";
 import { prisma } from "@/lib/prisma";
 import Image from "next/image";
+import { RecipeCard, RecipeCardProps } from "@/app/components/recipes/RecipeCard";
 
 export default async function HomePage() {
 
@@ -17,7 +18,8 @@ export default async function HomePage() {
     select: {
       title: true,
       description: true, 
-      servings: true,
+      tags: true,
+      slug: true,
       imageKey: true,
       imageExternalUrl: true,
     }
@@ -63,32 +65,7 @@ export default async function HomePage() {
         </h2>
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
           {recentRecipes.map((recipe, i) => (
-            <div
-              key={i}
-              className="group relative overflow-hidden rounded-2xl bg-white shadow-md transition hover:shadow-lg"
-            >
-              <div className="relative h-44 w-full">
-                <Image
-                  src={"/images/placeholder.png"}
-                  alt={recipe.title}
-                  fill
-                  className="object-cover transition-transform duration-300 group-hover:scale-105"
-                />
-              </div>
-              <div className="p-4">
-                <h3 className="font-semibold text-orange-950">{recipe.title}</h3>
-                <div className="mt-2 flex flex-wrap gap-1">
-                  {/* {recipe.tags.map((tag) => (
-                    <span
-                      key={tag}
-                      className="rounded-full bg-orange-100 px-2 py-0.5 text-xs font-medium text-orange-800"
-                    >
-                      {tag}
-                    </span>
-                  ))} */}
-                </div>
-              </div>
-            </div>
+            <RecipeCard key={i} recipe={recipe as RecipeCardProps} />
           ))}
         </div>
       </section>
