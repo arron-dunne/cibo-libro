@@ -57,8 +57,9 @@ export default async function RecipesPage({
     },
   });
 
-  const recipes: RecipeCardRecipe[] = rows.map((r) => ({
-    title: r.title ?? "",
+  const recipes: Recipe[] = rows.map((r) => ({
+    id: r.id,
+    title: r.title ?? "Untitled recipe",
     slug: r.slug ?? null,
     description: r.description ?? "",
     imageKey: r.imageKey ?? null,

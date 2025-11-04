@@ -1,8 +1,6 @@
 "use client";
 
-import React, { useEffect, useMemo, useRef, useState } from "react";
-import Image from "next/image";
-import Link from "next/link";
+import React, { useMemo, useState } from "react";
 import { RecipeCard, RecipeCardProps } from "@/app/components/recipes/RecipeCard";
 
 /**
@@ -12,25 +10,19 @@ import { RecipeCard, RecipeCardProps } from "@/app/components/recipes/RecipeCard
  * - Equal-height cards, 1→4 responsive columns, glassy filter bar
  */
 
-// export type Recipe = {
-//   id: string;
-//   slug?: string | null;               // /view/[slug]
-//   title: string;
-//   description?: string | null;
-//   imageKey?: string | null;           // R2 object key
-//   imageExternalUrl?: string | null;   // NEW: external image from importer
-//   tags?: string[] | null;
-//   prepMins?: number | null;
-//   cookMins?: number | null;
-//   servings?: number | null;
-//   sourceUrl?: string | null;
-// };
-
 export type ClientRecipesGridProps = {
   recipes: Recipe[];
   initialQuery?: string;
   initialTags?: string[];
 };
+
+/** Sort options */
+const SORT_OPTIONS = [
+  { key: "recent" as const, label: "Recently updated" },
+  { key: "title" as const, label: "Title A→Z" },
+  { key: "time" as const, label: "Total time" },
+];
+type SortOptionKey = (typeof SORT_OPTIONS)[number]["key"];
 
 export function ClientRecipesGrid({
   recipes,
@@ -269,7 +261,7 @@ export function ClientRecipesGrid({
       {/* Grid */}
       <ul className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5 md:gap-6" role="list">
         {visible.map((recipe, i) => (
-          <li key={recipe.id}>
+          <li key={i}>
             <RecipeCard recipe={recipe as RecipeCardProps} />
           </li>
         ))}

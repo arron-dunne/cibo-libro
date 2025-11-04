@@ -1,9 +1,8 @@
 import { auth } from "@/lib/auth";
 import { redirect } from "next/navigation";
-import { BookOpen, CookingPot, Globe, Import, PlusCircle } from "lucide-react";
+import { CookingPot, Import, PlusCircle } from "lucide-react";
 import Link from "next/link";
 import { prisma } from "@/lib/prisma";
-import Image from "next/image";
 import { RecipeCard, RecipeCardProps } from "@/app/components/recipes/RecipeCard";
 
 export default async function HomePage() {
