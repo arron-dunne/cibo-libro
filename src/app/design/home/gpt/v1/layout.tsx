@@ -3,7 +3,7 @@ export default async function Layout({ children }: { children: React.ReactNode }
 
   return (
     <>
-      {/* Backgroun */}
+      {/* Background */}
       <div className="absolute inset-0 -z-20 bg-gradient-to-br from-orange-400 via-orange-500 to-rose-500" />
       <div
         aria-hidden
