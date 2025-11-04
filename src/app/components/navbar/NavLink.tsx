@@ -8,7 +8,7 @@ type NavLinkType = "home" | "all" | "new" | "import" | "settings"
 
 export function NavLink({ type }: { type: NavLinkType }) {
 
-  const { label, href, icon: Icon, highlight } = getInfo(type)
+  const { label, href, icon: Icon, highlight } = useInfo(type)
 
   return (
     <Link
@@ -26,7 +26,7 @@ export function NavLink({ type }: { type: NavLinkType }) {
   );
 }
 
-function getInfo(type: NavLinkType) {
+function useInfo(type: NavLinkType) {
 
   const pathname = usePathname()
 

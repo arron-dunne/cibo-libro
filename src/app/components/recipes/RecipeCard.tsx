@@ -19,7 +19,7 @@ export type RecipeCardProps = {
 
 export function RecipeCard({ recipe }: { recipe: RecipeCardProps }) {
 
-  const minutes = ((recipe.prepMins ?? 0) + (recipe.cookMins ?? 0)) || undefined;
+  // const minutes = ((recipe.prepMins ?? 0) + (recipe.cookMins ?? 0)) || undefined;
   const href = `/view/${recipe.slug}`
 
   return (
