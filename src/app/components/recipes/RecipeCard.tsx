@@ -5,58 +5,60 @@ import Image from "next/image";
 import { useEffect, useState } from "react";
 // import { Clock, Bowl } from "lucide-react";
 
-export function RecipeCard({ recipe }: { recipe: Recipe }) {
+export type RecipeCardProps = {
+  title: string,         // required
+  slug: string,          // required
+  description?: string,
+  tags?: string[],
+  prepMins?: number,
+  cookMins?: number
+  servings?: number,
+  imageKey?: string,
+  imageExternalUrl?: string
+}
+
+export function RecipeCard({ recipe }: { recipe: RecipeCardProps }) {
 
   const minutes = ((recipe.prepMins ?? 0) + (recipe.cookMins ?? 0)) || undefined;
-  const href = recipe.slug ? `/view/${recipe.slug}` : `/view/${recipe.id}`;
+  const href = `/view/${recipe.slug}`
 
   return (
-    <article className="group relative flex h-full flex-col overflow-hidden rounded-2xl border border-zinc-200 bg-white shadow-sm transition hover:-translate-y-0.5 hover:shadow-md focus-within:shadow-md cursor-pointer">
-      {/* Make whole card clickable + accessible */}
+    <article className="w-full aspect-[0.7] flex flex-col overflow-hidden rounded-2xl border border-zinc-200 bg-white shadow-lg transition hover:scale-105 cursor-pointer">
+
+      {/* Make whole card link */}
       <Link
         href={href}
         aria-label={`Open ${recipe.title}`}
-        className="absolute inset-0 z-10 focus:outline-none focus-visible:ring-2 focus-visible:ring-orange-500/50"
-      />
+        className="w-full h-full"
+      >
 
-      {/* Media */}
-      <div className="relative aspect-[4/3] w-full bg-zinc-100">
-        <RecipeImage
-          imageKey={recipe.imageKey}
-          externalUrl={recipe.imageExternalUrl}
-          alt={recipe.title}
-        />
-      </div>
-
-      {/* Content */}
-      <div className="p-4 flex-1 flex flex-col">
-        <h3 className="line-clamp-1 text-lg font-semibold text-zinc-900 tracking-tight">{recipe.title}</h3>
-        {recipe.description && (
-          <p className="mt-1 line-clamp-2 text-sm text-zinc-600">{recipe.description}</p>
-        )}
-        <div className="mt-3 flex flex-wrap items-center gap-2 text-xs text-zinc-600">
-          {minutes ? (
-            <span className="inline-flex items-center gap-1 rounded-full bg-zinc-100 px-2 py-1">
-              {/* <Clock className="h-3.5 w-3.5" /> */}
-              {minutes} min
-            </span>
-          ) : null}
-          {typeof recipe.servings === "number" && recipe.servings > 0 ? (
-            <span className="inline-flex items-center gap-1 rounded-full bg-zinc-100 px-2 py-1">
-              {/* <BowlIcon className="h-3.5 w-3.5" /> */}
-              {recipe.servings} servings
-            </span>
-          ) : null}
-          {(recipe.tags ?? []).slice(0, 3).map((t) => (
-            <span
-              key={t}
-              className="inline-flex items-center gap-1 rounded-full bg-orange-50 px-2 py-1 font-medium text-orange-700"
-            >
-              #{t}
-            </span>
-          ))}
+        {/* Picture */}
+        <div className="w-full h-2/3 overflow-hidden bg-zinc-100">
+          <RecipeImage
+            imageKey={recipe.imageKey ?? null}
+            externalUrl={recipe.imageExternalUrl ?? null}
+            alt={recipe.title}
+          />
         </div>
-      </div>
+
+        {/* Content */}
+        <div className="p-3 h-full flex flex-col">
+          <h2 className="line-clamp-1 text-xl font-bold text-zinc-900">{recipe.title}</h2>
+          {recipe.description && (
+            <p className="mt-1 line-clamp-2 text-sm text-zinc-600">{recipe.description}</p>
+          )}
+          <div className="flex items-center gap-2 text-xs text-zinc-600">
+            {(recipe.tags ?? []).map((tag) => (
+              <span
+                key={tag}
+                className="inline-flex items-center gap-1 rounded-full bg-orange-50 px-2 py-1 font-medium text-orange-700"
+              >
+                {tag}
+              </span>
+            ))}
+          </div>
+        </div>
+      </Link>
     </article>
   );
 }
@@ -76,11 +78,11 @@ function RecipeImage({
 
   useEffect(() => {
 
-    async function run(imageKey: string) { 
-      const url = await getSignedImageUrl(imageKey) 
+    async function run(imageKey: string) {
+      const url = await getSignedImageUrl(imageKey)
       setSignedUrl(url)
     }
-    
+
     if (imageKey) {
       run(imageKey);
     }
@@ -102,8 +104,7 @@ function RecipeImage({
         src={signedUrl}
         alt={alt}
         fill
-        sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-        className="object-cover"
+        className="w-full h-full object-cover object-center"
         unoptimized
         priority={false}
       />
@@ -119,7 +120,7 @@ function RecipeImage({
         <img
           src={normalizedExternalUrl}
           alt={alt}
-          className="absolute inset-0 h-full w-full object-cover"
+          className="w-full h-full object-cover object-center"
           loading="lazy"
           referrerPolicy="no-referrer"
         />
