@@ -100,22 +100,24 @@ function RecipeImage({
   if (signedUrl) {
 
     return (
-      <Image
-        src={signedUrl}
-        alt={alt}
-        fill
-        className="w-full h-full object-cover object-center"
-        unoptimized
-        priority={false}
-      />
-    );
-  }
-
-  // No signed URL (no key or failed) → try external <img>
-  else if (normalizedExternalUrl) {
-
-    return (
-      <>
+      <div className="relative w-full h-full">
+        <Image
+          src={signedUrl}
+          alt={alt}
+          fill={true}
+          className="object-cover object-center"
+          unoptimized
+          priority={false}
+          />
+      </div>
+      );
+    }
+    
+    // No signed URL (no key or failed) → try external <img>
+    else if (normalizedExternalUrl) {
+      
+      return (
+        <>
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
           src={normalizedExternalUrl}
@@ -123,18 +125,21 @@ function RecipeImage({
           className="w-full h-full object-cover object-center"
           loading="lazy"
           referrerPolicy="no-referrer"
-        />
+          />
       </>
     );
   }
-
+  
   // Final placeholder
   return (
-    <Image
+    <div className="relative w-full h-full">
+      <Image
       src="/recipe-image-placeholder.png"
       alt="recipe image placeholder"
       fill={true}
-    />
+      className="object-cover object-center"
+      />
+    </div>
   );
 }
 
