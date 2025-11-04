@@ -8,12 +8,12 @@ export default function DesignPage() {
                 <li><a href="/design/home/gpt/v1">chatgpt v1</a></li>
                 <li><a href="/design/home/gpt/v2">chatgpt v2</a></li>
                 <li><a href="/design/home/claude/v1">claude v1</a></li>
-                <li><a href="/design/home/claude/v1">claude v2</a></li>
+                <li><a href="/design/home/claude/v2">claude v2</a></li>
             </ul>
 
             <h2 className="mt-4 font-semibold">All Recipes</h2>
             <ul className="ml-4 list-disc list-inside">
-                <li><a href="/design/all">v1</a></li>
+                <li><a href="/design/all/v1">v1</a></li>
             </ul>
 
             <h2 className="mt-4 font-semibold">Cook Mode</h2>
