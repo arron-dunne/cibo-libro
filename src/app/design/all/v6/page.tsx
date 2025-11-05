@@ -214,7 +214,8 @@ export default function AllRecipesPage() {
                 setShowSort((s) => !s);
                 setShowFilter(false);
               }}
-              className="w-32 h-11 md:h-12 inline-flex items-center gap-1.5 rounded-full border border-white/70 bg-white/80 backdrop-blur-md px-4 text-sm font-semibold text-zinc-800 shadow-[0_6px_18px_rgba(0,0,0,0.10)] hover:brightness-105 transition"
+              className="w-32 h-11 md:h-12 inline-flex items-center gap-1.5 rounded-full px-4 text-sm font-semibold text-slate-700 bg-gradient-to-r from-slate-300/80 to-slate-400/80 shadow-lg backdrop-blur-xl focus:outline-none focus:ring-2 focus:ring-orange-400/60 transition"
+
               aria-haspopup="menu"
               aria-expanded={showSort}
             >
@@ -255,7 +256,7 @@ export default function AllRecipesPage() {
                 setShowFilter((f) => !f);
                 setShowSort(false);
               }}
-              className="w-32 h-11 md:h-12 inline-flex items-center gap-1.5 rounded-full border border-white/70 bg-white/80 backdrop-blur-md px-4 text-sm font-semibold text-zinc-800 shadow-[0_6px_18px_rgba(0,0,0,0.10)] hover:brightness-105 transition"
+              className="w-32 h-11 md:h-12 inline-flex items-center gap-1.5 rounded-full px-4 text-sm font-semibold text-slate-700 bg-gradient-to-b from-slate-100 to-slate-300 shadow-[0_6px_16px_rgba(0,0,0,0.08),inset_0_1px_0_rgba(255,255,255,0.4)] hover:from-slate-200 hover:to-slate-400 hover:shadow-[0_8px_20px_rgba(0,0,0,0.12)] hover:-translate-y-0.5 active:translate-y-0 focus:outline-none focus:ring-2 focus:ring-orange-400/60 transition"
               aria-haspopup="menu"
               aria-expanded={showFilter}
             >
