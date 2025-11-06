@@ -4,28 +4,7 @@ import { prisma } from "@/lib/prisma";
 import { auth } from "@/lib/auth";
 import { SORT_OPTIONS, SortOptionKey } from "./options";
 
-export type RecipeCardRecipe = {
-  title: string;
-  description?: string;
-  prepMins?: number | null;
-  cookMins?: number | null;
-  servings?: number | null;
-  imageKey?: string | null;
-  imageExternalUrl?: string | null;
-  tags?: string[];
-  note?: string
-  sourceUrl?: string | null;
-  slug: string;
-  createdAt: Date;
-  updatedAt: Date;
-}
-
-export default async function RecipesPage({
-  searchParams
-}: {
-  searchParams: Promise<{ search?: string, sort?: string, tags?: string[] }>
-}) {
-
+export default async function RecipesPage() {
   const session = await auth();
   if (!session?.user) {
     redirect("/login");
