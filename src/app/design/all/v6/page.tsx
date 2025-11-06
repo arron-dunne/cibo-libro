@@ -3,7 +3,6 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
 import {
   Home,
   PlusCircle,
@@ -223,14 +222,9 @@ export default function AllRecipesPage() {
               <ChevronDown size={16} className="text-zinc-500" />
             </button>
 
-            <AnimatePresence>
               {showSort && (
-                <motion.div
+                <div
                   key="sort-dd"
-                  initial={{ opacity: 0, y: -6, scale: 0.98 }}
-                  animate={{ opacity: 1, y: 8, scale: 1 }}
-                  exit={{ opacity: 0, y: -6, scale: 0.98 }}
-                  transition={{ type: "spring", stiffness: 260, damping: 20 }}
                   className="absolute right-0 z-40 w-48 rounded-2xl border border-zinc-200 bg-white/95 shadow-xl overflow-hidden"
                   role="menu"
                 >
@@ -243,9 +237,8 @@ export default function AllRecipesPage() {
                       {opt}
                     </button>
                   ))}
-                </motion.div>
+                </div>
               )}
-            </AnimatePresence>
           </div>
 
           {/* Filter pill */}
@@ -265,14 +258,9 @@ export default function AllRecipesPage() {
               <ChevronDown size={16} className="text-zinc-500" />
             </button>
 
-            <AnimatePresence>
               {showFilter && (
-                <motion.div
+                <div
                   key="filter-dd"
-                  initial={{ opacity: 0, y: -6, scale: 0.98 }}
-                  animate={{ opacity: 1, y: 8, scale: 1 }}
-                  exit={{ opacity: 0, y: -6, scale: 0.98 }}
-                  transition={{ type: "spring", stiffness: 260, damping: 20 }}
                   className="absolute right-0 z-40 w-64 rounded-2xl border border-zinc-200 bg-white/95 shadow-xl p-3"
                   role="menu"
                 >
@@ -302,9 +290,8 @@ export default function AllRecipesPage() {
                       <input type="checkbox" className="accent-orange-500" /> Created by me
                     </label>
                   </div>
-                </motion.div>
+                </div>
               )}
-            </AnimatePresence>
           </div>
         </div>
       </div>
@@ -313,13 +300,11 @@ export default function AllRecipesPage() {
       <main className="mx-auto w-[min(1150px,95%)] pt-8 md:pt-14 pb-16">
         <ul className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5 md:gap-6">
           {recipes.map((r, i) => (
-            <motion.li
+            <li
               key={i}
-              whileHover={{ scale: 1.03, y: -3 }}
-              transition={{ type: "spring", stiffness: 250, damping: 20 }}
             >
               <RecipeCard recipe={r} />
-            </motion.li>
+            </li>
           ))}
         </ul>
       </main>

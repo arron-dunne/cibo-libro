@@ -3,7 +3,6 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
 import {
   Search,
   Filter,
@@ -60,21 +59,17 @@ export default function AllRecipesPage() {
       />
 
       {/* Filter overlay panel */}
-      <AnimatePresence>
-        {showFilters && <FilterPanel onClose={() => setShowFilters(false)} />}
-      </AnimatePresence>
+      {showFilters && <FilterPanel onClose={() => setShowFilters(false)} />}
 
       {/* Grid */}
       <main className="mx-auto w-[min(1150px,95%)] py-10 md:py-12">
         <ul className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5 md:gap-6">
           {recipes.map((r, i) => (
-            <motion.li
+            <li
               key={i}
-              whileHover={{ scale: 1.03, y: -3 }}
-              transition={{ type: "spring", stiffness: 250, damping: 20 }}
             >
               <RecipeCard recipe={r} />
-            </motion.li>
+            </li>
           ))}
         </ul>
       </main>
@@ -97,8 +92,7 @@ function Navbar({
   setShowFilters: (v: boolean) => void;
 }) {
   return (
-    <motion.nav
-      layout
+    <nav
       className="sticky top-4 z-40 mx-auto w-[min(1150px,95%)] rounded-full border border-white/60 bg-white/50 backdrop-blur-xl shadow-lg px-4 py-2 md:px-6 flex items-center justify-between"
     >
       {/* Left: logo + nav */}
@@ -122,14 +116,9 @@ function Navbar({
       </div>
 
       {/* Center: expanding search */}
-      <AnimatePresence initial={false}>
         {showSearch && (
-          <motion.div
+          <div
             key="search"
-            initial={{ width: 0, opacity: 0 }}
-            animate={{ width: "40%", opacity: 1 }}
-            exit={{ width: 0, opacity: 0 }}
-            transition={{ duration: 0.25 }}
             className="hidden md:flex relative items-center"
           >
             <input
@@ -142,9 +131,8 @@ function Navbar({
               size={16}
               className="absolute left-3 top-1/2 -translate-y-1/2 text-zinc-400"
             />
-          </motion.div>
+          </div>
         )}
-      </AnimatePresence>
 
       {/* Right: icons + logout */}
       <div className="flex items-center gap-2 md:gap-3">
@@ -172,7 +160,7 @@ function Navbar({
           Logout
         </button>
       </div>
-    </motion.nav>
+    </nav>
   );
 }
 
@@ -181,12 +169,8 @@ function Navbar({
 // ──────────────────────────────────────────────
 function FilterPanel({ onClose }: { onClose: () => void }) {
   return (
-    <motion.div
+    <div
       key="filters"
-      initial={{ opacity: 0, y: -10 }}
-      animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, y: -10 }}
-      transition={{ duration: 0.25 }}
       className="sticky top-20 z-30 mx-auto w-[min(1150px,95%)]"
     >
       <div className="rounded-3xl border border-white/60 bg-white/60 backdrop-blur-xl shadow-md p-4 md:p-5">
@@ -221,7 +205,7 @@ function FilterPanel({ onClose }: { onClose: () => void }) {
           </div>
         </div>
       </div>
-    </motion.div>
+    </div>
   );
 }
 

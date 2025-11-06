@@ -3,7 +3,6 @@
 import Image from "next/image";
 import Link from "next/link";
 import { Search, Image as ImageIcon, Home, PlusCircle, Upload, Settings, LogOut } from "lucide-react";
-import { motion } from "framer-motion";
 
 export default function AllPage() {
   const recipes = [
@@ -130,13 +129,11 @@ export default function AllPage() {
           role="list"
         >
           {recipes.map((recipe, i) => (
-            <motion.li
+            <li
               key={i}
-              whileHover={{ scale: 1.03, y: -4 }}
-              transition={{ type: "spring", stiffness: 300, damping: 20 }}
             >
               <RecipeCard recipe={recipe} />
-            </motion.li>
+            </li>
           ))}
         </ul>
       </main>
