@@ -34,6 +34,7 @@ export default async function RecipesPage({
   const params = await searchParams;
 
   const sortParam: SortOptionKey = getValidSortKey(params.sort ?? null);
+  const searchParam: string = params.search ?? ""
 
   // Pull all fields we need for the grid, including the external image URL.
   const rows = await prisma.recipe.findMany({
@@ -70,17 +71,7 @@ export default async function RecipesPage({
     updatedAt: r.updatedAt
   }));
 
-  // sort
-  switch (sortParam) {
-    case "az":
-      recipes.sort((a, b) => a.title.localeCompare(b.title))
-      break;
-    case "created":
-      recipes.sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime())
-      break;
-  }
-
-  return <ClientRecipesGrid recipes={recipes} initialSort={sortParam} initialSearch=""/>;
+  return <ClientRecipesGrid recipes={recipes} initialSort={sortParam} initialSearch={searchParam}/>;
 }
 
 // Takes the URL param for sort and returns a valid SortKeyOption at runtime
