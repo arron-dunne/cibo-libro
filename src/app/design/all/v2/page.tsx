@@ -7,7 +7,7 @@ import { Search, Image as ImageIcon, Home, LogOut } from "lucide-react";
 export default function AllPage() {
 
   // Mock data
-  const recipes = [
+  const recipes: Recipe[] = [
     {
       title: "Crispy Baked Tofu with Chili Oil",
       slug: "crispy-baked-tofu",
@@ -165,7 +165,7 @@ export default function AllPage() {
   );
 }
 
-function ClientRecipesGrid({ recipes }) {
+function ClientRecipesGrid({ recipes }: { recipes: Recipe[]}) {
 
   // Unique tags by frequency, then A→Z
   const allTags = ["Dinner", "Vegetarian", "One-Pot"]
@@ -240,7 +240,7 @@ function ClientRecipesGrid({ recipes }) {
 }
 
 
-function RecipeCard({ recipe }) {
+function RecipeCard({ recipe }: { recipe: Recipe}) {
 
   const href = `/view/${recipe.slug}`
 

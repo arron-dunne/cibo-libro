@@ -365,7 +365,7 @@ function Navbar() {
 // ──────────────────────────────────────────────
 // Card
 // ──────────────────────────────────────────────
-function RecipeCard({ recipe }) {
+function RecipeCard({ recipe }: { recipe: Recipe}) {
 
   const href = `/view/${recipe.slug}`
 
