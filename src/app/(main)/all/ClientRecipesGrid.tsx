@@ -1,12 +1,14 @@
 "use client";
 
-import React, { useMemo, useState } from "react";
+import React, { useMemo, useState, useRef, useEffect } from "react";
 import { RecipeCard, RecipeCardProps } from "@/app/components/recipes/RecipeCard";
 import { Search, ChevronDown, Funnel, ArrowUpDown } from "lucide-react";
 
 
 export type ClientRecipesGridProps = {
   recipes: Recipe[];
+  search?: string,
+  sort?: string,
   initialQuery?: string;
   initialTags?: string[];
   initialSort?: SortOptionKey;
@@ -22,10 +24,29 @@ type SortOptionKey = (typeof SORT_OPTIONS)[number]["key"];
 
 export function ClientRecipesGrid({
   recipes,
+  sort="",
   initialQuery = "",
   initialTags = [],
   initialSort = "recent",
 }: ClientRecipesGridProps) {
+
+  const [showSort, setShowSort] = useState<boolean>(false)
+  const [showFilter, setShowFilter] = useState<boolean>(false)
+
+  const sortRef = useRef<HTMLDivElement>(null);
+  const filterRef = useRef<HTMLDivElement>(null);
+
+  // click-outside to close dropdowns
+  useEffect(() => {
+    const onClick = (e: MouseEvent) => {
+      const t = e.target as Node;
+      if (sortRef.current && !sortRef.current.contains(t)) setShowSort(false);
+      if (filterRef.current && !filterRef.current.contains(t)) setShowFilter(false);
+    };
+    window.addEventListener("click", onClick);
+    return () => window.removeEventListener("click", onClick);
+  }, []);
+
   const [query, setQuery] = useState(initialQuery);
   const [selectedTags, setSelectedTags] = useState<string[]>(initialTags);
   const [sortBy, setSortBy] = useState<SortOptionKey>(initialSort);
@@ -75,7 +96,7 @@ export function ClientRecipesGrid({
   return (
     <div className="relative mx-auto max-w-screen-2xl px-4 sm:px-6 lg:px-8 flex flex-col gap-6">
       {/* Filter Bar (floating pills) */}
-      <div className="sticky top-0 z-10 flex items-center gap-3 md:gap-4">
+      <div className="sticky top-19 z-10 flex items-center gap-3 md:gap-4">
         {/* Search bar */}
         <label className="relative flex-1">
           <input
@@ -90,14 +111,41 @@ export function ClientRecipesGrid({
         </label>
 
         {/* Sort */}
-        <button
-          type="button"
-          className="sm:w-22 md:w-32 h-11 md:h-12 inline-flex items-center gap-1 rounded-full border border-white/70 px-4 text-sm font-semibold text-slate-700 bg-gradient-to-r from-slate-200 to-slate-300 shadow-lg cursor-pointer transition hover:brightness-90 active:scale-95"
-        >
-          <ArrowUpDown className="block sm:hidden" size={18} />
-          <span className="hidden sm:block grow">Sort</span>
-          <ChevronDown size={16} className="text-zinc-500" />
-        </button>
+        <div ref={sortRef} className="relative">
+          <button
+            type="button"
+            className="sm:w-22 md:w-32 h-11 md:h-12 inline-flex items-center gap-1 rounded-full border border-white/70 px-4 text-sm font-semibold text-slate-700 bg-gradient-to-r from-slate-200 to-slate-300 shadow-lg cursor-pointer transition hover:brightness-90 active:scale-95"
+            aria-haspopup="menu"
+            aria-expanded={showSort}
+            onClick={(e) => {
+              e.stopPropagation();
+              setShowSort((s) => !s);
+              setShowFilter(false);
+            }}
+          >
+            <ArrowUpDown className="block sm:hidden" size={18} />
+            <span className="hidden sm:block grow">Sort</span>
+            <ChevronDown size={16} className="text-zinc-500" />
+          </button>
+
+          {showSort && (
+            <div
+              key="sort-dd"
+              className="absolute right-0 z-40 w-48 rounded-2xl border border-zinc-200 bg-white shadow-xl overflow-hidden"
+              role="menu"
+            >
+              {["Title A–Z", "Recently Added", "Total Time"].map((opt) => (
+                <button
+                  key={opt}
+                  className="w-full text-left px-4 py-2 text-sm text-zinc-700 hover:bg-orange-50"
+                  role="menuitem"
+                >
+                  {opt}
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
 
         {/* Filter */}
         <button
