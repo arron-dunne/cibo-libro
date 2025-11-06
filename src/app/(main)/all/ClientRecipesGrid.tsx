@@ -3,63 +3,34 @@
 import React, { useMemo, useState, useRef, useEffect } from "react";
 import { RecipeCard, RecipeCardProps } from "@/app/components/recipes/RecipeCard";
 import { Search, ChevronDown, Funnel, ArrowUpDown } from "lucide-react";
+import { SORT_OPTIONS, SortOptionKey } from "./options";
+import { RecipeCardRecipe } from "./page";
 
-
-export type ClientRecipesGridProps = {
-  recipes: Recipe[];
-  search?: string,
-  sort?: string,
-  initialQuery?: string;
+type ClientRecipesGridProps = {
+  recipes: RecipeCardRecipe[];
+  initialSort: SortOptionKey;
+  initialSearch: string,
   initialTags?: string[];
 };
 
-/** Sort options */
-const SORT_OPTIONS = [
-  { key: "recent" as const, label: "Recently updated" },
-  { key: "title" as const, label: "Title A→Z" },
-  { key: "time" as const, label: "Total time" },
-];
-type SortOptionKey = (typeof SORT_OPTIONS)[number]["key"];
+
 
 export function ClientRecipesGrid({
   recipes,
-  sort="",
-  initialQuery = "",
-  initialTags = [],
-  initialSort = "recent",
+  initialSort = "updated",
+  initialSearch = "",
+  initialTags = []
 }: ClientRecipesGridProps) {
-
-  const [showSort, setShowSort] = useState<boolean>(false)
-  const [showFilter, setShowFilter] = useState<boolean>(false)
-
-  const sortRef = useRef<HTMLDivElement>(null);
-  const filterRef = useRef<HTMLDivElement>(null);
-
-  // click-outside to close dropdowns
-  useEffect(() => {
-    const onClick = (e: MouseEvent) => {
-      const t = e.target as Node;
-      if (sortRef.current && !sortRef.current.contains(t)) setShowSort(false);
-      if (filterRef.current && !filterRef.current.contains(t)) setShowFilter(false);
-    };
-    window.addEventListener("click", onClick);
-    return () => window.removeEventListener("click", onClick);
-  }, []);
-
-  const [query, setQuery] = useState(initialQuery);
-  const [selectedTags, setSelectedTags] = useState<string[]>(initialTags);
-  const [sortBy, setSortBy] = useState<SortOptionKey>(initialSort);
 
   const [sortMenu, setSortMenu] = useState<boolean>(false)
   const [filterMenu, setFilterMenu] = useState<boolean>(false)
 
   const [sort, setSort] = useState<SortOptionKey>(initialSort)
-  const [search, setSearch] = useState<string>(initialSearch);
 
   const sortRef = useRef<HTMLDivElement>(null);
   const filterRef = useRef<HTMLDivElement>(null);
-  const searchRef = useRef<HTMLInputElement>(null);
 
+  const [search, setQuery] = useState(initialSearch);
   const [selectedTags, setSelectedTags] = useState<string[]>(initialTags);
 
   // close dropdowns on click-outside
@@ -73,7 +44,7 @@ export function ClientRecipesGrid({
     return () => window.removeEventListener("click", onClick);
   }, []);
 
-  // Unique in alphabetical order
+  // Unique tags by frequency, then A→Z
   const allTags = useMemo(() => {
     const tagSet = new Set<string>();
     for (const recipe of recipes) {
@@ -166,11 +137,11 @@ export function ClientRecipesGrid({
             type="button"
             className="sm:w-22 md:w-32 h-11 md:h-12 inline-flex items-center gap-1 rounded-full border border-white/70 px-4 text-sm font-semibold text-slate-700 bg-gradient-to-r from-slate-200 to-slate-300 shadow-lg cursor-pointer transition hover:brightness-90 active:scale-95"
             aria-haspopup="menu"
-            aria-expanded={showSort}
+            aria-expanded={sortMenu}
             onClick={(e) => {
               e.stopPropagation();
-              setShowSort((s) => !s);
-              setShowFilter(false);
+              setSortMenu((s) => !s);
+              setFilterMenu(false);
             }}
           >
             <ArrowUpDown className="block sm:hidden" size={18} />
@@ -178,19 +149,20 @@ export function ClientRecipesGrid({
             <ChevronDown size={16} className="text-zinc-500" />
           </button>
 
-          {showSort && (
+          {sortMenu && (
             <div
               key="sort-dd"
               className="absolute right-0 z-40 w-48 rounded-2xl border border-zinc-200 bg-white shadow-xl overflow-hidden"
               role="menu"
             >
-              {["Title A–Z", "Recently Added", "Total Time"].map((opt) => (
+              {SORT_OPTIONS.map((opt) => (
                 <button
-                  key={opt}
+                  key={opt.key}
                   className="w-full text-left px-4 py-2 text-sm text-zinc-700 hover:bg-orange-50"
                   role="menuitem"
+                  onClick={() => setSort(opt.key)}
                 >
-                  {opt}
+                  {opt.label}
                 </button>
               ))}
             </div>
@@ -198,15 +170,59 @@ export function ClientRecipesGrid({
         </div>
 
         {/* Filter */}
-        <button
-          type="button"
-          className="sm:w-22 md:w-32 h-11 md:h-12 inline-flex items-center gap-1 rounded-full border border-white/70 px-4 text-sm font-semibold text-slate-700 bg-gradient-to-r from-slate-200 to-slate-300 shadow-lg cursor-pointer transition hover:brightness-90 active:scale-95"
-        >
-          <Funnel className="block sm:hidden" size={18} />
-          <span className="hidden sm:block grow">Filter</span>
-          <ChevronDown size={16} className="text-zinc-500" />
-        </button>
+        <div ref={filterRef} className="relative">
+          <button
+            type="button"
+            className="sm:w-22 md:w-32 h-11 md:h-12 inline-flex items-center gap-1 rounded-full border border-white/70 px-4 text-sm font-semibold text-slate-700 bg-gradient-to-r from-slate-200 to-slate-300 shadow-lg cursor-pointer transition hover:brightness-90 active:scale-95"
+            aria-haspopup="menu"
+            aria-expanded={filterMenu}
+            onClick={(e) => {
+              e.stopPropagation();
+              setFilterMenu((s) => !s);
+              setSortMenu(false);
+            }}>
+            <Funnel className="block sm:hidden" size={18} />
+            <span className="hidden sm:block grow">Filter</span>
+            <ChevronDown size={16} className="text-zinc-500" />
+          </button>
+
+           {filterMenu && (
+                <div
+                  key="filter-dd"
+                  className="absolute right-0 z-40 w-64 rounded-2xl border border-zinc-200 bg-white/95 shadow-xl p-3"
+                  role="menu"
+                >
+                  <p className="text-xs font-semibold text-zinc-500 mb-2">Filter by</p>
+
+                  <div className="mb-2">
+                    <p className="text-xs font-semibold text-zinc-500 mb-1">Tags</p>
+                    <div className="grid grid-cols-2 gap-1.5 text-sm text-zinc-800">
+                      {["Vegan", "Vegetarian", "Quick", "Dinner", "Breakfast", "Seafood"].map(
+                        (t) => (
+                          <label key={t} className="flex items-center gap-2">
+                            <input type="checkbox" className="accent-orange-500" /> {t}
+                          </label>
+                        )
+                      )}
+                    </div>
+                  </div>
+
+                  <div className="border-t border-zinc-200 my-2" />
+
+                  <div className="text-sm text-zinc-800">
+                    <p className="text-xs font-semibold text-zinc-500 mb-1">Source</p>
+                    <label className="flex items-center gap-2">
+                      <input type="checkbox" className="accent-orange-500" /> Imported
+                    </label>
+                    <label className="flex items-center gap-2">
+                      <input type="checkbox" className="accent-orange-500" /> Created by me
+                    </label>
+                  </div>
+                </div>
+              )}
+        </div>
       </div>
+
 
 
       {/* Empty states */}

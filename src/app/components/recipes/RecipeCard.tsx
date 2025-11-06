@@ -42,8 +42,11 @@ export function RecipeCard({ recipe }: { recipe: RecipeCardProps }) {
         </div>
 
         {/* Content */}
-        <div className="p-3 h-full flex flex-col">
-          <h2 className="line-clamp-1 text-xl font-bold text-zinc-900">{recipe.title}</h2>
+        <div className="px-4 py-3 h-full flex flex-col">
+          { recipe.title === "" ? 
+            <h2 className="line-clamp-1 text-xl font-bold italic text-zinc-400">Untitled</h2> :
+            <h2 className="line-clamp-1 text-xl font-bold text-zinc-900">{recipe.title}</h2> 
+          }
           {recipe.description && (
             <p className="mt-1 line-clamp-2 text-sm text-zinc-600">{recipe.description}</p>
           )}
