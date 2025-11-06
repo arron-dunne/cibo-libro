@@ -3,8 +3,6 @@ import { ClientRecipesGrid } from "./ClientRecipesGrid";
 import { prisma } from "@/lib/prisma";
 import { auth } from "@/lib/auth";
 
-export const revalidate = 0; // server component; keep fresh
-
 export default async function RecipesPage() {
   const session = await auth();
   if (!session?.user) {
@@ -21,7 +19,7 @@ export default async function RecipesPage() {
       title: true,
       description: true,
       imageKey: true,
-      imageExternalUrl: true, // ← NEW
+      imageExternalUrl: true,
       tags: true,
       prepMins: true,
       cookMins: true,
@@ -36,7 +34,7 @@ export default async function RecipesPage() {
     slug: r.slug ?? null,
     description: r.description ?? "",
     imageKey: r.imageKey ?? null,
-    imageExternalUrl: r.imageExternalUrl ?? null, // ← NEW
+    imageExternalUrl: r.imageExternalUrl ?? null,
     tags: r.tags ?? [],
     prepMins: r.prepMins ?? null,
     cookMins: r.cookMins ?? null,

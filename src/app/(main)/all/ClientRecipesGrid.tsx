@@ -3,12 +3,6 @@
 import React, { useMemo, useState } from "react";
 import { RecipeCard, RecipeCardProps } from "@/app/components/recipes/RecipeCard";
 
-/**
- * ClientRecipesGrid — R2 + External-aware recipe grid (no expanding cards)
- * - Uses `imageKey` → POST /api/images/sign-download to get a signed URL (preferred)
- * - Falls back to `imageExternalUrl` (plain <img>, avoids Next allow-list)
- * - Equal-height cards, 1→4 responsive columns, glassy filter bar
- */
 
 export type ClientRecipesGridProps = {
   recipes: Recipe[];
