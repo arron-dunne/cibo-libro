@@ -2,6 +2,7 @@
 
 import React, { useMemo, useState } from "react";
 import { RecipeCard, RecipeCardProps } from "@/app/components/recipes/RecipeCard";
+import { Search, ChevronDown, Funnel, ArrowUpDown } from "lucide-react";
 
 
 export type ClientRecipesGridProps = {
@@ -72,93 +73,43 @@ export function ClientRecipesGrid({
     setSelectedTags((prev) => (prev.includes(tag) ? prev.filter((t) => t !== tag) : [...prev, tag]));
 
   return (
-    <div className="mx-auto max-w-screen-2xl px-4 sm:px-6 lg:px-8 py-4 md:py-6 flex flex-col gap-6">
-      {/* Filter Bar (glassy card) */}
-      <div className="sticky top-20 z-10">
-        <div className="rounded-2xl border border-zinc-200/70 bg-white/80 backdrop-blur-md shadow-sm">
-          <div className="p-3 md:p-4 flex flex-col gap-3">
-            <div className="flex flex-wrap items-center gap-3">
-              {/* Search */}
-              <label className="relative flex-1 min-w-[240px]">
-                <span className="sr-only">Search recipes</span>
-                <input
-                  value={query}
-                  onChange={(e) => setQuery(e.target.value)}
-                  placeholder="Search recipes, tags…"
-                  className="w-full rounded-xl border border-zinc-200 bg-white/90 px-4 py-2.5 pr-10 text-sm shadow-sm outline-none focus:ring-2 focus:ring-orange-500/30 focus:border-orange-500"
-                  aria-label="Search recipes"
-                />
-                <svg
-                  className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 h-5 w-5 text-zinc-400"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                >
-                  <circle cx="11" cy="11" r="8" />
-                  <path d="m21 21-4.3-4.3" />
-                </svg>
-              </label>
+    <div className="relative mx-auto max-w-screen-2xl px-4 sm:px-6 lg:px-8 flex flex-col gap-6">
+      {/* Filter Bar (floating pills) */}
+      <div className="sticky top-0 z-10 flex items-center gap-3 md:gap-4">
+        {/* Search bar */}
+        <label className="relative flex-1">
+          <input
+            placeholder="Search recipes…"
+            className="w-full h-11 md:h-12 rounded-full border border-white/70 bg-white backdrop-blur-md pl-10 pr-4 text-sm shadow-lg"
+            aria-label="Search recipes"
+          />
+          <Search
+            size={18}
+            className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-orange-600/80"
+          />
+        </label>
 
-              {/* Sort */}
-              <div className="flex items-center gap-2">
-                <label htmlFor="sort" className="text-sm text-zinc-600">
-                  Sort
-                </label>
-                <select
-                  id="sort"
-                  className="rounded-xl border border-zinc-200 bg-white px-3 py-2 text-sm shadow-sm outline-none focus:ring-2 focus:ring-orange-500/30 focus:border-orange-500"
-                  value={sortBy}
-                  onChange={(e) => setSortBy(e.target.value as SortOptionKey)}
-                >
-                  {SORT_OPTIONS.map((o) => (
-                    <option key={o.key} value={o.key}>
-                      {o.label}
-                    </option>
-                  ))}
-                </select>
-              </div>
+        {/* Sort */}
+        <button
+          type="button"
+          className="sm:w-22 md:w-32 h-11 md:h-12 inline-flex items-center gap-1 rounded-full border border-white/70 px-4 text-sm font-semibold text-slate-700 bg-gradient-to-r from-slate-200 to-slate-300 shadow-lg cursor-pointer transition hover:brightness-90 active:scale-95"
+        >
+          <ArrowUpDown className="block sm:hidden" size={18} />
+          <span className="hidden sm:block grow">Sort</span>
+          <ChevronDown size={16} className="text-zinc-500" />
+        </button>
 
-              {/* Count */}
-              <div className="ml-auto text-sm text-zinc-600">
-                Showing <strong>{visible.length}</strong> of {recipes.length}
-              </div>
-            </div>
-
-            {/* Tags */}
-            {allTags.length > 0 && (
-              <div className="flex items-center gap-2 overflow-x-auto pb-1">
-                {allTags.map((tag) => {
-                  const active = selectedTags.includes(tag);
-                  return (
-                    <button
-                      key={tag}
-                      onClick={() => toggleTag(tag)}
-                      className={
-                        "whitespace-nowrap rounded-full border px-3 py-1.5 text-sm transition " +
-                        (active
-                          ? "border-orange-500 bg-orange-50 text-orange-700 shadow-sm"
-                          : "border-zinc-200 bg-white text-zinc-700 hover:bg-zinc-50")
-                      }
-                      aria-pressed={active}
-                    >
-                      {tag}
-                    </button>
-                  );
-                })}
-                {selectedTags.length > 0 && (
-                  <button
-                    onClick={() => setSelectedTags([])}
-                    className="ml-1 whitespace-nowrap rounded-full border border-zinc-200 bg-white px-3 py-1.5 text-sm text-zinc-600 hover:bg-zinc-50"
-                  >
-                    Clear
-                  </button>
-                )}
-              </div>
-            )}
-          </div>
-        </div>
+        {/* Filter */}
+        <button
+          type="button"
+          className="sm:w-22 md:w-32 h-11 md:h-12 inline-flex items-center gap-1 rounded-full border border-white/70 px-4 text-sm font-semibold text-slate-700 bg-gradient-to-r from-slate-200 to-slate-300 shadow-lg cursor-pointer transition hover:brightness-90 active:scale-95"
+        >
+          <Funnel className="block sm:hidden" size={18} />
+          <span className="hidden sm:block grow">Filter</span>
+          <ChevronDown size={16} className="text-zinc-500" />
+        </button>
       </div>
+
 
       {/* Empty states */}
       {recipes.length === 0 && (
