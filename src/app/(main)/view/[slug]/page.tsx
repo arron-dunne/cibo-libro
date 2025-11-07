@@ -1,9 +1,9 @@
+import Link from "next/link";
 import { notFound } from "next/navigation";
 import { prisma } from "@/lib/prisma";
-import { ClientImage } from "./ClientImage";
-import Link from "next/link";
 import { Pencil } from "lucide-react";
 import { ChefHat } from "lucide-react";
+import { RecipeImage } from "@/app/components/recipes/RecipeImage";
 
 export default async function ViewRecipePage({
   params,
@@ -58,13 +58,13 @@ export default async function ViewRecipePage({
         <div className="grid items-stretch gap-0 md:grid-cols-[1.2fr_1fr] flex-1">
           {/* Image */}
           <div className="relative h-full">
-            <div className="relative h-72 w-full md:h-full">
-              <ClientImage
+            {/* TODO: dynamic sizing  */}
+            <div className="relative h-99 w-full">
+              <RecipeImage
                 imageKey={recipe.imageKey ?? undefined}
-                externalUrl={recipe.imageExternalUrl ?? undefined}  // ← NEW
+                externalUrl={recipe.imageExternalUrl ?? undefined}
                 alt={recipe.title || "Recipe image"}
               />
-              <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/20 via-black/0 to-black/0" />
             </div>
           </div>
 
