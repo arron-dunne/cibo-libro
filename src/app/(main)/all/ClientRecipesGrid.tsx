@@ -13,8 +13,6 @@ type ClientRecipesGridProps = {
   initialTags?: string[];
 };
 
-
-
 export function ClientRecipesGrid({
   recipes,
   initialSort = "updated",
@@ -199,39 +197,39 @@ export function ClientRecipesGrid({
             >
               <p className="text-xs font-semibold text-zinc-500 mb-2">Filter by</p>
 
-              <div className="mb-2">
+              {/* Tag filters */}
+              <div className="mb-3">
                 <p className="text-xs font-semibold text-zinc-500 mb-1">Tags</p>
                 <div className="grid grid-cols-2 gap-1.5 text-sm text-zinc-800">
-                  {allTags.map(t => (
-                    <label
-                      key={t}
-                      className="flex items-center gap-2"
-                    >
+                  {allTags.map((t) => (
+                    <label key={t} className="flex items-center gap-2">
                       <input
                         type="checkbox"
                         className="accent-orange-500"
+                        checked={selectedTags.includes(t)}
                         onChange={(e) => toggleTag(t, e.target.checked)}
-                      /> {t}
+                      />
+                      {t}
                     </label>
-                  )
-                  )}
+                  ))}
                 </div>
               </div>
 
+              {/* Divider */}
               <div className="border-t border-zinc-200 my-2" />
 
-              <div className="text-sm text-zinc-800">
-                <p className="text-xs font-semibold text-zinc-500 mb-1">Source</p>
-                <label className="flex items-center gap-2">
-                  <input type="checkbox" className="accent-orange-500" /> Imported
-                </label>
-                <label className="flex items-center gap-2">
-                  <input type="checkbox" className="accent-orange-500" /> Created by me
-                </label>
-              </div>
+              {/* Clear All button */}
+              <button
+                type="button"
+                onClick={() => setSelectedTags([])}
+                className="w-full rounded-full bg-orange-600 text-white text-sm font-semibold py-1.5 shadow hover:bg-orange-700 transition"
+              >
+                Clear All
+              </button>
             </div>
           )}
         </div>
+
       </div>
 
       {/* Empty states */}
