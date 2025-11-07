@@ -34,7 +34,6 @@ export function ClientRecipesGrid({
 
   const [selectedTags, setSelectedTags] = useState<string[]>(initialTags);
 
-
   // close dropdowns on click-outside
   useEffect(() => {
     const onClick = (e: MouseEvent) => {
@@ -46,7 +45,7 @@ export function ClientRecipesGrid({
     return () => window.removeEventListener("click", onClick);
   }, []);
 
-  // Unique tags by frequency, then A→Z
+  // Unique in alphabetical order
   const allTags = useMemo(() => {
     const tagSet = new Set<string>();
     for (const recipe of recipes) {
@@ -67,6 +66,7 @@ export function ClientRecipesGrid({
       })),
     [recipes]
   );
+  console.log(selectedTags)
 
   const visible = useMemo(() => {
     const q = search.trim().toLowerCase();
@@ -200,7 +200,7 @@ export function ClientRecipesGrid({
           {filterMenu && (
             <div
               key="filter-dd"
-              className="absolute right-0 z-40 w-64 rounded-2xl border border-zinc-200 bg-white/95 shadow-xl p-3"
+              className="absolute right-0 z-40 w-64 rounded-2xl border border-zinc-200 bg-white shadow-xl p-3"
               role="menu"
             >
               <p className="text-xs font-semibold text-zinc-500 mb-2">Filter by</p>
@@ -208,12 +208,18 @@ export function ClientRecipesGrid({
               <div className="mb-2">
                 <p className="text-xs font-semibold text-zinc-500 mb-1">Tags</p>
                 <div className="grid grid-cols-2 gap-1.5 text-sm text-zinc-800">
-                  {["Vegan", "Vegetarian", "Quick", "Dinner", "Breakfast", "Seafood"].map(
-                    (t) => (
-                      <label key={t} className="flex items-center gap-2">
-                        <input type="checkbox" className="accent-orange-500" /> {t}
-                      </label>
-                    )
+                  {allTags.map(t => (
+                    <label
+                      key={t}
+                      className="flex items-center gap-2"
+                    >
+                      <input
+                        type="checkbox"
+                        className="accent-orange-500"
+                        onChange={(e) => toggleTag(t, e.target.checked)}
+                      /> {t}
+                    </label>
+                  )
                   )}
                 </div>
               </div>
