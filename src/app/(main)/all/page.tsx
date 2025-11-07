@@ -71,7 +71,7 @@ export default async function RecipesPage({
     updatedAt: r.updatedAt
   }));
 
-  return <ClientRecipesGrid recipes={recipes} initialSort={sortParam} initialSearch={searchParam}/>;
+  return <ClientRecipesGrid recipes={recipes} initialSearch={searchParam} initialSort={sortParam} />;
 }
 
 // Takes the URL param for sort and returns a valid SortKeyOption at runtime
