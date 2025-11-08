@@ -23,7 +23,7 @@ export type RecipeCardRecipe = {
 export default async function RecipesPage({
   searchParams
 }: {
-  searchParams: Promise<{ search?: string, sort?: string }>
+  searchParams: Promise<{ search?: string, sort?: string, tags?: string[] }>
 }) {
 
   const session = await auth();
@@ -35,6 +35,7 @@ export default async function RecipesPage({
 
   const sortParam: SortOptionKey = getValidSortKey(params.sort ?? null);
   const searchParam: string = params.search ?? ""
+  const tagsParam: string[] = params.tags ?? []
 
   // Pull all fields we need for the grid, including the external image URL.
   const rows = await prisma.recipe.findMany({
@@ -71,7 +72,14 @@ export default async function RecipesPage({
     updatedAt: r.updatedAt
   }));
 
-  return <ClientRecipesGrid recipes={recipes} initialSearch={searchParam} initialSort={sortParam} />;
+  return (
+    <ClientRecipesGrid 
+      recipes={recipes} 
+      initialSearch={searchParam} 
+      initialSort={sortParam} 
+      initialTags={tagsParam} 
+    />
+  );
 }
 
 // Takes the URL param for sort and returns a valid SortKeyOption at runtime
