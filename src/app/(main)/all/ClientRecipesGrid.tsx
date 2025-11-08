@@ -64,7 +64,6 @@ export function ClientRecipesGrid({
       })),
     [recipes]
   );
-  console.log(selectedTags)
 
   const visible = useMemo(() => {
     const q = search.trim().toLowerCase();
@@ -114,17 +113,10 @@ export function ClientRecipesGrid({
     }
   }
 
-  // Reset the search input to empty
-  function resetSearchInput() {
-    if (searchRef.current) {
-      searchRef.current.value = "";
-    }
-  }
-
   return (
-    <div className="relative mx-auto max-w-screen-2xl px-4 sm:px-6 lg:px-8 flex flex-col gap-6">
+    <div className="w-full flex flex-col gap-4">
       {/* Filter Bar (floating pills) */}
-      <div className="sticky top-19 z-10 flex items-center gap-3 md:gap-4">
+      <div className="sticky top-20 z-10 flex items-center gap-3 md:gap-4">
         {/* Search bar */}
         <label className="relative flex-1">
           <input
@@ -258,7 +250,7 @@ export function ClientRecipesGrid({
       </div>
 
       {/* Grid */}
-      <ul className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5 md:gap-6" role="list">
+      <ul className="px-2 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5 md:gap-6" role="list">
         {visible.map((recipe, i) => (
           <li key={i}>
             <RecipeCard recipe={recipe as RecipeCardProps} />
