@@ -231,33 +231,31 @@ export function ClientRecipesGrid({
       </div>
 
       {/* Empty states */}
-      <div className="flex justify-center">
-        {recipes.length === 0 && (
-          <EmptyState title="No recipes yet" subtitle="Add your first recipe to see it here." />
-        )}
-        {recipes.length > 0 && visible.length === 0 && (
-          <EmptyState
-            title="No matches found"
-            subtitle="Try a different search or clear your tag filters."
-            actionLabel="Clear filters"
-            onAction={() => {
-              setSearch("");
-              setSelectedTags([]);
-              resetSearchInput();
-            }}
-          />
-        )}
-      </div>
+      {recipes.length === 0 && (
+        <EmptyState title="No recipes yet" subtitle="Add your first recipe to see it here." />
+      )}
+      {recipes.length > 0 && visible.length === 0 && (
+        <EmptyState
+          title="No matches found"
+          subtitle="Try a different search or clear your tag filters."
+          actionLabel="Clear filters"
+          onAction={() => {
+            setSearch("");
+            setSelectedTags([]);
+            resetSearchInput();
+          }}
+        />
+      )}
 
       {/* Grid */}
-      <ul className="px-2 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5 md:gap-6" role="list">
+      <ul className="px-2 mt-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5 md:gap-6" role="list">
         {visible.map((recipe, i) => (
           <li key={i}>
             <RecipeCard recipe={recipe as RecipeCardProps} />
           </li>
         ))}
       </ul>
-    </div>
+    </div >
   );
 }
 
@@ -273,18 +271,20 @@ function EmptyState({
   onAction?: () => void;
 }) {
   return (
-    <div className="my-12 w-max justify-self-center flex flex-col items-center justify-center rounded-3xl border border-white/40 bg-white/65 backdrop-blur py-10 px-20 text-center">
-      <FileQuestionMark size={52} className="text-orange-700 mb-4" />
-      <h2 className="text-3xl font-bold text-slate-900">{title}</h2>
-      {subtitle && <p className="mt-4 max-w-md text-base text-slate-700">{subtitle}</p>}
-      {actionLabel && onAction && (
-        <button
-          onClick={onAction}
-          className="mt-4 rounded-full bg-orange-600 px-4 py-2 text-sm font-semibold text-white shadow hover:bg-orange-700 cursor-pointer"
-        >
-          {actionLabel}
-        </button>
-      )}
+    <div className="flex justify-center">
+      <div className="my-12 w-max justify-self-center flex flex-col items-center justify-center rounded-3xl border border-white/40 bg-white/65 backdrop-blur py-10 px-20 text-center">
+        <FileQuestionMark size={52} className="text-orange-700 mb-4" />
+        <h2 className="text-3xl font-bold text-slate-900">{title}</h2>
+        {subtitle && <p className="mt-4 max-w-md text-base text-slate-700">{subtitle}</p>}
+        {actionLabel && onAction && (
+          <button
+            onClick={onAction}
+            className="mt-4 rounded-full bg-orange-600 px-4 py-2 text-sm font-semibold text-white shadow hover:bg-orange-700 cursor-pointer"
+          >
+            {actionLabel}
+          </button>
+        )}
+      </div>
     </div>
   );
 }
