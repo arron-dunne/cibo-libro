@@ -24,7 +24,7 @@ export function RecipeCard({ recipe }: { recipe: RecipeCardProps }) {
   const href = `/view/${recipe.slug}`
 
   return (
-    <article className="w-full aspect-[0.7] flex flex-col overflow-hidden rounded-2xl border border-zinc-200 bg-white shadow-lg transition hover:scale-105 cursor-pointer">
+    <article className="w-full aspect-square lg:aspect-[0.7] flex flex-col overflow-hidden rounded-2xl border border-zinc-200 bg-white shadow-lg transition hover:scale-105 cursor-pointer">
 
       {/* Make whole card link */}
       <Link
