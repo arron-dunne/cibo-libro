@@ -1,9 +1,6 @@
 "use client";
 
 import Link from "next/link";
-import Image from "next/image";
-import { useEffect, useState } from "react";
-import { Image as ImageIcon } from "lucide-react";
 import { RecipeImage } from "./RecipeImage"
 
 export type RecipeCardProps = {
