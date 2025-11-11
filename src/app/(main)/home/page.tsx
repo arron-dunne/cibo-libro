@@ -1,6 +1,6 @@
 import { auth } from "@/lib/auth";
 import { redirect } from "next/navigation";
-import { CookingPot, Import, PlusCircle } from "lucide-react";
+import { CookingPot, Import, PlusCircle, Search } from "lucide-react";
 import Link from "next/link";
 import { prisma } from "@/lib/prisma";
 import { RecipeCard, RecipeCardProps } from "@/app/components/recipes/RecipeCard";
@@ -11,18 +11,25 @@ export default async function HomePage() {
   if (!session?.user) { redirect("/login"); }
 
   const recentRecipes = await prisma?.recipe.findMany({
-    where: {ownerId: session?.user.id},
+    where: { ownerId: session?.user.id },
     orderBy: { createdAt: "desc" },
     take: 4,
     select: {
       title: true,
-      description: true, 
+      description: true,
       tags: true,
       slug: true,
       imageKey: true,
       imageExternalUrl: true,
     }
   })
+
+  const tagsData = await prisma.recipe.findMany({
+    where: { ownerId: session.user.id },
+    select: { tags: true },
+  });
+  const allTags = [...new Set(tagsData.flatMap(r => r.tags ?? []))];
+
 
   return (
     <>
@@ -56,7 +63,56 @@ export default async function HomePage() {
           />
         </div>
       </section>
-      
+
+      {/* Quick Search Section */}
+      <section className="mt-10 rounded-3xl border border-white/70 bg-white/95 p-6 shadow-lg backdrop-blur-lg sm:p-8">
+        <h2 className="text-2xl font-semibold text-orange-950 mb-3">
+          What do you feel like today?
+        </h2>
+        <p className="text-slate-700 mb-5">
+          Search your recipes or explore by tag.
+        </p>
+
+        {/* Search Bar */}
+        <form
+          action="/all"
+          method="get"
+          className="relative mb-6 max-w-lg"
+        >
+          <input
+            type="text"
+            name="search"
+            placeholder="Search for a recipe..."
+            className="w-full rounded-full border border-orange-200 bg-white/80 py-3 pl-5 pr-12 text-slate-800 shadow-sm outline-none transition placeholder:text-slate-400 focus:border-orange-400 focus:ring-2 focus:ring-orange-300"
+          />
+          <button
+            type="submit"
+            className="absolute right-2 top-1/2 -translate-y-1/2 rounded-full bg-orange-500 p-2 text-white shadow-md transition hover:scale-105 hover:bg-orange-600"
+          >
+            <Search/>
+          </button>
+        </form>
+
+        {/* Tag Cloud */}
+        <div className="flex flex-wrap gap-3">
+          {allTags.length > 0 ? (
+            allTags.map((tag, i) => (
+              <Link
+                key={i}
+                href={`/all?tags=${encodeURIComponent(tag)}`}
+                className="group rounded-full border border-orange-200 bg-gradient-to-br from-orange-50 to-orange-100/70 px-4 py-2 text-sm font-medium text-orange-950 shadow-sm transition hover:scale-105 hover:border-orange-400 hover:from-orange-100 hover:to-orange-200/80 hover:shadow-md"
+              >
+                <span className="group-hover:text-orange-600">{tag}</span>
+              </Link>
+            ))
+          ) : (
+            <p className="text-slate-500 italic">
+              No tags yet — add some recipes to see them here!
+            </p>
+          )}
+        </div>
+      </section>
+
       {/* Recently Added */}
       <section className="mt-10">
         <h2 className="mb-4 text-2xl font-semibold text-orange-950">
