@@ -78,7 +78,7 @@ export default async function Layout({ children }: { children: React.ReactNode }
       </nav >
 
       {/* Page container */}
-      <main className="z-0 mx-auto w-[min(1150px,95%)] py-8"> {children}</main >
+      <main className="z-0 mx-auto w-[min(1150px,95%)] py-8 md:px-2"> {children}</main >
 
       <Footer />
     </>
