@@ -1,9 +1,9 @@
 import Image from "next/image";
 import Link from "next/link";
-import { LogOut } from "lucide-react";
 import { auth, signOut } from "@/lib/auth";
 import { Footer } from "@/app/components/footer/Footer";
 import { NavLink } from "@/app/components/navbar/NavLink";
+import { LogoutButton } from "@/app/components/navbar/LogoutButton";
 
 
 export default async function Layout({ children }: { children: React.ReactNode }) {
@@ -49,12 +49,7 @@ export default async function Layout({ children }: { children: React.ReactNode }
               {session?.user ? (
                 <>
                   <span className="hidden sm:inline text-gray-700">{session.user.email}</span>
-                  <form action={doSignOut}>
-                    <button className="flex gap-1 place-items-center rounded-full bg-gradient-to-r from-orange-500 to-rose-500 text-white px-4 py-2 font-bold shadow transition cursor-pointer hover:scale-105 hover:brightness-95">
-                      <LogOut size={16} />
-                      <span className="hidden sm:block">Logout</span>
-                    </button>
-                  </form>
+                  <LogoutButton action={doSignOut} />
                 </>
               ) : (
                 <>
@@ -84,5 +79,4 @@ export default async function Layout({ children }: { children: React.ReactNode }
     </>
   );
 }
-
 
