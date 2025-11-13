@@ -4,9 +4,9 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { CirclePlus, CookingPot, HomeIcon, Import, Settings } from "lucide-react";
 
-type NavLinkType = "home" | "all" | "new" | "import" | "settings"
+export type NavLinkType = "home" | "all" | "new" | "import" | "settings"
 
-export function NavLink({ type }: { type: NavLinkType }) {
+export function DesktopNavLink({ type }: { type: NavLinkType }) {
 
   const { label, href, icon: Icon, highlight } = useInfo(type)
 
@@ -26,7 +26,7 @@ export function NavLink({ type }: { type: NavLinkType }) {
   );
 }
 
-function useInfo(type: NavLinkType) {
+export function useInfo(type: NavLinkType) {
 
   const pathname = usePathname()
 

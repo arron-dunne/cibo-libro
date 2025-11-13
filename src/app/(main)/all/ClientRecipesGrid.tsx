@@ -116,7 +116,7 @@ export function ClientRecipesGrid({
   return (
     <div className="w-full flex flex-col gap-4">
       {/* Filter Bar (floating pills) */}
-      <div className="sticky top-20 z-10 flex items-center gap-3 md:gap-4">
+      <div className="sticky top-20 z-5 flex items-center gap-3 md:gap-4">
         {/* Search bar */}
         <label className="relative flex-1">
           <input
@@ -153,7 +153,7 @@ export function ClientRecipesGrid({
           {sortMenu && (
             <div
               key="sort-dd"
-              className="absolute right-0 z-40 w-48 rounded-2xl border border-zinc-200 bg-white shadow-xl overflow-hidden"
+              className="absolute right-0 z-6 w-48 rounded-2xl border border-zinc-200 bg-white shadow-xl overflow-hidden"
               role="menu"
             >
               {SORT_OPTIONS.map((opt) => (
@@ -190,7 +190,7 @@ export function ClientRecipesGrid({
           {filterMenu && (
             <div
               key="filter-dd"
-              className="absolute right-0 z-40 w-64 rounded-2xl border border-zinc-200 bg-white shadow-xl p-3"
+              className="absolute right-0 z-6 w-64 rounded-2xl border border-zinc-200 bg-white shadow-xl p-3"
               role="menu"
             >
               <p className="text-xs font-semibold text-zinc-500 mb-2">Filter by</p>

@@ -1,9 +1,10 @@
 import Image from "next/image";
 import Link from "next/link";
-import { LogOut } from "lucide-react";
 import { auth, signOut } from "@/lib/auth";
 import { Footer } from "@/app/components/footer/Footer";
-import { NavLink } from "@/app/components/navbar/NavLink";
+import { DesktopNavLink } from "@/app/components/navbar/DesktopNavLink";
+import { LogoutButton } from "@/app/components/navbar/LogoutButton";
+import { MobileMenu } from "@/app/components/navbar/MobileMenu";
 
 
 export default async function Layout({ children }: { children: React.ReactNode }) {
@@ -19,7 +20,7 @@ export default async function Layout({ children }: { children: React.ReactNode }
   return (
     <>
       {/* Floating navbar */}
-      <nav className="sticky top-4 z-40" >
+      <nav className="sticky top-4 z-10" >
         <div className="mx-auto w-[min(1150px,95%)]">
           <div className="flex h-14 gap-2 rounded-full border border-white/80 bg-white/60 px-3 sm:px-4 py-2 shadow-sm backdrop-blur">
 
@@ -36,25 +37,23 @@ export default async function Layout({ children }: { children: React.ReactNode }
             </Link>
 
             {/* Navigation */}
-            <div className="hidden gap-6 sm:flex">
-              <NavLink type="home" />
-              <NavLink type="all" />
-              <NavLink type="new" />
-              <NavLink type="import" />
-              <NavLink type="settings" />
+            <div className="hidden gap-6 md:flex">
+              <DesktopNavLink type="home" />
+              <DesktopNavLink type="all" />
+              <DesktopNavLink type="new" />
+              <DesktopNavLink type="import" />
+              <DesktopNavLink type="settings" />
             </div>
 
-            {/* Logout */}
             <div className="flex grow justify-end items-center gap-2 text-sm">
+              
+              <MobileMenu />
+              
+              {/* Logout */}
               {session?.user ? (
                 <>
-                  <span className="hidden sm:inline text-gray-700">{session.user.email}</span>
-                  <form action={doSignOut}>
-                    <button className="flex gap-2 place-items-center rounded-full bg-gradient-to-r from-orange-500 to-rose-500 text-white px-4 py-2 font-bold shadow transition cursor-pointer hover:scale-105 hover:brightness-95">
-                      <LogOut size={16} />
-                      Logout
-                    </button>
-                  </form>
+                  <span className="hidden md:inline text-gray-700">{session.user.email}</span>
+                  <LogoutButton action={doSignOut} />
                 </>
               ) : (
                 <>
@@ -84,5 +83,3 @@ export default async function Layout({ children }: { children: React.ReactNode }
     </>
   );
 }
-
-
