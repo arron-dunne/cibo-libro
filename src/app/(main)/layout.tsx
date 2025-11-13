@@ -19,7 +19,7 @@ export default async function Layout({ children }: { children: React.ReactNode }
   return (
     <>
       {/* Floating navbar */}
-      <nav className="sticky top-4 z-40" >
+      <nav className="sticky top-4 z-10" >
         <div className="mx-auto w-[min(1150px,95%)]">
           <div className="flex h-14 gap-2 rounded-full border border-white/80 bg-white/60 px-3 sm:px-4 py-2 shadow-sm backdrop-blur">
 
