@@ -53,7 +53,7 @@ export function LogoutButton({ action }: LogoutButtonProps) {
                 <button
                   type="button"
                   onClick={closeDialog}
-                  className="rounded-full border border-gray-200 px-4 py-2 text-sm font-medium text-gray-700 transition hover:bg-gray-50 disabled:opacity-50"
+                  className="rounded-full border border-gray-200 px-4 py-2 text-sm font-medium text-gray-700 cursor-pointer transition hover:bg-gray-50 active:bg-gray-100 disabled:opacity-50"
                   disabled={isSubmitting}
                 >
                   Cancel
@@ -61,7 +61,7 @@ export function LogoutButton({ action }: LogoutButtonProps) {
                 <button
                   type="button"
                   onClick={confirmLogout}
-                  className="rounded-full bg-gradient-to-r from-orange-500 to-rose-500 px-4 py-2 text-sm font-semibold text-white shadow disabled:cursor-not-allowed disabled:opacity-50"
+                  className="rounded-full bg-gradient-to-r from-orange-500 to-rose-500 px-4 py-2 text-sm font-semibold text-white cursor-pointer shadow hover:brightness-95 active:brightness-75 disabled:cursor-not-allowed disabled:opacity-50"
                   disabled={isSubmitting}
                 >
                   {isSubmitting ? "Logging out..." : "Log out"}
