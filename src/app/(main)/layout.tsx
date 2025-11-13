@@ -2,7 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { auth, signOut } from "@/lib/auth";
 import { Footer } from "@/app/components/footer/Footer";
-import { NavLink } from "@/app/components/navbar/NavLink";
+import { DesktopNavLink } from "@/app/components/navbar/DesktopNavLink";
 import { LogoutButton } from "@/app/components/navbar/LogoutButton";
 import { MobileMenu } from "@/app/components/navbar/MobileMenu";
 
@@ -38,11 +38,11 @@ export default async function Layout({ children }: { children: React.ReactNode }
 
             {/* Navigation */}
             <div className="hidden gap-6 md:flex">
-              <NavLink type="home" />
-              <NavLink type="all" />
-              <NavLink type="new" />
-              <NavLink type="import" />
-              <NavLink type="settings" />
+              <DesktopNavLink type="home" />
+              <DesktopNavLink type="all" />
+              <DesktopNavLink type="new" />
+              <DesktopNavLink type="import" />
+              <DesktopNavLink type="settings" />
             </div>
 
             <div className="flex grow justify-end items-center gap-2 text-sm">
