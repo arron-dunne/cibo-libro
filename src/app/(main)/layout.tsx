@@ -50,9 +50,9 @@ export default async function Layout({ children }: { children: React.ReactNode }
                 <>
                   <span className="hidden sm:inline text-gray-700">{session.user.email}</span>
                   <form action={doSignOut}>
-                    <button className="flex gap-2 place-items-center rounded-full bg-gradient-to-r from-orange-500 to-rose-500 text-white px-4 py-2 font-bold shadow transition cursor-pointer hover:scale-105 hover:brightness-95">
+                    <button className="flex gap-1 place-items-center rounded-full bg-gradient-to-r from-orange-500 to-rose-500 text-white px-4 py-2 font-bold shadow transition cursor-pointer hover:scale-105 hover:brightness-95">
                       <LogOut size={16} />
-                      Logout
+                      <span className="hidden sm:block">Logout</span>
                     </button>
                   </form>
                 </>
