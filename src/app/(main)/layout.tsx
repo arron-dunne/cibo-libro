@@ -4,6 +4,7 @@ import { auth, signOut } from "@/lib/auth";
 import { Footer } from "@/app/components/footer/Footer";
 import { NavLink } from "@/app/components/navbar/NavLink";
 import { LogoutButton } from "@/app/components/navbar/LogoutButton";
+import { MobileMenu } from "@/app/components/navbar/MobileMenu";
 
 
 export default async function Layout({ children }: { children: React.ReactNode }) {
@@ -36,7 +37,7 @@ export default async function Layout({ children }: { children: React.ReactNode }
             </Link>
 
             {/* Navigation */}
-            <div className="hidden gap-6 sm:flex">
+            <div className="hidden gap-6 md:flex">
               <NavLink type="home" />
               <NavLink type="all" />
               <NavLink type="new" />
@@ -44,11 +45,14 @@ export default async function Layout({ children }: { children: React.ReactNode }
               <NavLink type="settings" />
             </div>
 
-            {/* Logout */}
             <div className="flex grow justify-end items-center gap-2 text-sm">
+              
+              <MobileMenu />
+              
+              {/* Logout */}
               {session?.user ? (
                 <>
-                  <span className="hidden sm:inline text-gray-700">{session.user.email}</span>
+                  <span className="hidden md:inline text-gray-700">{session.user.email}</span>
                   <LogoutButton action={doSignOut} />
                 </>
               ) : (
@@ -79,4 +83,3 @@ export default async function Layout({ children }: { children: React.ReactNode }
     </>
   );
 }
-
