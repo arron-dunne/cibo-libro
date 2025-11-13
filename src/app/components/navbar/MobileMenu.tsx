@@ -18,7 +18,7 @@ export function MobileMenu() {
         type="button"
         aria-label="Open navigation menu"
         onClick={() => setIsOpen(true)}
-        className="flex h-10 w-10 justify-center items-center cursor-pointer gap-1 rounded-full border border-orange-200 bg-white text-orange-500 sm:w-max sm:px-4 sm:py-2 font-bold shadow transition hover:bg-orange-50 active:bg-orange-100 md:hidden"
+        className="flex h-10 w-10 justify-center items-center cursor-pointer gap-1 rounded-full border border-orange bg-white/70 backdrop-blur-md text-orange-600 sm:w-max sm:px-4 sm:py-2 font-bold shadow transition hover:bg-orange-50 active:bg-orange-100 md:hidden"
       >
         <Menu size={20} />
         <span className="hidden sm:block md:hidden">Menu</span>
