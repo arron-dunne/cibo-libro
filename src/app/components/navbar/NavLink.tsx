@@ -4,7 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { CirclePlus, CookingPot, HomeIcon, Import, Settings } from "lucide-react";
 
-type NavLinkType = "home" | "all" | "new" | "import" | "settings"
+export type NavLinkType = "home" | "all" | "new" | "import" | "settings"
 
 export function NavLink({ type }: { type: NavLinkType }) {
 
