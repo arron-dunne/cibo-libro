@@ -67,3 +67,9 @@ R065,Meal planning with Link Cards: allow scheduling a Link Card into the planne
 R066,Telemetry: log policy outcomes (imported vs linkcard + blocked_reason). No logging of publisher content.,Telemetry,MVP
 R067,Export: users can export Link Cards (CSV/JSON) containing only user-authored metadata and source URLs.,Data Portability,Release2
 R068,Legal affordance: Link Cards display 'From <domain>' and an 'Open Original' primary action; avoid hotlinking blocked assets; prefer favicon over hotlinked hero images for denied sources.,Compliance,MVP
+R069,Users shall be able to change their password if logged in,Auth,MVP
+R070,Users shall be able to reset their password if logged out,Auth,MVP
+R071,Users shall be able to sign-out from all devices,Settings,MVP
+R072,Users shall be able to delete their account (along with all data),Settings,MVP
+R073,When a user clicks “delete account” button there will be a popup confirming / cancelling the action first.,Settings,MVP
+R074,"When a user clicks ""delete recipe” button there will be a popup confirming / cancelling the action first.",Recipes,MVP
