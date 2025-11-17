@@ -1,9 +1,13 @@
+import { redirect } from "next/navigation";
 import { auth } from "@/lib/auth";
-import { ArrowUpFromLine, LockKeyhole, Mail, ShieldAlert } from "lucide-react";
+import { ArrowUpFromLine, CircleUserRound, LockKeyhole, Mail, ShieldAlert } from "lucide-react";
 
 export default async function SettingsPage() {
+
   const session = await auth();
-  const email = session?.user?.email ?? "Unknown";
+  if (!session?.user) { redirect("/login"); }
+
+  const email = session.user.email ?? "Unknown";
 
   return (
     <div className="space-y-8">
@@ -18,29 +22,33 @@ export default async function SettingsPage() {
         </p>
       </header>
 
-      <section className="grid gap-6 lg:grid-cols-2">
+      <section className="flex flex-col gap-4">
+        {/* Account details */}
         <div className="rounded-3xl bg-white p-6 shadow ring-1 ring-black/5">
           <div className="flex items-center gap-3">
             <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-orange-50 text-orange-500">
-              <Mail />
+              <CircleUserRound />
             </div>
             <div>
-              <h2 className="text-lg font-semibold text-gray-900">Email address</h2>
-              <p className="text-sm text-gray-500">Used for login and notifications</p>
+              <h2 className="text-2xl font-semibold text-gray-900">Account Details</h2>
+              {/* <p className="text-sm text-gray-500">Used for login and notifications</p> */}
             </div>
           </div>
-          <label className="mt-4 block text-sm font-medium text-gray-600">
-            Current email
+          <label className="ml-1 mt-4 block text-sm font-medium text-gray-600">
+            Email
           </label>
           <input
             type="email"
             value={email}
             readOnly
+            disabled
             className="mt-1 w-full rounded-2xl border border-gray-200 bg-gray-50 px-4 py-3 font-medium text-gray-900 focus:border-orange-400 focus:outline-none"
           />
           <p className="mt-2 text-xs text-gray-500">
             To change your email, contact support so we can verify ownership.
           </p>
+          <label className="ml-1 mt-4 block text-sm font-medium text-gray-600">Password</label>
+          <button className="mt-1 bg-linear-to-br from-orange-500 to-rose-500 rounded-full px-4 py-3 font-bold shadow text-white cursor-pointer hover:brightness-95 active:brightness-75">Change Password</button>
         </div>
 
         <div className="rounded-3xl bg-white p-6 shadow ring-1 ring-black/5">
