@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import { auth, signOut } from "@/lib/auth";
+import { auth, signOut } from "@/lib/auth/auth";
 import { Footer } from "@/app/components/footer/Footer";
 import { DesktopNavLink } from "@/app/components/navbar/DesktopNavLink";
 import { LogoutButton } from "@/app/components/navbar/LogoutButton";
