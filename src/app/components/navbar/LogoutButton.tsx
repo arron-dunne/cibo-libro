@@ -57,7 +57,7 @@ export function LogoutButton({ action }: LogoutButtonProps) {
         </button>
       </form>
 
-      {/* Dialog */}
+      {/* Popup */}
       {hasMounted && typeof window !== "undefined" &&
         createPortal(
           <div
@@ -65,13 +65,13 @@ export function LogoutButton({ action }: LogoutButtonProps) {
             aria-hidden={!isDialogOpen}
           >
             <div
-              className="w-full max-w-sm rounded-3xl bg-white p-6 text-center shadow-xl sm:p-7"
+              className="w-full max-w-sm rounded-[26px] bg-white p-6 text-center shadow-2xl ring-1 ring-black/5 sm:p-7"
               role="dialog"
               aria-modal="true"
               aria-labelledby="change-password-title"
               aria-describedby="change-password-description"
             >
-              <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-linear-to-br from-orange-100 to-rose-100 text-rose-500">
+              <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-orange-100 to-rose-100 text-rose-500">
                 <LogOut size={28} />
               </div>
               <h2 className="mt-4 text-xl font-semibold text-gray-900">Are you sure you want to log out?</h2>
