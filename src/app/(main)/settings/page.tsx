@@ -1,7 +1,7 @@
 import { redirect } from "next/navigation";
 import { auth } from "@/lib/auth/auth";
 import { ArrowUpFromLine, CircleUserRound, LockKeyhole, Mail, ShieldAlert } from "lucide-react";
-import ChangePasswordModal from "./ChangePasswordModal";
+import ChangePasswordModal from "./ChangePasswordPopup";
 
 export default async function SettingsPage() {
 
