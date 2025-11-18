@@ -1,4 +1,4 @@
-import { auth } from "@/lib/auth";
+import { auth } from "@/lib/auth/auth";
 import { redirect } from "next/navigation";
 import { CookingPot, Import, PlusCircle, Search } from "lucide-react";
 import Link from "next/link";
@@ -8,7 +8,6 @@ import { RecipeCard, RecipeCardProps } from "@/app/components/recipes/RecipeCard
 export default async function HomePage() {
 
   const session = await auth();
-  if (!session?.user) { redirect("/login"); }
 
   const recentRecipes = await prisma?.recipe.findMany({
     where: { ownerId: session?.user.id },
@@ -25,7 +24,7 @@ export default async function HomePage() {
   })
 
   const tagsData = await prisma.recipe.findMany({
-    where: { ownerId: session.user.id },
+    where: { ownerId: session?.user.id },
     select: { tags: true },
   });
   const allTags = [...new Set(tagsData.flatMap(r => r.tags ?? []))];
