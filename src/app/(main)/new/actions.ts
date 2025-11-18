@@ -2,7 +2,7 @@
 
 import { z } from "zod";
 import { prisma } from "@/lib/prisma";
-import { auth } from "@/lib/auth";
+import { auth } from "@/lib/auth/auth";
 import { uniqueRecipeSlug } from "@/lib/uniqueSlug";
 import { RecipeFormRecipe, RecipeFormActionResponse } from "@/types/recipe";
 

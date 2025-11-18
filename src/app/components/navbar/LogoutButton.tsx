@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { LogOut } from "lucide-react";
 
@@ -13,11 +13,28 @@ export function LogoutButton({ action }: LogoutButtonProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const formRef = useRef<HTMLFormElement>(null);
 
+  // needed to avoid hydration mismatch
+  const [hasMounted, setHasMounted] = useState<boolean>(false);
+  useEffect(() => setHasMounted(true), []) // useEffect fires after mount
+
   const openDialog = () => setIsDialogOpen(true);
   const closeDialog = () => {
     if (isSubmitting) return;
     setIsDialogOpen(false);
   };
+
+  // close popup with escape key
+  useEffect(() => {
+    if (!isDialogOpen) return;
+    function onKeyDown(e: KeyboardEvent) {
+      if (e.key === "Escape") {
+        e.preventDefault();
+        closeDialog();
+      }
+    }
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, [isDialogOpen, closeDialog]);
 
   const confirmLogout = () => {
     if (isSubmitting) return;
@@ -28,6 +45,7 @@ export function LogoutButton({ action }: LogoutButtonProps) {
 
   return (
     <>
+      {/* Button */}
       <form ref={formRef} action={action}>
         <button
           type="button"
@@ -39,11 +57,20 @@ export function LogoutButton({ action }: LogoutButtonProps) {
         </button>
       </form>
 
-      {isDialogOpen &&
-        typeof document !== "undefined" &&
+      {/* Popup */}
+      {hasMounted && typeof window !== "undefined" &&
         createPortal(
-          <div className="fixed inset-0 z-20 flex items-center justify-center bg-black/50 px-4">
-            <div className="w-full max-w-sm rounded-[26px] bg-white p-6 text-center shadow-2xl ring-1 ring-black/5 sm:p-7">
+          <div
+            className={`fixed inset-0 z-20 flex items-center justify-center bg-black/50 backdrop-blur-sm px-4 transition duration-200 ${isDialogOpen ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"}`}
+            aria-hidden={!isDialogOpen}
+          >
+            <div
+              className="w-full max-w-sm rounded-[26px] bg-white p-6 text-center shadow-2xl ring-1 ring-black/5 sm:p-7"
+              role="dialog"
+              aria-modal="true"
+              aria-labelledby="change-password-title"
+              aria-describedby="change-password-description"
+            >
               <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-orange-100 to-rose-100 text-rose-500">
                 <LogOut size={28} />
               </div>
@@ -73,7 +100,8 @@ export function LogoutButton({ action }: LogoutButtonProps) {
             </div>
           </div>,
           document.body
-        )}
+        )
+      }
     </>
   );
 }

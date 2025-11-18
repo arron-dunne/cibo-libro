@@ -1,5 +1,5 @@
 import { redirect } from "next/navigation";
-import { auth } from "@/lib/auth";
+import { auth } from "@/lib/auth/auth";
 import RecipeForm from "@/app/components/recipes/RecipeForm";
 import { createRecipe } from "./actions";
 

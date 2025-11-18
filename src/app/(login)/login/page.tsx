@@ -31,6 +31,11 @@ export default async function SigninPage({
           Account created. You can sign in now.
         </div>
       )}
+      { error === "expired" && (
+        <div className="mt-4 rounded-xl border border-red-300 bg-red-100 px-4 py-3 text-sm text-red-800">
+          Your session has expired. Please login again.
+        </div>
+      )}
 
       {/* Form */}
       <form action={handleSignIn} className="mt-6 space-y-5">

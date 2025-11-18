@@ -1,7 +1,7 @@
 import { redirect } from "next/navigation";
 import { ClientRecipesGrid } from "./ClientRecipesGrid";
 import { prisma } from "@/lib/prisma";
-import { auth } from "@/lib/auth";
+import { auth } from "@/lib/auth/auth";
 import { SORT_OPTIONS, SortOptionKey } from "./options";
 
 export type RecipeCardRecipe = {
