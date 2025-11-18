@@ -17,7 +17,7 @@ const credsSchema = z.object({
   password: z.string().min(8),
 });
 
-async function verifyPassword(hash: string, password: string): Promise<boolean> {
+export async function verifyPassword(hash: string, password: string): Promise<boolean> {
   return verify(hash, password);
 }
 

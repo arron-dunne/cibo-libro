@@ -2,11 +2,23 @@
 
 import { auth } from "@/lib/auth/auth";
 import { prisma } from "@/lib/prisma";
-import { verify, hash } from "argon2"
+import { hash } from "argon2"
+import { verifyPassword } from "@/lib/auth/auth";
 
-export async function changePassword(currentPassword: string, newPassword: string) {
+
+export async function changePassword(
+  prevState: { error: string | null },
+  formData: FormData
+) {
+  const currentPassword = formData.get("currentPassword") as string;
+  const newPassword = formData.get("newPassword") as string;
+  const confirmPassword = formData.get("confirmPassword") as string;
+
+  if (newPassword !== confirmPassword) {
+    return { error: "New passwords don't match" };
+  }
+
   const session = await auth();
-
   if (!session?.user?.id) {
     throw new Error("Not authenticated");
   }
@@ -14,14 +26,13 @@ export async function changePassword(currentPassword: string, newPassword: strin
   const user = await prisma.user.findUnique({
     where: { id: session.user.id },
   });
-
   if (!user || !user.passwordHash) {
     throw new Error("User not found");
   }
 
-  const valid = await verify(currentPassword, user.passwordHash);
+  const valid = await verifyPassword(user.passwordHash, currentPassword);
   if (!valid) {
-    throw new Error("Incorrect current password");
+    return { error: "Incorrect current password" }
   }
 
   await prisma.user.update({
@@ -32,5 +43,5 @@ export async function changePassword(currentPassword: string, newPassword: strin
     },
   });
 
-  return true;
+  return { error: null }
 }
