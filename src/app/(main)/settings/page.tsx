@@ -1,6 +1,7 @@
 import { redirect } from "next/navigation";
-import { auth } from "@/lib/auth";
+import { auth } from "@/lib/auth/auth";
 import { ArrowUpFromLine, CircleUserRound, LockKeyhole, Mail, ShieldAlert } from "lucide-react";
+import ChangePasswordModal from "./ChangePasswordPopup";
 
 export default async function SettingsPage() {
 
@@ -48,7 +49,7 @@ export default async function SettingsPage() {
             To change your email, contact support so we can verify ownership.
           </p>
           <label className="ml-1 mt-4 block text-sm font-medium text-gray-600">Password</label>
-          <button className="mt-1 bg-linear-to-br from-orange-500 to-rose-500 rounded-full px-4 py-3 font-bold shadow text-white cursor-pointer hover:brightness-95 active:brightness-75">Change Password</button>
+          <ChangePasswordModal />
         </div>
 
         <div className="rounded-3xl bg-white p-6 shadow ring-1 ring-black/5">

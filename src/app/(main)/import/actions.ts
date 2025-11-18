@@ -3,6 +3,7 @@
 import { redirect } from "next/navigation";
 import ky from "ky";
 import { z } from "zod";
+import { load as loadHtml } from "cheerio";
 import { auth } from "@/lib/auth/auth";
 import { prisma } from "@/lib/prisma";
 import { uniqueRecipeSlug } from "@/lib/uniqueSlug";

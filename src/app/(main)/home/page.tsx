@@ -1,4 +1,5 @@
 import { auth } from "@/lib/auth/auth";
+import { redirect } from "next/navigation";
 import { CookingPot, Import, PlusCircle, Search } from "lucide-react";
 import Link from "next/link";
 import { prisma } from "@/lib/prisma";
