@@ -4,8 +4,7 @@
 import ky from "ky";
 import { redirect } from "next/navigation";
 import { z } from "zod";
-import he from "he";
-import { load } from "cheerio";
+import { load as loadHtml } from "cheerio";
 import { auth } from "@/lib/auth/auth";
 import { prisma } from "@/lib/prisma";
 import { uniqueRecipeSlug } from "@/lib/uniqueSlug";
