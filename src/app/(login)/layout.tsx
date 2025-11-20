@@ -9,7 +9,7 @@ export default function LoginLayout({ children }: { children: React.ReactNode })
         {/* Logo above panel */}
         <div className="my-10">
           <Image
-            src="/logo.png"
+            src="/images/logo.png"
             alt="Cibo Libro"
             width={300}
             height={70}

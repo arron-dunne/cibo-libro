@@ -78,7 +78,7 @@ export default async function SigninPage({
         </div>
 
         <div className="flex items-center justify-between text-sm">
-          <a href="#" className="text-gray-500 hover:underline transition hover:text-gray-700">
+          <a href="/forgot" className="text-gray-500 hover:underline transition hover:text-gray-700">
             Forgot password
           </a>
           <span className="text-gray-500">
