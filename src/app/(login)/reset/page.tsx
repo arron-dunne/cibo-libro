@@ -1,11 +1,8 @@
 import Link from "next/link";
-import { ResetPasswordForm } from "./ResetPasswordForm";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, RotateCcwKey } from "lucide-react";
+import { updatePassword } from "./actions";
 
-export default async function ResetPasswordPage({ searchParams }: { searchParams: Promise<{ token?: string }> }) {
-
-  const token = await searchParams.then(sp => sp.token || "");
-
+export default function ResetPasswordPage() {
   return (
     <div className="relative text-center">
       {/* Back button */}
@@ -22,14 +19,36 @@ export default async function ResetPasswordPage({ searchParams }: { searchParams
         Choose a new password
       </p>
 
-      <ResetPasswordForm token={token} />
+      <form action={updatePassword} className="space-y-4 text-start">
+        <label className="block text-sm font-medium text-gray-700 mt-4 mb-1">
+          New Password
+        </label>
+        <input
+          name="password"
+          type="password"
+          className="w-full rounded-2xl bg-white px-4 py-3 shadow-inner"
+          required
+        />
 
-      <Link
-        href="/forgot"
-        className="flex justify-center items-center mt-2 w-full h-12 rounded-full bg-linear-to-br from-slate-300 to-slate-400 cursor-pointer font-bold text-lg text-black shadow hover:brightness-95 active:brightness-75 disabled:opacity-50"
-      >
-        Request another reset email
-      </Link>
+        <label className="block text-sm font-medium text-gray-700 mt-4 mb-1">
+          Confirm New Password
+        </label>
+        <input
+          name="confirm"
+          type="password"
+          className="w-full rounded-2xl bg-white/70 px-4 py-3 shadow-inner"
+          required
+        />
+
+        <button
+          type="submit"
+          // disabled={isSubmitting}
+          className="mt-2 w-full rounded-full bg-linear-to-br from-orange-500 to-rose-500 cursor-pointer px-4 py-3 font-bold text-lg text-white shadow hover:brightness-95 active:brightness-75 disabled:opacity-50"
+        >
+          {/* {isSubmitting ? "Updating..." : "Update Password"} */}
+          Reset Password
+        </button>
+      </form>
     </div>
   )
 }
