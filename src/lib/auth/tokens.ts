@@ -1,8 +1,8 @@
 import crypto from "crypto";
 
 export function generateResetToken() {
-  const raw = crypto.randomBytes(32).toString("hex");
-  const hashed = crypto.createHash("sha256").update(raw).digest("hex");
+  const token = crypto.randomBytes(32).toString("hex");
+  const hashed = crypto.createHash("sha256").update(token).digest("hex");
 
-  return { raw, hashed };
+  return { token, hashed };
 }
