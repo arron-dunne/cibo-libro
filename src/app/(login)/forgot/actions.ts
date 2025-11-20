@@ -13,7 +13,7 @@ export async function resetPassword(formData: FormData): Promise<void> {
     const user = await prisma.user.findUnique({ where: { email } });
 
     // dont show unknown user on the UI
-    if (!user) return;
+    // if (!user) return;
 
     const { token, hashed } = generateResetToken();
 
