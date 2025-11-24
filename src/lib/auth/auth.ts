@@ -17,7 +17,7 @@ const credsSchema = z.object({
   password: z.string().min(8),
 });
 
-async function verifyPassword(hash: string, password: string): Promise<boolean> {
+export async function verifyPassword(hash: string, password: string): Promise<boolean> {
   return verify(hash, password);
 }
 
@@ -40,8 +40,14 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         const user = await prisma.user.findUnique({ where: { email } });
         if (!user?.passwordHash) return null;
 
-        const ok = await verifyPassword(user.passwordHash, password);
-        return ok ? { id: user.id, email: user.email } : null;
+        const valid = await verifyPassword(user.passwordHash, password);
+        if (!valid) return null;
+
+        return {
+          id: user.id,
+          email: user.email,
+          sessionVersion: user.sessionVersion
+        };
       },
     }),
   ],
@@ -49,20 +55,34 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
   callbacks: {
     async jwt({ token, user }) {
       if (user) {
-        const u = user as { id: string; email?: string | null };
+        const u = user as { id: string; email: string; sessionVersion: number };
         (token as JWT).userId = u.id;
-        if (u.email !== undefined) (token as JWT).email = u.email;
+        (token as JWT).email = u.email;
+        (token as JWT).sessionVersion = u.sessionVersion;
+      }
+
+      // Check current session version from DB to invalidate stale sessions
+      if (token.userId) {
+        const dbUser = await prisma.user.findUnique({
+          where: { id: token.userId },
+          select: { sessionVersion: true },
+        });
+
+        // kill the session if its not using the most up-to-date session version
+        if (!dbUser || dbUser.sessionVersion !== token.sessionVersion) {
+          return {}; // empty token, session invalid
+        }
       }
       return token;
     },
 
     async session({ session, token }: { session: Session; token: JWT }) {
-      const userId = typeof token.userId === 'string' ? token.userId : undefined;
+      const userId = token.userId
       if (userId) {
         session.user = {
-          ...(session.user ?? { name: null, email: null }),
-          id: userId,
-          email: token.email ?? session.user?.email ?? null,
+          id: userId as string,
+          email: token.email as string,
+          sessionVersion: token.sessionVersion as number        
         };
       }
       return session;

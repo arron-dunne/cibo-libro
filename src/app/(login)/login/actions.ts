@@ -2,7 +2,7 @@
 
 import { z } from "zod";
 import { redirect } from "next/navigation";
-import { signIn } from "@/lib/auth";
+import { signIn } from "@/lib/auth/auth";
 import { AuthError } from "next-auth";
 
 const LoginSchema = z.object({

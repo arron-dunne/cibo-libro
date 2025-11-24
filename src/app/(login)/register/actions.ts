@@ -26,7 +26,6 @@ export async function handleRegister(formData: FormData) {
 
   if (!parsed.success) {
 
-    console.log(parsed.error);
     if (parsed.error.issues.some(err => err.message === "password mismatch")) {
       redirect("/register?error=mismatch");
     }

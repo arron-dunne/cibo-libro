@@ -1,5 +1,5 @@
 import { notFound, redirect } from "next/navigation";
-import { auth } from "@/lib/auth";
+import { auth } from "@/lib/auth/auth";
 import { prisma } from "@/lib/prisma";
 import RecipeForm from "@/app/components/recipes/RecipeForm";
 import { updateRecipe } from "./actions";

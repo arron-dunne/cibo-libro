@@ -5,7 +5,7 @@ import { NextResponse } from "next/server";
 import { z } from "zod";
 import { signPut } from "@/lib/images/r2";
 import { MAX_SIZE_BYTES, ALLOWED_TYPES, type AllowedType } from "@/lib/images/constants";
-import { auth } from "@/lib/auth";
+import { auth } from "@/lib/auth/auth";
 import { prisma } from "@/lib/prisma";
 
 // ---- Validation -------------------------------------------------------------

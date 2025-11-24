@@ -31,6 +31,11 @@ export default async function SigninPage({
           Account created. You can sign in now.
         </div>
       )}
+      { error === "expired" && (
+        <div className="mt-4 rounded-xl border border-red-300 bg-red-100 px-4 py-3 text-sm text-red-800">
+          Your session has expired. Please login again.
+        </div>
+      )}
 
       {/* Form */}
       <form action={handleSignIn} className="mt-6 space-y-5">
@@ -73,7 +78,7 @@ export default async function SigninPage({
         </div>
 
         <div className="flex items-center justify-between text-sm">
-          <a href="#" className="text-gray-500 hover:underline transition hover:text-gray-700">
+          <a href="/forgot" className="text-gray-500 hover:underline transition hover:text-gray-700">
             Forgot password
           </a>
           <span className="text-gray-500">
