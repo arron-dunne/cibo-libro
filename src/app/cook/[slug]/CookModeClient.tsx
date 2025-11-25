@@ -155,8 +155,8 @@ export default function CookModeClient({
     <main className="min-h-dvh mx-auto max-w-screen-xl py-4 text-white flex flex-col">
       {/* Header */}
       <header className="sticky top-4 z-10">
-        <div className="mx-auto max-w-screen-xl">
-          <div className="rounded-full h-14 flex gap-2 justify-between items-center border border-white/80 bg-white/60 backdrop-blur px-3 sm:px-4 py-2 shadow">
+        <div className="mx-auto w-full max-w-screen-xl">
+          <div className="rounded-full w-full h-14 flex gap-2 justify-between items-center border border-white/80 bg-white/60 backdrop-blur px-3 sm:px-4 py-2 shadow">
             {/* Back button */}
             <Link
               href={`/view/${slug}`}
@@ -352,7 +352,7 @@ export default function CookModeClient({
             Next <ChevronRight className="h-5 w-5" />
           </motion.button>
         </div>
-      </motion.nav>
+      </nav>
     </main >
   );
 }
