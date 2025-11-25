@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { Trash2 } from "lucide-react";
 
@@ -19,10 +19,10 @@ export function DeleteButton({ slug, action }: DeleteButtonProps) {
   useEffect(() => setHasMounted(true), []) // useEffect fires after mount
 
   const openModal = () => setIsModalOpen(true);
-  const closeModal = useCallback(() => {
+  const closeModal = () => {
     if (isSubmitting) return;
     setIsModalOpen(false);
-  }, [isSubmitting]);
+  };
 
   // close modal with escape key
   useEffect(() => {
@@ -48,11 +48,11 @@ export function DeleteButton({ slug, action }: DeleteButtonProps) {
     <>
       {/* Button */}
       <form ref={formRef} action={action}>
-        <input type="hidden" readOnly name="slug" value={slug} />
+        <input type="hidden" name="slug" value={slug} />
         <button
           type="button"
           onClick={openModal}
-          className="rounded-full items-center flex gap-2 bg-linear-to-r from-slate-50 to-slate-100 border border-slate-200 text-slate-800 text-sm font-semibold px-4 py-2 shadow cursor-pointer hover:brightness-90 active:brightness-75"
+          className="flex gap-2 justify-center items-center rounded-full bg-linear-to-r from-red-500 to-red-600 border border-white/70 text-white px-4 py-2 shadow transition cursor-pointer hover:brightness-95 active:brightness-75"
         >
           <Trash2 size={18} />
           <span>Delete</span>
@@ -72,19 +72,19 @@ export function DeleteButton({ slug, action }: DeleteButtonProps) {
               aria-modal="true"
               aria-labelledby="delete-recipe"
             >
-              <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-linear-to-br from-orange-100 to-rose-100 text-rose-500">
+              <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-orange-100 to-rose-100 text-rose-500">
                 <Trash2 size={28} />
               </div>
               <h2 className="mt-4 text-xl font-semibold text-gray-900">Are you sure you want to delete this recipe?</h2>
               <p className="mt-2 text-sm text-gray-500">
-                This action can&apos;t be undone.
+                This action can't be undone.
               </p>
 
               <div className="mt-6 flex flex-col gap-3 sm:flex-row">
                 <button
                   type="button"
                   onClick={confirmDelete}
-                  className="w-full rounded-full bg-linear-to-r from-orange-500 to-rose-500 px-5 py-3 text-base font-semibold text-white shadow-lg transition cursor-pointer hover:brightness-95 active:brightness-75 disabled:cursor-not-allowed disabled:opacity-50 sm:px-4 sm:py-2 sm:text-sm"
+                  className="w-full rounded-full bg-gradient-to-r from-orange-500 to-rose-500 px-5 py-3 text-base font-semibold text-white shadow-lg transition cursor-pointer hover:brightness-95 active:brightness-75 disabled:cursor-not-allowed disabled:opacity-50 sm:px-4 sm:py-2 sm:text-sm"
                   disabled={isSubmitting}
                 >
                   {isSubmitting ? "Deleting..." : "Delete"}

@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { prisma } from "@/lib/prisma";
-import { Pencil, ChefHat, ArrowLeft, Heart, ExternalLink } from "lucide-react";
+import { Pencil, ChefHat, Trash2, ArrowLeft } from "lucide-react";
 import { RecipeImage } from "@/app/components/recipes/RecipeImage";
 import { deleteRecipe } from "./actions";
 import { DeleteButton } from "./DeleteButton";
@@ -53,37 +53,45 @@ export default async function ViewRecipePage({
 
 
   return (
-    <>
+    <div className="space-y-6">
 
-      {/* Hero section */}
-      <section className="relative mt-8 overflow-hidden rounded-3xl border border-white/40 bg-white shadow-2xl min-h-[50vh] flex">
-
+      {/* Button bar */}
+      <div className="w-full flex gap-2 justify-between md:gap-4 text-md font-semibold">
         {/* Back button */}
         <Link
           href="/all"
-          className="absolute top-4 left-4 z-10 flex items-center gap-2 px-2 py-1 rounded-full border border-white/70 text-sm text-slate-700 bg-linear-to-r from-slate-200 to-slate-300 shadow-lg cursor-pointer hover:brightness-90 active:brightness-75"
+          className="inline-flex items-center gap-2 rounded-full border border-white/70 text-slate-700 bg-gradient-to-r from-slate-200 to-slate-300 shadow-lg cursor-pointer transition hover:brightness-90 active:brightness-75 px-4 py-2"
         >
-          <ArrowLeft size={16} />
+          <ArrowLeft className="h-4 w-4" />
           All Recipes
         </Link>
 
-        {/* View original */}
-        {recipe.sourceUrl &&
-          <Link
-            href={recipe.sourceUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            aria-label={`View original on ${domain ?? "source site"}`}
-            className="absolute top-4 right-4 z-10 flex items-center gap-2 px-2 py-1 rounded-full border text-sm border-orange-200 bg-orange-50/80 text-orange-800 shadow-lg cursor-pointer hover:brightness-90 active:brightness-75"
-          >
-            <ExternalLink size={16} />
-            <div className="font-semibold">View Original</div>
-            <div className="text-xs bg-white/80 rounded-full px-2 py-0.5 text-orange-700 border border-orange-400/50">
-              {domain}
-            </div>
-          </Link>
-        }
+        {/* Edit */}
+        <Link
+          href={`/edit/${slug}`}
+          className="w-1/4 inline-flex items-center gap-2 rounded-full bg-orange-600 px-4 py-2 text-sm font-semibold text-white shadow-sm ring-1 ring-black/5 transition hover:bg-orange-700 active:bg-orange-800"
+        >
+          <Pencil className="h-4 w-4" />
+          Edit
+        </Link>
 
+        {/* Delete */}
+        <DeleteButton action={deleteRecipe} slug={slug} />
+
+        {/* Cook Mode button */}
+        {recipe.type !== "EXTERNAL_LINK" && (
+          <Link
+            href={`/cook/${slug}`}
+            className="w-1/4 inline-flex items-center gap-2 rounded-full bg-orange-600 px-4 py-2 text-white shadow-sm ring-1 ring-black/5 transition hover:bg-orange-700 active:bg-orange-800"
+          >
+            <ChefHat className="h-4 w-4" />
+            Cook
+          </Link>
+        )}
+      </div>
+
+      {/* Hero section */}
+      <section className="overflow-hidden rounded-3xl border border-white/40 bg-white shadow-2xl min-h-[50vh] flex">
         <div className="grid gap-0 md:grid-cols-[1.2fr_1fr]">
           {/* Image */}
           <div className="relative h-full overflow-hidden">
@@ -98,7 +106,7 @@ export default async function ViewRecipePage({
 
           {/* Title + meta */}
           <div className="relative p-5 md:p-8 flex flex-col justify-center">
-            <h1 className="mt-8 text-3xl font-extrabold leading-tight md:text-5xl">
+            <h1 className="text-3xl font-extrabold leading-tight md:text-5xl">
               {recipe.title || "Untitled recipe"}
             </h1>
 
