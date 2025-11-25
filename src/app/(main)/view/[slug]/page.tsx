@@ -69,7 +69,7 @@ export default async function ViewRecipePage({
         {/* Edit */}
         <Link
           href={`/edit/${slug}`}
-          className="w-1/4 inline-flex items-center gap-2 rounded-full bg-orange-600 px-4 py-2 text-sm font-semibold text-white shadow-sm ring-1 ring-black/5 transition hover:bg-orange-700 active:bg-orange-800"
+          className="inline-flex items-center gap-2 rounded-full bg-orange-600 px-4 py-2 text-sm font-semibold text-white shadow-sm ring-1 ring-black/5 transition hover:bg-orange-700 active:bg-orange-800"
         >
           <Pencil className="h-4 w-4" />
           Edit
@@ -82,7 +82,7 @@ export default async function ViewRecipePage({
         {recipe.type !== "EXTERNAL_LINK" && (
           <Link
             href={`/cook/${slug}`}
-            className="w-1/4 inline-flex items-center gap-2 rounded-full bg-orange-600 px-4 py-2 text-white shadow-sm ring-1 ring-black/5 transition hover:bg-orange-700 active:bg-orange-800"
+            className="inline-flex items-center gap-2 rounded-full bg-orange-600 px-4 py-2 text-white shadow-sm ring-1 ring-black/5 transition hover:bg-orange-700 active:bg-orange-800"
           >
             <ChefHat className="h-4 w-4" />
             Cook
