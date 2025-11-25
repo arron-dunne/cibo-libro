@@ -153,11 +153,11 @@ export default function CookModeClient({
   };
 
   return (
-    <main className="min-h-dvh text-white flex flex-col">
+    <main className="min-h-dvh mx-auto max-w-screen-xl py-4 text-white flex flex-col">
       {/* Header */}
       <header className="sticky top-4 z-10">
-        <div className="mx-auto max-w-screen-xl">
-          <div className="rounded-full h-14 flex gap-2 justify-between items-center border border-white/80 bg-white/60 backdrop-blur px-3 sm:px-4 py-2 shadow">
+        <div className="mx-auto w-full max-w-screen-xl">
+          <div className="rounded-full w-full h-14 flex gap-2 justify-between items-center border border-white/80 bg-white/60 backdrop-blur px-3 sm:px-4 py-2 shadow">
             {/* Back button */}
             <Link
               href={`/view/${slug}`}
@@ -333,41 +333,27 @@ export default function CookModeClient({
       </section>
 
       {/* Bottom navigation */}
-      <motion.nav
-        className="fixed inset-x-0 bottom-0 z-30"
-        initial={{ opacity: 0, y: 40 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
-      >
-        <div className="mx-auto max-w-screen-xl w-full px-4 pb-4">
-          <div className="rounded-full p-3 bg-white/20 backdrop-blur-lg border border-white/30 shadow-[0_8px_30px_rgba(0,0,0,0.12)] grid grid-cols-2 gap-4">
-            <motion.button
-              whileTap={{ scale: 0.95 }}
-              onClick={goToPrevious}
-              disabled={!canGoPrevious}
-              className="h-14 rounded-full bg-teal-400 text-orange-900 text-lg font-semibold ring-1 ring-orange-700/30 shadow flex items-center justify-center gap-2 hover:bg-white/90 disabled:bg-white/60 disabled:text-orange-900/60 transition"
-            >
-              <ChevronLeft className="h-5 w-5" /> Prev
-            </motion.button>
+      <nav className="fixed inset-x-0 bottom-0 z-30 mx-auto max-w-screen-xl px-4 pb-4">
+        <div className="rounded-full h-20 flex gap-2 justify-between items-center border border-white/80 bg-white/60 backdrop-blur px-3 sm:px-4 py-2 shadow">
+          <motion.button
+            whileTap={{ scale: 0.95 }}
+            onClick={goToPrevious}
+            disabled={!canGoPrevious}
+            className="h-14 w-1/2 rounded-full text-lg font-semibold flex items-center justify-center gap-2 disabled:bg-white/60 disabled:text-orange-900/60 transition border border-white bg-linear-to-r from-slate-200 to-slate-300 shadow text-slate-700 hover:brightness-90 active:brightness-75"
+          >
+            <ChevronLeft className="h-5 w-5" /> Prev
+          </motion.button>
 
-            <motion.button
-              whileTap={{ scale: 0.95 }}
-              onClick={goToNext}
-              disabled={!canGoNext}
-              className="relative bg-rose-500 h-14 rounded-full text-lg font-semibold flex items-center justify-center gap-2 transition disabled:opacity-60 disabled:cursor-not-allowed"
-            // style={{
-            //   background:
-            //     "linear-gradient(135deg, #ff7a00 0%, #ff4500 100%)",
-            //   color: "white",
-            //   boxShadow:
-            //     "0 4px 15px rgba(255, 120, 0, 0.4), 0 0 10px rgba(255, 80, 0, 0.2)",
-            // }}
-            >
-              Next <ChevronRight className="h-5 w-5" />
-            </motion.button>
-          </div>
+          <motion.button
+            whileTap={{ scale: 0.95 }}
+            onClick={goToNext}
+            disabled={!canGoNext}
+            className="w-1/2 bg-linear-to-r from-orange-500 border border-white/70 to-rose-500 h-14 rounded-full text-lg font-semibold flex items-center justify-center gap-2 transition disabled:opacity-60 disabled:cursor-not-allowed"
+          >
+            Next <ChevronRight className="h-5 w-5" />
+          </motion.button>
         </div>
-      </motion.nav>
+      </nav>
     </main >
   );
 }
