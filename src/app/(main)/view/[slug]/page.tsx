@@ -1,9 +1,10 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { prisma } from "@/lib/prisma";
-import { Pencil } from "lucide-react";
-import { ChefHat } from "lucide-react";
+import { Pencil, ChefHat, Trash2, ArrowLeft } from "lucide-react";
 import { RecipeImage } from "@/app/components/recipes/RecipeImage";
+import { deleteRecipe } from "./actions";
+import { DeleteButton } from "./DeleteButton";
 
 export default async function ViewRecipePage({
   params,
@@ -53,13 +54,48 @@ export default async function ViewRecipePage({
 
   return (
     <div className="space-y-6">
-      {/* HERO CARD */}
+
+      {/* Button bar */}
+      <div className="w-full flex gap-2 justify-between md:gap-4 text-md font-semibold">
+        {/* Back button */}
+        <Link
+          href="/all"
+          className="inline-flex items-center gap-2 rounded-full border border-white/70 text-slate-700 bg-gradient-to-r from-slate-200 to-slate-300 shadow-lg cursor-pointer transition hover:brightness-90 active:brightness-75 px-4 py-2"
+        >
+          <ArrowLeft className="h-4 w-4" />
+          All Recipes
+        </Link>
+
+        {/* Edit */}
+        <Link
+          href={`/edit/${slug}`}
+          className="w-1/4 inline-flex items-center gap-2 rounded-full bg-orange-600 px-4 py-2 text-sm font-semibold text-white shadow-sm ring-1 ring-black/5 transition hover:bg-orange-700 active:bg-orange-800"
+        >
+          <Pencil className="h-4 w-4" />
+          Edit
+        </Link>
+
+        {/* Delete */}
+        <DeleteButton action={deleteRecipe} slug={slug} />
+
+        {/* Cook Mode button */}
+        {recipe.type !== "EXTERNAL_LINK" && (
+          <Link
+            href={`/cook/${slug}`}
+            className="w-1/4 inline-flex items-center gap-2 rounded-full bg-orange-600 px-4 py-2 text-white shadow-sm ring-1 ring-black/5 transition hover:bg-orange-700 active:bg-orange-800"
+          >
+            <ChefHat className="h-4 w-4" />
+            Cook
+          </Link>
+        )}
+      </div>
+
+      {/* Hero section */}
       <section className="overflow-hidden rounded-3xl border border-white/40 bg-white shadow-2xl min-h-[50vh] flex">
-        <div className="grid items-stretch gap-0 md:grid-cols-[1.2fr_1fr] flex-1">
+        <div className="grid gap-0 md:grid-cols-[1.2fr_1fr]">
           {/* Image */}
-          <div className="relative h-full">
-            {/* TODO: dynamic sizing  */}
-            <div className="relative h-99 w-full">
+          <div className="relative h-full overflow-hidden">
+            <div className="absolute inset-0 w-full h-full object-cover">
               <RecipeImage
                 imageKey={recipe.imageKey ?? undefined}
                 externalUrl={recipe.imageExternalUrl ?? undefined}
@@ -70,51 +106,6 @@ export default async function ViewRecipePage({
 
           {/* Title + meta */}
           <div className="relative p-5 md:p-8 flex flex-col justify-center">
-
-            {/* Top-right action buttons */}
-            <div className="absolute right-4 top-4 md:right-6 md:top-6 z-10 flex gap-3">
-              {/* Cook Mode button */}
-              {recipe.type !== "EXTERNAL_LINK" && (
-                <Link
-                  href={`/cook/${slug}`}
-                  aria-label="Open Cook Mode"
-                  data-testid="cook-mode-button"
-                  className="group inline-flex items-center gap-2 rounded-full
-        bg-orange-600 px-4 py-2 text-sm font-semibold text-white
-        shadow-sm ring-1 ring-black/5 transition
-        hover:bg-orange-700 active:bg-orange-800
-        focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-600/50
-        active:translate-y-px"
-                >
-                  <ChefHat
-                    className="h-4 w-4 transition-transform group-hover:rotate-6"
-                    aria-hidden="true"
-                  />
-                  <span>Cook Mode</span>
-                </Link>
-              )}
-
-              {/* Edit Recipe button */}
-              <Link
-                href={`/edit/${slug}`}
-                aria-label="Edit recipe"
-                className="group inline-flex items-center gap-2 rounded-full
-      bg-orange-600 px-4 py-2 text-sm font-semibold text-white
-      shadow-sm ring-1 ring-black/5 transition
-      hover:bg-orange-700 active:bg-orange-800
-      focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-600/50
-      active:translate-y-px"
-              >
-                <Pencil
-                  className="h-4 w-4 transition-transform group-hover:-rotate-6"
-                  aria-hidden="true"
-                />
-                <span>Edit</span>
-              </Link>
-            </div>
-
-
-
             <h1 className="text-3xl font-extrabold leading-tight md:text-5xl">
               {recipe.title || "Untitled recipe"}
             </h1>
