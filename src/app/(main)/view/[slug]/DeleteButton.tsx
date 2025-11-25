@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { Trash2 } from "lucide-react";
 
@@ -19,10 +19,10 @@ export function DeleteButton({ slug, action }: DeleteButtonProps) {
   useEffect(() => setHasMounted(true), []) // useEffect fires after mount
 
   const openModal = () => setIsModalOpen(true);
-  const closeModal = () => {
+  const closeModal = useCallback(() => {
     if (isSubmitting) return;
     setIsModalOpen(false);
-  };
+  }, [isModalOpen]);
 
   // close modal with escape key
   useEffect(() => {
@@ -48,7 +48,7 @@ export function DeleteButton({ slug, action }: DeleteButtonProps) {
     <>
       {/* Button */}
       <form ref={formRef} action={action}>
-        <input type="hidden" name="slug" value={slug} />
+        <input type="hidden" readOnly name="slug" value={slug} />
         <button
           type="button"
           onClick={openModal}

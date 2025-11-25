@@ -69,7 +69,7 @@ export default async function ViewRecipePage({
         {/* Edit */}
         <Link
           href={`/edit/${slug}`}
-          className="w-1/4 inline-flex items-center gap-2 rounded-full bg-orange-600 px-4 py-2 text-sm font-semibold text-white shadow-sm ring-1 ring-black/5 transition hover:bg-orange-700 active:bg-orange-800"
+          className="inline-flex items-center gap-2 rounded-full bg-orange-600 px-4 py-2 text-sm font-semibold text-white shadow-sm ring-1 ring-black/5 transition hover:bg-orange-700 active:bg-orange-800"
         >
           <Pencil className="h-4 w-4" />
           Edit
@@ -82,7 +82,7 @@ export default async function ViewRecipePage({
         {recipe.type !== "EXTERNAL_LINK" && (
           <Link
             href={`/cook/${slug}`}
-            className="w-1/4 inline-flex items-center gap-2 rounded-full bg-orange-600 px-4 py-2 text-white shadow-sm ring-1 ring-black/5 transition hover:bg-orange-700 active:bg-orange-800"
+            className="inline-flex items-center gap-2 rounded-full bg-orange-600 px-4 py-2 text-white shadow-sm ring-1 ring-black/5 transition hover:bg-orange-700 active:bg-orange-800"
           >
             <ChefHat className="h-4 w-4" />
             Cook
@@ -112,12 +112,12 @@ export default async function ViewRecipePage({
 
             {tags.length ? (
               <div className="mt-3 flex flex-wrap gap-2">
-                {tags.map((t) => (
+                {tags.map((tag) => (
                   <span
-                    key={t}
-                    className="inline-flex items-center gap-2 rounded-full border border-orange-200 bg-orange-50 px-3 py-1 text-xs font-semibold text-orange-800 shadow"
+                    key={tag}
+                    className="inline-flex items-center gap-1 rounded-full bg-orange-100 px-2 py-1 text-sm font-medium text-orange-700 text-nowrap"
                   >
-                    {emojiFor(t)} <span>{t}</span>
+                    <span>{tag}</span>
                   </span>
                 ))}
               </div>
@@ -210,13 +210,13 @@ export default async function ViewRecipePage({
             )}
           </Card>
 
-          <Card title="Notes">
+          {/* <Card title="Notes">
             <p className="text-sm text-slate-600">No notes yet.</p>
           </Card>
 
           <Card title="Serve with">
             <p className="text-sm text-slate-600">Add sides or pairings.</p>
-          </Card>
+          </Card> */}
         </div>
 
         {/* RIGHT COLUMN */}
@@ -275,13 +275,4 @@ function StatChip({ label, value }: { label: string; value: string }) {
       <span className="text-slate-900 col-start-3">{value}</span>
     </div>
   );
-}
-
-function emojiFor(tag: string) {
-  const t = tag?.toLowerCase?.() ?? "";
-  if (t.includes("pasta")) return "🍝";
-  if (t.includes("italian")) return "🇮🇹";
-  if (t.includes("quick")) return "⚡";
-  if (t.includes("comfort")) return "🥣";
-  return "🏷️";
 }
