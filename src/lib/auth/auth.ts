@@ -1,4 +1,3 @@
-// src/lib/auth.ts
 import 'server-only';
 
 export const runtime = 'nodejs';
