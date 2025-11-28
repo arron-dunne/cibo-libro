@@ -19,7 +19,7 @@ export function MobileMenu() {
       <button
         type="button"
         aria-label="Open navigation menu"
-        onClick={() => setIsOpen(true)}
+        onClick={() => setIsOpen(!isOpen)}
         className="flex h-10 w-10 justify-center items-center cursor-pointer gap-1 rounded-full border border-white/70 bg-linear-to-r from-orange-500 to-rose-500 text-white font-bold sm:w-max sm:px-4 sm:py-2 shadow hover:brightness-90 active:brightness-75 md:hidden"
       >
         <Menu size={20} />
@@ -61,12 +61,12 @@ export function MobileMenu() {
                     <MobileNavLink type={type} />
                   </div>
                 ))}
-                <form action={logout}>
-
+                <form className="w-full" action={logout}>
                   <button
-                    className="flex items-center gap-4 font-semibold text-lg rounded-full px-4 py-3 hover:outline text-orange-700 bg-white hover:brightness-95"
+                    className="w-full flex items-center gap-4 font-semibold text-lg rounded-full px-4 py-3 text-orange-700 bg-white hover:brightness-95"
                     type="submit"
                   >
+                    <LogOut size={24} />
                     Logout
                   </button>
                 </form>

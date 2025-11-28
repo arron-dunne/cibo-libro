@@ -49,7 +49,7 @@ export default async function Layout({ children }: { children: React.ReactNode }
               {session?.user ? (
                 <>
                   <span className="hidden lg:inline text-gray-700">{session.user.email}</span>
-                  <LogoutButton action={doSignOut} />
+                  <LogoutButton action={logout} />
                 </>
               ) : (
                 <>
