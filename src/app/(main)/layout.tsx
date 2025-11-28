@@ -18,7 +18,7 @@ export default async function Layout({ children }: { children: React.ReactNode }
       {/* Floating navbar */}
       <nav className="sticky top-4 z-10" >
         <div className="mx-auto px-2 md:px-4 max-w-screen-xl">
-          <div className="flex h-14 gap-2 rounded-full border border-white/80 bg-white/60 px-2 sm:px-4 py-2 shadow backdrop-blur">
+          <div className="flex h-14 gap-2 rounded-full border border-white/80 bg-white/60 px-4 py-2 shadow backdrop-blur">
 
             {/* Logo */}
             <Link href="/" className="grow" aria-label="cibo libro home">
@@ -48,8 +48,8 @@ export default async function Layout({ children }: { children: React.ReactNode }
               {/* Logout */}
               {session?.user ? (
                 <>
-                  <span className="hidden lg:inline mr-0 lg:mr-4 text-gray-700">{session.user.email}</span>
-                  <LogoutButton action={logout} />
+                  <span className="hidden lg:inline text-gray-700">{session.user.email}</span>
+                  <LogoutButton action={doSignOut} />
                 </>
               ) : (
                 <>
