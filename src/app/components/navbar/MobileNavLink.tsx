@@ -10,12 +10,10 @@ export function MobileNavLink({ type }: { type: NavLinkType }) {
   return (
     <Link
       href={href}
-      className={[
-        "flex items-center gap-4 font-semibold text-lg rounded-full px-4 py-3 hover:outline",
-        highlight
-          ? "bg-gradient-to-r from-orange-500 to-rose-500 text-white font-bold shadow"
-          : "text-orange-700 bg-white hover:outline hover:brightness-95",
-      ].join(" ")}
+      className={`flex items-center gap-4 font-semibold text-lg rounded-full px-4 py-3 
+        ${highlight ? "bg-gradient-to-r from-orange-500 to-rose-500 text-white font-bold shadow" :
+          "text-orange-700 bg-white hover:brightness-95"}`
+      }
     >
       <Icon size={24} />
       {label}
