@@ -5,17 +5,13 @@ import { Footer } from "@/app/components/footer/Footer";
 import { DesktopNavLink } from "@/app/components/navbar/DesktopNavLink";
 import { LogoutButton } from "@/app/components/navbar/LogoutButton";
 import { MobileMenu } from "@/app/components/navbar/MobileMenu";
+import { logout } from "@/app/actions/logout";
 
 
 export default async function Layout({ children }: { children: React.ReactNode }) {
 
   // needed for logout and navbar email
   const session = await auth();
-
-  async function doSignOut() {
-    "use server";
-    await signOut({ redirectTo: "/login" });
-  }
 
   return (
     <>
@@ -53,7 +49,7 @@ export default async function Layout({ children }: { children: React.ReactNode }
               {session?.user ? (
                 <>
                   <span className="hidden lg:inline text-gray-700">{session.user.email}</span>
-                  <LogoutButton action={doSignOut} />
+                  <LogoutButton action={logout} />
                 </>
               ) : (
                 <>
