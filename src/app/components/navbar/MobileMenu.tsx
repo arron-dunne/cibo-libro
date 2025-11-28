@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { createPortal } from "react-dom";
-import { Menu, X } from "lucide-react";
+import { LogOut, Menu, X } from "lucide-react";
 import { type NavLinkType } from "./DesktopNavLink";
 import { MobileNavLink } from "./MobileNavLink";
 import { logout } from "@/app/actions/logout";
@@ -10,8 +10,8 @@ import { logout } from "@/app/actions/logout";
 const navItems: NavLinkType[] = ["home", "all", "new", "import", "settings"];
 
 export function MobileMenu() {
+  
   const [isOpen, setIsOpen] = useState(false);
-
   const closeMenu = () => setIsOpen(false);
 
   return (
@@ -19,7 +19,7 @@ export function MobileMenu() {
       <button
         type="button"
         aria-label="Open navigation menu"
-        onClick={() => setIsOpen(true)}
+        onClick={() => setIsOpen(!isOpen)}
         className="flex h-10 w-10 justify-center items-center cursor-pointer gap-1 rounded-full border border-white/70 bg-linear-to-r from-orange-500 to-rose-500 text-white font-bold sm:w-max sm:px-4 sm:py-2 shadow hover:brightness-90 active:brightness-75 md:hidden"
       >
         <Menu size={20} />
@@ -36,9 +36,9 @@ export function MobileMenu() {
               document.body
             )
           }
-          <div className="fixed top-13 left-0 w-full px-4">
+          <div className="fixed top-16 left-0 w-full px-4">
             <div
-              className="rounded-b-3xl bg-white p-5 shadow-2xl"
+              className="rounded-3xl bg-white p-5 shadow-2xl"
               onClick={(event) => event.stopPropagation()}
             >
               <div className="flex items-center justify-between">
@@ -49,7 +49,7 @@ export function MobileMenu() {
                   type="button"
                   aria-label="Close menu"
                   onClick={closeMenu}
-                  className="flex h-10 w-10 cursor-pointer items-center justify-center rounded-full bg-linear-to-br from-slate-200 to-slate-300 transition hover:bg-gray-50 active:bg-gray-100"
+                  className="flex h-10 w-10 cursor-pointer items-center justify-center rounded-full bg-linear-to-br from-slate-200 to-slate-300 hover:brightness-90 active:brightness-75"
                 >
                   <X size={18} />
                 </button>
@@ -61,12 +61,12 @@ export function MobileMenu() {
                     <MobileNavLink type={type} />
                   </div>
                 ))}
-                <form action={logout}>
-
+                <form className="w-full" action={logout}>
                   <button
-                    className="flex items-center gap-4 font-semibold text-lg rounded-full px-4 py-3 hover:outline text-orange-700 bg-white hover:brightness-95"
+                    className="w-full flex items-center gap-4 font-semibold text-lg rounded-full px-4 py-3 text-orange-700 bg-white hover:brightness-95"
                     type="submit"
                   >
+                    <LogOut size={24} />
                     Logout
                   </button>
                 </form>
