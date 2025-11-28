@@ -5,6 +5,7 @@ import { createPortal } from "react-dom";
 import { Menu, X } from "lucide-react";
 import { type NavLinkType } from "./DesktopNavLink";
 import { MobileNavLink } from "./MobileNavLink";
+import { logout } from "@/app/actions/logout";
 
 const navItems: NavLinkType[] = ["home", "all", "new", "import", "settings"];
 
@@ -19,10 +20,10 @@ export function MobileMenu() {
         type="button"
         aria-label="Open navigation menu"
         onClick={() => setIsOpen(true)}
-        className="flex h-10 w-10 justify-center items-center cursor-pointer gap-1 rounded-full border border-orange bg-white/70 backdrop-blur-md text-orange-600 sm:w-max sm:px-4 sm:py-2 font-bold shadow transition hover:bg-orange-50 active:bg-orange-100 md:hidden"
+        className="flex h-10 w-10 justify-center items-center cursor-pointer gap-1 rounded-full border border-white/70 bg-linear-to-r from-orange-500 to-rose-500 text-white font-bold sm:w-max sm:px-4 sm:py-2 shadow hover:brightness-90 active:brightness-75 md:hidden"
       >
         <Menu size={20} />
-        <span className="hidden sm:block md:hidden">Menu</span>
+        <span className="hidden sm:block lg:hidden">Menu</span>
       </button>
 
       {isOpen &&
@@ -31,7 +32,7 @@ export function MobileMenu() {
             // black background
             typeof document !== "undefined" &&
             createPortal(
-              <div className="fixed inset-x-0 top-0 bottom-0 z-8 bg-black/60 px-4 pb-6 sm:hidden" />,
+              <div className="fixed inset-x-0 top-0 bottom-0 z-8 bg-black/60 backdrop-blur-sm px-4 pb-6 sm:hidden" />,
               document.body
             )
           }
@@ -57,9 +58,18 @@ export function MobileMenu() {
               <div className="mt-2 flex flex-col">
                 {navItems.map((type) => (
                   <div key={type} onClick={closeMenu}>
-                    <MobileNavLink type={type}/>
+                    <MobileNavLink type={type} />
                   </div>
                 ))}
+                <form action={logout}>
+
+                  <button
+                    className="flex items-center gap-4 font-semibold text-lg rounded-full px-4 py-3 hover:outline text-orange-700 bg-white hover:brightness-95"
+                    type="submit"
+                  >
+                    Logout
+                  </button>
+                </form>
               </div>
             </div>
           </div>

@@ -22,7 +22,7 @@ export default async function Layout({ children }: { children: React.ReactNode }
       {/* Floating navbar */}
       <nav className="sticky top-4 z-10" >
         <div className="mx-auto px-2 md:px-4 max-w-screen-xl">
-          <div className="flex h-14 gap-2 rounded-full border border-white/80 bg-white/60 px-2 sm:px-4 py-2 shadow backdrop-blur">
+          <div className="flex h-14 gap-2 rounded-full border border-white/80 bg-white/60 px-4 py-2 shadow backdrop-blur">
 
             {/* Logo */}
             <Link href="/" className="grow" aria-label="cibo libro home">
@@ -31,7 +31,7 @@ export default async function Layout({ children }: { children: React.ReactNode }
                 alt="cibo libro"
                 width={150}
                 height={36}
-                className="h-9 w-auto drop-shadow-[0_2px_6px_rgba(0,0,0,0.15)]"
+                className="h-9 w-auto drop-shadow"
                 priority
               />
             </Link>
@@ -45,14 +45,14 @@ export default async function Layout({ children }: { children: React.ReactNode }
               <DesktopNavLink type="settings" />
             </div>
 
-            <div className="flex grow justify-end items-center gap-2 text-sm">
+            <div className="flex grow justify-end items-center text-sm">
               
               <MobileMenu />
               
               {/* Logout */}
               {session?.user ? (
                 <>
-                  <span className="hidden md:inline text-gray-700">{session.user.email}</span>
+                  <span className="hidden lg:inline text-gray-700">{session.user.email}</span>
                   <LogoutButton action={doSignOut} />
                 </>
               ) : (
