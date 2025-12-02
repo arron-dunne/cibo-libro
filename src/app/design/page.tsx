@@ -47,7 +47,8 @@ export default function DesignPage() {
             
             <h2 className="mt-4 font-semibold">Recipe</h2>
             <ul className="mt-2 ml-4 list-disc list-inside">
-                <li><a href="/design/recipe">v1</a></li>
+                <li><a href="/design/recipe/v1">v1</a></li>
+                <li><a href="/design/recipe/v2">v2</a></li>
             </ul>
             
         </div>

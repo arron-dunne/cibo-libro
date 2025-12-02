@@ -1,4 +1,3 @@
-// src/app/recipes/page.tsx
 import path from "node:path";
 import fs from "node:fs/promises";
 import ClientRecipe from "./ClientRecipe";
