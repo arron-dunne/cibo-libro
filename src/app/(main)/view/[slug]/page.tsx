@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { prisma } from "@/lib/prisma";
-import { Pencil, ChefHat, Trash2, ArrowLeft } from "lucide-react";
+import { Pencil, ChefHat, Trash2, ArrowLeft, Heart } from "lucide-react";
 import { RecipeImage } from "@/app/components/recipes/RecipeImage";
 import { deleteRecipe } from "./actions";
 import { DeleteButton } from "./DeleteButton";
@@ -65,29 +65,6 @@ export default async function ViewRecipePage({
           <ArrowLeft className="h-4 w-4" />
           All Recipes
         </Link>
-
-        {/* Edit */}
-        <Link
-          href={`/edit/${slug}`}
-          className="inline-flex items-center gap-2 rounded-full bg-orange-600 px-4 py-2 text-sm font-semibold text-white shadow-sm ring-1 ring-black/5 transition hover:bg-orange-700 active:bg-orange-800"
-        >
-          <Pencil className="h-4 w-4" />
-          Edit
-        </Link>
-
-        {/* Delete */}
-        <DeleteButton action={deleteRecipe} slug={slug} />
-
-        {/* Cook Mode button */}
-        {recipe.type !== "EXTERNAL_LINK" && (
-          <Link
-            href={`/cook/${slug}`}
-            className="inline-flex items-center gap-2 rounded-full bg-orange-600 px-4 py-2 text-white shadow-sm ring-1 ring-black/5 transition hover:bg-orange-700 active:bg-orange-800"
-          >
-            <ChefHat className="h-4 w-4" />
-            Cook
-          </Link>
-        )}
       </div>
 
       {/* Hero section */}
@@ -144,6 +121,21 @@ export default async function ViewRecipePage({
               <StatChip label="Total" value={`${total}m`} />
               <StatChip label="Serves" value={String(recipe.servings ?? 1)} />
             </div>
+
+            {/* Button bar  */}
+            <div className="flex gap-2 mt-4">
+              {recipe.type != "EXTERNAL_LINK" &&
+                <Link href={`/cook/${slug}`} className="rounded-full items-center flex gap-2 bg-linear-to-r from-orange-500 to-orange-600 border border-slate-200 text-white text-sm font-semibold px-4 py-2 shadow cursor-pointer hover:brightness-90 active:brightness-75">
+                  <ChefHat size={18} className="-rotate-12" />
+                  <span>Start Cooking</span>
+                </Link>
+              }
+
+              <div className="rounded-full items-center flex gap-2 bg-linear-to-r from-slate-50 to-slate-100 border border-slate-200 text-slate-800 text-sm font-semibold px-4 py-2 shadow cursor-pointer hover:brightness-90 active:brightness-75">
+                <Heart size={18} />
+                <span>Favourite</span>
+              </div>
+            )}
 
             {/* Button bar  */}
             <div className="flex gap-2 mt-4">
