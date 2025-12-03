@@ -52,7 +52,7 @@ export function DeleteButton({ slug, action }: DeleteButtonProps) {
         <button
           type="button"
           onClick={openModal}
-          className="flex gap-2 justify-center items-center rounded-full bg-linear-to-r from-red-500 to-red-600 border border-white/70 text-white px-4 py-2 shadow transition cursor-pointer hover:brightness-95 active:brightness-75"
+          className="rounded-full items-center flex gap-2 bg-linear-to-r from-slate-50 to-slate-100 border border-slate-200 text-slate-800 text-sm font-semibold px-4 py-2 shadow cursor-pointer hover:brightness-90 active:brightness-75"
         >
           <Trash2 size={18} />
           <span>Delete</span>
