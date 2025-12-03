@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { prisma } from "@/lib/prisma";
-import { Pencil, ChefHat, Trash2, ArrowLeft, Heart } from "lucide-react";
+import { Pencil, ChefHat, Trash2, ArrowLeft, Heart, ExternalLink } from "lucide-react";
 import { RecipeImage } from "@/app/components/recipes/RecipeImage";
 import { deleteRecipe } from "./actions";
 import { DeleteButton } from "./DeleteButton";
@@ -53,22 +53,37 @@ export default async function ViewRecipePage({
 
 
   return (
-    <div className="space-y-6">
+    <>
 
-      {/* Button bar */}
-      <div className="w-full flex gap-2 justify-between md:gap-4 text-md font-semibold">
+      {/* Hero section */}
+      <section className="relative mt-8 overflow-hidden rounded-3xl border border-white/40 bg-white shadow-2xl min-h-[50vh] flex">
+
         {/* Back button */}
         <Link
           href="/all"
-          className="inline-flex items-center gap-2 rounded-full border border-white/70 text-slate-700 bg-gradient-to-r from-slate-200 to-slate-300 shadow-lg cursor-pointer transition hover:brightness-90 active:brightness-75 px-4 py-2"
+          className="absolute top-4 left-4 z-10 flex items-center gap-2 px-2 py-1 rounded-full border border-white/70 text-sm text-slate-700 bg-gradient-to-r from-slate-200 to-slate-300 shadow-lg cursor-pointer hover:brightness-90 active:brightness-75"
         >
-          <ArrowLeft className="h-4 w-4" />
+          <ArrowLeft size={16} />
           All Recipes
         </Link>
-      </div>
 
-      {/* Hero section */}
-      <section className="overflow-hidden rounded-3xl border border-white/40 bg-white shadow-2xl min-h-[50vh] flex">
+        {/* View original */}
+        {recipe.sourceUrl &&
+          <Link
+            href={recipe.sourceUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label={`View original on ${domain ?? "source site"}`}
+            className="absolute top-4 right-4 z-10 flex items-center gap-2 px-2 py-1 rounded-full border text-sm border-orange-200 bg-orange-50/80 text-orange-800 shadow-lg cursor-pointer hover:brightness-90 active:brightness-75"
+          >
+            <ExternalLink size={16} />
+            <div className="font-semibold">View Original</div>
+            <div className="text-xs bg-white/80 rounded-full px-2 py-0.5 text-orange-700 border border-orange-400/50">
+              {domain}
+            </div>
+          </Link>
+        }
+
         <div className="grid gap-0 md:grid-cols-[1.2fr_1fr]">
           {/* Image */}
           <div className="relative h-full overflow-hidden">
@@ -83,7 +98,7 @@ export default async function ViewRecipePage({
 
           {/* Title + meta */}
           <div className="relative p-5 md:p-8 flex flex-col justify-center">
-            <h1 className="text-3xl font-extrabold leading-tight md:text-5xl">
+            <h1 className="mt-8 text-3xl font-extrabold leading-tight md:text-5xl">
               {recipe.title || "Untitled recipe"}
             </h1>
 
@@ -122,47 +137,6 @@ export default async function ViewRecipePage({
               <StatChip label="Serves" value={String(recipe.servings ?? 1)} />
             </div>
 
-            {/* View original (only if we have a sourceUrl) */}
-            {recipe.sourceUrl && (
-              <div className="mt-5 self-end">
-                <a
-                  href={recipe.sourceUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  aria-label={`View original on ${domain ?? "source site"}`}
-                  className="
-        inline-flex items-center gap-2 rounded-full
-        border border-orange-200 bg-orange-50/80
-        px-3 py-1.5 text-sm font-semibold text-orange-800
-        shadow-sm ring-1 ring-black/5
-      "
-                >
-                  {/* icon */}
-                  <svg
-                    className="h-4 w-4 text-orange-600"
-                    viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true"
-                  >
-                    <path d="M15 3h6v6" />
-                    <path d="M10 14 21 3" />
-                    <path d="M18 13v6a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
-                  </svg>
-
-                  <span className="tracking-tight">View original</span>
-
-                  {domain && (
-                    <span
-                      className="
-            ml-1 rounded-full border border-orange-200
-            bg-white/80 px-2 py-0.5 text-xs font-medium text-orange-700
-          "
-                    >
-                      {domain}
-                    </span>
-                  )}
-                </a>
-              </div>
-            )}
-
             {/* Button bar  */}
             <div className="flex gap-2 mt-4">
               {recipe.type != "EXTERNAL_LINK" &&
@@ -191,9 +165,9 @@ export default async function ViewRecipePage({
         </div>
       </section>
 
-      {/* CONTENT: two-column */}
-      <section className="grid items-start gap-6 md:grid-cols-[0.9fr_1.1fr]">
-        {/* LEFT COLUMN */}
+      {/* Steps and Ingredients */}
+      <section className="mt-8 grid items-start gap-6 md:grid-cols-[0.9fr_1.1fr]">
+        {/* Steps (left panel) */}
         <div className="grid gap-6">
           <Card title="Ingredients">
             {ingredients.length ? (
@@ -241,7 +215,7 @@ export default async function ViewRecipePage({
           </Card>
         </div>
       </section>
-    </div>
+    </>
   );
 }
 
