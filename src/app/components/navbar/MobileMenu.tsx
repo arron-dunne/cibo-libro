@@ -2,15 +2,16 @@
 
 import { useState } from "react";
 import { createPortal } from "react-dom";
-import { Menu, X } from "lucide-react";
+import { LogOut, Menu, X } from "lucide-react";
 import { type NavLinkType } from "./DesktopNavLink";
 import { MobileNavLink } from "./MobileNavLink";
+import { logout } from "@/app/actions/logout";
 
 const navItems: NavLinkType[] = ["home", "all", "new", "import", "settings"];
 
 export function MobileMenu() {
+  
   const [isOpen, setIsOpen] = useState(false);
-
   const closeMenu = () => setIsOpen(false);
 
   return (
@@ -18,11 +19,11 @@ export function MobileMenu() {
       <button
         type="button"
         aria-label="Open navigation menu"
-        onClick={() => setIsOpen(true)}
-        className="flex h-10 w-10 justify-center items-center cursor-pointer gap-1 rounded-full border border-orange bg-white/70 backdrop-blur-md text-orange-600 sm:w-max sm:px-4 sm:py-2 font-bold shadow transition hover:bg-orange-50 active:bg-orange-100 md:hidden"
+        onClick={() => setIsOpen(!isOpen)}
+        className="flex h-10 w-10 justify-center items-center cursor-pointer gap-1 rounded-full border border-white/70 bg-linear-to-r from-orange-500 to-rose-500 text-white font-bold sm:w-max sm:px-4 sm:py-2 shadow hover:brightness-90 active:brightness-75 md:hidden"
       >
         <Menu size={20} />
-        <span className="hidden sm:block md:hidden">Menu</span>
+        <span className="hidden sm:block lg:hidden">Menu</span>
       </button>
 
       {isOpen &&
@@ -31,13 +32,13 @@ export function MobileMenu() {
             // black background
             typeof document !== "undefined" &&
             createPortal(
-              <div className="fixed inset-x-0 top-0 bottom-0 z-8 bg-black/60 px-4 pb-6 sm:hidden" />,
+              <div className="fixed inset-x-0 top-0 bottom-0 z-8 bg-black/60 backdrop-blur-sm px-4 pb-6 sm:hidden" />,
               document.body
             )
           }
-          <div className="fixed top-13 left-0 w-full px-4">
+          <div className="fixed top-16 left-0 w-full px-4">
             <div
-              className="rounded-b-3xl bg-white p-5 shadow-2xl"
+              className="rounded-3xl bg-white p-5 shadow-2xl"
               onClick={(event) => event.stopPropagation()}
             >
               <div className="flex items-center justify-between">
@@ -48,7 +49,7 @@ export function MobileMenu() {
                   type="button"
                   aria-label="Close menu"
                   onClick={closeMenu}
-                  className="flex h-10 w-10 cursor-pointer items-center justify-center rounded-full bg-linear-to-br from-slate-200 to-slate-300 transition hover:bg-gray-50 active:bg-gray-100"
+                  className="flex h-10 w-10 cursor-pointer items-center justify-center rounded-full bg-linear-to-br from-slate-200 to-slate-300 hover:brightness-90 active:brightness-75"
                 >
                   <X size={18} />
                 </button>
@@ -57,9 +58,18 @@ export function MobileMenu() {
               <div className="mt-2 flex flex-col">
                 {navItems.map((type) => (
                   <div key={type} onClick={closeMenu}>
-                    <MobileNavLink type={type}/>
+                    <MobileNavLink type={type} />
                   </div>
                 ))}
+                <form className="w-full" action={logout}>
+                  <button
+                    className="w-full flex items-center gap-4 font-semibold text-lg rounded-full px-4 py-3 text-orange-700 bg-white hover:brightness-95"
+                    type="submit"
+                  >
+                    <LogOut size={24} />
+                    Logout
+                  </button>
+                </form>
               </div>
             </div>
           </div>

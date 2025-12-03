@@ -1,9 +1,10 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { prisma } from "@/lib/prisma";
-import { Pencil } from "lucide-react";
-import { ChefHat } from "lucide-react";
+import { Pencil, ChefHat, Trash2, ArrowLeft, Heart, ExternalLink } from "lucide-react";
 import { RecipeImage } from "@/app/components/recipes/RecipeImage";
+import { deleteRecipe } from "./actions";
+import { DeleteButton } from "./DeleteButton";
 
 export default async function ViewRecipePage({
   params,
@@ -52,14 +53,41 @@ export default async function ViewRecipePage({
 
 
   return (
-    <div className="space-y-6">
-      {/* HERO CARD */}
-      <section className="overflow-hidden rounded-3xl border border-white/40 bg-white shadow-2xl min-h-[50vh] flex">
-        <div className="grid items-stretch gap-0 md:grid-cols-[1.2fr_1fr] flex-1">
+    <>
+
+      {/* Hero section */}
+      <section className="relative mt-8 overflow-hidden rounded-3xl border border-white/40 bg-white shadow-2xl min-h-[50vh] flex">
+
+        {/* Back button */}
+        <Link
+          href="/all"
+          className="absolute top-4 left-4 z-10 flex items-center gap-2 px-2 py-1 rounded-full border border-white/70 text-sm text-slate-700 bg-gradient-to-r from-slate-200 to-slate-300 shadow-lg cursor-pointer hover:brightness-90 active:brightness-75"
+        >
+          <ArrowLeft size={16} />
+          All Recipes
+        </Link>
+
+        {/* View original */}
+        {recipe.sourceUrl &&
+          <Link
+            href={recipe.sourceUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label={`View original on ${domain ?? "source site"}`}
+            className="absolute top-4 right-4 z-10 flex items-center gap-2 px-2 py-1 rounded-full border text-sm border-orange-200 bg-orange-50/80 text-orange-800 shadow-lg cursor-pointer hover:brightness-90 active:brightness-75"
+          >
+            <ExternalLink size={16} />
+            <div className="font-semibold">View Original</div>
+            <div className="text-xs bg-white/80 rounded-full px-2 py-0.5 text-orange-700 border border-orange-400/50">
+              {domain}
+            </div>
+          </Link>
+        }
+
+        <div className="grid gap-0 md:grid-cols-[1.2fr_1fr]">
           {/* Image */}
-          <div className="relative h-full">
-            {/* TODO: dynamic sizing  */}
-            <div className="relative h-99 w-full">
+          <div className="relative h-full overflow-hidden">
+            <div className="absolute inset-0 w-full h-full object-cover">
               <RecipeImage
                 imageKey={recipe.imageKey ?? undefined}
                 externalUrl={recipe.imageExternalUrl ?? undefined}
@@ -70,63 +98,18 @@ export default async function ViewRecipePage({
 
           {/* Title + meta */}
           <div className="relative p-5 md:p-8 flex flex-col justify-center">
-
-            {/* Top-right action buttons */}
-            <div className="absolute right-4 top-4 md:right-6 md:top-6 z-10 flex gap-3">
-              {/* Cook Mode button */}
-              {recipe.type !== "EXTERNAL_LINK" && (
-                <Link
-                  href={`/cook/${slug}`}
-                  aria-label="Open Cook Mode"
-                  data-testid="cook-mode-button"
-                  className="group inline-flex items-center gap-2 rounded-full
-        bg-orange-600 px-4 py-2 text-sm font-semibold text-white
-        shadow-sm ring-1 ring-black/5 transition
-        hover:bg-orange-700 active:bg-orange-800
-        focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-600/50
-        active:translate-y-px"
-                >
-                  <ChefHat
-                    className="h-4 w-4 transition-transform group-hover:rotate-6"
-                    aria-hidden="true"
-                  />
-                  <span>Cook Mode</span>
-                </Link>
-              )}
-
-              {/* Edit Recipe button */}
-              <Link
-                href={`/edit/${slug}`}
-                aria-label="Edit recipe"
-                className="group inline-flex items-center gap-2 rounded-full
-      bg-orange-600 px-4 py-2 text-sm font-semibold text-white
-      shadow-sm ring-1 ring-black/5 transition
-      hover:bg-orange-700 active:bg-orange-800
-      focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-600/50
-      active:translate-y-px"
-              >
-                <Pencil
-                  className="h-4 w-4 transition-transform group-hover:-rotate-6"
-                  aria-hidden="true"
-                />
-                <span>Edit</span>
-              </Link>
-            </div>
-
-
-
-            <h1 className="text-3xl font-extrabold leading-tight md:text-5xl">
+            <h1 className="mt-8 text-3xl font-extrabold leading-tight md:text-5xl">
               {recipe.title || "Untitled recipe"}
             </h1>
 
             {tags.length ? (
               <div className="mt-3 flex flex-wrap gap-2">
-                {tags.map((t) => (
+                {tags.map((tag) => (
                   <span
-                    key={t}
-                    className="inline-flex items-center gap-2 rounded-full border border-orange-200 bg-orange-50 px-3 py-1 text-xs font-semibold text-orange-800 shadow"
+                    key={tag}
+                    className="inline-flex items-center gap-1 rounded-full bg-orange-100 px-2 py-1 text-sm font-medium text-orange-700 text-nowrap"
                   >
-                    {emojiFor(t)} <span>{t}</span>
+                    <span>{tag}</span>
                   </span>
                 ))}
               </div>
@@ -154,53 +137,37 @@ export default async function ViewRecipePage({
               <StatChip label="Serves" value={String(recipe.servings ?? 1)} />
             </div>
 
-            {/* View original (only if we have a sourceUrl) */}
-            {recipe.sourceUrl && (
-              <div className="mt-5 self-end">
-                <a
-                  href={recipe.sourceUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  aria-label={`View original on ${domain ?? "source site"}`}
-                  className="
-        inline-flex items-center gap-2 rounded-full
-        border border-orange-200 bg-orange-50/80
-        px-3 py-1.5 text-sm font-semibold text-orange-800
-        shadow-sm ring-1 ring-black/5
-      "
-                >
-                  {/* icon */}
-                  <svg
-                    className="h-4 w-4 text-orange-600"
-                    viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true"
-                  >
-                    <path d="M15 3h6v6" />
-                    <path d="M10 14 21 3" />
-                    <path d="M18 13v6a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
-                  </svg>
+            {/* Button bar  */}
+            <div className="flex gap-2 mt-4">
+              {recipe.type != "EXTERNAL_LINK" &&
+                <Link href={`/cook/${slug}`} className="rounded-full items-center flex gap-2 bg-linear-to-r from-orange-500 to-orange-600 border border-slate-200 text-white text-sm font-semibold px-4 py-2 shadow cursor-pointer hover:brightness-90 active:brightness-75">
+                  <ChefHat size={18} className="-rotate-12" />
+                  <span>Start Cooking</span>
+                </Link>
+              }
 
-                  <span className="tracking-tight">View original</span>
-
-                  {domain && (
-                    <span
-                      className="
-            ml-1 rounded-full border border-orange-200
-            bg-white/80 px-2 py-0.5 text-xs font-medium text-orange-700
-          "
-                    >
-                      {domain}
-                    </span>
-                  )}
-                </a>
+              <div className="rounded-full items-center flex gap-2 bg-linear-to-r from-slate-50 to-slate-100 border border-slate-200 text-slate-800 text-sm font-semibold px-4 py-2 shadow cursor-pointer hover:brightness-90 active:brightness-75">
+                <Heart size={18} />
+                <span>Favourite</span>
               </div>
-            )}
+
+              {recipe.type != "EXTERNAL_LINK" &&
+                <Link href={`/edit/${slug}`} className="rounded-full items-center flex gap-2 bg-linear-to-r from-slate-50 to-slate-100 border border-slate-200 text-slate-800 text-sm font-semibold px-4 py-2 shadow cursor-pointer hover:brightness-90 active:brightness-75">
+                  <Pencil size={18} />
+                  <span>Edit</span>
+                </Link>
+              }
+
+              <DeleteButton slug={slug} action={deleteRecipe} />
+
+            </div>
           </div>
         </div>
       </section>
 
-      {/* CONTENT: two-column */}
-      <section className="grid items-start gap-6 md:grid-cols-[0.9fr_1.1fr]">
-        {/* LEFT COLUMN */}
+      {/* Steps and Ingredients */}
+      <section className="mt-8 grid items-start gap-6 md:grid-cols-[0.9fr_1.1fr]">
+        {/* Steps (left panel) */}
         <div className="grid gap-6">
           <Card title="Ingredients">
             {ingredients.length ? (
@@ -219,13 +186,13 @@ export default async function ViewRecipePage({
             )}
           </Card>
 
-          <Card title="Notes">
+          {/* <Card title="Notes">
             <p className="text-sm text-slate-600">No notes yet.</p>
           </Card>
 
           <Card title="Serve with">
             <p className="text-sm text-slate-600">Add sides or pairings.</p>
-          </Card>
+          </Card> */}
         </div>
 
         {/* RIGHT COLUMN */}
@@ -248,7 +215,7 @@ export default async function ViewRecipePage({
           </Card>
         </div>
       </section>
-    </div>
+    </>
   );
 }
 
@@ -284,13 +251,4 @@ function StatChip({ label, value }: { label: string; value: string }) {
       <span className="text-slate-900 col-start-3">{value}</span>
     </div>
   );
-}
-
-function emojiFor(tag: string) {
-  const t = tag?.toLowerCase?.() ?? "";
-  if (t.includes("pasta")) return "🍝";
-  if (t.includes("italian")) return "🇮🇹";
-  if (t.includes("quick")) return "⚡";
-  if (t.includes("comfort")) return "🥣";
-  return "🏷️";
 }
