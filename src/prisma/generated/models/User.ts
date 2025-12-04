@@ -229,7 +229,6 @@ export type UserWhereInput = {
   accounts?: Prisma.AccountListRelationFilter
   sessions?: Prisma.SessionListRelationFilter
   uploads?: Prisma.UploadListRelationFilter
-  userContacts?: Prisma.UserContactListRelationFilter
 }
 
 export type UserOrderByWithRelationInput = {
@@ -244,7 +243,6 @@ export type UserOrderByWithRelationInput = {
   accounts?: Prisma.AccountOrderByRelationAggregateInput
   sessions?: Prisma.SessionOrderByRelationAggregateInput
   uploads?: Prisma.UploadOrderByRelationAggregateInput
-  userContacts?: Prisma.UserContactOrderByRelationAggregateInput
 }
 
 export type UserWhereUniqueInput = Prisma.AtLeast<{
@@ -262,7 +260,6 @@ export type UserWhereUniqueInput = Prisma.AtLeast<{
   accounts?: Prisma.AccountListRelationFilter
   sessions?: Prisma.SessionListRelationFilter
   uploads?: Prisma.UploadListRelationFilter
-  userContacts?: Prisma.UserContactListRelationFilter
 }, "id" | "email">
 
 export type UserOrderByWithAggregationInput = {
@@ -303,7 +300,6 @@ export type UserCreateInput = {
   accounts?: Prisma.AccountCreateNestedManyWithoutUserInput
   sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
   uploads?: Prisma.UploadCreateNestedManyWithoutUserInput
-  userContacts?: Prisma.UserContactCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateInput = {
@@ -318,7 +314,6 @@ export type UserUncheckedCreateInput = {
   accounts?: Prisma.AccountUncheckedCreateNestedManyWithoutUserInput
   sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
   uploads?: Prisma.UploadUncheckedCreateNestedManyWithoutUserInput
-  userContacts?: Prisma.UserContactUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserUpdateInput = {
@@ -333,7 +328,6 @@ export type UserUpdateInput = {
   accounts?: Prisma.AccountUpdateManyWithoutUserNestedInput
   sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
   uploads?: Prisma.UploadUpdateManyWithoutUserNestedInput
-  userContacts?: Prisma.UserContactUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateInput = {
@@ -348,7 +342,6 @@ export type UserUncheckedUpdateInput = {
   accounts?: Prisma.AccountUncheckedUpdateManyWithoutUserNestedInput
   sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
   uploads?: Prisma.UploadUncheckedUpdateManyWithoutUserNestedInput
-  userContacts?: Prisma.UserContactUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateManyInput = {
@@ -418,11 +411,6 @@ export type UserScalarRelationFilter = {
   isNot?: Prisma.UserWhereInput
 }
 
-export type UserNullableScalarRelationFilter = {
-  is?: Prisma.UserWhereInput | null
-  isNot?: Prisma.UserWhereInput | null
-}
-
 export type StringFieldUpdateOperationsInput = {
   set?: string
 }
@@ -485,22 +473,6 @@ export type UserUpdateOneRequiredWithoutImportJobsNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutImportJobsInput, Prisma.UserUpdateWithoutImportJobsInput>, Prisma.UserUncheckedUpdateWithoutImportJobsInput>
 }
 
-export type UserCreateNestedOneWithoutUserContactsInput = {
-  create?: Prisma.XOR<Prisma.UserCreateWithoutUserContactsInput, Prisma.UserUncheckedCreateWithoutUserContactsInput>
-  connectOrCreate?: Prisma.UserCreateOrConnectWithoutUserContactsInput
-  connect?: Prisma.UserWhereUniqueInput
-}
-
-export type UserUpdateOneWithoutUserContactsNestedInput = {
-  create?: Prisma.XOR<Prisma.UserCreateWithoutUserContactsInput, Prisma.UserUncheckedCreateWithoutUserContactsInput>
-  connectOrCreate?: Prisma.UserCreateOrConnectWithoutUserContactsInput
-  upsert?: Prisma.UserUpsertWithoutUserContactsInput
-  disconnect?: Prisma.UserWhereInput | boolean
-  delete?: Prisma.UserWhereInput | boolean
-  connect?: Prisma.UserWhereUniqueInput
-  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutUserContactsInput, Prisma.UserUpdateWithoutUserContactsInput>, Prisma.UserUncheckedUpdateWithoutUserContactsInput>
-}
-
 export type UserCreateNestedOneWithoutAccountsInput = {
   create?: Prisma.XOR<Prisma.UserCreateWithoutAccountsInput, Prisma.UserUncheckedCreateWithoutAccountsInput>
   connectOrCreate?: Prisma.UserCreateOrConnectWithoutAccountsInput
@@ -540,7 +512,6 @@ export type UserCreateWithoutRecipesInput = {
   accounts?: Prisma.AccountCreateNestedManyWithoutUserInput
   sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
   uploads?: Prisma.UploadCreateNestedManyWithoutUserInput
-  userContacts?: Prisma.UserContactCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutRecipesInput = {
@@ -554,7 +525,6 @@ export type UserUncheckedCreateWithoutRecipesInput = {
   accounts?: Prisma.AccountUncheckedCreateNestedManyWithoutUserInput
   sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
   uploads?: Prisma.UploadUncheckedCreateNestedManyWithoutUserInput
-  userContacts?: Prisma.UserContactUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutRecipesInput = {
@@ -584,7 +554,6 @@ export type UserUpdateWithoutRecipesInput = {
   accounts?: Prisma.AccountUpdateManyWithoutUserNestedInput
   sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
   uploads?: Prisma.UploadUpdateManyWithoutUserNestedInput
-  userContacts?: Prisma.UserContactUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutRecipesInput = {
@@ -598,7 +567,6 @@ export type UserUncheckedUpdateWithoutRecipesInput = {
   accounts?: Prisma.AccountUncheckedUpdateManyWithoutUserNestedInput
   sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
   uploads?: Prisma.UploadUncheckedUpdateManyWithoutUserNestedInput
-  userContacts?: Prisma.UserContactUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutUploadsInput = {
@@ -612,7 +580,6 @@ export type UserCreateWithoutUploadsInput = {
   importJobs?: Prisma.ImportJobCreateNestedManyWithoutUserInput
   accounts?: Prisma.AccountCreateNestedManyWithoutUserInput
   sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
-  userContacts?: Prisma.UserContactCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutUploadsInput = {
@@ -626,7 +593,6 @@ export type UserUncheckedCreateWithoutUploadsInput = {
   importJobs?: Prisma.ImportJobUncheckedCreateNestedManyWithoutUserInput
   accounts?: Prisma.AccountUncheckedCreateNestedManyWithoutUserInput
   sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
-  userContacts?: Prisma.UserContactUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutUploadsInput = {
@@ -656,7 +622,6 @@ export type UserUpdateWithoutUploadsInput = {
   importJobs?: Prisma.ImportJobUpdateManyWithoutUserNestedInput
   accounts?: Prisma.AccountUpdateManyWithoutUserNestedInput
   sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
-  userContacts?: Prisma.UserContactUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutUploadsInput = {
@@ -670,7 +635,6 @@ export type UserUncheckedUpdateWithoutUploadsInput = {
   importJobs?: Prisma.ImportJobUncheckedUpdateManyWithoutUserNestedInput
   accounts?: Prisma.AccountUncheckedUpdateManyWithoutUserNestedInput
   sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
-  userContacts?: Prisma.UserContactUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutImportJobsInput = {
@@ -684,7 +648,6 @@ export type UserCreateWithoutImportJobsInput = {
   accounts?: Prisma.AccountCreateNestedManyWithoutUserInput
   sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
   uploads?: Prisma.UploadCreateNestedManyWithoutUserInput
-  userContacts?: Prisma.UserContactCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutImportJobsInput = {
@@ -698,7 +661,6 @@ export type UserUncheckedCreateWithoutImportJobsInput = {
   accounts?: Prisma.AccountUncheckedCreateNestedManyWithoutUserInput
   sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
   uploads?: Prisma.UploadUncheckedCreateNestedManyWithoutUserInput
-  userContacts?: Prisma.UserContactUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutImportJobsInput = {
@@ -728,7 +690,6 @@ export type UserUpdateWithoutImportJobsInput = {
   accounts?: Prisma.AccountUpdateManyWithoutUserNestedInput
   sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
   uploads?: Prisma.UploadUpdateManyWithoutUserNestedInput
-  userContacts?: Prisma.UserContactUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutImportJobsInput = {
@@ -739,79 +700,6 @@ export type UserUncheckedUpdateWithoutImportJobsInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   sessionVersion?: Prisma.IntFieldUpdateOperationsInput | number
   recipes?: Prisma.RecipeUncheckedUpdateManyWithoutOwnerNestedInput
-  accounts?: Prisma.AccountUncheckedUpdateManyWithoutUserNestedInput
-  sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
-  uploads?: Prisma.UploadUncheckedUpdateManyWithoutUserNestedInput
-  userContacts?: Prisma.UserContactUncheckedUpdateManyWithoutUserNestedInput
-}
-
-export type UserCreateWithoutUserContactsInput = {
-  id?: string
-  email: string
-  passwordHash?: string | null
-  createdAt?: Date | string
-  updatedAt?: Date | string
-  sessionVersion?: number
-  recipes?: Prisma.RecipeCreateNestedManyWithoutOwnerInput
-  importJobs?: Prisma.ImportJobCreateNestedManyWithoutUserInput
-  accounts?: Prisma.AccountCreateNestedManyWithoutUserInput
-  sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
-  uploads?: Prisma.UploadCreateNestedManyWithoutUserInput
-}
-
-export type UserUncheckedCreateWithoutUserContactsInput = {
-  id?: string
-  email: string
-  passwordHash?: string | null
-  createdAt?: Date | string
-  updatedAt?: Date | string
-  sessionVersion?: number
-  recipes?: Prisma.RecipeUncheckedCreateNestedManyWithoutOwnerInput
-  importJobs?: Prisma.ImportJobUncheckedCreateNestedManyWithoutUserInput
-  accounts?: Prisma.AccountUncheckedCreateNestedManyWithoutUserInput
-  sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
-  uploads?: Prisma.UploadUncheckedCreateNestedManyWithoutUserInput
-}
-
-export type UserCreateOrConnectWithoutUserContactsInput = {
-  where: Prisma.UserWhereUniqueInput
-  create: Prisma.XOR<Prisma.UserCreateWithoutUserContactsInput, Prisma.UserUncheckedCreateWithoutUserContactsInput>
-}
-
-export type UserUpsertWithoutUserContactsInput = {
-  update: Prisma.XOR<Prisma.UserUpdateWithoutUserContactsInput, Prisma.UserUncheckedUpdateWithoutUserContactsInput>
-  create: Prisma.XOR<Prisma.UserCreateWithoutUserContactsInput, Prisma.UserUncheckedCreateWithoutUserContactsInput>
-  where?: Prisma.UserWhereInput
-}
-
-export type UserUpdateToOneWithWhereWithoutUserContactsInput = {
-  where?: Prisma.UserWhereInput
-  data: Prisma.XOR<Prisma.UserUpdateWithoutUserContactsInput, Prisma.UserUncheckedUpdateWithoutUserContactsInput>
-}
-
-export type UserUpdateWithoutUserContactsInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  email?: Prisma.StringFieldUpdateOperationsInput | string
-  passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  sessionVersion?: Prisma.IntFieldUpdateOperationsInput | number
-  recipes?: Prisma.RecipeUpdateManyWithoutOwnerNestedInput
-  importJobs?: Prisma.ImportJobUpdateManyWithoutUserNestedInput
-  accounts?: Prisma.AccountUpdateManyWithoutUserNestedInput
-  sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
-  uploads?: Prisma.UploadUpdateManyWithoutUserNestedInput
-}
-
-export type UserUncheckedUpdateWithoutUserContactsInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  email?: Prisma.StringFieldUpdateOperationsInput | string
-  passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  sessionVersion?: Prisma.IntFieldUpdateOperationsInput | number
-  recipes?: Prisma.RecipeUncheckedUpdateManyWithoutOwnerNestedInput
-  importJobs?: Prisma.ImportJobUncheckedUpdateManyWithoutUserNestedInput
   accounts?: Prisma.AccountUncheckedUpdateManyWithoutUserNestedInput
   sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
   uploads?: Prisma.UploadUncheckedUpdateManyWithoutUserNestedInput
@@ -828,7 +716,6 @@ export type UserCreateWithoutAccountsInput = {
   importJobs?: Prisma.ImportJobCreateNestedManyWithoutUserInput
   sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
   uploads?: Prisma.UploadCreateNestedManyWithoutUserInput
-  userContacts?: Prisma.UserContactCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutAccountsInput = {
@@ -842,7 +729,6 @@ export type UserUncheckedCreateWithoutAccountsInput = {
   importJobs?: Prisma.ImportJobUncheckedCreateNestedManyWithoutUserInput
   sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
   uploads?: Prisma.UploadUncheckedCreateNestedManyWithoutUserInput
-  userContacts?: Prisma.UserContactUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutAccountsInput = {
@@ -872,7 +758,6 @@ export type UserUpdateWithoutAccountsInput = {
   importJobs?: Prisma.ImportJobUpdateManyWithoutUserNestedInput
   sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
   uploads?: Prisma.UploadUpdateManyWithoutUserNestedInput
-  userContacts?: Prisma.UserContactUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutAccountsInput = {
@@ -886,7 +771,6 @@ export type UserUncheckedUpdateWithoutAccountsInput = {
   importJobs?: Prisma.ImportJobUncheckedUpdateManyWithoutUserNestedInput
   sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
   uploads?: Prisma.UploadUncheckedUpdateManyWithoutUserNestedInput
-  userContacts?: Prisma.UserContactUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutSessionsInput = {
@@ -900,7 +784,6 @@ export type UserCreateWithoutSessionsInput = {
   importJobs?: Prisma.ImportJobCreateNestedManyWithoutUserInput
   accounts?: Prisma.AccountCreateNestedManyWithoutUserInput
   uploads?: Prisma.UploadCreateNestedManyWithoutUserInput
-  userContacts?: Prisma.UserContactCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutSessionsInput = {
@@ -914,7 +797,6 @@ export type UserUncheckedCreateWithoutSessionsInput = {
   importJobs?: Prisma.ImportJobUncheckedCreateNestedManyWithoutUserInput
   accounts?: Prisma.AccountUncheckedCreateNestedManyWithoutUserInput
   uploads?: Prisma.UploadUncheckedCreateNestedManyWithoutUserInput
-  userContacts?: Prisma.UserContactUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutSessionsInput = {
@@ -944,7 +826,6 @@ export type UserUpdateWithoutSessionsInput = {
   importJobs?: Prisma.ImportJobUpdateManyWithoutUserNestedInput
   accounts?: Prisma.AccountUpdateManyWithoutUserNestedInput
   uploads?: Prisma.UploadUpdateManyWithoutUserNestedInput
-  userContacts?: Prisma.UserContactUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutSessionsInput = {
@@ -958,7 +839,6 @@ export type UserUncheckedUpdateWithoutSessionsInput = {
   importJobs?: Prisma.ImportJobUncheckedUpdateManyWithoutUserNestedInput
   accounts?: Prisma.AccountUncheckedUpdateManyWithoutUserNestedInput
   uploads?: Prisma.UploadUncheckedUpdateManyWithoutUserNestedInput
-  userContacts?: Prisma.UserContactUncheckedUpdateManyWithoutUserNestedInput
 }
 
 
@@ -972,7 +852,6 @@ export type UserCountOutputType = {
   accounts: number
   sessions: number
   uploads: number
-  userContacts: number
 }
 
 export type UserCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -981,7 +860,6 @@ export type UserCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.I
   accounts?: boolean | UserCountOutputTypeCountAccountsArgs
   sessions?: boolean | UserCountOutputTypeCountSessionsArgs
   uploads?: boolean | UserCountOutputTypeCountUploadsArgs
-  userContacts?: boolean | UserCountOutputTypeCountUserContactsArgs
 }
 
 /**
@@ -1029,13 +907,6 @@ export type UserCountOutputTypeCountUploadsArgs<ExtArgs extends runtime.Types.Ex
   where?: Prisma.UploadWhereInput
 }
 
-/**
- * UserCountOutputType without action
- */
-export type UserCountOutputTypeCountUserContactsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  where?: Prisma.UserContactWhereInput
-}
-
 
 export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -1049,7 +920,6 @@ export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   accounts?: boolean | Prisma.User$accountsArgs<ExtArgs>
   sessions?: boolean | Prisma.User$sessionsArgs<ExtArgs>
   uploads?: boolean | Prisma.User$uploadsArgs<ExtArgs>
-  userContacts?: boolean | Prisma.User$userContactsArgs<ExtArgs>
   _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["user"]>
 
@@ -1087,7 +957,6 @@ export type UserInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   accounts?: boolean | Prisma.User$accountsArgs<ExtArgs>
   sessions?: boolean | Prisma.User$sessionsArgs<ExtArgs>
   uploads?: boolean | Prisma.User$uploadsArgs<ExtArgs>
-  userContacts?: boolean | Prisma.User$userContactsArgs<ExtArgs>
   _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type UserIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {}
@@ -1101,7 +970,6 @@ export type $UserPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     accounts: Prisma.$AccountPayload<ExtArgs>[]
     sessions: Prisma.$SessionPayload<ExtArgs>[]
     uploads: Prisma.$UploadPayload<ExtArgs>[]
-    userContacts: Prisma.$UserContactPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -1509,7 +1377,6 @@ export interface Prisma__UserClient<T, Null = never, ExtArgs extends runtime.Typ
   accounts<T extends Prisma.User$accountsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$accountsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$AccountPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   sessions<T extends Prisma.User$sessionsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$sessionsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$SessionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   uploads<T extends Prisma.User$uploadsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$uploadsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$UploadPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-  userContacts<T extends Prisma.User$userContactsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$userContactsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$UserContactPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -2050,30 +1917,6 @@ export type User$uploadsArgs<ExtArgs extends runtime.Types.Extensions.InternalAr
   take?: number
   skip?: number
   distinct?: Prisma.UploadScalarFieldEnum | Prisma.UploadScalarFieldEnum[]
-}
-
-/**
- * User.userContacts
- */
-export type User$userContactsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  /**
-   * Select specific fields to fetch from the UserContact
-   */
-  select?: Prisma.UserContactSelect<ExtArgs> | null
-  /**
-   * Omit specific fields from the UserContact
-   */
-  omit?: Prisma.UserContactOmit<ExtArgs> | null
-  /**
-   * Choose, which related nodes to fetch as well
-   */
-  include?: Prisma.UserContactInclude<ExtArgs> | null
-  where?: Prisma.UserContactWhereInput
-  orderBy?: Prisma.UserContactOrderByWithRelationInput | Prisma.UserContactOrderByWithRelationInput[]
-  cursor?: Prisma.UserContactWhereUniqueInput
-  take?: number
-  skip?: number
-  distinct?: Prisma.UserContactScalarFieldEnum | Prisma.UserContactScalarFieldEnum[]
 }
 
 /**

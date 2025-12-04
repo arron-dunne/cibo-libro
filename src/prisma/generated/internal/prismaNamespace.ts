@@ -80,12 +80,12 @@ export type PrismaVersion = {
 }
 
 /**
- * Prisma Client JS version: 7.3.0
- * Query Engine version: 9d6ad21cbbceab97458517b147a6a09ff43aa735
+ * Prisma Client JS version: 7.1.0
+ * Query Engine version: ab635e6b9d606fa5c8fb8b1a7f909c3c3c1c98ba
  */
 export const prismaVersion: PrismaVersion = {
-  client: "7.3.0",
-  engine: "9d6ad21cbbceab97458517b147a6a09ff43aa735"
+  client: "7.1.0",
+  engine: "ab635e6b9d606fa5c8fb8b1a7f909c3c3c1c98ba"
 }
 
 /**
@@ -388,7 +388,6 @@ export const ModelName = {
   Recipe: 'Recipe',
   Upload: 'Upload',
   ImportJob: 'ImportJob',
-  UserContact: 'UserContact',
   Account: 'Account',
   Session: 'Session',
   VerificationToken: 'VerificationToken'
@@ -407,7 +406,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "user" | "recipe" | "upload" | "importJob" | "userContact" | "account" | "session" | "verificationToken"
+    modelProps: "user" | "recipe" | "upload" | "importJob" | "account" | "session" | "verificationToken"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -704,80 +703,6 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         count: {
           args: Prisma.ImportJobCountArgs<ExtArgs>
           result: runtime.Types.Utils.Optional<Prisma.ImportJobCountAggregateOutputType> | number
-        }
-      }
-    }
-    UserContact: {
-      payload: Prisma.$UserContactPayload<ExtArgs>
-      fields: Prisma.UserContactFieldRefs
-      operations: {
-        findUnique: {
-          args: Prisma.UserContactFindUniqueArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserContactPayload> | null
-        }
-        findUniqueOrThrow: {
-          args: Prisma.UserContactFindUniqueOrThrowArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserContactPayload>
-        }
-        findFirst: {
-          args: Prisma.UserContactFindFirstArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserContactPayload> | null
-        }
-        findFirstOrThrow: {
-          args: Prisma.UserContactFindFirstOrThrowArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserContactPayload>
-        }
-        findMany: {
-          args: Prisma.UserContactFindManyArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserContactPayload>[]
-        }
-        create: {
-          args: Prisma.UserContactCreateArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserContactPayload>
-        }
-        createMany: {
-          args: Prisma.UserContactCreateManyArgs<ExtArgs>
-          result: BatchPayload
-        }
-        createManyAndReturn: {
-          args: Prisma.UserContactCreateManyAndReturnArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserContactPayload>[]
-        }
-        delete: {
-          args: Prisma.UserContactDeleteArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserContactPayload>
-        }
-        update: {
-          args: Prisma.UserContactUpdateArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserContactPayload>
-        }
-        deleteMany: {
-          args: Prisma.UserContactDeleteManyArgs<ExtArgs>
-          result: BatchPayload
-        }
-        updateMany: {
-          args: Prisma.UserContactUpdateManyArgs<ExtArgs>
-          result: BatchPayload
-        }
-        updateManyAndReturn: {
-          args: Prisma.UserContactUpdateManyAndReturnArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserContactPayload>[]
-        }
-        upsert: {
-          args: Prisma.UserContactUpsertArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserContactPayload>
-        }
-        aggregate: {
-          args: Prisma.UserContactAggregateArgs<ExtArgs>
-          result: runtime.Types.Utils.Optional<Prisma.AggregateUserContact>
-        }
-        groupBy: {
-          args: Prisma.UserContactGroupByArgs<ExtArgs>
-          result: runtime.Types.Utils.Optional<Prisma.UserContactGroupByOutputType>[]
-        }
-        count: {
-          args: Prisma.UserContactCountArgs<ExtArgs>
-          result: runtime.Types.Utils.Optional<Prisma.UserContactCountAggregateOutputType> | number
         }
       }
     }
@@ -1107,18 +1032,6 @@ export const ImportJobScalarFieldEnum = {
 export type ImportJobScalarFieldEnum = (typeof ImportJobScalarFieldEnum)[keyof typeof ImportJobScalarFieldEnum]
 
 
-export const UserContactScalarFieldEnum = {
-  id: 'id',
-  userId: 'userId',
-  contactType: 'contactType',
-  metaData: 'metaData',
-  data: 'data',
-  createdAt: 'createdAt'
-} as const
-
-export type UserContactScalarFieldEnum = (typeof UserContactScalarFieldEnum)[keyof typeof UserContactScalarFieldEnum]
-
-
 export const AccountScalarFieldEnum = {
   id: 'id',
   userId: 'userId',
@@ -1309,20 +1222,6 @@ export type EnumQueryModeFieldRefInput<$PrismaModel> = FieldRefInputType<$Prisma
 
 
 /**
- * Reference to a field of type 'UserContactType'
- */
-export type EnumUserContactTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'UserContactType'>
-    
-
-
-/**
- * Reference to a field of type 'UserContactType[]'
- */
-export type ListEnumUserContactTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'UserContactType[]'>
-    
-
-
-/**
  * Reference to a field of type 'Float'
  */
 export type FloatFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Float'>
@@ -1434,7 +1333,6 @@ export type GlobalOmitConfig = {
   recipe?: Prisma.RecipeOmit
   upload?: Prisma.UploadOmit
   importJob?: Prisma.ImportJobOmit
-  userContact?: Prisma.UserContactOmit
   account?: Prisma.AccountOmit
   session?: Prisma.SessionOmit
   verificationToken?: Prisma.VerificationTokenOmit
