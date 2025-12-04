@@ -1,10 +1,10 @@
 generator client {
   provider = "prisma-client"
-  output   = "../src/prisma/generated/"  
+  output   = "../src/prisma/generated/"
 }
 
 datasource db {
-  provider  = "postgresql"
+  provider = "postgresql"
 }
 
 enum RecipeType {
@@ -113,7 +113,6 @@ model UserContact {
   id          String          @id @default(cuid())
   userId      String?
   contactType UserContactType @default(GENERAL)
-  metaData    Json?
   data        Json?
   createdAt   DateTime        @default(now())
 
