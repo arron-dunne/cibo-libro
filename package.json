@@ -70,6 +70,7 @@
     "jest-axe": "^10.0.0",
     "msw": "^2.10.5",
     "next-router-mock": "^1.0.2",
+    "prisma": "^7.1.0",
     "tailwindcss": "^4",
     "testcontainers": "^11.5.1",
     "typescript": "^5.9.2",
