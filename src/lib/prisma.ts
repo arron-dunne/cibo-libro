@@ -1,19 +1,12 @@
-import { PrismaClient } from "@prisma/client";
+import { PrismaClient } from '@/prisma/generated/client';
+import { PrismaPg } from '@prisma/adapter-pg';
 
-declare global {
-  // Prevent multiple instances of Prisma Client in development
-  // (Next.js hot reload can cause it to re-import)
-   
-  var prisma: PrismaClient | undefined;
-}
+// Prevent next.js from creating multiple prisma clients (from hotloading) in dev
+const globalPrisma = globalThis as unknown as { prisma: PrismaClient };
 
-export const prisma =
-  global.prisma ||
-  new PrismaClient({
-    log:
-      process.env.NODE_ENV === "development"
-        ? ["query", "error", "warn"]
-        : ["error"],
-  });
+const connectionString = `${process.env.DATABASE_URL}`;
 
-if (process.env.NODE_ENV !== "production") global.prisma = prisma;
+const adapter = new PrismaPg({ connectionString });
+export const prisma = globalPrisma.prisma || new PrismaClient({ adapter });
+
+if (process.env.NODE_ENV !== 'production') globalPrisma.prisma = prisma;
