@@ -279,6 +279,23 @@ export type JsonNullableWithAggregatesFilterBase<$PrismaModel = never> = {
   _max?: Prisma.NestedJsonNullableFilter<$PrismaModel>
 }
 
+export type EnumUserContactTypeFilter<$PrismaModel = never> = {
+  equals?: $Enums.UserContactType | Prisma.EnumUserContactTypeFieldRefInput<$PrismaModel>
+  in?: $Enums.UserContactType[] | Prisma.ListEnumUserContactTypeFieldRefInput<$PrismaModel>
+  notIn?: $Enums.UserContactType[] | Prisma.ListEnumUserContactTypeFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumUserContactTypeFilter<$PrismaModel> | $Enums.UserContactType
+}
+
+export type EnumUserContactTypeWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.UserContactType | Prisma.EnumUserContactTypeFieldRefInput<$PrismaModel>
+  in?: $Enums.UserContactType[] | Prisma.ListEnumUserContactTypeFieldRefInput<$PrismaModel>
+  notIn?: $Enums.UserContactType[] | Prisma.ListEnumUserContactTypeFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumUserContactTypeWithAggregatesFilter<$PrismaModel> | $Enums.UserContactType
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumUserContactTypeFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumUserContactTypeFilter<$PrismaModel>
+}
+
 export type NestedStringFilter<$PrismaModel = never> = {
   equals?: string | Prisma.StringFieldRefInput<$PrismaModel>
   in?: string[] | Prisma.ListStringFieldRefInput<$PrismaModel>
@@ -528,6 +545,23 @@ export type NestedJsonNullableFilterBase<$PrismaModel = never> = {
   gt?: runtime.InputJsonValue | Prisma.JsonFieldRefInput<$PrismaModel>
   gte?: runtime.InputJsonValue | Prisma.JsonFieldRefInput<$PrismaModel>
   not?: runtime.InputJsonValue | Prisma.JsonFieldRefInput<$PrismaModel> | Prisma.JsonNullValueFilter
+}
+
+export type NestedEnumUserContactTypeFilter<$PrismaModel = never> = {
+  equals?: $Enums.UserContactType | Prisma.EnumUserContactTypeFieldRefInput<$PrismaModel>
+  in?: $Enums.UserContactType[] | Prisma.ListEnumUserContactTypeFieldRefInput<$PrismaModel>
+  notIn?: $Enums.UserContactType[] | Prisma.ListEnumUserContactTypeFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumUserContactTypeFilter<$PrismaModel> | $Enums.UserContactType
+}
+
+export type NestedEnumUserContactTypeWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.UserContactType | Prisma.EnumUserContactTypeFieldRefInput<$PrismaModel>
+  in?: $Enums.UserContactType[] | Prisma.ListEnumUserContactTypeFieldRefInput<$PrismaModel>
+  notIn?: $Enums.UserContactType[] | Prisma.ListEnumUserContactTypeFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumUserContactTypeWithAggregatesFilter<$PrismaModel> | $Enums.UserContactType
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumUserContactTypeFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumUserContactTypeFilter<$PrismaModel>
 }
 
 

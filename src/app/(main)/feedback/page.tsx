@@ -2,6 +2,7 @@
 
 import { Star, MessageSquare, Heart } from "lucide-react";
 import { useState } from "react";
+import { submitFeedback } from "./actions";
 
 export default function FeedbackPage() {
   const [rating, setRating] = useState<number | null>(null);
@@ -20,7 +21,7 @@ export default function FeedbackPage() {
       </section>
 
       {/* Feedback Form */}
-      <form className="mt-10 space-y-10">
+      <form action={submitFeedback} className="mt-10 space-y-10">
         
         {/* Rating Card */}
         <section className="rounded-3xl border border-white/70 bg-white/95 p-8 shadow-lg backdrop-blur">
