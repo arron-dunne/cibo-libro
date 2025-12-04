@@ -60,6 +60,11 @@ export type Upload = Prisma.UploadModel
  */
 export type ImportJob = Prisma.ImportJobModel
 /**
+ * Model UserContact
+ * 
+ */
+export type UserContact = Prisma.UserContactModel
+/**
  * Model Account
  * *
  *  * * Auth.js adapter tables **
