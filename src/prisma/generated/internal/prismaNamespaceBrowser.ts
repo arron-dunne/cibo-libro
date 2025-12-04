@@ -55,6 +55,7 @@ export const ModelName = {
   Recipe: 'Recipe',
   Upload: 'Upload',
   ImportJob: 'ImportJob',
+  UserContact: 'UserContact',
   Account: 'Account',
   Session: 'Session',
   VerificationToken: 'VerificationToken'
@@ -139,6 +140,17 @@ export const ImportJobScalarFieldEnum = {
 } as const
 
 export type ImportJobScalarFieldEnum = (typeof ImportJobScalarFieldEnum)[keyof typeof ImportJobScalarFieldEnum]
+
+
+export const UserContactScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  contactType: 'contactType',
+  data: 'data',
+  createdAt: 'createdAt'
+} as const
+
+export type UserContactScalarFieldEnum = (typeof UserContactScalarFieldEnum)[keyof typeof UserContactScalarFieldEnum]
 
 
 export const AccountScalarFieldEnum = {
