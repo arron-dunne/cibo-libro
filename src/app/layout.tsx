@@ -4,6 +4,7 @@ import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import type { Metadata } from "next";
 import { Nunito } from "next/font/google";
+import { ToastProvider } from "@/app/components/toast/ToastContext";
 
 export const metadata: Metadata = {
   title: "Cibo Libro",
@@ -31,8 +32,10 @@ export default async function RootLayout({ children }: { children: React.ReactNo
               className="fixed inset-0 bg-linear-to-b from-transparent to-white/10 pointer-events-none" />
           </div>
 
-          {children}
-
+          <ToastProvider>
+            {children}
+          </ToastProvider>
+        
         </div>
 
       </body>
