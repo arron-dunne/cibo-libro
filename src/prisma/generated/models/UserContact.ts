@@ -42,6 +42,7 @@ export type UserContactCountAggregateOutputType = {
   id: number
   userId: number
   contactType: number
+  metaData: number
   data: number
   createdAt: number
   _all: number
@@ -66,6 +67,7 @@ export type UserContactCountAggregateInputType = {
   id?: true
   userId?: true
   contactType?: true
+  metaData?: true
   data?: true
   createdAt?: true
   _all?: true
@@ -147,6 +149,7 @@ export type UserContactGroupByOutputType = {
   id: string
   userId: string | null
   contactType: $Enums.UserContactType
+  metaData: runtime.JsonValue | null
   data: runtime.JsonValue | null
   createdAt: Date
   _count: UserContactCountAggregateOutputType | null
@@ -176,6 +179,7 @@ export type UserContactWhereInput = {
   id?: Prisma.StringFilter<"UserContact"> | string
   userId?: Prisma.StringNullableFilter<"UserContact"> | string | null
   contactType?: Prisma.EnumUserContactTypeFilter<"UserContact"> | $Enums.UserContactType
+  metaData?: Prisma.JsonNullableFilter<"UserContact">
   data?: Prisma.JsonNullableFilter<"UserContact">
   createdAt?: Prisma.DateTimeFilter<"UserContact"> | Date | string
   user?: Prisma.XOR<Prisma.UserNullableScalarRelationFilter, Prisma.UserWhereInput> | null
@@ -185,6 +189,7 @@ export type UserContactOrderByWithRelationInput = {
   id?: Prisma.SortOrder
   userId?: Prisma.SortOrderInput | Prisma.SortOrder
   contactType?: Prisma.SortOrder
+  metaData?: Prisma.SortOrderInput | Prisma.SortOrder
   data?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   user?: Prisma.UserOrderByWithRelationInput
@@ -197,6 +202,7 @@ export type UserContactWhereUniqueInput = Prisma.AtLeast<{
   NOT?: Prisma.UserContactWhereInput | Prisma.UserContactWhereInput[]
   userId?: Prisma.StringNullableFilter<"UserContact"> | string | null
   contactType?: Prisma.EnumUserContactTypeFilter<"UserContact"> | $Enums.UserContactType
+  metaData?: Prisma.JsonNullableFilter<"UserContact">
   data?: Prisma.JsonNullableFilter<"UserContact">
   createdAt?: Prisma.DateTimeFilter<"UserContact"> | Date | string
   user?: Prisma.XOR<Prisma.UserNullableScalarRelationFilter, Prisma.UserWhereInput> | null
@@ -206,6 +212,7 @@ export type UserContactOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
   userId?: Prisma.SortOrderInput | Prisma.SortOrder
   contactType?: Prisma.SortOrder
+  metaData?: Prisma.SortOrderInput | Prisma.SortOrder
   data?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   _count?: Prisma.UserContactCountOrderByAggregateInput
@@ -220,6 +227,7 @@ export type UserContactScalarWhereWithAggregatesInput = {
   id?: Prisma.StringWithAggregatesFilter<"UserContact"> | string
   userId?: Prisma.StringNullableWithAggregatesFilter<"UserContact"> | string | null
   contactType?: Prisma.EnumUserContactTypeWithAggregatesFilter<"UserContact"> | $Enums.UserContactType
+  metaData?: Prisma.JsonNullableWithAggregatesFilter<"UserContact">
   data?: Prisma.JsonNullableWithAggregatesFilter<"UserContact">
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"UserContact"> | Date | string
 }
@@ -227,6 +235,7 @@ export type UserContactScalarWhereWithAggregatesInput = {
 export type UserContactCreateInput = {
   id?: string
   contactType?: $Enums.UserContactType
+  metaData?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   data?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   user?: Prisma.UserCreateNestedOneWithoutUserContactsInput
@@ -236,6 +245,7 @@ export type UserContactUncheckedCreateInput = {
   id?: string
   userId?: string | null
   contactType?: $Enums.UserContactType
+  metaData?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   data?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
 }
@@ -243,6 +253,7 @@ export type UserContactUncheckedCreateInput = {
 export type UserContactUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   contactType?: Prisma.EnumUserContactTypeFieldUpdateOperationsInput | $Enums.UserContactType
+  metaData?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   data?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   user?: Prisma.UserUpdateOneWithoutUserContactsNestedInput
@@ -252,6 +263,7 @@ export type UserContactUncheckedUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   userId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   contactType?: Prisma.EnumUserContactTypeFieldUpdateOperationsInput | $Enums.UserContactType
+  metaData?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   data?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -260,6 +272,7 @@ export type UserContactCreateManyInput = {
   id?: string
   userId?: string | null
   contactType?: $Enums.UserContactType
+  metaData?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   data?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
 }
@@ -267,6 +280,7 @@ export type UserContactCreateManyInput = {
 export type UserContactUpdateManyMutationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   contactType?: Prisma.EnumUserContactTypeFieldUpdateOperationsInput | $Enums.UserContactType
+  metaData?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   data?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -275,6 +289,7 @@ export type UserContactUncheckedUpdateManyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   userId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   contactType?: Prisma.EnumUserContactTypeFieldUpdateOperationsInput | $Enums.UserContactType
+  metaData?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   data?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -293,6 +308,7 @@ export type UserContactCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
   userId?: Prisma.SortOrder
   contactType?: Prisma.SortOrder
+  metaData?: Prisma.SortOrder
   data?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
 }
@@ -360,6 +376,7 @@ export type EnumUserContactTypeFieldUpdateOperationsInput = {
 export type UserContactCreateWithoutUserInput = {
   id?: string
   contactType?: $Enums.UserContactType
+  metaData?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   data?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
 }
@@ -367,6 +384,7 @@ export type UserContactCreateWithoutUserInput = {
 export type UserContactUncheckedCreateWithoutUserInput = {
   id?: string
   contactType?: $Enums.UserContactType
+  metaData?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   data?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
 }
@@ -404,6 +422,7 @@ export type UserContactScalarWhereInput = {
   id?: Prisma.StringFilter<"UserContact"> | string
   userId?: Prisma.StringNullableFilter<"UserContact"> | string | null
   contactType?: Prisma.EnumUserContactTypeFilter<"UserContact"> | $Enums.UserContactType
+  metaData?: Prisma.JsonNullableFilter<"UserContact">
   data?: Prisma.JsonNullableFilter<"UserContact">
   createdAt?: Prisma.DateTimeFilter<"UserContact"> | Date | string
 }
@@ -411,6 +430,7 @@ export type UserContactScalarWhereInput = {
 export type UserContactCreateManyUserInput = {
   id?: string
   contactType?: $Enums.UserContactType
+  metaData?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   data?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
 }
@@ -418,6 +438,7 @@ export type UserContactCreateManyUserInput = {
 export type UserContactUpdateWithoutUserInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   contactType?: Prisma.EnumUserContactTypeFieldUpdateOperationsInput | $Enums.UserContactType
+  metaData?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   data?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -425,6 +446,7 @@ export type UserContactUpdateWithoutUserInput = {
 export type UserContactUncheckedUpdateWithoutUserInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   contactType?: Prisma.EnumUserContactTypeFieldUpdateOperationsInput | $Enums.UserContactType
+  metaData?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   data?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -432,6 +454,7 @@ export type UserContactUncheckedUpdateWithoutUserInput = {
 export type UserContactUncheckedUpdateManyWithoutUserInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   contactType?: Prisma.EnumUserContactTypeFieldUpdateOperationsInput | $Enums.UserContactType
+  metaData?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   data?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -442,6 +465,7 @@ export type UserContactSelect<ExtArgs extends runtime.Types.Extensions.InternalA
   id?: boolean
   userId?: boolean
   contactType?: boolean
+  metaData?: boolean
   data?: boolean
   createdAt?: boolean
   user?: boolean | Prisma.UserContact$userArgs<ExtArgs>
@@ -451,6 +475,7 @@ export type UserContactSelectCreateManyAndReturn<ExtArgs extends runtime.Types.E
   id?: boolean
   userId?: boolean
   contactType?: boolean
+  metaData?: boolean
   data?: boolean
   createdAt?: boolean
   user?: boolean | Prisma.UserContact$userArgs<ExtArgs>
@@ -460,6 +485,7 @@ export type UserContactSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.E
   id?: boolean
   userId?: boolean
   contactType?: boolean
+  metaData?: boolean
   data?: boolean
   createdAt?: boolean
   user?: boolean | Prisma.UserContact$userArgs<ExtArgs>
@@ -469,11 +495,12 @@ export type UserContactSelectScalar = {
   id?: boolean
   userId?: boolean
   contactType?: boolean
+  metaData?: boolean
   data?: boolean
   createdAt?: boolean
 }
 
-export type UserContactOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "userId" | "contactType" | "data" | "createdAt", ExtArgs["result"]["userContact"]>
+export type UserContactOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "userId" | "contactType" | "metaData" | "data" | "createdAt", ExtArgs["result"]["userContact"]>
 export type UserContactInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   user?: boolean | Prisma.UserContact$userArgs<ExtArgs>
 }
@@ -493,6 +520,7 @@ export type $UserContactPayload<ExtArgs extends runtime.Types.Extensions.Interna
     id: string
     userId: string | null
     contactType: $Enums.UserContactType
+    metaData: runtime.JsonValue | null
     data: runtime.JsonValue | null
     createdAt: Date
   }, ExtArgs["result"]["userContact"]>
@@ -922,6 +950,7 @@ export interface UserContactFieldRefs {
   readonly id: Prisma.FieldRef<"UserContact", 'String'>
   readonly userId: Prisma.FieldRef<"UserContact", 'String'>
   readonly contactType: Prisma.FieldRef<"UserContact", 'UserContactType'>
+  readonly metaData: Prisma.FieldRef<"UserContact", 'Json'>
   readonly data: Prisma.FieldRef<"UserContact", 'Json'>
   readonly createdAt: Prisma.FieldRef<"UserContact", 'DateTime'>
 }

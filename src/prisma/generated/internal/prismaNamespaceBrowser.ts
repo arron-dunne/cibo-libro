@@ -146,6 +146,7 @@ export const UserContactScalarFieldEnum = {
   id: 'id',
   userId: 'userId',
   contactType: 'contactType',
+  metaData: 'metaData',
   data: 'data',
   createdAt: 'createdAt'
 } as const
