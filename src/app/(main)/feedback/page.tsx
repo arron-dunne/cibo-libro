@@ -3,9 +3,31 @@
 import { Star, MessageSquare, Heart, Bug, MessageCircleQuestionMark, Inbox } from "lucide-react";
 import { useState } from "react";
 import { submitFeedback } from "./actions";
+import { useToast } from "@/app/components/toast/ToastContext";
 
 export default function FeedbackPage() {
   const [rating, setRating] = useState<number | null>(null);
+
+  const { addToast } = useToast();
+
+  const handleSubmit = async (fd: FormData) => {
+
+    // Simulate API call
+    try {
+      // await fetch("/api/feedback", { method: "POST" });
+      addToast({
+        message: "Thanks for the feedback!",
+        type: "success",
+        duration: 5000,
+        // onReturnHome: () => router.push("/"),
+      });
+    } catch {
+      addToast({
+        message: "Something went wrong.",
+        type: "error",
+      });
+    }
+  };
 
   return (
     <div className="max-w-3xl mx-auto">
@@ -21,7 +43,8 @@ export default function FeedbackPage() {
       </section>
 
       {/* Feedback Form */}
-      <form action={submitFeedback} className="mt-10 space-y-10">
+      {/* <form action={submitFeedback} className="mt-10 space-y-10"> */}
+      <form action={handleSubmit} className="mt-10 space-y-10">
 
         {/* Rating Card */}
         <section className="rounded-3xl border border-white/70 bg-white/95 p-8 shadow-lg backdrop-blur">
