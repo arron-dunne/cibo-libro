@@ -1,5 +1,6 @@
 "use server";
 
+import { headers } from 'next/headers'
 import { prisma } from "@/lib/prisma";
 import { auth } from "@/lib/auth/auth";
 
@@ -24,13 +25,16 @@ export async function submitFeedback(formData: FormData) {
     });
   }
 
-  console.log(responses);
+  // Get the user agent
+  const headersList = await headers();
+  const userAgent = headersList.get('user-agent');
   
   // TODO: better error handling
   const record = await prisma.userContact.create({
     data: {
       userId: userId ?? undefined,
       contactType: "FEEDBACK",
+      metaData: { userAgent },
       data: responses,
     },
   });
