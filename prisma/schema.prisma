@@ -113,6 +113,7 @@ model UserContact {
   id          String          @id @default(cuid())
   userId      String?
   contactType UserContactType @default(GENERAL)
+  metaData    Json?
   data        Json?
   createdAt   DateTime        @default(now())
 
