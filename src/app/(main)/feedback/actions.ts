@@ -29,11 +29,10 @@ export async function submitFeedback(formData: FormData) {
   const headersList = await headers();
   const userAgent = headersList.get('user-agent');
   
-  // TODO: rate limits, prevent rapid submissions
   // TODO: better error handling
-  await prisma.userContact.create({
+  const record = await prisma.userContact.create({
     data: {
-      user: { connect: { id: userId }},
+      userId: userId ?? undefined,
       contactType: "FEEDBACK",
       metaData: { userAgent },
       data: responses,
