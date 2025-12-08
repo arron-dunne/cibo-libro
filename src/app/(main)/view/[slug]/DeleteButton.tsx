@@ -72,7 +72,7 @@ export function DeleteButton({ slug, action }: DeleteButtonProps) {
               aria-modal="true"
               aria-labelledby="delete-recipe"
             >
-              <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-orange-100 to-rose-100 text-rose-500">
+              <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-linear-to-br from-orange-100 to-rose-100 text-rose-500">
                 <Trash2 size={28} />
               </div>
               <h2 className="mt-4 text-xl font-semibold text-gray-900">Are you sure you want to delete this recipe?</h2>
@@ -84,7 +84,7 @@ export function DeleteButton({ slug, action }: DeleteButtonProps) {
                 <button
                   type="button"
                   onClick={confirmDelete}
-                  className="w-full rounded-full bg-gradient-to-r from-orange-500 to-rose-500 px-5 py-3 text-base font-semibold text-white shadow-lg transition cursor-pointer hover:brightness-95 active:brightness-75 disabled:cursor-not-allowed disabled:opacity-50 sm:px-4 sm:py-2 sm:text-sm"
+                  className="w-full rounded-full bg-linear-to-r from-orange-500 to-rose-500 px-5 py-3 text-base font-semibold text-white shadow-lg transition cursor-pointer hover:brightness-95 active:brightness-75 disabled:cursor-not-allowed disabled:opacity-50 sm:px-4 sm:py-2 sm:text-sm"
                   disabled={isSubmitting}
                 >
                   {isSubmitting ? "Deleting..." : "Delete"}

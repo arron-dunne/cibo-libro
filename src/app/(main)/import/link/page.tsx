@@ -121,7 +121,7 @@ export default async function Page({
                 referrerPolicy="no-referrer"
               />
             ) : (
-              <div className="aspect-[16/9] w-full rounded-t-2xl bg-gradient-to-br from-orange-100 to-rose-100">
+              <div className="aspect-[16/9] w-full rounded-t-2xl bg-linear-to-br from-orange-100 to-rose-100">
                 <div className="flex h-full w-full items-center justify-center">
                   <div className="flex items-center gap-3 rounded-xl border border-orange-200/60 bg-white/70 px-4 py-2 text-orange-700 shadow-sm backdrop-blur">
                     <ImageIcon className="h-5 w-5" />

@@ -65,7 +65,7 @@ export function RecipeImage({
 
   // Final placeholder
   return (
-    <div className="w-full h-full flex flex-col items-center justify-center bg-gradient-to-br from-orange-100 to-rose-100">
+    <div className="w-full h-full flex flex-col items-center justify-center bg-linear-to-br from-orange-100 to-rose-100">
       <div className="text-orange-400">
         <ImageIcon size={32} />
       </div>
