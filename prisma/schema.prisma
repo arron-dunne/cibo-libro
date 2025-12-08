@@ -43,9 +43,10 @@ model User {
 
   // Relations
   recipes    Recipe[]
-  importJobs ImportJob[]
+  importJobs ImportJob[] // ← add this line
   accounts   Account[]
   sessions   Session[]
+
   uploads      Upload[]
   userContacts UserContact[]
 }
