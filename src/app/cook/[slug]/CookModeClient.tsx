@@ -171,7 +171,7 @@ export default function CookModeClient({
             <h1 className="text-2xl text-black font-semibold">{title}</h1>
 
             {/* Cook mode icon */}
-            <div className="inline-flex items-center gap-2 rounded-full bg-gradient-to-br from-orange-300 to-rose-300 text-rose-600 shadow px-3 py-1">
+            <div className="inline-flex items-center gap-2 rounded-full bg-linear-to-br from-orange-300 to-rose-300 text-rose-600 shadow px-3 py-1">
               <UtensilsCrossed size={18} aria-hidden />
               <span className="font-semibold">Cook Mode</span>
             </div>

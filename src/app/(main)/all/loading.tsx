@@ -7,10 +7,10 @@ export default function LoadingRecipesGrid() {
         <div className="flex-1 h-11 md:h-12 rounded-full bg-white/60 border border-white/70 backdrop-blur-md shadow-lg animate-pulse" />
 
         {/* Sort button */}
-        <div className="h-11 md:h-12 w-28 sm:w-32 rounded-full bg-gradient-to-r from-slate-200 to-slate-300 shadow-lg animate-pulse" />
+        <div className="h-11 md:h-12 w-28 sm:w-32 rounded-full bg-linear-to-r from-slate-200 to-slate-300 shadow-lg animate-pulse" />
 
         {/* Filter button */}
-        <div className="h-11 md:h-12 w-28 sm:w-32 rounded-full bg-gradient-to-r from-slate-200 to-slate-300 shadow-lg animate-pulse" />
+        <div className="h-11 md:h-12 w-28 sm:w-32 rounded-full bg-linear-to-r from-slate-200 to-slate-300 shadow-lg animate-pulse" />
       </div>
 
       {/* Recipe Card Skeletons  */}

@@ -53,7 +53,7 @@ export default function ChangePasswordModal() {
             <X className="h-5 w-5" />
           </button>
 
-          <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-orange-100 to-rose-100 text-rose-500">
+          <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-linear-to-br from-orange-100 to-rose-100 text-rose-500">
             <KeyRound size={28} />
           </div>
 

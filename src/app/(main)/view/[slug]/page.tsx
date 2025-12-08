@@ -61,7 +61,7 @@ export default async function ViewRecipePage({
         {/* Back button */}
         <Link
           href="/all"
-          className="absolute top-4 left-4 z-10 flex items-center gap-2 px-2 py-1 rounded-full border border-white/70 text-sm text-slate-700 bg-gradient-to-r from-slate-200 to-slate-300 shadow-lg cursor-pointer hover:brightness-90 active:brightness-75"
+          className="absolute top-4 left-4 z-10 flex items-center gap-2 px-2 py-1 rounded-full border border-white/70 text-sm text-slate-700 bg-linear-to-r from-slate-200 to-slate-300 shadow-lg cursor-pointer hover:brightness-90 active:brightness-75"
         >
           <ArrowLeft size={16} />
           All Recipes
@@ -199,7 +199,7 @@ export default async function ViewRecipePage({
         <div className="grid gap-6">
           <Card id="steps" title="Steps">
             {steps.length ? (
-              <ol className="relative ml-3 space-y-6 before:absolute before:left-0 before:top-0 before:h-full before:w-1 before:rounded before:bg-gradient-to-b before:from-orange-200 before:to-rose-200">
+              <ol className="relative ml-3 space-y-6 before:absolute before:left-0 before:top-0 before:h-full before:w-1 before:rounded before:bg-linear-to-b before:from-orange-200 before:to-rose-200">
                 {steps.map((s, i) => (
                   <li key={i} className="relative pl-6">
                     <div className="absolute left-0 top-1 -translate-x-1/2 grid h-5 w-5 place-items-center rounded-full bg-orange-500 text-[11px] font-extrabold text-white shadow">

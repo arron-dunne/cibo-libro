@@ -99,7 +99,7 @@ export default async function HomePage() {
               <Link
                 key={i}
                 href={`/all?tags=${encodeURIComponent(tag)}`}
-                className="group rounded-full border border-orange-200 bg-gradient-to-br from-orange-50 to-orange-100/70 px-4 py-2 text-sm font-medium text-orange-950 shadow-sm transition hover:scale-105 hover:border-orange-400 hover:from-orange-100 hover:to-orange-200/80 hover:shadow-md"
+                className="group rounded-full border border-orange-200 bg-linear-to-br from-orange-50 to-orange-100/70 px-4 py-2 text-sm font-medium text-orange-950 shadow-sm transition hover:scale-105 hover:border-orange-400 hover:from-orange-100 hover:to-orange-200/80 hover:shadow-md"
               >
                 <span className="group-hover:text-orange-600">{tag}</span>
               </Link>
