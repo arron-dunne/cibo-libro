@@ -1,147 +1,117 @@
 "use client";
 
-import Link from "next/link";
-import {
-  Star,
-  Heart,
-  Bug,
-  MessageCircleQuestionMark,
-  LoaderCircle,
-  CheckCircle,
-  ChevronLeft,
-  CircleX,
-} from "lucide-react";
+import { Bug, AlertTriangle, FileWarning, Layers } from "lucide-react";
+import { useState } from "react";
+import { submitFeedback } from "./actions";
 
-import { useState, useActionState, useEffect } from "react";
-import { submitIssue } from "./actions";
+export default function ReportIssuesPage() {
+  const [pages, setPages] = useState<string[]>([]);
 
-export default function IssuesPage() {
-  
-  // Typed action state handling
-  const initialState = { status: null, message: "" };
-  const [state, formAction, isPending] = useActionState(
-    submitIssue,
-    initialState
-  );
+  const togglePage = (page: string) => {
+    setPages((prev) =>
+      prev.includes(page) ? prev.filter((p) => p !== page) : [...prev, page]
+    );
+  };
 
-  // Scroll to top on submission
-  useEffect(() => {
-    if (state.status) {
-      window.scrollTo({ top: 0, behavior: "smooth" });
-    }
-  }, [state.status]);
+  const pageOptions = [
+    "Home / Library Grid",
+    "View Recipe Page",
+    "Manual Add Recipe",
+    "Edit Recipe",
+    "Import from URL",
+    "Cook Mode",
+    "Auth / Login / Signup",
+    "Image Uploads",
+    "Tags & Search",
+    "Other",
+  ];
 
   return (
     <div className="max-w-3xl mx-auto">
-      {/* Feedback Panel */}
-      {state.status === "success" && (
-        <div className="mt-6 mb-4 rounded-3xl bg-green-200/90 border border-green-800 p-8 text-green-800 shadow">
-          <h2 className="text-2xl font-semibold mb-1 flex items-center gap-4">
-            <CheckCircle size={28} />
-            Your issue was reported
-          </h2>
-          <p className="ml-11">Thank you for taking the time to make Cibo Libro a better place</p>
-          <Link href="/home" className="ml-11 mt-2 w-max text-black flex items-center gap-2 rounded-full px-4 py-2 bg-slate-200 border border-white cursor-pointer hover:brightness-90 active:brightness-75">
-            <ChevronLeft />
-            Home
-          </Link>
-          {/* {state.message ?? "Thanks for your feedback!"} */}
-        </div>
-      )}
-
-      {state.status === "error" && (
-        <div className="mt-6 mb-4 rounded-3xl bg-red-200/90 border border-red-800 p-8 text-red-800 shadow">
-          <h2 className="text-2xl font-semibold mb-1 flex items-center gap-4">
-            <CircleX size={28} />
-            Something went wrong
-          </h2>
-          <p className="ml-11">Please try again or come back later</p>
-          <Link href="/home" className="ml-11 mt-2 w-max text-black flex items-center gap-2 rounded-full px-4 py-2 bg-slate-200 border border-white cursor-pointer hover:brightness-90 active:brightness-75">
-            <ChevronLeft />
-            Home
-          </Link>
-          {/* {state.message ?? "Thanks for your feedback!"} */}
-        </div>
-      )}
-
-      {/* Header Card */}
-      <section className="mt-4 rounded-3xl border border-white/70 bg-white/95 p-8 shadow-lg backdrop-blur">
+      {/* Header */}
+      <section className="mt-8 rounded-3xl border border-white/70 bg-white/95 p-8 shadow-lg backdrop-blur">
         <h1 className="text-3xl sm:text-4xl font-extrabold text-orange-950">
-          Report an issue
+          Report an Issue
         </h1>
         <p className="mt-3 text-slate-700 leading-relaxed">
-          Let is know if you experienced any issues or bugs with our website.
-          Your feedback directly helps improve Cibo Libro.
+          Found a bug, broken feature, or something that doesn’t behave as expected?
+          Let us know and we’ll look into it. Your reports help keep CiboLibro reliable.
         </p>
       </section>
 
-      {/* Feedback Form */}
-      <form action={formAction} className="mt-10 space-y-10">
-
-
-        {/* Feature Request */}
+      {/* Form */}
+      <form action={submitFeedback} className="mt-10 space-y-10">
+        {/* Category */}
         <section className="rounded-3xl border border-white/70 bg-white/95 p-8 shadow-lg backdrop-blur">
           <h2 className="text-2xl font-semibold text-orange-950 mb-4 flex items-center gap-4">
-            <MessageCircleQuestionMark size={28} className="text-orange-500" />
-            What feature would you love to see next?
+            <AlertTriangle size={28} className="text-orange-500" />
+            What type of issue is this?
           </h2>
 
-          <textarea
-            name="featureRequest"
-            placeholder="Tell us your idea…"
-            disabled={isPending}
-            rows={4}
-            className="w-full rounded-2xl border border-orange-200 bg-white/80 p-4 text-slate-800 shadow-sm outline-none transition placeholder:text-slate-400 focus:border-orange-400 focus:ring-2 focus:ring-orange-300 disabled:opacity-50"
-          />
+          <select
+            name="issueCategory"
+            className="w-full rounded-2xl border border-orange-200 bg-white/80 p-4 text-slate-800 shadow-sm outline-none transition focus:border-orange-400 focus:ring-2 focus:ring-orange-300"
+            required
+          >
+            <option value="">Select a category…</option>
+            <option value="bug">Bug / Something not working</option>
+            <option value="ui">UI / Layout issue</option>
+            <option value="performance">Slow or performance issue</option>
+            <option value="incorrectData">Incorrect data / import issue</option>
+            <option value="crash">Page crash / error</option>
+            <option value="other">Other</option>
+          </select>
         </section>
 
-        {/* UI Pain Points */}
+        {/* Description */}
         <section className="rounded-3xl border border-white/70 bg-white/95 p-8 shadow-lg backdrop-blur">
-          <h2 className="text-2xl font-semibold text-orange-950 flex gap-4 items-center mb-4">
+          <h2 className="text-2xl font-semibold text-orange-950 mb-4 flex items-center gap-4">
             <Bug size={28} className="text-orange-500" />
-            What feels confusing or frustrating?
+            Describe the issue
           </h2>
-
           <textarea
-            name="uiPainPoints"
-            placeholder="What slowed you down, or didn’t work as expected?"
-            disabled={isPending}
-            rows={4}
-            className="w-full rounded-2xl border border-orange-200 bg-white/80 p-4 text-slate-800 shadow-sm outline-none transition placeholder:text-slate-400 focus:border-orange-400 focus:ring-2 focus:ring-orange-300 disabled:opacity-50"
+            name="issueDescription"
+            required
+            placeholder="What happened? What did you expect to happen? Any steps to reproduce?"
+            rows={5}
+            className="w-full rounded-2xl border border-orange-200 bg-white/80 p-4 text-slate-800 shadow-sm outline-none transition placeholder:text-slate-400 focus:border-orange-400 focus:ring-2 focus:ring-orange-300"
           />
         </section>
 
-        {/* Page */}
+        {/* Pages Affected */}
         <section className="rounded-3xl border border-white/70 bg-white/95 p-8 shadow-lg backdrop-blur">
           <h2 className="text-2xl font-semibold text-orange-950 mb-4 flex items-center gap-4">
-            <Heart size={28} className="text-orange-500" />
-            Which page(s) did you experince the issue on?
+            <Layers size={28} className="text-orange-500" />
+            Which page(s) does this affect?
           </h2>
 
-          <textarea
-            name="additionalFeedback"
-            placeholder="Anything at all — we're listening."
-            disabled={isPending}
-            rows={4}
-            className="w-full rounded-2xl border border-orange-200 bg-white/80 p-4 text-slate-800 shadow-sm outline-none transition placeholder:text-slate-400 focus:border-orange-400 focus:ring-2 focus:ring-orange-300 disabled:opacity-50"
-          />
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            {pageOptions.map((page) => (
+              <label
+                key={page}
+                className="flex items-center gap-3 rounded-2xl border border-orange-200 bg-white/70 p-4 cursor-pointer hover:border-orange-400 transition"
+              >
+                <input
+                  type="checkbox"
+                  name="affectedPages"
+                  value={page}
+                  checked={pages.includes(page)}
+                  onChange={() => togglePage(page)}
+                  className="h-5 w-5 rounded border-slate-300 text-orange-600 focus:ring-orange-400"
+                />
+                <span className="text-slate-800">{page}</span>
+              </label>
+            ))}
+          </div>
         </section>
 
-        {/* Submit Button */}
+        {/* Submit */}
         <div className="flex justify-center">
           <button
             type="submit"
-            disabled={isPending}
-            className="rounded-full bg-white/60 border border-white px-8 py-3 text-lg font-semibold text-slate-600 shadow-lg backdrop-blur hover:brightness-90 active:brightness-75 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-3"
+            className="rounded-full bg-white/60 border border-white px-8 py-3 text-lg font-semibold text-slate-600 shadow-lg backdrop-blur hover:brightness-90 active:brightness-75 cursor-pointer"
           >
-            {isPending ? (
-              <>
-                <LoaderCircle className="animate-spin" size={20} />
-                Submitting...
-              </>
-            ) : (
-              "Submit Issue"
-            )}
+            Submit Issue
           </button>
         </div>
       </form>
