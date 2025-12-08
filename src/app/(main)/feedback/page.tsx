@@ -1,16 +1,43 @@
 "use client";
 
-import { Star, MessageSquare, Heart, Bug, MessageCircleQuestionMark } from "lucide-react";
-import { useState } from "react";
+import {
+  Star,
+  Heart,
+  Bug,
+  MessageCircleQuestionMark,
+  LoaderCircle,
+} from "lucide-react";
+
+import { useState, useActionState } from "react";
 import { submitFeedback } from "./actions";
 
 export default function FeedbackPage() {
   const [rating, setRating] = useState<number | null>(null);
 
+  // Typed action state handling
+  const initialState = { status: null, message: "" };
+  const [state, formAction, isPending] = useActionState(
+    submitFeedback,
+    initialState
+  );
+
   return (
     <div className="max-w-3xl mx-auto">
+      {/* Feedback Panel */}
+      {state.status === "success" && (
+        <div className="mt-6 mb-4 rounded-3xl bg-green-50 border border-green-200 p-4 text-green-800 shadow-sm">
+          {state.message ?? "Thanks for your feedback!"}
+        </div>
+      )}
+
+      {state.status === "error" && (
+        <div className="mt-6 mb-4 rounded-3xl bg-red-50 border border-red-200 p-4 text-red-800 shadow-sm">
+          {state.message ?? "Something went wrong."}
+        </div>
+      )}
+
       {/* Header Card */}
-      <section className="mt-8 rounded-3xl border border-white/70 bg-white/95 p-8 shadow-lg backdrop-blur">
+      <section className="mt-4 rounded-3xl border border-white/70 bg-white/95 p-8 shadow-lg backdrop-blur">
         <h1 className="text-3xl sm:text-4xl font-extrabold text-orange-950">
           We’d love your feedback
         </h1>
@@ -21,8 +48,7 @@ export default function FeedbackPage() {
       </section>
 
       {/* Feedback Form */}
-      <form action={submitFeedback} className="mt-10 space-y-10">
-
+      <form action={formAction} className="mt-10 space-y-10">
         {/* Rating Card */}
         <section className="rounded-3xl border border-white/70 bg-white/95 p-8 shadow-lg backdrop-blur">
           <h2 className="text-2xl font-semibold text-orange-950 mb-4 flex items-center gap-4">
@@ -35,12 +61,16 @@ export default function FeedbackPage() {
               <button
                 type="button"
                 key={n}
+                disabled={isPending}
                 onClick={() => setRating(n)}
                 className={`h-12 w-12 flex items-center justify-center rounded-full border transition shadow-sm text-lg font-medium
-                  ${rating === n
-                    ? "bg-orange-500 text-white border-orange-600 shadow-md scale-105"
-                    : "bg-white/80 text-orange-900 border-orange-200 hover:border-orange-400 hover:scale-105"
-                  }`}
+                  ${
+                    rating === n
+                      ? "bg-orange-500 text-white border-orange-600 shadow-md scale-105"
+                      : "bg-white/80 text-orange-900 border-orange-200 hover:border-orange-400 hover:scale-105"
+                  }
+                  ${isPending ? "opacity-50 cursor-not-allowed" : ""}
+                `}
               >
                 {n}
               </button>
@@ -60,8 +90,9 @@ export default function FeedbackPage() {
           <textarea
             name="featureRequest"
             placeholder="Tell us your idea…"
+            disabled={isPending}
             rows={4}
-            className="w-full rounded-2xl border border-orange-200 bg-white/80 p-4 text-slate-800 shadow-sm outline-none transition placeholder:text-slate-400 focus:border-orange-400 focus:ring-2 focus:ring-orange-300"
+            className="w-full rounded-2xl border border-orange-200 bg-white/80 p-4 text-slate-800 shadow-sm outline-none transition placeholder:text-slate-400 focus:border-orange-400 focus:ring-2 focus:ring-orange-300 disabled:opacity-50"
           />
         </section>
 
@@ -71,11 +102,13 @@ export default function FeedbackPage() {
             <Bug size={28} className="text-orange-500" />
             What feels confusing or frustrating?
           </h2>
+
           <textarea
             name="uiPainPoints"
             placeholder="What slowed you down, or didn’t work as expected?"
+            disabled={isPending}
             rows={4}
-            className="w-full rounded-2xl border border-orange-200 bg-white/80 p-4 text-slate-800 shadow-sm outline-none transition placeholder:text-slate-400 focus:border-orange-400 focus:ring-2 focus:ring-orange-300"
+            className="w-full rounded-2xl border border-orange-200 bg-white/80 p-4 text-slate-800 shadow-sm outline-none transition placeholder:text-slate-400 focus:border-orange-400 focus:ring-2 focus:ring-orange-300 disabled:opacity-50"
           />
         </section>
 
@@ -85,11 +118,13 @@ export default function FeedbackPage() {
             <Heart size={28} className="text-orange-500" />
             Anything else you'd like to share?
           </h2>
+
           <textarea
             name="additionalFeedback"
             placeholder="Anything at all — we're listening."
+            disabled={isPending}
             rows={4}
-            className="w-full rounded-2xl border border-orange-200 bg-white/80 p-4 text-slate-800 shadow-sm outline-none transition placeholder:text-slate-400 focus:border-orange-400 focus:ring-2 focus:ring-orange-300"
+            className="w-full rounded-2xl border border-orange-200 bg-white/80 p-4 text-slate-800 shadow-sm outline-none transition placeholder:text-slate-400 focus:border-orange-400 focus:ring-2 focus:ring-orange-300 disabled:opacity-50"
           />
         </section>
 
@@ -97,9 +132,17 @@ export default function FeedbackPage() {
         <div className="flex justify-center">
           <button
             type="submit"
-            className="rounded-full bg-white/60 border border-white px-8 py-3 text-lg font-semibold text-slate-600 shadow-lg backdrop-blur hover:brightness-90 active:brightness-75 cursor-pointer"
+            disabled={isPending}
+            className="rounded-full bg-white/60 border border-white px-8 py-3 text-lg font-semibold text-slate-600 shadow-lg backdrop-blur hover:brightness-90 active:brightness-75 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-3"
           >
-            Submit Feedback
+            {isPending ? (
+              <>
+                <LoaderCircle className="animate-spin" size={20} />
+                Sending…
+              </>
+            ) : (
+              "Submit Feedback"
+            )}
           </button>
         </div>
       </form>
