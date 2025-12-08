@@ -41,7 +41,6 @@ export async function submitFeedback(
         data: responses,
       },
     });
-
     return { status: "success", message: "Thanks for your feedback!" };
   } catch (err) {
     console.error("Feedback submit error:", err);
