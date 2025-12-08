@@ -61,7 +61,7 @@ export default async function ViewRecipePage({
         {/* Back button */}
         <Link
           href="/all"
-          className="absolute top-4 left-4 z-10 flex items-center gap-2 px-2 py-1 rounded-full border border-white/70 text-sm text-slate-700 bg-gradient-to-r from-slate-200 to-slate-300 shadow-lg cursor-pointer hover:brightness-90 active:brightness-75"
+          className="absolute top-4 left-4 z-10 flex items-center gap-2 px-2 py-1 rounded-full border border-white/70 text-sm text-slate-700 bg-linear-to-r from-slate-200 to-slate-300 shadow-lg cursor-pointer hover:brightness-90 active:brightness-75"
         >
           <ArrowLeft size={16} />
           All Recipes

@@ -84,7 +84,7 @@ export function LogoutButton({ action }: LogoutButtonProps) {
               aria-labelledby="change-password-title"
               aria-describedby="change-password-description"
             >
-              <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-orange-100 to-rose-100 text-rose-500">
+              <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-linear-to-br from-orange-100 to-rose-100 text-rose-500">
                 <LogOut size={28} />
               </div>
               <h2 className="mt-4 text-xl font-semibold text-gray-900">Are you sure you want to log out?</h2>

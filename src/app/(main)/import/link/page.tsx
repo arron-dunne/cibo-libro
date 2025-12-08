@@ -126,13 +126,43 @@ function PreviewCard({
   )
 }
 
-function InfoBanner() {
-  return (
-    <div className="max-w-4xl mx-auto rounded-3xl border border-white/70 bg-white/60 px-5 py-3.5 shadow backdrop-blur flex items-center gap-3">
-      <Info size={24} className="text-rose-500 shrink-0" />
-      <div>
-        <span className="font-semibold text-gray-900">We couldn&apos;t import this recipe. </span>
-        <span className="font-medium text-gray-600">You can still save it as a link in your cookbook.</span>
+          <div className="relative">
+            {image ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img
+                src={image}
+                alt={title}
+                className="aspect-[16/9] w-full rounded-t-2xl object-cover"
+                referrerPolicy="no-referrer"
+              />
+            ) : (
+              <div className="aspect-[16/9] w-full rounded-t-2xl bg-linear-to-br from-orange-100 to-rose-100">
+                <div className="flex h-full w-full items-center justify-center">
+                  <div className="flex items-center gap-3 rounded-xl border border-orange-200/60 bg-white/70 px-4 py-2 text-orange-700 shadow-sm backdrop-blur">
+                    <ImageIcon className="h-5 w-5" />
+                    <span className="text-sm font-medium">No preview image available</span>
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+
+          <div className="space-y-3 px-5 py-5">
+            <h2 id="preview-title" className="text-xl font-semibold text-gray-900">
+              {title}
+            </h2>
+            <p className="text-sm text-gray-500">This is a link preview. The full recipe remains on the original site.</p>
+          </div>
+
+          <footer className="border-t px-5 py-4 text-xs text-gray-500">
+            We only save safe metadata and your inputs. Full recipes from other sites aren’t copied. There’s always a link back to the original.
+          </footer>
+        </section>
+
+        {/* Form */}
+        <Suspense fallback={<div className="h-[560px] rounded-2xl border bg-white shadow-sm" />}>
+          <ClientLinkCardForm initialUrl={url} title={title} image={image} />
+        </Suspense>
       </div>
     </div>
   );

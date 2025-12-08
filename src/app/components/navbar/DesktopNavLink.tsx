@@ -13,9 +13,12 @@ export function DesktopNavLink({ type }: { type: NavLinkType }) {
   return (
     <Link
       href={href}
-      className={`flex items-center gap-1 font-medium rounded-full transition 
-      ${ highlight ? "bg-linear-to-r from-orange-500 to-rose-500 text-white px-4 py-2 font-bold shadow"
-        : "text-orange-700 hover:brightness-200"}`}
+      className={[
+        "flex items-center gap-1 font-medium rounded-full transition",
+        highlight
+          ? "bg-linear-to-r from-orange-500 to-rose-500 text-white px-4 py-2 font-bold shadow"
+          : "text-orange-700 hover:brightness-200",
+      ].join(" ")}
     >
       {highlight && <Icon size={18} />}
       {label}
