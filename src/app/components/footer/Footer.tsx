@@ -19,7 +19,6 @@ export function Footer() {
           <Link className="hover:underline" href="/terms">Terms of Use</Link>
           <Link className="hover:underline" href="/privacy">Privacy Policy</Link>
           <Link className="hover:underline" href="/contact">Contact</Link>
-          <Link className="hover:underline" href="/feedback">Feedback</Link>
         </nav>
         <div className="text-xs/6 opacity-90">© {new Date().getFullYear()} cibo libro. All rights reserved.</div>
       </div>
