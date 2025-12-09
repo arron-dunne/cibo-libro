@@ -33,7 +33,7 @@ export default function FeedbackPage() {
   }, [state.status]);
 
   return (
-    <div className="max-w-3xl mx-auto">
+    <div>
       {/* Feedback Panel */}
       {state.status === "success" && (
         <div className="mb-4 rounded-3xl bg-green-200/90 border border-green-800 p-8 text-green-800 shadow">
