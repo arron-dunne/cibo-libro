@@ -14,7 +14,6 @@ const FormDataObject = z.object({
   issueCatgory: z.enum(["bug", "ui", "performance", "incorrectData", "crash", "other"]),
   otherCategoryDetail: z.string().optional(),
   issueDescription: z.string(),
-  affectedPages: z.array(z.string()).optional()
 })
 
 export async function submitIssue(
@@ -32,24 +31,14 @@ export async function submitIssue(
       affectedPages: formData.get("affectedPages")
     }
 
-    const parsed = FormDataObject.safeParse(raw);
-
-    if (!parsed.success) { return { status: "error" } }
-
     const responses: Array<{ question: string; answer: string }> = [];
 
     const issueCategory = String(formData.get("issueCategory")) ?? "";
     if (issueCategory) { responses.push({ question: "issueCategory", answer: issueCategory })}
     
     const otherCategoryDetail = String(formData.get("issueCategory")) ?? "";
-    if (otherCategoryDetail) { responses.push({ question: "otherCategoryDetail", answer: otherCategoryDetail })}
-    
-    const issueDescription = String(formData.get("issueDescription")) ?? "";
-    if (issueDescription) { responses.push({ question: "issueDescription", answer: issueDescription })}
-    
-    const affectedPages = formData.get("affectedPages");
-    // if (issueDescription) { responses.push({ question: "issueDescription", answer: issueDescription })}
-    console.log(affectedPages);
+    if (issueCategory) { responses.push({ question: "issueCategory", answer: issueCategory })}
+
 
 
     // for (const [key, value] of formData.entries()) {

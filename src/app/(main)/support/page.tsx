@@ -1,21 +1,17 @@
-import { Bug, ChevronRight, Copyright, FileText, Lightbulb, Lock, LucideProps, MessageCircle } from "lucide-react"
+import { Bug, ChevronRight, Copyright, FileText, Lightbulb, Lock, LucideIcon, LucideProps, MessageCircle } from "lucide-react"
 import Link from "next/link";
 
 export default function SupportPage() {
   return (
-    <div className="max-w-3xl mx-auto">
-      <p className="mt-6 mb-6 text-center text-4xl text-white font-extrabold tracking-tighter">
-        Get in touch
-      </p>
-      <div className="flex flex-col mx-auto max-w-md md:max-w-none md:flex-row gap-4 md:gap-12 items-center justify-center">
+    <div className="max-w-2xl mx-auto">
+      <p className="mt-4 mb-4 text-center text-3xl font-bold text-shadow-[0px_0px_2px] text-shadow-white">Get in touch</p>
+      <div className="flex gap-8 justify-center">
         <PrimaryLink name="Feedback"/>
         <PrimaryLink name="Issues"/>
         <PrimaryLink name="General"/>
       </div>
 
-      <p className="mt-14 mb-6 text-center text-4xl text-white font-extrabold tracking-tighter">
-        More Information
-      </p>
+      <p className="mt-8 mb-4 text-center text-3xl font-bold text-shadow-[0px_0px_2px] text-shadow-white">More Information</p>
       <div className="max-w-md mx-auto flex flex-col gap-4 items-center">
         <SecondaryLink name="Terms of Service"/>
         <SecondaryLink name="Privacy Policy"/>
@@ -47,19 +43,15 @@ function PrimaryLink({name}: {name: string}) {
 
   return (
     <Link 
-      className="w-full md:aspect-square px-6 py-4 rounded-3xl shadow-lg 
-        flex md:flex-col items-center justify-start md:justify-center gap-4
-      bg-white/70 backdrop-blur-sm border border-white/80 
-      text-orange-600 font-bold
-        hover:brightness-110 active:brightness-125 md:hover:brightness-100 md:active:brightness-100 
-        transition-transform md:hover:scale-110 md:active:scale-105"
+      className="w-full aspect-square rounded-2xl shadow 
+        flex flex-col items-center justify-center gap-4
+        bg-linear-to-br from-orange-100 to-rose-200 border border-white/80 
+        text-orange-500 font-bold
+        transition hover:scale-110 active:scale-105"
       href={href}
     >
-      <Icon className="w-6 md:w-20 md:h-20"/>
-      <div className="w-full flex items-center gap-2 justify-between md:justify-center">
-        <p className="text-xl">{name}</p>
-        <ChevronRight />
-      </div>
+      <Icon className="w-1/3 h-1/3"/>
+      <p className="text-xl">{name}</p>
     </Link>
   )
 }
@@ -92,7 +84,7 @@ function SecondaryLink({name}: {name: string}) {
       hover:brightness-90 active:brightness-75"
     >
       <div className="flex gap-4">
-        <Icon size={24}/>
+        <Icon />
         {name}
       </div>
       <ChevronRight />
