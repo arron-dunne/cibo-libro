@@ -36,7 +36,7 @@ export default function FeedbackPage() {
     <div className="max-w-3xl mx-auto">
       {/* Feedback Panel */}
       {state.status === "success" && (
-        <div className="mt-6 mb-4 rounded-3xl bg-green-200/90 border border-green-800 p-8 text-green-800 shadow">
+        <div className="mb-4 rounded-3xl bg-green-200/90 border border-green-800 p-8 text-green-800 shadow">
           <h2 className="text-2xl font-semibold mb-1 flex items-center gap-4">
             <CheckCircle size={28} />
             Your feedback was submitted
@@ -51,7 +51,7 @@ export default function FeedbackPage() {
       )}
 
       {state.status === "error" && (
-        <div className="mt-6 mb-4 rounded-3xl bg-red-200/90 border border-red-800 p-8 text-red-800 shadow">
+        <div className="mb-4 rounded-3xl bg-red-200/90 border border-red-800 p-8 text-red-800 shadow">
           <h2 className="text-2xl font-semibold mb-1 flex items-center gap-4">
             <CircleX size={28} />
             Something went wrong
@@ -66,7 +66,7 @@ export default function FeedbackPage() {
       )}
 
       {/* Header Card */}
-      <section className="mt-4 rounded-3xl border border-white/70 bg-white/95 p-8 shadow-lg backdrop-blur">
+      <section className="rounded-3xl border border-white/70 bg-white/95 p-8 shadow-lg backdrop-blur">
         <h1 className="text-3xl sm:text-4xl font-extrabold text-orange-950">
           We’d love your feedback
         </h1>
