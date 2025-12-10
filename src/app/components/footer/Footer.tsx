@@ -15,10 +15,11 @@ export function Footer() {
           />
         </div>
         <nav className="flex flex-wrap gap-4 text-sm">
-          <Link className="hover:underline" href="/support">Support</Link>
+          <Link className="hover:underline" href="/about">About</Link>
           <Link className="hover:underline" href="/terms">Terms of Use</Link>
           <Link className="hover:underline" href="/privacy">Privacy Policy</Link>
           <Link className="hover:underline" href="/contact">Contact</Link>
+          <Link className="hover:underline" href="/support">Support</Link>
         </nav>
         <div className="text-xs/6 opacity-90">© {new Date().getFullYear()} cibo libro. All rights reserved.</div>
       </div>
