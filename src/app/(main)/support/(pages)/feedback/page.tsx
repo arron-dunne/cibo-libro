@@ -10,6 +10,9 @@ import {
   CheckCircle,
   ChevronLeft,
   CircleX,
+  Send,
+  Home,
+  ArrowRight,
 } from "lucide-react";
 
 import { useState, useActionState, useEffect } from "react";
@@ -42,8 +45,8 @@ export default function FeedbackPage() {
             Your feedback was submitted
           </h2>
           <p className="ml-11">Thank you for taking the time to make Cibo Libro a better place</p>
-          <Link href="/home" className="ml-11 mt-2 w-max text-black flex items-center gap-2 rounded-full px-4 py-2 bg-slate-200 border border-white cursor-pointer hover:brightness-90 active:brightness-75">
-            <ChevronLeft />
+          <Link href="/home" className="ml-10 mt-4 w-max text-black flex items-center gap-2 rounded-full px-4 py-2 bg-slate-200 border border-black/10 cursor-pointer hover:brightness-90 active:brightness-75">
+            <Home size={20} />
             Home
           </Link>
           {/* {state.message ?? "Thanks for your feedback!"} */}
@@ -92,7 +95,7 @@ export default function FeedbackPage() {
                 key={n}
                 disabled={isPending}
                 onClick={() => setRating(n)}
-                className={`h-12 w-12 flex items-center justify-center rounded-full border transition shadow-sm text-lg font-medium
+                className={`h-12 w-12 flex items-center justify-center rounded-full border transition shadow-sm text-lg font-medium cursor-pointer
                   ${rating === n
                     ? "bg-orange-500 text-white border-orange-600 shadow-md scale-105"
                     : "bg-white/80 text-orange-900 border-orange-200 hover:border-orange-400 hover:scale-105"
@@ -161,15 +164,20 @@ export default function FeedbackPage() {
           <button
             type="submit"
             disabled={isPending}
-            className="rounded-full bg-white/60 border border-white px-8 py-3 text-lg font-semibold text-slate-600 shadow-lg backdrop-blur hover:brightness-90 active:brightness-75 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-3"
+            className="max-w-sm w-full h-14 rounded-full flex justify-center items-center gap-4
+            bg-white/60 border border-white shadow-lg backdrop-blur
+            text-xl font-semibold cursor-pointer
+            hover:brightness-90 active:brightness-75 disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {isPending ? (
               <>
-                <LoaderCircle className="animate-spin" size={20} />
-                Submitting...
+                <LoaderCircle className="animate-spin" size={22} />
               </>
             ) : (
-              "Submit Feedback"
+              <>
+                <p>Submit Feedback</p>
+                <Send size={22} />
+              </>
             )}
           </button>
         </div>
