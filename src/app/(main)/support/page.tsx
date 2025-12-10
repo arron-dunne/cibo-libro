@@ -3,15 +3,19 @@ import Link from "next/link";
 
 export default function SupportPage() {
   return (
-    <div className="max-w-2xl mx-auto">
-      <p className="mt-4 mb-4 text-center text-3xl font-bold text-shadow-[0px_0px_2px] text-shadow-white">Get in touch</p>
-      <div className="flex gap-8 justify-center">
+    <div className="max-w-3xl mx-auto">
+      <p className="mt-6 mb-6 text-center text-4xl text-white font-extrabold tracking-tighter">
+        Get in touch
+      </p>
+      <div className="flex gap-16 justify-center">
         <PrimaryLink name="Feedback"/>
         <PrimaryLink name="Issues"/>
         <PrimaryLink name="General"/>
       </div>
 
-      <p className="mt-8 mb-4 text-center text-3xl font-bold text-shadow-[0px_0px_2px] text-shadow-white">More Information</p>
+      <p className="mt-14 mb-6 text-center text-4xl text-white font-extrabold tracking-tighter">
+        More Information
+      </p>
       <div className="max-w-md mx-auto flex flex-col gap-4 items-center">
         <SecondaryLink name="Terms of Service"/>
         <SecondaryLink name="Privacy Policy"/>
@@ -43,10 +47,10 @@ function PrimaryLink({name}: {name: string}) {
 
   return (
     <Link 
-      className="w-full aspect-square rounded-2xl shadow 
+      className="w-full aspect-square rounded-2xl shadow-lg 
         flex flex-col items-center justify-center gap-4
-        bg-linear-to-br from-orange-100 to-rose-200 border border-white/80 
-        text-orange-500 font-bold
+      bg-white/70 backdrop-blur-sm border border-white/80 
+      text-orange-600 font-bold
         transition hover:scale-110 active:scale-105"
       href={href}
     >
