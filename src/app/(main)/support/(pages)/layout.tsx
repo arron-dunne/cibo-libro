@@ -1,8 +1,8 @@
-import { ArrowLeft, ChevronLeft } from "lucide-react";
+import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
 import React from "react";
 
-export default function SupportPageLayout({ children }: { children: React.ReactElement }) {
+export default function SupportPageLayout({ children }: { children: React.ReactNode }) {
   return (
     <div className="max-w-3xl w-full mx-auto mt-4">
 
