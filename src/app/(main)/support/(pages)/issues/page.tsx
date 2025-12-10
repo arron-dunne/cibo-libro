@@ -1,8 +1,9 @@
 "use client";
 
-import { Bug, AlertTriangle, Layers } from "lucide-react";
+import { Bug, AlertTriangle, Layers, CircleX, ChevronLeft, Home, CheckCircle } from "lucide-react";
 import { useActionState, useState } from "react";
 import { submitIssue } from "./actions";
+import Link from "next/link";
 
 export default function ReportIssuesPage() {
 
@@ -27,6 +28,37 @@ export default function ReportIssuesPage() {
 
   return (
     <div>
+      {/* Feedback Panel */}
+      {state.status === "success" && (
+        <div className="mb-4 rounded-3xl bg-green-200/90 border border-green-800 p-8 text-green-800 shadow">
+          <h2 className="text-2xl font-semibold mb-1 flex items-center gap-4">
+            <CheckCircle size={28} />
+            Your feedback was submitted
+          </h2>
+          <p className="ml-11">Thank you for taking the time to make Cibo Libro a better place</p>
+          <Link href="/home" className="ml-10 mt-4 w-max text-black flex items-center gap-2 rounded-full px-4 py-2 bg-slate-200 border border-black/10 cursor-pointer hover:brightness-90 active:brightness-75">
+            <Home size={20} />
+            Home
+          </Link>
+          {/* {state.message ?? "Thanks for your feedback!"} */}
+        </div>
+      )}
+
+      {state.status === "error" && (
+        <div className="mb-4 rounded-3xl bg-red-200/90 border border-red-800 p-8 text-red-800 shadow">
+          <h2 className="text-2xl font-semibold mb-1 flex items-center gap-4">
+            <CircleX size={28} />
+            Something went wrong
+          </h2>
+          <p className="ml-11">Please try again or come back later</p>
+          <Link href="/home" className="ml-11 mt-2 w-max text-black flex items-center gap-2 rounded-full px-4 py-2 bg-slate-200 border border-white cursor-pointer hover:brightness-90 active:brightness-75">
+            <ChevronLeft />
+            Home
+          </Link>
+          {/* {state.message ?? "Thanks for your feedback!"} */}
+        </div>
+      )}
+      
       {/* Header */}
       <section className="rounded-3xl border border-white/70 bg-white/95 p-8 shadow-lg backdrop-blur">
         <h1 className="text-3xl sm:text-4xl font-extrabold text-orange-950">
