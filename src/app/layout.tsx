@@ -23,12 +23,12 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         <div className="min-h-screen text-gray-900 antialiased">
           {/* Background */}
           <div className="fixed h-screen w-full -z-10 overscroll-none inset-0">
-            <div className="absolute w-full h-full inset-0 bg-linear-to-br from-orange-400 via-orange-500 to-rose-500" />
-            <div
-              aria-hidden
-              className="fixed -top-24 -left-24 h-72 w-72 rounded-full bg-orange-200/35 blur-3xl pointer-events-none "
-            />
-            <div className="fixed inset-0 bg-gradient-to-b from-transparent to-white/10 pointer-events-none" />
+            <div aria-hidden 
+              className="absolute w-full h-full inset-0 bg-linear-to-br from-orange-400 via-orange-500 to-rose-500" />
+            <div aria-hidden
+              className="fixed -top-24 -left-24 h-72 w-72 rounded-full bg-orange-200/35 blur-3xl pointer-events-none "/>
+            <div aria-hidden 
+              className="fixed inset-0 bg-gradient-to-b from-transparent to-white/10 pointer-events-none" />
           </div>
 
           {children}
