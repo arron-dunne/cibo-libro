@@ -16,7 +16,7 @@ export function DesktopNavLink({ type }: { type: NavLinkType }) {
       className={[
         "flex items-center gap-1 font-medium rounded-full transition",
         highlight
-          ? "bg-gradient-to-r from-orange-500 to-rose-500 text-white px-4 py-2 font-bold shadow"
+          ? "bg-linear-to-r from-orange-500 to-rose-500 text-white px-4 py-2 font-bold shadow"
           : "text-orange-700 hover:brightness-200",
       ].join(" ")}
     >

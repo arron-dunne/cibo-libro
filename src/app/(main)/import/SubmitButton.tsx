@@ -12,7 +12,7 @@ export function SubmitButton() {
       disabled={pending}
       aria-busy={pending}
       aria-live="polite"
-      className="m-1 inline-flex shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-orange-500 to-orange-600 px-6 py-2.5 text-sm font-semibold text-white shadow-sm hover:from-orange-600 hover:to-orange-700 active:translate-y-px"
+      className="m-1 inline-flex shrink-0 items-center justify-center rounded-full bg-linear-to-br from-orange-500 to-orange-600 px-6 py-2.5 text-sm font-semibold text-white shadow-sm hover:from-orange-600 hover:to-orange-700 active:translate-y-px"
     >
       {pending ? "Importing…" : "Import"}
       <ArrowRight className="h-5 w-5" aria-hidden="true" />

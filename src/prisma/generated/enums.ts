@@ -33,3 +33,14 @@ export const RecipeStatus = {
 } as const
 
 export type RecipeStatus = (typeof RecipeStatus)[keyof typeof RecipeStatus]
+
+
+export const UserContactType = {
+  FEEDBACK: 'FEEDBACK',
+  BUG: 'BUG',
+  DMCA: 'DMCA',
+  REPORT: 'REPORT',
+  GENERAL: 'GENERAL'
+} as const
+
+export type UserContactType = (typeof UserContactType)[keyof typeof UserContactType]
