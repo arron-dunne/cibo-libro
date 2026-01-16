@@ -1,91 +1,60 @@
 import { importRecipe } from "./actions";
-import { SubmitButton } from "./SubmitButton";
-import { Download, ShieldCheck, Zap, StickyNote } from "lucide-react";
+import { UrlInput } from "./UrlInput";
+import { Download, ShieldCheck, Zap, StickyNote, ClipboardPaste } from "lucide-react";
 
-export const dynamic = "force-dynamic";
-
-/**
- * Import page — UI with floating panel, pill input, feature cards.
- * Header icon now uses Download with orange background.
- */
 export default function ImportPage() {
   return (
-    <div className="relative">
-      {/* Spotlight glow behind the panel for premium depth */}
-      <div
-        aria-hidden
-        className="pointer-events-none absolute inset-x-0 top-10 mx-auto h-72 w-[min(1150px,96%)] rounded-[2rem] bg-[radial-gradient(ellipse_at_center,rgba(255,255,255,0.45),rgba(255,255,255,0)_60%)]"
-      />
+    <div className="max-w-4xl w-full mx-auto mt-8 p-6 sm:p-8 rounded-3xl border border-white/70 bg-white/95 backdrop-blur shadow-lg">
+      {/* Header */}
+      <div className="mb-6 flex items-start gap-6 md:mb-8">
+        <div className="flex h-20 w-20 items-center justify-center rounded-2xl border border-rose-200 bg-rose-50 text-rose-500">
+          <Download size={36} aria-hidden="true" />
+        </div>
+        <div>
+          <h1 className="text-3xl font-bold leading-tight text-gray-900 md:text-4xl">
+            Import a recipe
+          </h1>
+          <p className="mt-2 text-[15px] text-gray-700">
+            Paste a link to add it to your personal cookbook
+          </p>
+        </div>
+      </div>
 
-      {/* Floating panel under navbar */}
-      <div className="relative mx-auto w-[min(1100px,96%)] rounded-3xl border border-white/60 bg-white/95 p-6 shadow-[0_24px_64px_rgba(0,0,0,0.16)] backdrop-blur supports-[backdrop-filter]:bg-white/90 md:p-8">
-        {/* Header */}
-        <div className="mb-6 flex items-start gap-4 md:mb-8">
-          <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-orange-500 text-white shadow-sm">
-            <Download className="h-6 w-6" aria-hidden="true" />
-          </div>
-          <div>
-            <h1 className="text-3xl font-bold leading-tight text-gray-900 md:text-4xl">
-              Import a Recipe
-            </h1>
-            <p className="mt-2 text-[15px] text-gray-700">
-              Paste a link. We’ll do the rest.
-            </p>
-          </div>
+      {/* Form */}
+      <form action={importRecipe} className="space-y-5">
+        {/* Honeypot (bot trap) */}
+        <div aria-hidden="true" className="hidden">
+          <label className="block">
+            Leave this empty:
+            <input name="website" type="text" tabIndex={-1} autoComplete="off" />
+          </label>
         </div>
 
-        {/* Form */}
-        <form action={importRecipe} className="space-y-5">
-          
-          {/* Honeypot (bot trap) */}
-          <div aria-hidden="true" className="hidden">
-            <label className="block">
-              Leave this empty:
-              <input name="website" type="text" tabIndex={-1} autoComplete="off" />
-            </label>
-          </div>
+        {/* URL field with pill layout */}
+        <UrlInput />
+        
 
-          {/* URL field with pill layout */}
-          <div className="w-full">
-            <div className="flex w-full items-center overflow-hidden rounded-full bg-white shadow-sm ring-1 ring-gray-200 focus-within:ring-2 focus-within:ring-orange-400">
-              <input
-                id="url"
-                name="url"
-                type="url"
-                required
-                inputMode="url"
-                placeholder="https://example.com/best-lasagne-ever"
-                pattern="https?://.+"
-                autoFocus
-                maxLength={2000}
-                className="flex-1 border-0 bg-transparent px-5 py-3 text-lg text-gray-900 placeholder:text-gray-400 focus:outline-none"
-              />
-              <SubmitButton />
-            </div>
-          </div>
-
-          {/* Feature cards */}
-          <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
-            <InfoCard
-              icon={<Zap className="h-5 w-5" />}
-              title="Import in one click"
-              desc="Paste a recipe link and we’ll grab the essentials—title, ingredients, steps, and timings—straight into your cookbook."
-            />
-            <InfoCard
-              icon={<StickyNote className="h-5 w-5" />}
-              title="No recipe? No problem"
-              desc="If a site won’t share, we’ll save a handy card with the title and link so you can always find it again."
-            />
-            <InfoCard
-              icon={<ShieldCheck className="h-5 w-5" />}
-              title="We play nice"
-              desc="We follow the rules—no paywall dodging or sneaky scraping. Everything stays tidy, safe, and fair."
-            />
-          </div>
-        </form>
-      </div>
+        {/* Feature cards */}
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
+          <InfoCard
+            icon={<Zap className="h-5 w-5" />}
+            title="Import in one click"
+            desc="Paste a recipe link and we’ll grab the essentials—title, ingredients, steps, and timings—straight into your cookbook."
+          />
+          <InfoCard
+            icon={<StickyNote className="h-5 w-5" />}
+            title="No recipe? No problem"
+            desc="If a site won’t share, we’ll save a handy card with the title and link so you can always find it again."
+          />
+          <InfoCard
+            icon={<ShieldCheck className="h-5 w-5" />}
+            title="We play nice"
+            desc="We follow the rules—no paywall dodging or sneaky scraping. Everything stays tidy, safe, and fair."
+          />
+        </div>
+      </form>
     </div>
-  );
+  )
 }
 
 /** Reusable little card under the field */
