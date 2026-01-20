@@ -1,7 +1,7 @@
 "use client";
 
 import { useFormStatus } from "react-dom";
-import { ArrowRight, ClipboardPaste } from "lucide-react";
+import { ArrowRight, ClipboardPaste, Loader2 } from "lucide-react";
 import { useRef } from "react";
 
 
@@ -10,7 +10,7 @@ export function UrlInput() {
   const inputRef = useRef<HTMLInputElement | null>(null);
 
   return (
-    <div className="w-full flex gap-4 items-center">
+    <div className="w-full flex flex-col md:flex-row gap-6 md:gap-4 items-center">
       <div className="w-full flex gap-4 items-center justify-between px-5 py-3 rounded-full overflow-hidden
             border border-gray-200 bg-white text-lg text-gray-900 placeholder:text-gray-400
             focus-within:outline-2 focus-within:outline-blue-500 focus-within:outline-solid"
@@ -54,10 +54,21 @@ function SubmitButton() {
       disabled={pending}
       aria-busy={pending}
       aria-live="polite"
-      className="m-1 inline-flex shrink-0 items-center justify-center rounded-full bg-linear-to-br from-orange-500 to-orange-600 px-6 py-2.5 text-sm font-semibold text-white shadow-sm hover:from-orange-600 hover:to-orange-700 active:translate-y-px"
+      className={`w-full md:w-48 flex gap-2 items-center justify-center rounded-full bg-linear-to-br from-orange-500 to-rose-500 px-6 py-2 text-lg font-bold text-white shadow-sm 
+        ${pending ? "cursor-wait brightness-90" : 
+          "hover:brightness-90 active:brightness-75 cursor-pointer"}`
+      }
     >
-      {pending ? "Importing…" : "Import"}
-      <ArrowRight className="h-5 w-5" aria-hidden="true" />
+      { pending ? 
+        <>
+          Importing
+          <Loader2 size={20} className="animate-spin" />
+        </> : 
+        <>
+          Import
+          <ArrowRight size={20} aria-hidden="true" />
+        </>
+      }
     </button>
   )
 }
