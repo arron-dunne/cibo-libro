@@ -5,6 +5,7 @@ import { AlertTriangle, ShieldAlert, LinkIcon, Save, ArrowRight } from "lucide-r
 import { RecipeImage } from "@/app/components/recipes/RecipeImage";
 import { saveLinkCard } from "./actions";
 import { Tags } from "./Tags";
+import { SaveButton } from "./SaveButton";
 
 const Reason = ["ROBOTS", "DENYLIST", "PAYWALL", "NO_SCHEMA", "ERROR"] as const;
 
@@ -108,6 +109,10 @@ function PreviewCard({
   return (
     <div className="relative w-92 mx-auto bg-white rounded-3xl">
 
+      {/* Hidden inputs */}
+      <input name="url" value={url} hidden readOnly/>
+      <input name="imageUrl" value={imageUrl} hidden readOnly/>
+
       {/* Source */}
       <Link 
         href={url}
@@ -142,6 +147,8 @@ function PreviewCard({
         <div>
           <label htmlFor="description" className="text-sm font-semibold">Description</label>
           <textarea
+            id="description"
+            name="description"
             rows={5}
             placeholder="Add a description for this recipe link..."
             className="mt-2 p-2 w-full rounded-2xl border border-slate-200 shadow-inner"
@@ -150,10 +157,7 @@ function PreviewCard({
 
         <Tags />
 
-        <button className="my-3 cursor-pointer hover:brightness-90 active:brightness-75 rounded-full flex gap-2 justify-center items-center w-full py-2 bg-linear-to-br from-orange-500 to-rose-500 text-white font-bold text-lg">
-          Save 
-          <ArrowRight size={20} />
-        </button>
+        <SaveButton />
       </div>
 
     </div>
