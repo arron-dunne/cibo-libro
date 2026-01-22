@@ -1,20 +1,22 @@
 import Link from "next/link"
 import { notFound } from "next/navigation";
 import { z } from "zod";
-import { Info, LinkIcon } from "lucide-react";
+import { AlertTriangle, ShieldAlert, LinkIcon, Save, ArrowRight } from "lucide-react";
 import { RecipeImage } from "@/app/components/recipes/RecipeImage";
 import { saveLinkCard } from "./actions";
 import { Tags } from "./Tags";
-import { SaveButton } from "./SaveButton";
-import { getHostname } from "@/lib/hostname";
 
+const Reason = ["ROBOTS", "DENYLIST", "PAYWALL", "NO_SCHEMA", "ERROR"] as const;
 
 const ParamsSchema = z.object({
   url: z.url(),
   title: z.string().min(1).max(280),
-  imageUrl: z.string().optional(),
-  description: z.string().max(600).optional(),
+  imageUrl: z.string().optional(), // accept any string for image
+  siteName: z.string().optional(),
+  reason: z.enum(Reason),
 });
+
+type ReasonKey = z.infer<typeof Reason>;
 
 export default async function Page({
   searchParams,
@@ -23,7 +25,8 @@ export default async function Page({
     url?: string;
     title?: string;
     image?: string;
-    description?: string;
+    siteName?: string;
+    reason?: string
   }>;
 }) {
   const params = await searchParams
@@ -39,56 +42,16 @@ export default async function Page({
     notFound();
   }
 
-  const { url, title, imageUrl, description } = parsed.data;
+  const { url, title, imageUrl, siteName, reason } = parsed.data;
+  const site = (siteName || safeHostname(url)).trim();
+  const badge = reasonBadge(reason);
 
   return (
-    <div className="mx-auto max-w-5xl flex flex-col gap-4 md:gap-8">
-      <InfoBanner />
-      <PreviewCard title={title} url={url} imageUrl={imageUrl} description={description} />
-    </div>
-  );
-}
-
-
-function PreviewCard({
-  title,
-  url,
-  imageUrl,
-  description,
-}: {
-  title: string,
-  url: string,
-  imageUrl?: string,
-  description?: string,
-}) {
-
-  return (
-    <form action={saveLinkCard} className="rounded-3xl border border-white/70 bg-white/90 shadow-lg backdrop-blur overflow-hidden">
-
-      {/* Hidden inputs */}
-      <input name="url" value={url} hidden readOnly />
-      {imageUrl && <input name="imageUrl" value={imageUrl} hidden readOnly />}
-
-      <div className="flex flex-col md:flex-row">
-
-        {/* Image */}
-        <div className="relative w-full md:w-2/5 shrink-0">
-          <div className="h-full max-h-80 md:max-h-none aspect-auto overflow-hidden">
-            <RecipeImage externalUrl={imageUrl} alt="Recipe picture" />
-          </div>
-
-          {/* Source */}
-          <Link
-            href={url}
-            target="_blank"
-            className="absolute top-3 right-3 px-4 py-2 flex gap-2 items-center
-              bg-linear-to-r from-slate-200 to-slate-300 shadow-lg
-              rounded-full text-slate-700 border border-white/70
-              cursor-pointer hover:brightness-90 active:brightness-75"
-          >
-            <LinkIcon size={18} />
-            <p className="text-sm">{getHostname(url)}</p>
-          </Link>
+    <div className="mx-auto max-w-3xl">
+      {/* Status panel */}
+      <div className="mt-2 mb-6 flex items-start gap-3 rounded-2xl border border-orange-200/70 bg-white/85 p-4 shadow-sm backdrop-blur supports-[backdrop-filter]:bg-white/65">
+        <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-orange-100 text-orange-700">
+          <AlertTriangle className="h-5 w-5" />
         </div>
 
         {/* Form fields */}
@@ -122,53 +85,106 @@ function PreviewCard({
 
       </div>
 
-    </form>
-  )
-}
+      {/* Preview */}
+      <form action={saveLinkCard}>
+        <PreviewCard title={title} url={url} imageUrl={imageUrl} />
+      </form>
 
-          <div className="relative">
-            {image ? (
-              // eslint-disable-next-line @next/next/no-img-element
-              <img
-                src={image}
-                alt={title}
-                className="aspect-[16/9] w-full rounded-t-2xl object-cover"
-                referrerPolicy="no-referrer"
-              />
-            ) : (
-              <div className="aspect-[16/9] w-full rounded-t-2xl bg-linear-to-br from-orange-100 to-rose-100">
-                <div className="flex h-full w-full items-center justify-center">
-                  <div className="flex items-center gap-3 rounded-xl border border-orange-200/60 bg-white/70 px-4 py-2 text-orange-700 shadow-sm backdrop-blur">
-                    <ImageIcon className="h-5 w-5" />
-                    <span className="text-sm font-medium">No preview image available</span>
-                  </div>
-                </div>
-              </div>
-            )}
-          </div>
-
-          <div className="space-y-3 px-5 py-5">
-            <h2 id="preview-title" className="text-xl font-semibold text-gray-900">
-              {title}
-            </h2>
-            <p className="text-sm text-gray-500">This is a link preview. The full recipe remains on the original site.</p>
-          </div>
-
-          <footer className="border-t px-5 py-4 text-xs text-gray-500">
-            We only save safe metadata and your inputs. Full recipes from other sites aren’t copied. There’s always a link back to the original.
-          </footer>
-        </section>
-
-        {/* Form */}
-        <Suspense fallback={<div className="h-[560px] rounded-2xl border bg-white shadow-sm" />}>
-          <ClientLinkCardForm initialUrl={url} title={title} image={image} />
-        </Suspense>
-      </div>
     </div>
   );
 }
 
-// Utils
+
+function PreviewCard({
+  title,
+  url,
+  imageUrl
+}: {
+  title: string,
+  url: string,
+  imageUrl?: string
+}) {
+
+  return (
+    <div className="relative w-92 mx-auto bg-white rounded-3xl">
+
+      {/* Source */}
+      <Link 
+        href={url}
+        target="_blank"
+        className="absolute top-3 right-3 px-4 py-2 flex gap-2 items-center
+          bg-linear-to-r from-slate-200 to-slate-300 shadow-lg
+          rounded-full text-slate-700 cursor-pointer
+          hover:brightness-90 active:brightness-75"
+      >
+        <LinkIcon size={18} />
+        <p className="text-sm">{safeHostname(url)}</p>
+
+      </Link>
+      
+      {/* Image */}
+      <div className="w-full aspect-[1.4] rounded-t-3xl overflow-hidden">
+        <RecipeImage externalUrl={imageUrl} alt="Recipe picture" />
+      </div>
+
+      {/* Data */}
+      <div className="p-4 flex flex-col gap-4">
+        <div>
+          <label htmlFor="title" className="text-sm font-semibold">Title</label>
+          <input
+            id="title"
+            name="title"
+            defaultValue={title}
+            className="mt-2 border border-slate-200 rounded-2xl w-full p-2 shadow-inner text-2xl font-bold text-zinc-900"
+          />
+        </div>
+
+        <div>
+          <label htmlFor="description" className="text-sm font-semibold">Description</label>
+          <textarea
+            rows={5}
+            placeholder="Add a description for this recipe link..."
+            className="mt-2 p-2 w-full rounded-2xl border border-slate-200 shadow-inner"
+          />
+        </div>
+
+        <Tags />
+
+        <button className="my-3 cursor-pointer hover:brightness-90 active:brightness-75 rounded-full flex gap-2 justify-center items-center w-full py-2 bg-linear-to-br from-orange-500 to-rose-500 text-white font-bold text-lg">
+          Save 
+          <ArrowRight size={20} />
+        </button>
+      </div>
+
+    </div>
+  )
+}
+
+/* -------- utils -------- */
 function normalizeParam(v: string | string[] | undefined) {
   return Array.isArray(v) ? v[0] : v;
+}
+function safeHostname(u: string) {
+  try {
+    const x = new URL(u);
+    return x.hostname.replace(/^www\./, "");
+  } catch {
+    return u;
+  }
+}
+
+function reasonBadge(reason: ReasonKey) {
+  switch (reason) {
+    case "ROBOTS":
+      return { label: "site blocks robots", cls: "bg-amber-100 text-amber-800", icon: <ShieldAlert className="h-4 w-4" /> };
+    case "DENYLIST":
+      return { label: "site terms restrict import", cls: "bg-yellow-100 text-yellow-800", icon: <AlertTriangle className="h-4 w-4" /> };
+    case "PAYWALL":
+      return { label: "paywalled", cls: "bg-pink-100 text-pink-800", icon: <AlertTriangle className="h-4 w-4" /> };
+    case "ERROR":
+      return { label: "fetch/parsing error", cls: "bg-red-100 text-red-800", icon: <AlertTriangle className="h-4 w-4" /> };
+    case "NO_SCHEMA":
+    default:
+      return { label: "no JSON-LD schema", cls: "bg-gray-100 text-gray-800", icon: <AlertTriangle className="h-4 w-4" /> };
+  }
 }
