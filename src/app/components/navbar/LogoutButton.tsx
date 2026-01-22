@@ -63,7 +63,7 @@ export function LogoutButton({ action }: LogoutButtonProps) {
         <button
           type="button"
           onClick={openDialog}
-          className="hidden md:flex gap-1 justify-center items-center rounded-full bg-linear-to-r from-orange-500 to-rose-500 text-white w-10 h-10 sm:w-max sm:px-4 sm:py-2 font-bold shadow transition cursor-pointer hover:brightness-95 active:brightness-75"
+          className="hidden md:flex gap-1 justify-center items-center rounded-full bg-linear-to-r from-orange-500 to-rose-500 text-white w-10 h-10 sm:w-max sm:px-4 sm:py-2 font-bold shadow transition cursor-pointer hover:brightness-90 active:brightness-75"
         >
           <LogOut size={18} />
           <span className="block">Logout</span>
