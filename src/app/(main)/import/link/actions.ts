@@ -7,18 +7,16 @@ import { prisma } from "@/lib/prisma";
 import { uniqueRecipeSlug } from "@/lib/uniqueSlug";
 
 const PayloadSchema = z.object({
-  url: z.url(),
-  title: z.string().min(1).max(280),
-  image: z.url().optional().nullable(),
-
-  // User-entered metadata
-  note: z.string().max(10_000).optional().nullable(),
+  url: z.url(),         // required
+  title: z.string(),    // required
+  imageUrl: z.url().optional(),
+  description: z.string().max(10000).optional(),
   tags: z.array(z.string().trim().min(1).max(48)).optional().default([]),
 });
 
 /**
  * Save a link-only recipe with optional tags and note.
- * Redirects to the created recipe on success.
+ * Redirects to the all recipes page on success.
  */
 export async function saveLinkCard(formData: FormData) {
   const session = await auth();
@@ -27,8 +25,8 @@ export async function saveLinkCard(formData: FormData) {
   const raw = {
     url: formData.get("url"),
     title: formData.get("title"),
-    image: emptyToNull(formData.get("image")),
-    note: emptyToNull(formData.get("note")),
+    image: formData.get("imageUrl") || "",
+    description: formData.get("description") || "",
     tags: formData.getAll("tags").filter(Boolean) as string[],
   };
 
@@ -37,7 +35,7 @@ export async function saveLinkCard(formData: FormData) {
     throw new Error(z.prettifyError(parsed.error) ?? "Invalid input.");
   }
 
-  const { url, title, image, note, tags } = parsed.data;
+  const { url, title, description, imageUrl, tags } = parsed.data;
   const slug = await uniqueRecipeSlug(title);
 
   try {
@@ -46,9 +44,8 @@ export async function saveLinkCard(formData: FormData) {
         ownerId: session.user.id,
         type: "EXTERNAL_LINK",
         title,
-        sourceUrl: url.toString(),
-        imageExternalUrl: image,
-        note: note ?? undefined,
+        sourceUrl: url,
+        imageExternalUrl: imageUrl || undefined,
         tags: tags ?? [],
         slug,
         status: "PUBLISHED",
@@ -61,10 +58,5 @@ export async function saveLinkCard(formData: FormData) {
     console.error("[create] error:", err);
     throw new Error("Failed to save Link Card. Please try again.");
   }
-  redirect(`/view/${slug}`);
-}
-
-function emptyToNull(v: FormDataEntryValue | null): string | null {
-  const s = (v ?? "").toString().trim();
-  return s.length ? s : null;
+  redirect("/all");
 }
