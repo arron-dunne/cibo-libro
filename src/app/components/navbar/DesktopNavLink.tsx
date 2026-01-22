@@ -36,7 +36,7 @@ export function useInfo(type: NavLinkType) {
     case "new":
       return { label: "Add", href: "/new", icon: CirclePlus, highlight: pathname === "/new" };
     case "import":
-      return { label: "Import", href: "/import", icon: Import, highlight: pathname === "/import" };
+      return { label: "Import", href: "/import", icon: Import, highlight: RegExp("/import*").test(pathname) };
     case "settings":
       return { label: "Settings", href: "/settings", icon: Settings, highlight: pathname === "/settings" };
     default:

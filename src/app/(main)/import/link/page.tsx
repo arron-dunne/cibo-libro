@@ -1,33 +1,32 @@
-// app/(main)/import/link/page.tsx
-import Link from "next/link";
+import Link from "next/link"
+import { notFound } from "next/navigation";
 import { z } from "zod";
-import { Suspense } from "react";
-import { Globe, ExternalLink, Link2, Image as ImageIcon, AlertTriangle, ShieldAlert } from "lucide-react";
-import ClientLinkCardForm from "./ClientLinkCardForm";
+import { AlertTriangle, ShieldAlert, LinkIcon, Save, ArrowRight } from "lucide-react";
+import { RecipeImage } from "@/app/components/recipes/RecipeImage";
+import { saveLinkCard } from "./actions";
+import { Tags } from "./Tags";
 
-/** Canonical reasons we display; we also accept legacy synonyms (see normalizeReason) */
-const ReasonSchema = z.enum(["ROBOTS", "DENYLIST", "PAYWALL", "NO_SCHEMA", "ERROR"]);
+const Reason = ["ROBOTS", "DENYLIST", "PAYWALL", "NO_SCHEMA", "ERROR"] as const;
 
 const ParamsSchema = z.object({
   url: z.url(),
   title: z.string().min(1).max(280),
-  // Accept empty string for optional image
-  image: z.url().optional().or(z.literal("")).transform((v) => (v || undefined)),
+  imageUrl: z.string().optional(), // accept any string for image
   siteName: z.string().optional(),
-  reason: z.string().optional().transform((v) => normalizeReason(v)),
+  reason: z.enum(Reason),
 });
 
-type ReasonKey = z.infer<typeof ReasonSchema>;
+type ReasonKey = z.infer<typeof Reason>;
 
 export default async function Page({
   searchParams,
 }: {
-  searchParams: Promise<{ 
-    url?: string; 
-    title?: string; 
-    image?: string; 
-    siteName?: string; 
-    reason?: string 
+  searchParams: Promise<{
+    url?: string;
+    title?: string;
+    image?: string;
+    siteName?: string;
+    reason?: string
   }>;
 }) {
   const params = await searchParams
@@ -41,34 +40,15 @@ export default async function Page({
   });
 
   if (!parsed.success) {
-    return (
-      <div className="mx-auto w-[min(1150px,95%)]">
-        <div className="mx-auto max-w-3xl">
-          <div className="mt-6 rounded-2xl border border-red-200 bg-white p-6 shadow-sm">
-            <div className="mb-2 flex items-center gap-2 text-red-700">
-              <AlertTriangle className="h-5 w-5" />
-              <h1 className="text-lg font-semibold">Invalid link preview parameters</h1>
-            </div>
-            <p className="text-sm text-gray-700">
-              Required: <code>url</code>, <code>title</code>. Optional: <code>reason</code>, <code>image</code>, <code>siteName</code>.
-            </p>
-            <div className="mt-4">
-              <Link href="/import" className="text-sm font-semibold text-orange-600 hover:underline">
-                ← Back to Import
-              </Link>
-            </div>
-          </div>
-        </div>
-      </div>
-    );
+    notFound();
   }
 
-  const { url, title, image, siteName, reason } = parsed.data;
+  const { url, title, imageUrl, siteName, reason } = parsed.data;
   const site = (siteName || safeHostname(url)).trim();
   const badge = reasonBadge(reason);
 
   return (
-    <div className="mx-auto w-[min(1150px,95%)]">
+    <div className="mx-auto max-w-3xl">
       {/* Status panel */}
       <div className="mt-2 mb-6 flex items-start gap-3 rounded-2xl border border-orange-200/70 bg-white/85 p-4 shadow-sm backdrop-blur supports-[backdrop-filter]:bg-white/65">
         <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-orange-100 text-orange-700">
@@ -87,70 +67,79 @@ export default async function Page({
         </span>
       </div>
 
-      {/* Preview + Form */}
-      <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
-        {/* Preview */}
-        <section aria-labelledby="preview-title" className="rounded-2xl border bg-white shadow-sm">
-          <header className="flex items-center justify-between border-b px-5 py-4">
-            <div className="flex items-center gap-2 text-sm text-gray-600">
-              <Globe className="h-4 w-4" />
-              <span className="truncate">{site}</span>
-              <span className="text-gray-300">•</span>
-              <a
-                href={url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-1 text-gray-700 underline decoration-gray-300 underline-offset-2 hover:text-gray-900"
-              >
-                View original <ExternalLink className="h-3.5 w-3.5" />
-              </a>
-            </div>
-            <div className="inline-flex items-center gap-1 rounded-full bg-gray-50 px-3 py-1 text-xs text-gray-600">
-              <Link2 className="h-3.5 w-3.5" />
-              Link Card
-            </div>
-          </header>
+      {/* Preview */}
+      <form action={saveLinkCard}>
+        <PreviewCard title={title} url={url} imageUrl={imageUrl} />
+      </form>
 
-          <div className="relative">
-            {image ? (
-              // eslint-disable-next-line @next/next/no-img-element
-              <img
-                src={image}
-                alt={title}
-                className="aspect-[16/9] w-full rounded-t-2xl object-cover"
-                referrerPolicy="no-referrer"
-              />
-            ) : (
-              <div className="aspect-[16/9] w-full rounded-t-2xl bg-linear-to-br from-orange-100 to-rose-100">
-                <div className="flex h-full w-full items-center justify-center">
-                  <div className="flex items-center gap-3 rounded-xl border border-orange-200/60 bg-white/70 px-4 py-2 text-orange-700 shadow-sm backdrop-blur">
-                    <ImageIcon className="h-5 w-5" />
-                    <span className="text-sm font-medium">No preview image available</span>
-                  </div>
-                </div>
-              </div>
-            )}
-          </div>
-
-          <div className="space-y-3 px-5 py-5">
-            <h2 id="preview-title" className="text-xl font-semibold text-gray-900">
-              {title}
-            </h2>
-            <p className="text-sm text-gray-500">This is a link preview. The full recipe remains on the original site.</p>
-          </div>
-
-          <footer className="border-t px-5 py-4 text-xs text-gray-500">
-            We only save safe metadata and your inputs. Full recipes from other sites aren’t copied. There’s always a link back to the original.
-          </footer>
-        </section>
-
-        {/* Form */}
-        <Suspense fallback={<div className="h-[560px] rounded-2xl border bg-white shadow-sm" />}>
-          <ClientLinkCardForm initialUrl={url} title={title} image={image} />
-        </Suspense>
-      </div>
     </div>
   );
+}
+
+
+function PreviewCard({
+  title,
+  url,
+  imageUrl
+}: {
+  title: string,
+  url: string,
+  imageUrl?: string
+}) {
+
+  return (
+    <div className="relative w-92 mx-auto bg-white rounded-3xl">
+
+      {/* Source */}
+      <Link 
+        href={url}
+        target="_blank"
+        className="absolute top-3 right-3 px-4 py-2 flex gap-2 items-center
+          bg-linear-to-r from-slate-200 to-slate-300 shadow-lg
+          rounded-full text-slate-700 cursor-pointer
+          hover:brightness-90 active:brightness-75"
+      >
+        <LinkIcon size={18} />
+        <p className="text-sm">{safeHostname(url)}</p>
+
+      </Link>
+      
+      {/* Image */}
+      <div className="w-full aspect-[1.4] rounded-t-3xl overflow-hidden">
+        <RecipeImage externalUrl={imageUrl} alt="Recipe picture" />
+      </div>
+
+      {/* Data */}
+      <div className="p-4 flex flex-col gap-4">
+        <div>
+          <label htmlFor="title" className="text-sm font-semibold">Title</label>
+          <input
+            id="title"
+            name="title"
+            defaultValue={title}
+            className="mt-2 border border-slate-200 rounded-2xl w-full p-2 shadow-inner text-2xl font-bold text-zinc-900"
+          />
+        </div>
+
+        <div>
+          <label htmlFor="description" className="text-sm font-semibold">Description</label>
+          <textarea
+            rows={5}
+            placeholder="Add a description for this recipe link..."
+            className="mt-2 p-2 w-full rounded-2xl border border-slate-200 shadow-inner"
+          />
+        </div>
+
+        <Tags />
+
+        <button className="my-3 cursor-pointer hover:brightness-90 active:brightness-75 rounded-full flex gap-2 justify-center items-center w-full py-2 bg-linear-to-br from-orange-500 to-rose-500 text-white font-bold text-lg">
+          Save 
+          <ArrowRight size={20} />
+        </button>
+      </div>
+
+    </div>
+  )
 }
 
 /* -------- utils -------- */
@@ -164,16 +153,6 @@ function safeHostname(u: string) {
   } catch {
     return u;
   }
-}
-
-/** Map legacy reasons to canonical keys. */
-function normalizeReason(v?: string): ReasonKey {
-  const raw = (v ?? "").toUpperCase();
-  if (ReasonSchema.safeParse(raw).success) return raw as ReasonKey;
-  if (raw === "ROBOTS_BLOCKED") return "ROBOTS";
-  if (raw === "PAYWALLED") return "PAYWALL";
-  if (raw === "FETCH_FAILED") return "ERROR";
-  return "NO_SCHEMA";
 }
 
 function reasonBadge(reason: ReasonKey) {
