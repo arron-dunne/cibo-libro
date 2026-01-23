@@ -83,7 +83,7 @@ function InfoCard({
         <Icon className="w-8 h-8 md:w-6 md:h-6"/>
       </div>
       <div>
-        <p className="text-lg font-semibold text-gray-900">{title}</p>
+        <h4 className="text-lg font-semibold text-gray-900">{title}</h4>
         <p className="text-sm leading-6 text-gray-700">{desc}</p>
       </div>
     </div>

@@ -1,11 +1,11 @@
 import Link from "next/link"
 import { notFound } from "next/navigation";
 import { z } from "zod";
-import { AlertTriangle, LinkIcon } from "lucide-react";
+import { Info, LinkIcon } from "lucide-react";
 import { RecipeImage } from "@/app/components/recipes/RecipeImage";
 import { saveLinkCard } from "./actions";
 import { Tags } from "./Tags";
-import { SaveButton } from "./SaveButton";
+import { SaveButton, QuickSaveButton } from "./SaveButton";
 
 
 const ParamsSchema = z.object({
@@ -43,9 +43,9 @@ export default async function Page({
 
   return (
     <div className="mx-auto max-w-3xl">
-      <StatusPanel />
-      {/* Preview */}
       <form action={saveLinkCard}>
+        <StatusPanel />
+        {/* Preview */}
         <PreviewCard title={title} url={url} imageUrl={imageUrl} />
       </form>
 
@@ -65,7 +65,7 @@ function PreviewCard({
 }) {
 
   return (
-    <div className="relative w-92 mx-auto bg-white rounded-3xl">
+    <div className="relative mt-8 w-92 mx-auto bg-white rounded-3xl">
 
       {/* Hidden inputs */}
       <input name="url" value={url} hidden readOnly />
@@ -124,19 +124,27 @@ function PreviewCard({
 
 function StatusPanel() {
   return (
-    <div className="mt-2 mb-6 flex items-start gap-3 rounded-2xl border border-orange-200/70 bg-white/85 p-4 shadow-sm backdrop-blur supports-[backdrop-filter]:bg-white/65">
-      <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-orange-100 text-orange-700">
-        <AlertTriangle className="h-5 w-5" />
+    <div className="max-w-3xl w-full mt-4 p-4 sm:p-5 rounded-3xl border border-white/90 bg-white/60 shadow flex flex-col">
+      <div className="flex items-start gap-4">
+        <div className="hidden sm:flex w-12 h-12 shrink-0 items-center justify-center rounded-2xl bg-linear-to-br from-pink-300 to-rose-300">
+          <Info className="w-6 h-6 text-rose-900" />
+        </div>
+
+        <div className="flex flex-col gap-1">
+          <h4 className="text-lg sm:text-xl font-semibold text-slate-900">
+            We couldn’t import a recipe from this page
+          </h4>
+
+          <p className="text-sm sm:text-base text-slate-700 leading-relaxed">
+            You can still save it as a recipe link in your cookbook.
+            Customise it with a description and tags below, or quick save as it is.
+          </p>
+        </div>
       </div>
-      <div className="grow">
-        <h1 className="text-lg font-semibold text-gray-900">We couldn’t import the full recipe</h1>
-        <p className="mt-1 text-sm text-gray-700">
-          The website’s settings or terms prevent automated imports. You can still save a{" "}
-          <span className="font-medium text-gray-900">Link Card</span> with safe metadata and your own tags/notes.
-        </p>
-      </div>
+
+      <QuickSaveButton />
     </div>
-  )
+  );
 }
 
 // Utils
