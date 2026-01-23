@@ -8,11 +8,11 @@ export default function ImportPage() {
     <div className="max-w-4xl w-full mx-auto">
       <div className="mt-8 p-6 sm:p-8 rounded-3xl border border-white/70 bg-white/95 backdrop-blur shadow-lg">
         {/* Header */}
-        <div className="mb-6 flex items-start gap-6 md:mb-8">
-          <div className="flex h-20 w-20 items-center justify-center rounded-3xl bg-linear-to-br from-rose-300 to-fuchsia-300 text-rose-900">
-            <Download size={36} aria-hidden="true" />
+        <div className="mb-6 flex flex-col sm:flex-row items-center sm:items-start gap-3 sm:gap-6 md:mb-8">
+          <div className="w-20 h-16 sm:w-20 sm:h-18 flex items-center justify-center rounded-3xl sm:rounded-3xl bg-linear-to-br from-rose-300 to-fuchsia-300 text-rose-900">
+            <Download aria-hidden="true" className="w-8 h-8 sm:w-10 sm:h-10"/>
           </div>
-          <div>
+          <div className="text-center sm:text-start">
             <h1 className="text-3xl font-bold leading-tight text-gray-900 md:text-4xl">
               Import a recipe
             </h1>
@@ -79,8 +79,8 @@ function InfoCard({
 }) {
   return (
     <div className="w-full max-w-lg mx-auto md:w-1/3 p-4 rounded-3xl border border-white/70 bg-white/95 shadow-lg flex gap-4">
-      <div className={`w-22 h-20 md:w-12 md:h-12 shrink-0 flex justify-center items-center rounded-3xl md:rounded-2xl ${iconStyle}`}>
-        <Icon className="w-8 h-8 md:w-6 md:h-10"/>
+      <div className={`w-20 h-18 md:w-12 md:h-12 shrink-0 flex justify-center items-center rounded-3xl md:rounded-2xl ${iconStyle}`}>
+        <Icon className="w-8 h-8 md:w-6 md:h-6"/>
       </div>
       <div>
         <p className="text-lg font-semibold text-gray-900">{title}</p>
