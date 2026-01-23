@@ -9,7 +9,7 @@ export default function ImportPage() {
       <div className="mt-8 p-6 sm:p-8 rounded-3xl border border-white/70 bg-white/95 backdrop-blur shadow-lg">
         {/* Header */}
         <div className="mb-6 flex flex-col sm:flex-row items-center sm:items-start gap-3 sm:gap-6 md:mb-8">
-          <div className="w-20 h-16 sm:w-20 sm:h-18 flex items-center justify-center rounded-3xl sm:rounded-3xl bg-linear-to-br from-rose-300 to-fuchsia-300 text-rose-900">
+          <div className="hidden sm:flex w-20 h-18 items-center justify-center rounded-3xl sm:rounded-3xl bg-linear-to-br from-rose-300 to-fuchsia-300 text-rose-900">
             <Download aria-hidden="true" className="w-8 h-8 sm:w-10 sm:h-10"/>
           </div>
           <div className="text-center sm:text-start">
