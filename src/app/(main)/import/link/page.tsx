@@ -65,7 +65,7 @@ function PreviewCard({
 }) {
 
   return (
-    <div className="relative mt-8 w-92 mx-auto bg-white rounded-3xl">
+    <div className="relative mt-8 max-w-92 w-full mx-auto bg-white rounded-3xl">
 
       {/* Hidden inputs */}
       <input name="url" value={url} hidden readOnly />
