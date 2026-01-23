@@ -77,8 +77,8 @@ function PreviewCard({
         target="_blank"
         className="absolute top-3 right-3 px-4 py-2 flex gap-2 items-center
           bg-linear-to-r from-slate-200 to-slate-300 shadow-lg
-          rounded-full text-slate-700 cursor-pointer
-          hover:brightness-90 active:brightness-75"
+          rounded-full text-slate-700 border border-white/70
+          cursor-pointer hover:brightness-90 active:brightness-75"
       >
         <LinkIcon size={18} />
         <p className="text-sm">{safeHostname(url)}</p>
