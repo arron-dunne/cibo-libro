@@ -1,25 +1,24 @@
-// app/(main)/import/actions.ts
 "use server";
 
 import { redirect } from "next/navigation";
 import { z } from "zod";
+import he from "he";
 import { load as loadHtml } from "cheerio";
 import { auth } from "@/lib/auth/auth";
 import { prisma } from "@/lib/prisma";
 import { uniqueRecipeSlug } from "@/lib/uniqueSlug";
-import he from "he";
 import { isDenylisted } from "@/lib/denylist";
 
+// TODO: setup support email channel
 /** Outbound HTTP settings */
 const IMPORTER_USER_AGENT =
   process.env.IMPORTER_USER_AGENT ??
   "CiboLibroBot/0.1 (+https://cibolibro.com; contact support@cibolibro.com)";
 const IMPORTER_TIMEOUT_MS = Number(process.env.IMPORTER_TIMEOUT_MS ?? 7000);
 
-/** Consistent failure reasons understood by /import/link page */
 type ImportFailReason = "ROBOTS" | "DENYLIST" | "PAYWALL" | "ERROR" | "NO_SCHEMA";
 
-/** Form payload validation (with honeypot) */
+// Form payload validation (with honeypot)
 const ImportSchema = z.object({
   url: z
     .url("Please enter a valid URL.")
@@ -48,7 +47,7 @@ type OpenGraphMeta = {
   siteName?: string;
 };
 
-/** Main server action: try import → otherwise redirect to Link Card flow */
+// Main server action: try import structured recipe, otherwise redirect to Link Card page
 export async function importRecipe(formData: FormData) {
   const session = await auth();
   if (!session?.user?.id) throw new Error("You must be signed in to import recipes.");
@@ -69,30 +68,30 @@ export async function importRecipe(formData: FormData) {
     select: { id: true },
   });
 
-  // Denylist → Link Card
+  // Denylisted
   if (isDenylisted(hostname)) {
     await failJob(job.id, "DENYLIST");
-    return redirect(buildPromptUrl(url, undefined, "DENYLIST"));
+    return redirect(buildPromptUrl(url, undefined));
   }
 
   // Robots (conservative)
   const robots = await checkRobotsAllowed(url, IMPORTER_TIMEOUT_MS);
   if (!robots.allowed) {
     await failJob(job.id, "ROBOTS");
-    return redirect(buildPromptUrl(url, undefined, "ROBOTS"));
+    return redirect(buildPromptUrl(url, undefined));
   }
 
   // Fetch page
   const { ok, status, html, og } = await fetchHtmlWithMeta(url.toString(), IMPORTER_TIMEOUT_MS);
   if (!ok || !html) {
     await failJob(job.id, "ERROR", `FETCH_FAILED_${status ?? "0"}`);
-    return redirect(buildPromptUrl(url, og, "ERROR"));
+    return redirect(buildPromptUrl(url, og));
   }
 
   // Paywall detection via JSON-LD
   if (detectPaywalledFromJsonLd(html)) {
     await failJob(job.id, "PAYWALL");
-    return redirect(buildPromptUrl(url, og, "PAYWALL"));
+    return redirect(buildPromptUrl(url, og));
   }
 
   // Parse structured (JSON-LD → microdata)
@@ -111,7 +110,7 @@ export async function importRecipe(formData: FormData) {
 
   // No structured data → Link Card prompt
   await failJob(job.id, "NO_SCHEMA");
-  return redirect(buildPromptUrl(url, og, "NO_SCHEMA"));
+  return redirect(buildPromptUrl(url, og));
 }
 
 /** Persist structured recipe into your model (safe-cleansed text). */
@@ -159,13 +158,12 @@ async function failJob(jobId: string, reason: ImportFailReason, message?: string
   });
 }
 
-/** Build the /import/link URL with safe defaults + OG hints. */
-function buildPromptUrl(u: URL, og?: OpenGraphMeta, reason?: ImportFailReason) {
+// Build the /import/link URL with safe defaults + OG hints
+function buildPromptUrl(u: URL, og?: OpenGraphMeta) {
   const title = (og?.title?.trim() || synthesizeTitleFromUrl(u)).slice(0, 120);
   const params = new URLSearchParams({ url: u.toString(), title });
   if (og?.image) params.set("image", og.image);
   if (og?.siteName) params.set("siteName", og.siteName);
-  if (reason) params.set("reason", reason);
   return `/import/link?${params.toString()}`;
 }
 
@@ -206,7 +204,7 @@ async function fetchHtmlWithMeta(
   }
 }
 
-/** Minimal (conservative) robots.txt check — disallow "/" for UA or "*" → blocked. */
+// Minimal (conservative) robots.txt check — disallow "/" for UA or "*" → blocked
 async function checkRobotsAllowed(url: URL, timeoutMs: number): Promise<{ allowed: boolean }> {
   const robotsUrl = `${url.protocol}//${url.host}/robots.txt`;
   const ac = new AbortController();
