@@ -6,6 +6,7 @@ import { RecipeImage } from "@/app/components/recipes/RecipeImage";
 import { saveLinkCard } from "./actions";
 import { Tags } from "./Tags";
 import { SaveButton, QuickSaveButton } from "./SaveButton";
+import { getHostname } from "@/lib/hostname";
 
 
 const ParamsSchema = z.object({
@@ -39,7 +40,6 @@ export default async function Page({
   }
 
   const { url, title, imageUrl, siteName } = parsed.data;
-  const site = (siteName || safeHostname(url)).trim();
 
   return (
     <div className="mx-auto max-w-3xl">
@@ -81,7 +81,7 @@ function PreviewCard({
           cursor-pointer hover:brightness-90 active:brightness-75"
       >
         <LinkIcon size={18} />
-        <p className="text-sm">{safeHostname(url)}</p>
+        <p className="text-sm">{getHostname(url)}</p>
 
       </Link>
 
@@ -150,12 +150,4 @@ function StatusPanel() {
 // Utils
 function normalizeParam(v: string | string[] | undefined) {
   return Array.isArray(v) ? v[0] : v;
-}
-function safeHostname(u: string) {
-  try {
-    const x = new URL(u);
-    return x.hostname.replace(/^www\./, "");
-  } catch {
-    return u;
-  }
 }
