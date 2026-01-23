@@ -3,20 +3,12 @@
 import { redirect } from "next/navigation";
 import ky from "ky";
 import { z } from "zod";
+import he from "he";
 import { load as loadHtml } from "cheerio";
 import { auth } from "@/lib/auth/auth";
 import { prisma } from "@/lib/prisma";
 import { uniqueRecipeSlug } from "@/lib/uniqueSlug";
-import { detectPaywall } from "@/lib/import/detectPaywall";
-import { isDenylisted } from "@/lib/import/denylist";
-import { isSafeUrl } from "@/lib/import/safeUrl";
-import { parseJsonLd, StructuredRecipe } from "@/lib/import/jsonld";
-import { extractOpenGraph, OpenGraphMeta } from "@/lib/import/opengraph";
-
-
-class UnsafeUrlError extends Error {
-  name = "UnsafeUrlError";
-}
+import { isDenylisted } from "@/lib/denylist";
 
 // TODO: setup support email channel
 /** Outbound HTTP settings */
@@ -66,7 +58,13 @@ const safeFetcher = ky.extend({
   }
 });
 
-// Server action
+type OpenGraphMeta = {
+  title?: string;
+  image?: string;
+  siteName?: string;
+};
+
+// Main server action: try import structured recipe, otherwise redirect to Link Card page
 export async function importRecipe(formData: FormData) {
 
   // Authentication
@@ -89,35 +87,28 @@ export async function importRecipe(formData: FormData) {
     select: { id: true },
   });
 
-  // Check blockers before fetching
-  const denied = isDenylisted(url.hostname.toLowerCase());
-  const robotsAllowed = denied ? true : await isRobotsAllowed(url);
-
-  // Always fetch page for OG data (used on link card fallback)
-  const { ok, status, html, og } = await fetchHtmlWithMeta(url);
-
   // Denylisted
-  if (denied) {
+  if (isDenylisted(hostname)) {
     await failJob(job.id, "DENYLIST");
-    redirect(buildLinkCardUrl(url, og));
+    return redirect(buildPromptUrl(url, undefined));
   }
 
   // Robots.txt
   if (!robotsAllowed) {
     await failJob(job.id, "ROBOTS");
-    redirect(buildLinkCardUrl(url, og));
+    return redirect(buildPromptUrl(url, undefined));
   }
 
   // Fetch failed
   if (!ok || !html) {
     await failJob(job.id, "ERROR", `FETCH_FAILED_${status ?? "0"}`);
-    redirect(buildLinkCardUrl(url, og));
+    return redirect(buildPromptUrl(url, og));
   }
 
   // Paywall detection via JSON-LD
   if (detectPaywall(html)) {
     await failJob(job.id, "PAYWALL");
-    redirect(buildLinkCardUrl(url, og));
+    return redirect(buildPromptUrl(url, og));
   }
 
   // JSON-LD
@@ -138,12 +129,102 @@ export async function importRecipe(formData: FormData) {
 
   // if no data extracted, redirect to link card
   await failJob(job.id, "NO_SCHEMA");
-  redirect(buildLinkCardUrl(url, og));
+  return redirect(buildPromptUrl(url, og));
 }
 
-// TODO: improve, currently user agents on consecutive lines arnt handled correctly
-// Check robots.txt to see if importing is allowed, returning yes (true) or no (false)
-async function isRobotsAllowed(url: URL): Promise<boolean> {
+/** Persist structured recipe into your model (safe-cleansed text). */
+async function createStructuredRecipe({
+  userId,
+  sourceUrl,
+  data,
+}: {
+  userId: string;
+  sourceUrl: string;
+  data: StructuredRecipe;
+}) {
+  const title = (data.title || humanizeUrl(sourceUrl)).trim();
+  const slug = await uniqueRecipeSlug(title);
+
+  const created = await prisma.recipe.create({
+    data: {
+      ownerId: userId,
+      type: "EXTERNAL_FULL",
+      title,
+      description: sanitizeDescription(data.description ?? ""),
+      prepMins: data.prepMins ?? null,
+      cookMins: data.cookMins ?? null,
+      servings: data.servings ?? null,
+      imageExternalUrl: safeExternalImage(data.image),
+      ingredients: (data.ingredients ?? []).map(sanitizeInline).filter(Boolean),
+      steps: (data.instructions ?? []).map(sanitizeInline).filter(Boolean),
+      tags: normalizeTags({ raw: data.tags, title }),
+      sourceUrl,
+      isPublic: false,
+      slug,
+      status: "PUBLISHED",
+    },
+    select: { id: true, slug: true },
+  });
+
+  return created;
+}
+
+/** Update job to FAILED with optional message. */
+async function failJob(jobId: string, reason: ImportFailReason, message?: string) {
+  await prisma.importJob.update({
+    where: { id: jobId },
+    data: { status: "FAILED", errorMsg: message ?? reason },
+  });
+}
+
+// Build the /import/link URL with safe defaults + OG hints
+function buildPromptUrl(u: URL, og?: OpenGraphMeta) {
+  const title = (og?.title?.trim() || synthesizeTitleFromUrl(u)).slice(0, 120);
+  const params = new URLSearchParams({ url: u.toString(), title });
+  if (og?.image) params.set("image", og.image);
+  if (og?.siteName) params.set("siteName", og.siteName);
+  return `/import/link?${params.toString()}`;
+}
+
+/** Fallback title synthesised from URL. */
+function synthesizeTitleFromUrl(u: URL): string {
+  const last = decodeURIComponent(u.pathname.split("/").filter(Boolean).pop() || u.hostname);
+  const s = last.replace(/\.(html?|php|aspx?)$/i, "").replace(/[-_]+/g, " ").replace(/\s+/g, " ").trim();
+  return s ? s.replace(/\b\w/g, (c) => c.toUpperCase()) : u.hostname.replace(/^www\./, "");
+}
+
+/** Fetch HTML and basic OG with a polite UA + timeout. */
+async function fetchHtmlWithMeta(
+  url: string,
+  timeoutMs: number
+): Promise<{ ok: boolean; status?: number; html?: string; og?: OpenGraphMeta }> {
+  const ac = new AbortController();
+  const to = setTimeout(() => ac.abort(), timeoutMs);
+  try {
+    const res = await fetch(url, {
+      signal: ac.signal,
+      headers: {
+        "User-Agent": IMPORTER_USER_AGENT,
+        Accept: "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8",
+      },
+      redirect: "follow",
+      credentials: "omit",
+      cache: "no-store",
+    });
+    const status = res.status;
+    if (!res.ok) return { ok: false, status };
+    const html = await res.text();
+    const og = extractOpenGraph(html);
+    return { ok: true, status, html, og };
+  } catch {
+    return { ok: false };
+  } finally {
+    clearTimeout(to);
+  }
+}
+
+// Minimal (conservative) robots.txt check — disallow "/" for UA or "*" → blocked
+async function checkRobotsAllowed(url: URL, timeoutMs: number): Promise<{ allowed: boolean }> {
   const robotsUrl = `${url.protocol}//${url.host}/robots.txt`;
 
   try {
