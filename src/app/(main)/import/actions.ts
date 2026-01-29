@@ -1,5 +1,7 @@
 "use server";
 
+import ipaddr from "ipaddr.js";
+import dns from "node:dns/promises";
 import { redirect } from "next/navigation";
 import { z } from "zod";
 import he from "he";
@@ -62,11 +64,16 @@ export async function importRecipe(formData: FormData) {
   const url = new URL(parsed.data.url);
   const hostname = url.hostname.toLowerCase();
 
-  // Create ImportJob (PENDING)
+  // Create ImportJob
   const job = await prisma.importJob.create({
     data: { userId, sourceUrl: url.toString() },
     select: { id: true },
   });
+
+  // Check URL
+  const isSafe = await isUrlSafe(url);
+  console.log("url: " + url + "    isSafe: " + isSafe);
+  return
 
   // Denylisted
   if (isDenylisted(hostname)) {
@@ -395,8 +402,8 @@ function mapJsonLdRecipe(node: JSONObject, idIndex: Map<string, JSONObject>): St
     typeof node["author"] === "string"
       ? (node["author"] as string)
       : isObject(node["author"]) && typeof node["author"]["name"] === "string"
-      ? (node["author"]["name"] as string)
-      : undefined;
+        ? (node["author"]["name"] as string)
+        : undefined;
 
   return {
     title: typeof node["name"] === "string" ? node["name"].trim() : "",
@@ -660,3 +667,39 @@ const DIET_KEYS = ["vegan", "vegetarian", "gluten free", "gluten-free", "dairy f
 const METHOD_KEYS = ["easy", "quick", "weeknight", "one pot", "one-pot", "one pan", "sheet pan", "sheet-pan", "slow cooker", "instant pot", "air fryer", "grill", "bbq", "baked", "roasted", "stir fry", "stir-fry"];
 const CUISINE_KEYS = ["italian", "mexican", "indian", "chinese", "thai", "japanese", "korean", "greek", "french", "spanish", "lebanese", "middle eastern", "vietnamese"];
 const ADJECTIVE_KEYS = ["spicy", "healthy", "creamy"];
+
+// Check URL is safe to fetch to prevent from SSRF attacks
+async function isUrlSafe(url: URL): Promise<boolean> {
+
+  // Only allow HTTP(S) protocol
+  if (url.protocol != "http:" && url.protocol != "https:") {
+    return false;
+  }
+
+  // Only allow ports 80 (HTTP) and 443 (HTTPS)
+  if (url.port && url.port != "80" && url.port != "443") {
+    return false;
+  }
+
+  try {
+
+    // Resolve domain name to IP
+    const addresses = await dns.lookup(url.hostname, { all: true, family: 4 });
+
+    if (addresses.length < 1) { return false; }
+
+    // Check each IP returned from DNS resolution
+    for (const { address } of addresses) {
+      if (ipaddr.parse(address).range() !== "unicast") {
+        return false;
+      }
+    }
+
+  }
+  catch {
+    return false;
+  }
+
+  // Only return true if all checks pass
+  return true;
+}
