@@ -1,35 +1,23 @@
+import Image from "next/image";
 import { importRecipe } from "./actions";
-import { SubmitButton } from "./SubmitButton";
-import { Download, ShieldCheck, Zap, StickyNote } from "lucide-react";
+import { UrlInput } from "./UrlInput";
+import { Download, LucideProps, MousePointerClick, UserPen, Handshake } from "lucide-react";
 
-export const dynamic = "force-dynamic";
-
-/**
- * Import page — UI with floating panel, pill input, feature cards.
- * Header icon now uses Download with orange background.
- */
 export default function ImportPage() {
   return (
-    <div className="relative">
-      {/* Spotlight glow behind the panel for premium depth */}
-      <div
-        aria-hidden
-        className="pointer-events-none absolute inset-x-0 top-10 mx-auto h-72 w-[min(1150px,96%)] rounded-[2rem] bg-[radial-gradient(ellipse_at_center,rgba(255,255,255,0.45),rgba(255,255,255,0)_60%)]"
-      />
-
-      {/* Floating panel under navbar */}
-      <div className="relative mx-auto w-[min(1100px,96%)] rounded-3xl border border-white/60 bg-white/95 p-6 shadow-[0_24px_64px_rgba(0,0,0,0.16)] backdrop-blur supports-[backdrop-filter]:bg-white/90 md:p-8">
+    <div className="max-w-4xl w-full mx-auto">
+      <div className="mt-8 p-6 sm:p-8 rounded-3xl border border-white/70 bg-white/95 backdrop-blur shadow-lg">
         {/* Header */}
-        <div className="mb-6 flex items-start gap-4 md:mb-8">
-          <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-orange-500 text-white shadow-sm">
-            <Download className="h-6 w-6" aria-hidden="true" />
+        <div className="mb-6 flex flex-col sm:flex-row items-center sm:items-start gap-3 sm:gap-6 md:mb-8">
+          <div className="hidden sm:flex w-20 h-18 items-center justify-center rounded-3xl sm:rounded-3xl bg-linear-to-br from-rose-300 to-fuchsia-300 text-rose-900">
+            <Download aria-hidden="true" className="w-8 h-8 sm:w-10 sm:h-10"/>
           </div>
-          <div>
+          <div className="text-center sm:text-start">
             <h1 className="text-3xl font-bold leading-tight text-gray-900 md:text-4xl">
-              Import a Recipe
+              Import a recipe
             </h1>
             <p className="mt-2 text-[15px] text-gray-700">
-              Paste a link. We’ll do the rest.
+              Paste a link to add it to your personal cookbook
             </p>
           </div>
         </div>
@@ -45,67 +33,59 @@ export default function ImportPage() {
           </div>
 
           {/* URL field with pill layout */}
-          <div className="w-full">
-            <div className="flex w-full items-center overflow-hidden rounded-full bg-white shadow-sm ring-1 ring-gray-200 focus-within:ring-2 focus-within:ring-orange-400">
-              <input
-                id="url"
-                name="url"
-                type="url"
-                required
-                inputMode="url"
-                placeholder="https://example.com/best-lasagne-ever"
-                pattern="https?://.+"
-                autoFocus
-                maxLength={2000}
-                className="flex-1 border-0 bg-transparent px-5 py-3 text-lg text-gray-900 placeholder:text-gray-400 focus:outline-none"
-              />
-              <SubmitButton />
-            </div>
-          </div>
+          <UrlInput />
 
-          {/* Feature cards */}
-          <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
-            <InfoCard
-              icon={<Zap className="h-5 w-5" />}
-              title="Import in one click"
-              desc="Paste a recipe link and we’ll grab the essentials—title, ingredients, steps, and timings—straight into your cookbook."
-            />
-            <InfoCard
-              icon={<StickyNote className="h-5 w-5" />}
-              title="No recipe? No problem"
-              desc="If a site won’t share, we’ll save a handy card with the title and link so you can always find it again."
-            />
-            <InfoCard
-              icon={<ShieldCheck className="h-5 w-5" />}
-              title="We play nice"
-              desc="We follow the rules—no paywall dodging or sneaky scraping. Everything stays tidy, safe, and fair."
-            />
-          </div>
         </form>
       </div>
+
+      {/* Feature cards */}
+      <Image className="mt-12 w-60 mx-auto md:mx-4" src="/images/how-it-works.png" alt="How it works" width={830} height={112}/>
+
+      <div className="mt-8 flex flex-col md:flex-row gap-8 md:gap-4">
+        <InfoCard
+          Icon={MousePointerClick}
+          title="Import in one click"
+          desc="Paste a recipe link and we’ll save the it straight to your cookbook"
+          iconStyle="bg-linear-to-br from-blue-300 to-cyan-300 text-blue-900"
+          />
+        <InfoCard
+          Icon={Handshake}
+          title="We respect other sites"
+          desc="If a site won’t share, we’ll save a handy link card instead so you can easily remember"
+          iconStyle="bg-linear-to-br from-green-300 to-lime-300 text-green-900"
+          />
+        <InfoCard
+          Icon={UserPen}
+          title="Personalise it your way"
+          desc="Add your personal tags, notes and rating to any recipe"
+          iconStyle="bg-linear-to-br from-purple-300 to-fuchsia-300 text-purple-900"
+        />
+      </div>
     </div>
-  );
+  )
 }
 
 /** Reusable little card under the field */
 function InfoCard({
-  icon,
+  Icon,
   title,
   desc,
+  iconStyle
 }: {
-  icon: React.ReactNode;
+  Icon: React.ComponentType<LucideProps>;
   title: string;
   desc: string;
+  iconStyle: string
 }) {
   return (
-    <div className="rounded-2xl border border-orange-100/60 bg-white p-4 shadow-sm">
-      <div className="mb-2 inline-flex items-center gap-2">
-        <span className="inline-flex h-9 w-9 items-center justify-center rounded-xl bg-orange-50 text-orange-700 ring-1 ring-orange-200">
-          {icon}
-        </span>
-        <span className="text-sm font-semibold text-gray-900">{title}</span>
+    <div className="w-full max-w-lg mx-auto md:w-1/3 p-4 rounded-3xl border border-white/70 bg-white/95 shadow-lg flex gap-4">
+      <div className={`w-20 h-18 md:w-12 md:h-12 shrink-0 flex justify-center items-center rounded-3xl md:rounded-2xl ${iconStyle}`}>
+        <Icon className="w-8 h-8 md:w-6 md:h-6"/>
       </div>
-      <p className="text-sm leading-6 text-gray-700">{desc}</p>
+      <div>
+        <h4 className="text-lg font-semibold text-gray-900">{title}</h4>
+        <p className="text-sm leading-6 text-gray-700">{desc}</p>
+      </div>
     </div>
   );
 }

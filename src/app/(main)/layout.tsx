@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import { auth, signOut } from "@/lib/auth/auth";
+import { auth } from "@/lib/auth/auth";
 import { Footer } from "@/app/components/footer/Footer";
 import { DesktopNavLink } from "@/app/components/navbar/DesktopNavLink";
 import { LogoutButton } from "@/app/components/navbar/LogoutButton";
@@ -16,7 +16,7 @@ export default async function Layout({ children }: { children: React.ReactNode }
   return (
     <>
       {/* Floating navbar */}
-      <nav className="sticky top-4 z-10" >
+      <nav className="sticky top-4 mt-4 z-10" >
         <div className="mx-auto px-2 md:px-4 max-w-screen-xl">
           <div className="flex h-14 gap-2 rounded-full border border-white/80 bg-white/60 px-4 py-2 shadow backdrop-blur">
 
@@ -48,7 +48,7 @@ export default async function Layout({ children }: { children: React.ReactNode }
               {/* Logout */}
               {session?.user ? (
                 <>
-                  <span className="hidden lg:inline text-gray-700">{session.user.email}</span>
+                  <span className="hidden lg:inline mr-0 lg:mr-4 text-gray-700">{session.user.email}</span>
                   <LogoutButton action={logout} />
                 </>
               ) : (

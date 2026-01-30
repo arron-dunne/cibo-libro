@@ -13,14 +13,11 @@ export function DesktopNavLink({ type }: { type: NavLinkType }) {
   return (
     <Link
       href={href}
-      className={[
-        "flex items-center gap-1 font-medium rounded-full transition",
-        highlight
-          ? "bg-linear-to-r from-orange-500 to-rose-500 text-white px-4 py-2 font-bold shadow"
-          : "text-orange-700 hover:brightness-200",
-      ].join(" ")}
+      className={`flex items-center gap-1 font-medium rounded-full transition 
+      ${ highlight ? "bg-linear-to-r from-orange-500 to-rose-500 text-white px-4 py-2 font-bold shadow"
+        : "text-orange-700 hover:brightness-200"}`}
     >
-      {highlight && <Icon size={16} />}
+      {highlight && <Icon size={18} />}
       {label}
     </Link>
   );
@@ -36,7 +33,7 @@ export function useInfo(type: NavLinkType) {
     case "new":
       return { label: "Add", href: "/new", icon: CirclePlus, highlight: pathname === "/new" };
     case "import":
-      return { label: "Import", href: "/import", icon: Import, highlight: pathname === "/import" };
+      return { label: "Import", href: "/import", icon: Import, highlight: RegExp("/import*").test(pathname) };
     case "settings":
       return { label: "Settings", href: "/settings", icon: Settings, highlight: pathname === "/settings" };
     default:
