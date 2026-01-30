@@ -1,16 +1,17 @@
 "use server";
 
 import ipaddr from "ipaddr.js";
+import ky from "ky";
 import dns from "node:dns/promises";
 import { redirect } from "next/navigation";
-import ky from "ky";
-import { z } from "zod";
+import { string, z } from "zod";
 import he from "he";
 import { load as loadHtml } from "cheerio";
 import { auth } from "@/lib/auth/auth";
 import { prisma } from "@/lib/prisma";
 import { uniqueRecipeSlug } from "@/lib/uniqueSlug";
 import { isDenylisted } from "@/lib/denylist";
+import { url } from "node:inspector";
 
 // TODO: setup support email channel
 /** Outbound HTTP settings */
@@ -66,6 +67,29 @@ type OpenGraphMeta = {
   siteName?: string;
 };
 
+// Safe fetcher which checks URL is safe before fetching and contains options
+const safeFetcher = ky.extend({
+  method: "get",
+  timeout: IMPORTER_TIMEOUT_MS,
+  headers: {
+    "User-Agent": IMPORTER_USER_AGENT,
+    Accept: "text/html,text/plain,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8",
+  },
+  redirect: "follow",
+  credentials: "omit",
+  cache: "no-store",
+  hooks: {
+    // Check URL is safe before every request
+    beforeRequest: [async (req) => {
+      const safe = await isSafeUrl(req.url);
+      console.log("checking: " + req.url + " safe: " + safe);
+      if (!safe) {
+        throw Error("unsafe url");
+      }
+    }]
+  }
+});
+
 // Main server action: try import structured recipe, otherwise redirect to Link Card page
 export async function importRecipe(formData: FormData) {
 
@@ -89,11 +113,6 @@ export async function importRecipe(formData: FormData) {
     select: { id: true },
   });
 
-  // Check URL
-  const isSafe = await isUrlSafe(url);
-  console.log("url: " + url + "    isSafe: " + isSafe);
-  return
-
   // Denylisted
   if (isDenylisted(hostname)) {
     await failJob(job.id, "DENYLIST");
@@ -101,12 +120,14 @@ export async function importRecipe(formData: FormData) {
   }
 
   // Robots.txt
-  if (!robotsAllowed) {
+  const allowed = await isRobotsAllowed(url);
+  if (!allowed) {
     await failJob(job.id, "ROBOTS");
     return redirect(buildPromptUrl(url, undefined));
   }
 
-  // Fetch failed
+  // Fetch page
+  const { ok, status, html, og } = await fetchHtmlWithMeta(url.toString());
   if (!ok || !html) {
     await failJob(job.id, "ERROR", `FETCH_FAILED_${status ?? "0"}`);
     return redirect(buildPromptUrl(url, og));
@@ -200,24 +221,12 @@ function synthesizeTitleFromUrl(u: URL): string {
   return s ? s.replace(/\b\w/g, (c) => c.toUpperCase()) : u.hostname.replace(/^www\./, "");
 }
 
-/** Fetch HTML and basic OG with a polite UA + timeout. */
+// Fetch HTML and basic OG from URL
 async function fetchHtmlWithMeta(
   url: string,
-  timeoutMs: number
 ): Promise<{ ok: boolean; status?: number; html?: string; og?: OpenGraphMeta }> {
-  const ac = new AbortController();
-  const to = setTimeout(() => ac.abort(), timeoutMs);
   try {
-    const res = await fetch(url, {
-      signal: ac.signal,
-      headers: {
-        "User-Agent": IMPORTER_USER_AGENT,
-        Accept: "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8",
-      },
-      redirect: "follow",
-      credentials: "omit",
-      cache: "no-store",
-    });
+    const res = await safeFetcher.get(url);
     const status = res.status;
     if (!res.ok) return { ok: false, status };
     const html = await res.text();
@@ -225,13 +234,12 @@ async function fetchHtmlWithMeta(
     return { ok: true, status, html, og };
   } catch {
     return { ok: false };
-  } finally {
-    clearTimeout(to);
   }
 }
 
-// Minimal (conservative) robots.txt check — disallow "/" for UA or "*" → blocked
-async function checkRobotsAllowed(url: URL, timeoutMs: number): Promise<{ allowed: boolean }> {
+// TODO: improve, currently user agents on consecutive lines arnt handled correctly
+// Check robots.txt to see if importing is allowed, returning yes (true) or no (false)
+async function isRobotsAllowed(url: URL): Promise<boolean> {
   const robotsUrl = `${url.protocol}//${url.host}/robots.txt`;
 
   try {
@@ -696,7 +704,10 @@ const CUISINE_KEYS = ["italian", "mexican", "indian", "chinese", "thai", "japane
 const ADJECTIVE_KEYS = ["spicy", "healthy", "creamy"];
 
 // Check URL is safe to fetch to prevent from SSRF attacks
-async function isUrlSafe(url: URL): Promise<boolean> {
+async function isSafeUrl(inputUrl: URL | string): Promise<boolean> {
+
+  // Cast to URL object if given a string input
+  const url = typeof inputUrl === "string" ? new URL(inputUrl) : inputUrl;
 
   // Only allow HTTP(S) protocol
   if (url.protocol != "http:" && url.protocol != "https:") {
