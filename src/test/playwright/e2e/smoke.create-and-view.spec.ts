@@ -1,4 +1,3 @@
-// test/e2e/smoke.create-and-view.spec.ts
 import { test, expect } from "@playwright/test";
 import { uniqueTitle } from "./helpers";
 
