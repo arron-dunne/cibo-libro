@@ -11,11 +11,6 @@ import { uniqueRecipeSlug } from "@/lib/uniqueSlug";
 import { isDenylisted } from "@/lib/denylist";
 import { isSafeUrl } from "@/lib/validation/safeUrl";
 
-
-class UnsafeUrlError extends Error {
-  name = "UnsafeUrlError";
-}
-
 // TODO: setup support email channel
 /** Outbound HTTP settings */
 const IMPORTER_USER_AGENT =
@@ -65,6 +60,7 @@ const safeFetcher = ky.extend({
   cache: "no-store",
   hooks: {
     // Check URL is safe before every request
+    // TODO: throwing error causes retry but it shouldn't
     beforeRequest: [async (req) => {
       const safe = await isSafeUrl(req.url);
       if (!safe) {
