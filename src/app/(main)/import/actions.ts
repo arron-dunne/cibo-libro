@@ -1,8 +1,7 @@
 "use server";
 
-import ipaddr from "ipaddr.js";
+
 import ky from "ky";
-import dns from "node:dns/promises";
 import { redirect } from "next/navigation";
 import { string, z } from "zod";
 import he from "he";
@@ -11,7 +10,7 @@ import { auth } from "@/lib/auth/auth";
 import { prisma } from "@/lib/prisma";
 import { uniqueRecipeSlug } from "@/lib/uniqueSlug";
 import { isDenylisted } from "@/lib/denylist";
-import { url } from "node:inspector";
+import { isSafeUrl } from "@/lib/validation/safeUrl";
 
 // TODO: setup support email channel
 /** Outbound HTTP settings */
@@ -80,6 +79,7 @@ const safeFetcher = ky.extend({
   cache: "no-store",
   hooks: {
     // Check URL is safe before every request
+    // TODO: throwing error causes retry but it shouldn't
     beforeRequest: [async (req) => {
       const safe = await isSafeUrl(req.url);
       console.log("checking: " + req.url + " safe: " + safe);
@@ -702,42 +702,3 @@ const DIET_KEYS = ["vegan", "vegetarian", "gluten free", "gluten-free", "dairy f
 const METHOD_KEYS = ["easy", "quick", "weeknight", "one pot", "one-pot", "one pan", "sheet pan", "sheet-pan", "slow cooker", "instant pot", "air fryer", "grill", "bbq", "baked", "roasted", "stir fry", "stir-fry"];
 const CUISINE_KEYS = ["italian", "mexican", "indian", "chinese", "thai", "japanese", "korean", "greek", "french", "spanish", "lebanese", "middle eastern", "vietnamese"];
 const ADJECTIVE_KEYS = ["spicy", "healthy", "creamy"];
-
-// Check URL is safe to fetch to prevent from SSRF attacks
-async function isSafeUrl(inputUrl: URL | string): Promise<boolean> {
-
-  // Cast to URL object if given a string input
-  const url = typeof inputUrl === "string" ? new URL(inputUrl) : inputUrl;
-
-  // Only allow HTTP(S) protocol
-  if (url.protocol != "http:" && url.protocol != "https:") {
-    return false;
-  }
-
-  // Only allow ports 80 (HTTP) and 443 (HTTPS)
-  if (url.port && url.port != "80" && url.port != "443") {
-    return false;
-  }
-
-  try {
-
-    // Resolve domain name to IP
-    const addresses = await dns.lookup(url.hostname, { all: true, family: 4 });
-
-    if (addresses.length < 1) { return false; }
-
-    // Check each IP returned from DNS resolution
-    for (const { address } of addresses) {
-      if (ipaddr.parse(address).range() !== "unicast") {
-        return false;
-      }
-    }
-
-  }
-  catch {
-    return false;
-  }
-
-  // Only return true if all checks pass
-  return true;
-}
