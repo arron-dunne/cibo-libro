@@ -3,14 +3,19 @@
 
 import ky from "ky";
 import { redirect } from "next/navigation";
-import { string, z } from "zod";
+import { z } from "zod";
 import he from "he";
-import { load as loadHtml } from "cheerio";
+import { load } from "cheerio";
 import { auth } from "@/lib/auth/auth";
 import { prisma } from "@/lib/prisma";
 import { uniqueRecipeSlug } from "@/lib/uniqueSlug";
 import { isDenylisted } from "@/lib/denylist";
 import { isSafeUrl } from "@/lib/validation/safeUrl";
+
+
+class UnsafeUrlError extends Error {
+  name = "UnsafeUrlError";
+}
 
 // TODO: setup support email channel
 /** Outbound HTTP settings */
@@ -62,6 +67,7 @@ const safeFetcher = ky.extend({
 
 type OpenGraphMeta = {
   title?: string;
+  description?: string;
   image?: string;
   siteName?: string;
 };
@@ -79,18 +85,26 @@ const safeFetcher = ky.extend({
   cache: "no-store",
   hooks: {
     // Check URL is safe before every request
-    // TODO: throwing error causes retry but it shouldn't
     beforeRequest: [async (req) => {
       const safe = await isSafeUrl(req.url);
-      console.log("checking: " + req.url + " safe: " + safe);
       if (!safe) {
-        throw Error("unsafe url");
+        throw new UnsafeUrlError();
       }
     }]
+  },
+  retry: {
+    limit: 3,
+    // Dont retry if the error is from unsafe URL
+    shouldRetry: ({ error }) => {
+      if (error instanceof UnsafeUrlError) {
+        return false;
+      }
+      return true;
+    }
   }
 });
 
-// Main server action: try import structured recipe, otherwise redirect to Link Card page
+// Server action
 export async function importRecipe(formData: FormData) {
 
   // Authentication
@@ -114,7 +128,7 @@ export async function importRecipe(formData: FormData) {
   });
 
   // Denylisted
-  if (isDenylisted(hostname)) {
+  if (isDenylisted(url.hostname.toLowerCase())) {
     await failJob(job.id, "DENYLIST");
     return redirect(buildPromptUrl(url, undefined));
   }
@@ -127,7 +141,7 @@ export async function importRecipe(formData: FormData) {
   }
 
   // Fetch page
-  const { ok, status, html, og } = await fetchHtmlWithMeta(url.toString());
+  const { ok, status, html, og } = await fetchHtmlWithMeta(url);
   if (!ok || !html) {
     await failJob(job.id, "ERROR", `FETCH_FAILED_${status ?? "0"}`);
     return redirect(buildPromptUrl(url, og));
@@ -139,25 +153,44 @@ export async function importRecipe(formData: FormData) {
     return redirect(buildPromptUrl(url, og));
   }
 
-  // JSON-LD
-  const jsonldRecipe = parseJsonLd(html);
-  if (jsonldRecipe) {
-    const slug = await saveRecipe(userId, url.toString(), jsonldRecipe);
-    await succeedJob(job.id);
-    redirect(`/view/${slug}`);
-  }
+  // Parse structured (JSON-LD → microdata)
+  // const structured = tryParseStructured(html);
+  // if (structured) {
+  //   const enriched: StructuredRecipe = { ...structured, image: structured.image ?? og?.image ?? undefined };
+  //   const recipe = await createStructuredRecipe({ userId, sourceUrl: url.toString(), data: enriched });
 
-  // TODO: Release 1
-  // Microdata
-  // const microdataRecipe = parseMicrodata(html);
-  // if (microdataRecipe) {
-  //   saveRecipe(userId, url.toString(), microdataRecipe);
-  //   return;
+  //   await prisma.importJob.update({
+  //     where: { id: job.id },
+  //     data: { status: "SUCCESS", parsedJson: enriched, errorMsg: null },
+  //   });
+
+  //   return redirect(`/view/${recipe.slug ?? recipe.id}`);
   // }
 
-  // if no data extracted, redirect to link card
-  await failJob(job.id, "NO_SCHEMA");
-  return redirect(buildPromptUrl(url, og));
+  // // No structured data → Link Card prompt
+  // await failJob(job.id, "NO_SCHEMA");
+  // return redirect(buildPromptUrl(url, og));
+}
+
+// Fetch HTML and basic OG from URL
+async function fetchHtmlWithMeta(
+  url: URL,
+): Promise<{ ok: boolean; status?: number; html?: string; og?: OpenGraphMeta }> {
+  try {
+    // Fetch URL with the safe fetcher (URL checking)
+    const res = await safeFetcher.get(url);
+    const status = res.status;
+
+    if (!res.ok) return { ok: false, status };
+
+    // Parse HTML and then extract any OpenGraph data
+    const html = await res.text();
+    const og = extractOpenGraph(html);
+
+    return { ok: true, status, html, og };
+  } catch {
+    return { ok: false };
+  }
 }
 
 /** Persist structured recipe into your model (safe-cleansed text). */
@@ -219,22 +252,6 @@ function synthesizeTitleFromUrl(u: URL): string {
   const last = decodeURIComponent(u.pathname.split("/").filter(Boolean).pop() || u.hostname);
   const s = last.replace(/\.(html?|php|aspx?)$/i, "").replace(/[-_]+/g, " ").replace(/\s+/g, " ").trim();
   return s ? s.replace(/\b\w/g, (c) => c.toUpperCase()) : u.hostname.replace(/^www\./, "");
-}
-
-// Fetch HTML and basic OG from URL
-async function fetchHtmlWithMeta(
-  url: string,
-): Promise<{ ok: boolean; status?: number; html?: string; og?: OpenGraphMeta }> {
-  try {
-    const res = await safeFetcher.get(url);
-    const status = res.status;
-    if (!res.ok) return { ok: false, status };
-    const html = await res.text();
-    const og = extractOpenGraph(html);
-    return { ok: true, status, html, og };
-  } catch {
-    return { ok: false };
-  }
 }
 
 // TODO: improve, currently user agents on consecutive lines arnt handled correctly
@@ -299,42 +316,62 @@ function isArray(v: unknown): v is JSONValue[] {
   return Array.isArray(v);
 }
 
-function detectPaywalledFromJsonLd(html: string): boolean {
-  const $ = loadHtml(html);
-  const scripts = $('script[type="application/ld+json"]');
-  if (!scripts.length) return false;
+// Look for a paywall in the JSON-LD, return true if we find one
+function detectPaywall(html: string): boolean {
+  const $ = load(html);
 
-  const payloads: JSONValue[] = [];
-  scripts.each((_, el) => {
-    const raw = $(el).contents().text().trim();
+  // Get all script tags with json-ld
+  const allJsonld = $('script[type="application/ld+json"]');
+  if (!allJsonld.length) return false;
+
+  const data: Object[] = [];
+
+  // Parse the json ld tags into a json object, skipping any malformed data
+  allJsonld.each((_, el) => {
+    const raw = $(el).text().trim();
     if (!raw) return;
+
     try {
-      payloads.push(JSON.parse(raw) as JSONValue);
+      data.push(JSON.parse(raw));
     } catch {
-      /* ignore malformed JSON-LD */
+      // ignore malformed JSON-LD
     }
   });
 
-  const nodes = payloads.flatMap(flattenJsonLd);
-  for (const n of nodes) {
-    if (falseyFlag(n["isAccessibleForFree"])) return true;
-    const isPartOf = isObject(n["isPartOf"]) ? n["isPartOf"] : null;
-    if (isPartOf && falseyFlag(isPartOf["isAccessibleForFree"])) return true;
+  return hasPaywallFlag(data);
+}
 
-    if (
-      hasType(n, "Recipe") ||
-      hasType(n, "WebPage") ||
-      hasType(n, "Article")
-    ) {
-      if (falseyFlag(n["isAccessibleForFree"])) return true;
-      if (isPartOf && falseyFlag(isPartOf["isAccessibleForFree"])) return true;
+// Recursive function to search nested JSON object for paywall flags
+function hasPaywallFlag(data: unknown): boolean {
+
+  if (!data) { return false; }
+
+  // Recursive call for each element in an array
+  if (Array.isArray(data)) {
+    return data.some(hasPaywallFlag);
+  }
+
+  if (typeof data === "object") {
+    for (const [key, val] of Object.entries(data)) {
+      if (key === "isAccessibleForFree" &&
+        (val === false || val === "false" || val === 0 || val === "0")
+      ) {
+        return true;
+      }
+
+      // Recursive search on child objects
+      if (val && typeof val === "object") {
+        if (hasPaywallFlag(val)) return true;
+      }
     }
   }
+
   return false;
+
 }
 
 function parseJsonLd(html: string): StructuredRecipe | null {
-  const $ = loadHtml(html);
+  const $ = load(html);
   const scripts = $('script[type="application/ld+json"]');
   if (!scripts.length) return null;
 
@@ -500,16 +537,10 @@ function parseIsoDurationMinutes(dur: string | null): number | null {
   return hours * 60 + mins + Math.round(secs / 60);
 }
 
-function falseyFlag(v: JSONValue | undefined): boolean {
-  if (v === false) return true;
-  if (typeof v === "string") return /^(false|no|0)$/i.test(v.trim());
-  return false;
-}
-
 /* ---------------- Microdata (best-effort) ---------------- */
 
 function parseMicrodata(html: string): StructuredRecipe | null {
-  const $ = loadHtml(html);
+  const $ = load(html);
   const root = $('[itemscope][itemtype*="schema.org/Recipe"], [itemscope][itemtype*="Schema.org/Recipe"]').first();
   if (!root.length) return null;
 
@@ -562,14 +593,15 @@ function parseMicrodata(html: string): StructuredRecipe | null {
 /* ---------------- Open Graph + small utils ---------------- */
 
 function extractOpenGraph(html: string): OpenGraphMeta {
-  const $ = loadHtml(html);
+  const $ = load(html);
   const get = (prop: string) =>
     $(`meta[property="${prop}"]`).attr("content") || $(`meta[name="${prop}"]`).attr("content") || undefined;
 
   const title = get("og:title") || $("title").first().text().trim() || undefined;
+  const description = get("og:description") || undefined;
   const image = get("og:image");
   const siteName = get("og:site_name");
-  return { title, image, siteName };
+  return { title, description, image, siteName };
 }
 
 function humanizeUrl(u: string): string {
