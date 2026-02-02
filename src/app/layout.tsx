@@ -28,7 +28,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
             <div aria-hidden
               className="fixed -top-24 -left-24 h-72 w-72 rounded-full bg-orange-200/35 blur-3xl pointer-events-none "/>
             <div aria-hidden 
-              className="fixed inset-0 bg-gradient-to-b from-transparent to-white/10 pointer-events-none" />
+              className="fixed inset-0 bg-linear-to-b from-transparent to-white/10 pointer-events-none" />
           </div>
 
           {children}
