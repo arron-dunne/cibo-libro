@@ -1,6 +1,6 @@
 import { describe, test, expect, vi, beforeEach } from "vitest";
 import dns from "node:dns/promises";
-import { isSafeUrl } from "@/lib/validation/safeUrl";
+import { isSafeUrl } from "@/lib/import/safeUrl";
 
 vi.mock("node:dns/promises", () => {
   return {
@@ -119,5 +119,3 @@ describe("handles DNS failures safely", () => {
     expect(result).toBe(false);
   });
 });
-q
-
