@@ -6,12 +6,11 @@ const projectRoot = path.resolve(__dirname, './');
 export default defineConfig({
   resolve: {
     alias: {
-      '@': path.resolve(projectRoot, "./src"),
-      'server-only': path.resolve(projectRoot, "./src/test/__mocks__/server-only.ts"),
+      '@': path.resolve(projectRoot, "./src") 
     },
   },
   test: {
-    dir: "src/test/",
+    dir: "src/test/vitest",
     environment: 'jsdom',         // components; integration tests can override to 'node'
     // setupFiles: ['./tests/vitest/setupTests.ts'],
     // coverage: { provider: 'vs8', reporter: ['text', 'lcov'] }
