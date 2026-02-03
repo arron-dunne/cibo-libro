@@ -8,8 +8,8 @@
     "start": "next start",
     "lint": "next lint",
     "postinstall": "prisma generate",
-    "test:unit": "vitest test src/test/unit",
-    "test:int": "vitest test src/test/integration"
+    "test:unit": "vitest unit.test.ts",
+    "test:int": "vitest int.test.ts"
   },
   "dependencies": {
     "@auth/prisma-adapter": "^2.10.0",
