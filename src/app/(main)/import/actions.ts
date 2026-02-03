@@ -1,9 +1,9 @@
 "use server";
 
-import ky from "ky";
 import { redirect } from "next/navigation";
-import { z } from "zod";
+import ky from "ky";
 import he from "he";
+import { z } from "zod";
 import { load } from "cheerio";
 import { auth } from "@/lib/auth/auth";
 import { prisma } from "@/lib/prisma";
@@ -11,6 +11,7 @@ import { uniqueRecipeSlug } from "@/lib/uniqueSlug";
 import { detectPaywall } from "@/lib/import/detectPaywall";
 import { isDenylisted } from "@/lib/import/denylist";
 import { isSafeUrl } from "@/lib/import/safeUrl";
+import { parseJsonLd, StructuredRecipe } from "@/lib/import/jsonld";
 
 
 class UnsafeUrlError extends Error {
@@ -33,18 +34,7 @@ const ImportSchema = z.object({
   website: z.string().optional().refine((v) => !v),
 });
 
-type StructuredRecipe = {
-  title: string;
-  description?: string;
-  image?: string;
-  ingredients?: string[];
-  instructions?: string[];
-  servings?: number;
-  prepMins?: number | null;
-  cookMins?: number | null;
-  tags?: string[];
-  author?: string;
-};
+
 
 type OpenGraphMeta = {
   title?: string;
@@ -134,6 +124,22 @@ export async function importRecipe(formData: FormData) {
     return redirect(buildPromptUrl(url, og));
   }
 
+  // JSON-LD
+  const jsonldRecipe = parseJsonLd(html);
+  if (jsonldRecipe) { 
+    saveRecipe(userId, url.toString(), jsonldRecipe); 
+    return;
+  }
+
+  // TODO: Release 1
+  // Microdata
+  // const microdataRecipe = parseMicrodata(html);
+  // if (microdataRecipe) { 
+  //   saveRecipe(userId, url.toString(), microdataRecipe); 
+  //   return;
+  // }
+
+
   // Parse structured (JSON-LD → microdata)
   // const structured = tryParseStructured(html);
   // if (structured) {
@@ -175,16 +181,16 @@ async function fetchHtmlWithMeta(
 }
 
 /** Persist structured recipe into your model (safe-cleansed text). */
-async function createStructuredRecipe({
-  userId,
-  sourceUrl,
-  data,
-}: {
-  userId: string;
-  sourceUrl: string;
-  data: StructuredRecipe;
-}) {
-  const title = (data.title || humanizeUrl(sourceUrl)).trim();
+async function saveRecipe(
+  userId: string,
+  sourceUrl: string,
+  recipe: StructuredRecipe,
+) {
+
+  // sourceUrl should of been checked when initially fetching so this should never throw
+  if (!(await isSafeUrl(sourceUrl))) throw Error("unsafe url");
+
+  const title = (recipe.title || humanizeUrl(sourceUrl)).trim();
   const slug = await uniqueRecipeSlug(title);
 
   const created = await prisma.recipe.create({
@@ -192,18 +198,22 @@ async function createStructuredRecipe({
       ownerId: userId,
       type: "EXTERNAL_FULL",
       title,
-      description: sanitizeDescription(data.description ?? ""),
-      prepMins: data.prepMins ?? null,
-      cookMins: data.cookMins ?? null,
-      servings: data.servings ?? null,
-      imageExternalUrl: safeExternalImage(data.image),
-      ingredients: (data.ingredients ?? []).map(sanitizeInline).filter(Boolean),
-      steps: (data.instructions ?? []).map(sanitizeInline).filter(Boolean),
-      tags: normalizeTags({ raw: data.tags, title }),
+      description: sanitizeDescription(recipe.description ?? ""),
+      prepMins: recipe.prepMins ?? null,
+      cookMins: recipe.cookMins ?? null,
+      servings: recipe.servings ?? null,
+      ingredients: (recipe.ingredients ?? []).map(sanitizeInline).filter(Boolean),
+      steps: (recipe.instructions ?? []).map(sanitizeInline).filter(Boolean),
+      // tags: normalizeTags({ raw: recipe.tags, title }),
       sourceUrl,
       isPublic: false,
       slug,
-      status: "PUBLISHED",
+      // status: "PUBLISHED",
+      imageExternalUrl: recipe.image 
+        ? await isSafeUrl(recipe.image) 
+          ? recipe.image 
+          : null
+        : null
     },
     select: { id: true, slug: true },
   });
@@ -275,166 +285,7 @@ async function isRobotsAllowed(url: URL): Promise<boolean> {
   }
 }
 
-/** Parse structured recipe from JSON-LD or microdata. */
-function tryParseStructured(html: string): StructuredRecipe | null {
-  const fromLd = parseJsonLd(html);
-  if (fromLd) return fromLd;
-  const fromMicro = parseMicrodata(html);
-  if (fromMicro) return fromMicro;
-  return null;
-}
 
-/* ---------------- JSON-LD helpers (type-safe, no `any`) ---------------- */
-
-type JSONPrimitive = string | number | boolean | null;
-type JSONValue = JSONPrimitive | JSONObject | JSONValue[];
-type JSONObject = { [k: string]: JSONValue };
-
-function isObject(v: unknown): v is JSONObject {
-  return typeof v === "object" && v !== null && !Array.isArray(v);
-}
-function isArray(v: unknown): v is JSONValue[] {
-  return Array.isArray(v);
-}
-
-
-
-function parseJsonLd(html: string): StructuredRecipe | null {
-  const $ = load(html);
-  const scripts = $('script[type="application/ld+json"]');
-  if (!scripts.length) return null;
-
-  const payloads: JSONValue[] = [];
-  scripts.each((_, el) => {
-    const raw = $(el).contents().text().trim();
-    if (!raw) return;
-    try {
-      payloads.push(JSON.parse(raw) as JSONValue);
-    } catch {
-      /* ignore */
-    }
-  });
-
-  const nodes = payloads.flatMap(flattenJsonLd);
-  const idIndex = buildIdIndex(nodes);
-
-  const recipeNode = nodes.find((n) => hasType(n, "Recipe"));
-  return recipeNode ? mapJsonLdRecipe(recipeNode, idIndex) : null;
-}
-
-function flattenJsonLd(obj: JSONValue): JSONObject[] {
-  const out: JSONObject[] = [];
-  (function walk(n: JSONValue) {
-    if (isObject(n)) out.push(n);
-    if (isArray(n)) n.forEach((x) => walk(x));
-    else if (isObject(n)) Object.keys(n).forEach((k) => {
-      const v = n[k];
-      if (v !== undefined) walk(v as JSONValue);
-    });
-  })(obj);
-  return out;
-}
-
-function buildIdIndex(nodes: JSONObject[]): Map<string, JSONObject> {
-  const m = new Map<string, JSONObject>();
-  for (const n of nodes) {
-    const id = typeof n["@id"] === "string" ? (n["@id"] as string) : undefined;
-    if (id) m.set(id, n);
-  }
-  return m;
-}
-
-function hasType(node: JSONObject, type: string): boolean {
-  const t = node["@type"];
-  if (typeof t === "string") return t.toLowerCase() === type.toLowerCase();
-  if (isArray(t)) return t.map(String).map((s) => s.toLowerCase()).includes(type.toLowerCase());
-  return false;
-}
-
-function resolveImageRef(img: JSONValue | undefined, idIndex: Map<string, JSONObject>): string | undefined {
-  if (img == null) return undefined;
-  if (typeof img === "string") return img;
-  if (isArray(img)) {
-    for (const item of img) {
-      const r = resolveImageRef(item, idIndex);
-      if (r) return r;
-    }
-    return undefined;
-  }
-  if (isObject(img)) {
-    const direct =
-      (typeof img["url"] === "string" && (img["url"] as string)) ||
-      (typeof img["contentUrl"] === "string" && (img["contentUrl"] as string)) ||
-      (typeof img["thumbnailUrl"] === "string" && (img["thumbnailUrl"] as string));
-    if (direct) return direct;
-
-    const ref = typeof img["@id"] === "string" ? (img["@id"] as string) : undefined;
-    if (ref) {
-      const target = idIndex.get(ref);
-      if (target) return resolveImageRef(target, idIndex);
-    }
-  }
-  return undefined;
-}
-
-function mapJsonLdRecipe(node: JSONObject, idIndex: Map<string, JSONObject>): StructuredRecipe {
-  const imageUrl = resolveImageRef(node["image"], idIndex);
-
-  const ingredients: string[] | undefined = isArray(node["recipeIngredient"])
-    ? (node["recipeIngredient"] as JSONValue[]).map(String)
-    : undefined;
-
-  const instructions = parseJsonLdInstructions(node["recipeInstructions"]);
-
-  const author =
-    typeof node["author"] === "string"
-      ? (node["author"] as string)
-      : isObject(node["author"]) && typeof node["author"]["name"] === "string"
-        ? (node["author"]["name"] as string)
-        : undefined;
-
-  return {
-    title: typeof node["name"] === "string" ? node["name"].trim() : "",
-    description: typeof node["description"] === "string" ? (node["description"] as string) : undefined,
-    image: imageUrl,
-    ingredients,
-    instructions,
-    servings: maybeNumber(node["recipeYield"]),
-    prepMins: parseIsoDurationMinutes(typeof node["prepTime"] === "string" ? (node["prepTime"] as string) : null),
-    cookMins: parseIsoDurationMinutes(typeof node["cookTime"] === "string" ? (node["cookTime"] as string) : null),
-    tags: parseKeywords(node["keywords"]),
-    author,
-  };
-}
-
-function parseJsonLdInstructions(instr: JSONValue | undefined): string[] | undefined {
-  if (instr == null) return undefined;
-
-  if (typeof instr === "string") return [instr];
-
-  if (isArray(instr)) {
-    const out: string[] = [];
-    for (const item of instr) {
-      if (typeof item === "string") out.push(item);
-      else if (isObject(item)) {
-        if (typeof item["text"] === "string") out.push(item["text"] as string);
-        // HowToSection
-        if (isArray(item["itemListElement"])) {
-          const nested = parseJsonLdInstructions(item["itemListElement"]);
-          if (nested?.length) out.push(...nested);
-        }
-      }
-    }
-    return out.length ? out : undefined;
-  }
-
-  if (isObject(instr)) {
-    if (typeof instr["text"] === "string") return [instr["text"] as string];
-    if (isArray(instr["itemListElement"])) return parseJsonLdInstructions(instr["itemListElement"]);
-  }
-
-  return undefined;
-}
 
 function parseKeywords(keywords: JSONValue | undefined): string[] | undefined {
   if (!keywords) return undefined;
@@ -456,68 +307,9 @@ function maybeNumber(x: JSONValue | undefined): number | undefined {
   return undefined;
 }
 
-function parseIsoDurationMinutes(dur: string | null): number | null {
-  if (!dur) return null;
-  const m = dur.match(/P(T(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?)?/i);
-  if (!m) return null;
-  const hours = m[2] ? parseInt(m[2], 10) : 0;
-  const mins = m[3] ? parseInt(m[3], 10) : 0;
-  const secs = m[4] ? parseInt(m[4], 10) : 0;
-  return hours * 60 + mins + Math.round(secs / 60);
-}
 
-/* ---------------- Microdata (best-effort) ---------------- */
 
-function parseMicrodata(html: string): StructuredRecipe | null {
-  const $ = load(html);
-  const root = $('[itemscope][itemtype*="schema.org/Recipe"], [itemscope][itemtype*="Schema.org/Recipe"]').first();
-  if (!root.length) return null;
 
-  const getText = (sel: string) => {
-    const el = root.find(sel).first();
-    const content = el.attr("content");
-    return (content ?? el.text() ?? "").trim();
-  };
-
-  const title = getText('[itemprop="name"]') || $("title").first().text().trim();
-  const description = getText('[itemprop="description"]') || undefined;
-
-  const image =
-    root.find('[itemprop="image"]').attr("content") ||
-    root.find('[itemprop="image"]').attr("src") ||
-    undefined;
-
-  const ingredients: string[] = [];
-  root.find('[itemprop="recipeIngredient"]').each((_, el) => {
-    const t = ($(el).attr("content") || $(el).text() || "").trim();
-    if (t) ingredients.push(t);
-  });
-
-  const instructions: string[] = [];
-  root.find('[itemprop="recipeInstructions"]').each((_, el) => {
-    const $el = $(el);
-    const text = $el.attr("content") || $el.find('[itemprop="text"]').text() || $el.text() || "";
-    const cleaned = text.replace(/\s+/g, " ").trim();
-    if (cleaned) instructions.push(cleaned);
-  });
-
-  const servings = maybeNumber(getText('[itemprop="recipeYield"]'));
-  const prepMins = parseIsoDurationMinutes(getText('[itemprop="prepTime"]') || null);
-  const cookMins = parseIsoDurationMinutes(getText('[itemprop="cookTime"]') || null);
-
-  if (!title || (!ingredients.length && !instructions.length)) return null;
-
-  return {
-    title,
-    description,
-    image,
-    ingredients: ingredients.length ? ingredients : undefined,
-    instructions: instructions.length ? instructions : undefined,
-    servings,
-    prepMins,
-    cookMins,
-  };
-}
 
 /* ---------------- Open Graph + small utils ---------------- */
 
@@ -540,17 +332,6 @@ function humanizeUrl(u: string): string {
     return path && path !== "/" ? `${url.hostname}${path.split("/").slice(0, 3).join("/")}` : url.hostname;
   } catch {
     return u;
-  }
-}
-
-function safeExternalImage(src?: string): string | null {
-  if (!src) return null;
-  try {
-    const u = new URL(src);
-    if (!/^https?:$/i.test(u.protocol)) return null;
-    return u.toString();
-  } catch {
-    return null;
   }
 }
 
