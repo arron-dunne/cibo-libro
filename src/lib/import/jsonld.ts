@@ -37,14 +37,19 @@ export function parseJsonLd(html: string): StructuredRecipe | null {
   // Find the first Recipe anywhere in the JSON-LD
   const recipeNode = findRecipeNode(data);
   if (recipeNode) {
-    return extractRecipe(recipeNode);
+    const recipe = extractRecipe(recipeNode);
+    
+    // Don't import recipes with no title
+    if(!recipe.title || recipe.title === "") return null;
+    
+    return recipe;
   }
 
   return null;
 }
 
 
-function findRecipeNode(data: unknown): Record<string, unknown> | null {
+export function findRecipeNode(data: unknown): Record<string, unknown> | null {
   if (!data || typeof data != "object") return null;
 
   // Handle arrays
@@ -77,7 +82,7 @@ function findRecipeNode(data: unknown): Record<string, unknown> | null {
   return null;
 }
 
-function extractRecipe(node: Record<string, unknown>): StructuredRecipe {
+export function extractRecipe(node: Record<string, unknown>): StructuredRecipe {
   return {
     title:
       typeof node["name"] === "string"
@@ -114,7 +119,7 @@ function extractRecipe(node: Record<string, unknown>): StructuredRecipe {
   };
 }
 
-function extractInstructions(value: unknown): string[] | undefined {
+export function extractInstructions(value: unknown): string[] | undefined {
   if (!value) return undefined;
 
   // Plain string

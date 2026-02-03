@@ -9,7 +9,7 @@ export function parseIsoDurationMinutes(value: unknown): number | undefined {
     const minutes = duration.total({ unit: "minutes" });
 
     // Guard against NaN / Infinity just in case
-    return Number.isFinite(minutes) ? Math.round(minutes) : undefined;
+    return Number.isFinite(minutes) ? Math.floor(minutes) : undefined;
   } catch {
     return undefined;
   }

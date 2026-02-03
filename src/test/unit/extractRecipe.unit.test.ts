@@ -7,7 +7,7 @@ describe("extractRecipe", () => {
       name: "Simple Toast",
     };
 
-    const recipe = extractRecipe(node as Record<string, unknown>);
+    const recipe = extractRecipe(node as any);
 
     expect(recipe).toEqual({
       title: "Simple Toast",
@@ -26,7 +26,7 @@ describe("extractRecipe", () => {
   it("returns empty title when no fields are present", () => {
     const node = {};
 
-    const recipe = extractRecipe(node as Record<string, unknown>);
+    const recipe = extractRecipe(node as any);
 
     expect(recipe.title).toBe("");
   });
@@ -36,7 +36,7 @@ describe("extractRecipe", () => {
       name: "",
     };
 
-    const recipe = extractRecipe(node as Record<string, unknown>);
+    const recipe = extractRecipe(node as any);
 
     expect(recipe.title).toBe("");
   });
@@ -46,7 +46,7 @@ describe("extractRecipe", () => {
       name: "   ",
     };
 
-    const recipe = extractRecipe(node as Record<string, unknown>);
+    const recipe = extractRecipe(node as any);
 
     expect(recipe.title).toBe("");
   });
@@ -57,7 +57,7 @@ describe("extractRecipe", () => {
       image: "https://example.com/image.jpg",
     };
 
-    const recipe = extractRecipe(node as Record<string, unknown>);
+    const recipe = extractRecipe(node as any);
 
     expect(recipe.image).toBe("https://example.com/image.jpg");
   });
@@ -71,7 +71,7 @@ describe("extractRecipe", () => {
       ],
     };
 
-    const recipe = extractRecipe(node as Record<string, unknown>);
+    const recipe = extractRecipe(node as any);
 
     expect(recipe.image).toBe("https://example.com/first.jpg");
   });
@@ -81,7 +81,7 @@ describe("extractRecipe", () => {
       name: "Optional Fields Missing",
     };
 
-    const recipe = extractRecipe(node as Record<string, unknown>);
+    const recipe = extractRecipe(node as any);
 
     expect(recipe.ingredients).toBeUndefined();
     expect(recipe.instructions).toBeUndefined();
@@ -101,8 +101,8 @@ describe("extractRecipe", () => {
       recipeYield: "6",
     };
 
-    const numericRecipe = extractRecipe(numericNode as Record<string, unknown>);
-    const stringRecipe = extractRecipe(stringNode as Record<string, unknown>);
+    const numericRecipe = extractRecipe(numericNode as any);
+    const stringRecipe = extractRecipe(stringNode as any);
 
     expect(numericRecipe.servings).toBe(4);
     expect(stringRecipe.servings).toBe(6);
@@ -115,7 +115,7 @@ describe("extractRecipe", () => {
       recipeInstructions: ["Mix", "Bake"],
     };
 
-    const recipe = extractRecipe(node as Record<string, unknown>);
+    const recipe = extractRecipe(node as any);
 
     expect(recipe.title).toBe("");
   });
