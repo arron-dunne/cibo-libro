@@ -21,7 +21,7 @@ export function parseJsonLd(html: string): StructuredRecipe | null {
   const allJsonld = $('script[type="application/ld+json"]');
   if (!allJsonld.length) return null;
 
-  const data: object[] = [];
+  const data: Object[] = [];
   allJsonld.each((_, el) => {
     const raw = $(el).contents().text().trim();
     if (!raw) return;
@@ -37,19 +37,14 @@ export function parseJsonLd(html: string): StructuredRecipe | null {
   // Find the first Recipe anywhere in the JSON-LD
   const recipeNode = findRecipeNode(data);
   if (recipeNode) {
-    const recipe = extractRecipe(recipeNode);
-    
-    // Don't import recipes with no title
-    if(!recipe.title || recipe.title === "") return null;
-    
-    return recipe;
+    return extractRecipe(recipeNode);
   }
 
   return null;
 }
 
 
-export function findRecipeNode(data: unknown): Record<string, unknown> | null {
+function findRecipeNode(data: unknown): Record<string, unknown> | null {
   if (!data || typeof data != "object") return null;
 
   // Handle arrays
@@ -82,7 +77,7 @@ export function findRecipeNode(data: unknown): Record<string, unknown> | null {
   return null;
 }
 
-export function extractRecipe(node: Record<string, unknown>): StructuredRecipe {
+function extractRecipe(node: Record<string, unknown>): StructuredRecipe {
   return {
     title:
       typeof node["name"] === "string"
@@ -119,7 +114,7 @@ export function extractRecipe(node: Record<string, unknown>): StructuredRecipe {
   };
 }
 
-export function extractInstructions(value: unknown): string[] | undefined {
+function extractInstructions(value: unknown): string[] | undefined {
   if (!value) return undefined;
 
   // Plain string
