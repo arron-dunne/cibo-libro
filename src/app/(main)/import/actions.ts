@@ -123,9 +123,10 @@ export async function importRecipe(formData: FormData) {
 
   // JSON-LD
   const jsonldRecipe = parseJsonLd(html);
-  if (jsonldRecipe) { 
-    const slug = await saveRecipe(userId, url.toString(), jsonldRecipe); 
-    redirect(`/view/${slug}`)
+  if (jsonldRecipe) {
+    const slug = await saveRecipe(userId, url.toString(), jsonldRecipe);
+    await succeedJob(job.id);
+    redirect(`/view/${slug}`);
   }
 
   // TODO: Release 1
@@ -287,6 +288,14 @@ async function failJob(jobId: string, reason: ImportFailReason, message?: string
   await prisma.importJob.update({
     where: { id: jobId },
     data: { status: "FAILED", errorMsg: message ?? reason },
+  });
+}
+
+// Update the job to SUCCESS
+async function succeedJob(jobId: string) {
+  await prisma.importJob.update({
+    where: { id: jobId },
+    data: { status: "SUCCESS" },
   });
 }
 
