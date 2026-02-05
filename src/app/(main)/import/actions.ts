@@ -208,7 +208,7 @@ async function saveRecipe(
   // sourceUrl should of been checked when initially fetching so this should never throw
   if (!(await isSafeUrl(sourceUrl))) throw Error("unsafe url");
 
-  const title = (recipe.title || humanizeUrl(sourceUrl)).trim();
+  const title = (recipe.title || getTitleFromUrl(new URL(sourceUrl))).trim();
   const slug = await uniqueRecipeSlug(title);
 
   const created = await prisma.recipe.create({
@@ -241,28 +241,23 @@ async function saveRecipe(
 
 // build the url for link card with open graph data if available
 function buildPromptUrl(u: URL, og?: OpenGraphMeta) {
-  const title = (og?.title?.trim() || synthesizeTitleFromUrl(u)).slice(0, 120);
+  const title = (og?.title?.trim() || getTitleFromUrl(u)).slice(0, 120);
   const params = new URLSearchParams({ url: u.toString(), title });
   if (og?.image) params.set("image", og.image);
   if (og?.description) params.set("description", og.description);
   return `/import/link?${params.toString()}`;
 }
 
-// fallback title synthesised from URL
-function synthesizeTitleFromUrl(u: URL): string {
+// fallback title derived from URL's last path segment
+function getTitleFromUrl(u: URL): string {
   const last = decodeURIComponent(u.pathname.split("/").filter(Boolean).pop() || u.hostname);
-  const s = last.replace(/\.(html?|php|aspx?)$/i, "").replace(/[-_]+/g, " ").replace(/\s+/g, " ").trim();
+  const s = last
+    .replace(/\.(html?|php|aspx?)$/i, "")
+    .replace(/[-_]+/g, " ")
+    .replace(/\b\d+\b/g, "")
+    .replace(/\s+/g, " ")
+    .trim();
   return s ? s.replace(/\b\w/g, (c) => c.toUpperCase()) : u.hostname.replace(/^www\./, "");
-}
-
-function humanizeUrl(u: string): string {
-  try {
-    const url = new URL(u);
-    const path = url.pathname.replace(/\/+$/, "");
-    return path && path !== "/" ? `${url.hostname}${path.split("/").slice(0, 3).join("/")}` : url.hostname;
-  } catch {
-    return u;
-  }
 }
 
 // Update the job to FAILED with optional info
