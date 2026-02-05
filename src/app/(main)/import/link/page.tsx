@@ -12,8 +12,8 @@ import { getHostname } from "@/lib/hostname";
 const ParamsSchema = z.object({
   url: z.url(),
   title: z.string().min(1).max(280),
-  imageUrl: z.string().optional(), // accept any string for image
-  siteName: z.string().optional(),
+  imageUrl: z.string().optional(),
+  description: z.string().max(600).optional(),
 });
 
 export default async function Page({
@@ -23,7 +23,7 @@ export default async function Page({
     url?: string;
     title?: string;
     image?: string;
-    siteName?: string;
+    description?: string;
   }>;
 }) {
   const params = await searchParams
@@ -31,24 +31,22 @@ export default async function Page({
   const parsed = ParamsSchema.safeParse({
     url: normalizeParam(params.url),
     title: normalizeParam(params.title),
-    image: normalizeParam(params.image),
-    siteName: normalizeParam(params.siteName),
+    imageUrl: normalizeParam(params.image),
+    description: normalizeParam(params.description),
   });
 
   if (!parsed.success) {
     notFound();
   }
 
-  const { url, title, imageUrl, siteName } = parsed.data;
+  const { url, title, imageUrl, description } = parsed.data;
 
   return (
     <div className="mx-auto max-w-3xl">
       <form action={saveLinkCard}>
         <StatusPanel />
-        {/* Preview */}
-        <PreviewCard title={title} url={url} imageUrl={imageUrl} />
+        <PreviewCard title={title} url={url} imageUrl={imageUrl} description={description} />
       </form>
-
     </div>
   );
 }
@@ -57,11 +55,13 @@ export default async function Page({
 function PreviewCard({
   title,
   url,
-  imageUrl
+  imageUrl,
+  description,
 }: {
   title: string,
   url: string,
-  imageUrl?: string
+  imageUrl?: string,
+  description?: string,
 }) {
 
   return (
@@ -69,7 +69,7 @@ function PreviewCard({
 
       {/* Hidden inputs */}
       <input name="url" value={url} hidden readOnly />
-      <input name="imageUrl" value={imageUrl} hidden readOnly />
+      { imageUrl && <input name="imageUrl" value={imageUrl} hidden readOnly /> }
 
       {/* Source */}
       <Link
@@ -108,6 +108,7 @@ function PreviewCard({
             id="description"
             name="description"
             rows={5}
+            defaultValue={description}
             placeholder="Add a description for this recipe link..."
             className="mt-2 p-2 w-full rounded-2xl border border-slate-200 shadow-inner"
           />

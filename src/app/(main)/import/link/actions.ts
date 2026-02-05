@@ -25,7 +25,7 @@ export async function saveLinkCard(formData: FormData) {
   const raw = {
     url: formData.get("url"),
     title: formData.get("title"),
-    image: formData.get("imageUrl") || "",
+    imageUrl: formData.get("imageUrl") || "",
     description: formData.get("description") || "",
     tags: formData.getAll("tags").filter(Boolean) as string[],
   };
@@ -44,6 +44,7 @@ export async function saveLinkCard(formData: FormData) {
         ownerId: session.user.id,
         type: "EXTERNAL_LINK",
         title,
+        description: description || "",
         sourceUrl: url,
         imageExternalUrl: imageUrl || undefined,
         tags: tags ?? [],
