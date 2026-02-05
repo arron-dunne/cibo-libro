@@ -91,27 +91,27 @@ export async function importRecipe(formData: FormData) {
   // Denylisted
   if (isDenylisted(url.hostname.toLowerCase())) {
     await failJob(job.id, "DENYLIST");
-    redirect(buildPromptUrl(url, undefined));
+    redirect(buildLinkCardUrl(url, undefined));
   }
 
   // Robots.txt
   const allowed = await isRobotsAllowed(url);
   if (!allowed) {
     await failJob(job.id, "ROBOTS");
-    redirect(buildPromptUrl(url, undefined));
+    redirect(buildLinkCardUrl(url, undefined));
   }
 
   // Fetch page
   const { ok, status, html, og } = await fetchHtmlWithMeta(url);
   if (!ok || !html) {
     await failJob(job.id, "ERROR", `FETCH_FAILED_${status ?? "0"}`);
-    redirect(buildPromptUrl(url, og));
+    redirect(buildLinkCardUrl(url, og));
   }
 
   // Paywall detection via JSON-LD
   if (detectPaywall(html)) {
     await failJob(job.id, "PAYWALL");
-    redirect(buildPromptUrl(url, og));
+    redirect(buildLinkCardUrl(url, og));
   }
 
   // JSON-LD
@@ -132,7 +132,7 @@ export async function importRecipe(formData: FormData) {
 
   // if no data extracted, redirect to link card
   await failJob(job.id, "NO_SCHEMA");
-  redirect(buildPromptUrl(url, og));
+  redirect(buildLinkCardUrl(url, og));
 }
 
 // TODO: improve, currently user agents on consecutive lines arnt handled correctly
@@ -240,11 +240,11 @@ async function saveRecipe(
 }
 
 // build the url for link card with open graph data if available
-function buildPromptUrl(u: URL, og?: OpenGraphMeta) {
+function buildLinkCardUrl(u: URL, og?: OpenGraphMeta) {
   const title = (og?.title?.trim() || getTitleFromUrl(u)).slice(0, 120);
   const params = new URLSearchParams({ url: u.toString(), title });
   if (og?.image) params.set("image", og.image);
-  if (og?.description) params.set("description", og.description);
+  if (og?.description) params.set("description", og.description.slice(0, 500));
   return `/import/link?${params.toString()}`;
 }
 
