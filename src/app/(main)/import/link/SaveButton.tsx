@@ -29,27 +29,27 @@ export function SaveButton() {
   )
 }
 
-export function QuickSaveButton() {
+// export function QuickSaveButton() {
 
-  const { pending } = useFormStatus();
+//   const { pending } = useFormStatus();
 
-  return (
-    <button
-      type="submit"
-      disabled={pending}
-      className={`mt-2 sm:mt-0 w-34 self-end inline-flex gap-2 items-center justify-center
-        rounded-full py-2 px-4 shadow border border-white/70 
-        text-sm font-semibold bg-linear-to-br from bg-slate-200 to-slate-300 
-        ${pending ? "brightness-90 cursor-wait" : "hover:brightness-90 active:brightness-75 cursor-pointer"}`}>
-      {pending ?
-        <>
-          Saving
-          <Loader2 size={18} className="animate-spin" />
-        </> : <>
-          Quick Save
-          <Save size={18} />
-        </>
-      }
-    </button>
-  )
-}
+//   return (
+//     <button
+//       type="submit"
+//       disabled={pending}
+//       className={`mt-2 sm:mt-0 w-34 self-end inline-flex gap-2 items-center justify-center
+//         rounded-full py-2 px-4 shadow border border-white/70 
+//         text-sm font-semibold bg-linear-to-br from bg-slate-200 to-slate-300 
+//         ${pending ? "brightness-90 cursor-wait" : "hover:brightness-90 active:brightness-75 cursor-pointer"}`}>
+//       {pending ?
+//         <>
+//           Saving
+//           <Loader2 size={18} className="animate-spin" />
+//         </> : <>
+//           Quick Save
+//           <Save size={18} />
+//         </>
+//       }
+//     </button>
+//   )
+// }
