@@ -3,7 +3,6 @@
 import { redirect } from "next/navigation";
 import ky from "ky";
 import { z } from "zod";
-import { load } from "cheerio";
 import { auth } from "@/lib/auth/auth";
 import { prisma } from "@/lib/prisma";
 import { uniqueRecipeSlug } from "@/lib/uniqueSlug";
@@ -11,6 +10,7 @@ import { detectPaywall } from "@/lib/import/detectPaywall";
 import { isDenylisted } from "@/lib/import/denylist";
 import { isSafeUrl } from "@/lib/import/safeUrl";
 import { parseJsonLd, StructuredRecipe } from "@/lib/import/jsonld";
+import { extractOpenGraph, OpenGraphMeta } from "@/lib/import/opengraph";
 
 
 class UnsafeUrlError extends Error {
@@ -25,13 +25,6 @@ const IMPORTER_USER_AGENT =
 const IMPORTER_TIMEOUT_MS = Number(process.env.IMPORTER_TIMEOUT_MS ?? 7000);
 
 type ImportFailReason = "ROBOTS" | "DENYLIST" | "PAYWALL" | "ERROR" | "NO_SCHEMA";
-
-type OpenGraphMeta = {
-  title?: string;
-  description?: string;
-  image?: string;
-  siteName?: string;
-};
 
 // Form payload validation (with honeypot)
 const ImportSchema = z.object({
@@ -195,7 +188,7 @@ async function fetchHtmlWithMeta(
 
     // parse HTML and then extract any OpenGraph data
     const html = await res.text();
-    const og = extractOpenGraph(html);
+    const og = await extractOpenGraph(html);
 
     return { ok: true, status, html, og };
   } catch(e) {
@@ -251,6 +244,7 @@ function buildPromptUrl(u: URL, og?: OpenGraphMeta) {
   const title = (og?.title?.trim() || synthesizeTitleFromUrl(u)).slice(0, 120);
   const params = new URLSearchParams({ url: u.toString(), title });
   if (og?.image) params.set("image", og.image);
+  if (og?.description) params.set("description", og.description);
   return `/import/link?${params.toString()}`;
 }
 
@@ -269,18 +263,6 @@ function humanizeUrl(u: string): string {
   } catch {
     return u;
   }
-}
-
-function extractOpenGraph(html: string): OpenGraphMeta {
-  const $ = load(html);
-  const get = (prop: string) =>
-    $(`meta[property="${prop}"]`).attr("content") || $(`meta[name="${prop}"]`).attr("content") || undefined;
-
-  const title = get("og:title") || $("title").first().text().trim() || undefined;
-  const description = get("og:description") || undefined;
-  const image = get("og:image");
-  const siteName = get("og:site_name");
-  return { title, description, image, siteName };
 }
 
 // Update the job to FAILED with optional info

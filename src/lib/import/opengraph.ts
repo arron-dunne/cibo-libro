@@ -1,6 +1,8 @@
 import { load } from "cheerio";
 import { isSafeUrl } from "./safeUrl";
 
+const MAX_DESCRIPTION_LENGTH = 500;
+
 export type OpenGraphMeta = {
   title?: string;
   description?: string;
@@ -8,7 +10,7 @@ export type OpenGraphMeta = {
 };
 
 // Extract Open Graph metadata from HTML, returning a validated object
-// with a safe image URL
+// with a safe image URL and truncated description
 export async function extractOpenGraph(html: string): Promise<OpenGraphMeta> {
   const $ = load(html);
   const get = (prop: string) =>
@@ -17,7 +19,11 @@ export async function extractOpenGraph(html: string): Promise<OpenGraphMeta> {
     undefined;
 
   const title = get("og:title") || $("title").first().text().trim() || undefined;
-  const description = get("og:description") || undefined;
+
+  const rawDescription = get("og:description");
+  const description = rawDescription
+    ? rawDescription.slice(0, MAX_DESCRIPTION_LENGTH)
+    : undefined;
 
   const rawImage = get("og:image");
   const image = rawImage && (await isSafeUrl(rawImage)) ? rawImage : undefined;
