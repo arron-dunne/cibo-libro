@@ -98,27 +98,27 @@ export async function importRecipe(formData: FormData) {
   // Denylisted
   if (isDenylisted(url.hostname.toLowerCase())) {
     await failJob(job.id, "DENYLIST");
-    return redirect(buildPromptUrl(url, undefined));
+    redirect(buildPromptUrl(url, undefined));
   }
 
   // Robots.txt
   const allowed = await isRobotsAllowed(url);
   if (!allowed) {
     await failJob(job.id, "ROBOTS");
-    return redirect(buildPromptUrl(url, undefined));
+    redirect(buildPromptUrl(url, undefined));
   }
 
   // Fetch page
   const { ok, status, html, og } = await fetchHtmlWithMeta(url);
   if (!ok || !html) {
     await failJob(job.id, "ERROR", `FETCH_FAILED_${status ?? "0"}`);
-    return redirect(buildPromptUrl(url, og));
+    redirect(buildPromptUrl(url, og));
   }
 
   // Paywall detection via JSON-LD
   if (detectPaywall(html)) {
     await failJob(job.id, "PAYWALL");
-    return redirect(buildPromptUrl(url, og));
+    redirect(buildPromptUrl(url, og));
   }
 
   // JSON-LD
@@ -139,7 +139,7 @@ export async function importRecipe(formData: FormData) {
 
   // if no data extracted, redirect to link card
   await failJob(job.id, "NO_SCHEMA");
-  return redirect(buildPromptUrl(url, og));
+  redirect(buildPromptUrl(url, og));
 }
 
 // TODO: improve, currently user agents on consecutive lines arnt handled correctly
