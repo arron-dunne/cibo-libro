@@ -104,9 +104,9 @@ describe("returns undefined for missing or empty tags", () => {
 });
 
 
-describe("description extraction", () => {
+describe("description truncation", () => {
 
-  it("extracts a short description", async () => {
+  it("keeps descriptions under the limit unchanged", async () => {
     const html = `<head>
       <meta property="og:description" content="Short description" />
     </head>`;
@@ -116,7 +116,7 @@ describe("description extraction", () => {
     expect(og.description).toBe("Short description");
   });
 
-  it("extracts a long description", async () => {
+  it("truncates descriptions over 500 characters", async () => {
     const longDesc = "a".repeat(600);
     const html = `<head>
       <meta property="og:description" content="${longDesc}" />
@@ -124,8 +124,19 @@ describe("description extraction", () => {
 
     const og = await extractOpenGraph(html);
 
-    expect(og.description).toHaveLength(600);
-    expect(og.description).toBe(longDesc);
+    expect(og.description).toHaveLength(500);
+    expect(og.description).toBe("a".repeat(500));
+  });
+
+  it("keeps a description of exactly 500 characters unchanged", async () => {
+    const exactDesc = "b".repeat(500);
+    const html = `<head>
+      <meta property="og:description" content="${exactDesc}" />
+    </head>`;
+
+    const og = await extractOpenGraph(html);
+
+    expect(og.description).toHaveLength(500);
   });
 });
 
