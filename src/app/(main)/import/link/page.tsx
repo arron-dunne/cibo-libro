@@ -5,7 +5,7 @@ import { Info, LinkIcon } from "lucide-react";
 import { RecipeImage } from "@/app/components/recipes/RecipeImage";
 import { saveLinkCard } from "./actions";
 import { Tags } from "./Tags";
-import { SaveButton, QuickSaveButton } from "./SaveButton";
+import { SaveButton } from "./SaveButton";
 import { getHostname } from "@/lib/hostname";
 
 
@@ -42,11 +42,9 @@ export default async function Page({
   const { url, title, imageUrl, description } = parsed.data;
 
   return (
-    <div className="mx-auto max-w-3xl">
-      <form action={saveLinkCard}>
-        <StatusPanel />
-        <PreviewCard title={title} url={url} imageUrl={imageUrl} description={description} />
-      </form>
+    <div className="mx-auto max-w-3xl flex flex-col md:flex-row gap-8 mt-4">
+      <StatusPanel />
+      <PreviewCard title={title} url={url} imageUrl={imageUrl} description={description} />
     </div>
   );
 }
@@ -65,11 +63,11 @@ function PreviewCard({
 }) {
 
   return (
-    <div className="relative mt-8 max-w-92 w-full mx-auto bg-white rounded-3xl">
+    <form action={saveLinkCard} className="relative max-w-92 mx-auto bg-white rounded-3xl">
 
       {/* Hidden inputs */}
       <input name="url" value={url} hidden readOnly />
-      { imageUrl && <input name="imageUrl" value={imageUrl} hidden readOnly /> }
+      {imageUrl && <input name="imageUrl" value={imageUrl} hidden readOnly />}
 
       {/* Source */}
       <Link
@@ -119,16 +117,16 @@ function PreviewCard({
         <SaveButton />
       </div>
 
-    </div>
+    </form>
   )
 }
 
 function StatusPanel() {
   return (
-    <div className="max-w-3xl w-full mt-4 p-4 sm:p-5 rounded-3xl border border-white/90 bg-white/60 shadow flex flex-col">
-      <div className="flex items-start gap-4">
-        <div className="hidden sm:flex w-12 h-12 shrink-0 items-center justify-center rounded-2xl bg-linear-to-br from-pink-300 to-rose-300">
-          <Info className="w-6 h-6 text-rose-900" />
+    <div className="w-full h-max max-w-3xl md:max-w-92 p-4 md:p-6 rounded-3xl border border-white/90 bg-white/60 shadow flex flex-col">
+      <div className="flex flex-row md:flex-col items-start gap-4">
+        <div className="hidden sm:flex w-16 h-16 mx-0 md:mx-auto shrink-0 items-center justify-center rounded-2xl bg-linear-to-br from-rose-500 to-fuchsia-400 text-white">
+          <Info size={30} />
         </div>
 
         <div className="flex flex-col gap-1">
@@ -142,8 +140,6 @@ function StatusPanel() {
           </p>
         </div>
       </div>
-
-      <QuickSaveButton />
     </div>
   );
 }
