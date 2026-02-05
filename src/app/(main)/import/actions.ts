@@ -88,21 +88,26 @@ export async function importRecipe(formData: FormData) {
     select: { id: true },
   });
 
+  // Check blockers before fetching
+  const denied = isDenylisted(url.hostname.toLowerCase());
+  const robotsAllowed = denied ? true : await isRobotsAllowed(url);
+
+  // Always fetch page for OG data (used on link card fallback)
+  const { ok, status, html, og } = await fetchHtmlWithMeta(url);
+
   // Denylisted
-  if (isDenylisted(url.hostname.toLowerCase())) {
+  if (denied) {
     await failJob(job.id, "DENYLIST");
-    redirect(buildLinkCardUrl(url, undefined));
+    redirect(buildLinkCardUrl(url, og));
   }
 
   // Robots.txt
-  const allowed = await isRobotsAllowed(url);
-  if (!allowed) {
+  if (!robotsAllowed) {
     await failJob(job.id, "ROBOTS");
-    redirect(buildLinkCardUrl(url, undefined));
+    redirect(buildLinkCardUrl(url, og));
   }
 
-  // Fetch page
-  const { ok, status, html, og } = await fetchHtmlWithMeta(url);
+  // Fetch failed
   if (!ok || !html) {
     await failJob(job.id, "ERROR", `FETCH_FAILED_${status ?? "0"}`);
     redirect(buildLinkCardUrl(url, og));
@@ -125,8 +130,8 @@ export async function importRecipe(formData: FormData) {
   // TODO: Release 1
   // Microdata
   // const microdataRecipe = parseMicrodata(html);
-  // if (microdataRecipe) { 
-  //   saveRecipe(userId, url.toString(), microdataRecipe); 
+  // if (microdataRecipe) {
+  //   saveRecipe(userId, url.toString(), microdataRecipe);
   //   return;
   // }
 
