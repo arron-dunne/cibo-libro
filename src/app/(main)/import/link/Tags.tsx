@@ -10,7 +10,7 @@ export function Tags() {
   const [inputTag, setInputTag] = useState("");
 
   function addTag(v: string) {
-    const clean = v.trim();
+    const clean = v.trim().replace(/^./, c => c.toUpperCase());
     if (!clean) return;
     setTags((t) => (t.includes(clean) ? t : [...t, clean]));
     setInputTag("");
@@ -28,7 +28,7 @@ export function Tags() {
       {tags.length >= 1 ?
         <div className="w-full h-max mb-1 flex flex-wrap gap-2">
           {tags.map((t) => (
-            <div key={t} className="group flex items-center gap-1 rounded-full bg-orange-100 px-2 py-1 font-medium text-orange-700 texts-sm">
+            <div key={t} className="group flex items-center gap-1 rounded-full border border-orange-200 bg-orange-200/50 text-orange-600 px-2 py-1 font-medium texts-sm">
               <span className="ml-1">{t}</span>
               <button
                 type="button"
@@ -36,7 +36,7 @@ export function Tags() {
                 aria-label={`Remove tag ${t}`}
                 className="rounded-full p-0.5 cursor-pointer"
               >
-                <X size={14} className="text-orange-700" />
+                <X size={14} className="text-orange-600" />
               </button>
               <input type="hidden" name="tags" value={t} readOnly />
             </div>

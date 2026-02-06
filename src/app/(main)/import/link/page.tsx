@@ -42,7 +42,7 @@ export default async function Page({
   const { url, title, imageUrl, description } = parsed.data;
 
   return (
-    <div className="mx-auto max-w-5xl flex flex-col gap-4 mt-4">
+    <div className="mx-auto max-w-5xl flex flex-col gap-8">
       <InfoBanner />
       <PreviewCard title={title} url={url} imageUrl={imageUrl} description={description} />
     </div>
@@ -63,7 +63,7 @@ function PreviewCard({
 }) {
 
   return (
-    <form action={saveLinkCard} className="rounded-3xl border border-white/70 bg-white/95 shadow-lg backdrop-blur overflow-hidden">
+    <form action={saveLinkCard} className="rounded-3xl border border-white/70 bg-white/90 shadow-lg backdrop-blur overflow-hidden">
 
       {/* Hidden inputs */}
       <input name="url" value={url} hidden readOnly />
@@ -99,7 +99,7 @@ function PreviewCard({
               id="title"
               name="title"
               defaultValue={title}
-              className="mt-1 border border-zinc-300 bg-white/95 rounded-2xl w-full p-2 text-2xl font-bold text-zinc-900"
+              className="mt-1 border border-zinc-300 bg-white rounded-2xl w-full p-2 text-2xl font-bold text-zinc-900"
             />
           </div>
 
@@ -128,11 +128,12 @@ function PreviewCard({
 
 function InfoBanner() {
   return (
-    <div className="rounded-3xl border border-white/70 bg-white/60 px-5 py-3.5 shadow backdrop-blur flex items-center gap-3">
-      <Info size={20} className="text-gray-600 shrink-0" />
-      <p className="text-gray-600 font-semibold">
-        We couldn&apos;t import this recipe. You can still save it as a link in your cookbook.
-      </p>
+    <div className="max-w-4xl mx-auto rounded-3xl border border-white/70 bg-white/60 px-5 py-3.5 shadow backdrop-blur flex items-center gap-3">
+      <Info size={24} className="text-rose-500 shrink-0" />
+      <div>
+        <span className="font-semibold text-gray-900">We couldn&apos;t import this recipe. </span>
+        <span className="font-medium text-gray-600">You can still save it as a link in your cookbook.</span>
+      </div>
     </div>
   );
 }
