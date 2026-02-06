@@ -22,7 +22,7 @@ export function DeleteButton({ slug, action }: DeleteButtonProps) {
   const closeModal = useCallback(() => {
     if (isSubmitting) return;
     setIsModalOpen(false);
-  }, [isModalOpen]);
+  }, [isSubmitting]);
 
   // close modal with escape key
   useEffect(() => {
@@ -77,7 +77,7 @@ export function DeleteButton({ slug, action }: DeleteButtonProps) {
               </div>
               <h2 className="mt-4 text-xl font-semibold text-gray-900">Are you sure you want to delete this recipe?</h2>
               <p className="mt-2 text-sm text-gray-500">
-                This action can't be undone.
+                This action can&apos;t be undone.
               </p>
 
               <div className="mt-6 flex flex-col gap-3 sm:flex-row">

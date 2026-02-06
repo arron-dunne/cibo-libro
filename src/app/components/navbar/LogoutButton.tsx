@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { LogOut } from "lucide-react";
 
@@ -22,19 +22,6 @@ export function LogoutButton({ action }: LogoutButtonProps) {
     if (isSubmitting) return;
     setIsDialogOpen(false);
   }, [isSubmitting]);
-
-  // close popup with escape key
-  useEffect(() => {
-    if (!isDialogOpen) return;
-    function onKeyDown(e: KeyboardEvent) {
-      if (e.key === "Escape") {
-        e.preventDefault();
-        closeDialog();
-      }
-    }
-    window.addEventListener("keydown", onKeyDown);
-    return () => window.removeEventListener("keydown", onKeyDown);
-  }, [isDialogOpen, closeDialog]);
 
   // close popup with escape key
   useEffect(() => {

@@ -1,7 +1,7 @@
 "use client";
 
 import { useFormStatus } from "react-dom";
-import { ArrowRight, Save, Loader2 } from "lucide-react"
+import { ArrowRight, Loader2 } from "lucide-react"
 
 export function SaveButton() {
 
