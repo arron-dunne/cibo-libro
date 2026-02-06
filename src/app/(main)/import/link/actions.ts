@@ -8,7 +8,7 @@ import { uniqueRecipeSlug } from "@/lib/uniqueSlug";
 
 const PayloadSchema = z.object({
   url: z.url(),         // required
-  title: z.string(),    // required
+  title: z.string().min(1),    // required
   imageUrl: z.url().optional(),
   description: z.string().max(10000).optional(),
   tags: z.array(z.string().trim().min(1).max(48)).optional().default([]),
@@ -25,7 +25,7 @@ export async function saveLinkCard(formData: FormData) {
   const raw = {
     url: formData.get("url"),
     title: formData.get("title"),
-    imageUrl: formData.get("imageUrl") || "",
+    imageUrl: formData.get("imageUrl") || undefined,
     description: formData.get("description") || "",
     tags: formData.getAll("tags").filter(Boolean) as string[],
   };
