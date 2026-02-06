@@ -3,16 +3,11 @@ name: CI
 on:
   pull_request:
     branches: [dev, main]
-  workflow_dispatch:
-
-env:
-  DATABASE_URL: ${{ secrets.DATABASE_URL }}
 
 jobs:
   lint:
     name: Lint
     runs-on: ubuntu-latest
-    environment: preview
     steps:
       - uses: actions/checkout@v4
 
@@ -28,7 +23,6 @@ jobs:
   test-unit:
     name: Unit Tests
     runs-on: ubuntu-latest
-    environment: preview
     steps:
       - uses: actions/checkout@v4
 
@@ -44,7 +38,6 @@ jobs:
   test-integration:
     name: Integration Tests
     runs-on: ubuntu-latest
-    environment: preview
     steps:
       - uses: actions/checkout@v4
 
