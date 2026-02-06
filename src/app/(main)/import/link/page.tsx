@@ -99,7 +99,7 @@ function PreviewCard({
               id="title"
               name="title"
               defaultValue={title}
-              className="mt-1 border border-zinc-300 bg-white rounded-2xl w-full p-2 text-2xl font-bold text-zinc-900"
+              className="mt-1 border border-zinc-300 bg-white rounded-2xl w-full p-2 text-xl sm:text-2xl font-bold text-zinc-900"
             />
           </div>
 
