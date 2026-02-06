@@ -42,7 +42,7 @@ export async function submitIssue(
     if (issueCategory) { responses.push({ question: "issueCategory", answer: issueCategory })}
     
     const otherCategoryDetail = String(formData.get("issueCategory")) ?? "";
-    if (issueCategory) { responses.push({ question: "issueCategory", answer: issueCategory })}
+    if (otherCategoryDetail) { responses.push({ question: "otherCategoryDetail", answer: otherCategoryDetail })}
     
     const issueDescription = String(formData.get("issueDescription")) ?? "";
     if (issueDescription) { responses.push({ question: "issueDescription", answer: issueDescription })}

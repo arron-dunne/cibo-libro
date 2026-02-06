@@ -21,7 +21,7 @@ export function parseJsonLd(html: string): StructuredRecipe | null {
   const allJsonld = $('script[type="application/ld+json"]');
   if (!allJsonld.length) return null;
 
-  const data: Object[] = [];
+  const data: object[] = [];
   allJsonld.each((_, el) => {
     const raw = $(el).contents().text().trim();
     if (!raw) return;
