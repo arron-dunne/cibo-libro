@@ -42,7 +42,7 @@ export default async function Page({
   const { url, title, imageUrl, description } = parsed.data;
 
   return (
-    <div className="mx-auto max-w-4xl flex flex-col gap-4 mt-4">
+    <div className="mx-auto max-w-5xl flex flex-col gap-4 mt-4">
       <InfoBanner />
       <PreviewCard title={title} url={url} imageUrl={imageUrl} description={description} />
     </div>
@@ -69,10 +69,10 @@ function PreviewCard({
       <input name="url" value={url} hidden readOnly />
       {imageUrl && <input name="imageUrl" value={imageUrl} hidden readOnly />}
 
-      <div className="flex flex-col md:flex-row md:h-[28rem]">
+      <div className="flex flex-col md:flex-row">
 
         {/* Image */}
-        <div className="relative w-full md:w-[40%] shrink-0">
+        <div className="relative w-full md:w-2/5 shrink-0">
           <div className="aspect-[1.4] md:aspect-auto md:h-full overflow-hidden">
             <RecipeImage externalUrl={imageUrl} alt="Recipe picture" />
           </div>
@@ -92,7 +92,7 @@ function PreviewCard({
         </div>
 
         {/* Form fields */}
-        <div className="flex-1 p-5 sm:p-6 flex flex-col gap-3 min-h-0">
+        <div className="flex-1 p-4 sm:p-6 flex flex-col gap-4">
           <div className="shrink-0">
             <label htmlFor="title" className="text-sm font-semibold">Title</label>
             <input
