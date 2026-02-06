@@ -42,7 +42,7 @@ export default async function Page({
   const { url, title, imageUrl, description } = parsed.data;
 
   return (
-    <div className="mx-auto max-w-5xl flex flex-col gap-8">
+    <div className="mx-auto max-w-5xl flex flex-col gap-4 md:gap-8">
       <InfoBanner />
       <PreviewCard title={title} url={url} imageUrl={imageUrl} description={description} />
     </div>
@@ -73,7 +73,7 @@ function PreviewCard({
 
         {/* Image */}
         <div className="relative w-full md:w-2/5 shrink-0">
-          <div className="aspect-[1.4] md:aspect-auto md:h-full overflow-hidden">
+          <div className="h-full max-h-80 md:max-h-none aspect-auto overflow-hidden">
             <RecipeImage externalUrl={imageUrl} alt="Recipe picture" />
           </div>
 
