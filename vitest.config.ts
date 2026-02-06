@@ -6,7 +6,8 @@ const projectRoot = path.resolve(__dirname, './');
 export default defineConfig({
   resolve: {
     alias: {
-      '@': path.resolve(projectRoot, "./src") 
+      '@': path.resolve(projectRoot, "./src"),
+      'server-only': path.resolve(projectRoot, "./src/test/__mocks__/server-only.ts"),
     },
   },
   test: {
