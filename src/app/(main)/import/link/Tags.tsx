@@ -21,11 +21,12 @@ export function Tags() {
   }
 
   return (
-    <div className="flex flex-col flex-1 min-h-0">
+    <div className="flex flex-col flex-1 gap-2">
       <label className="text-sm font-semibold shrink-0">Tags</label>
 
-      <div className="mt-1 flex-1 min-h-0 overflow-y-auto">
-        <div className="flex flex-wrap gap-2">
+
+      {tags.length >= 1 ?
+        <div className="w-full h-max mb-1 flex flex-wrap gap-2">
           {tags.map((t) => (
             <div key={t} className="group flex items-center gap-1 rounded-full bg-orange-100 px-2 py-1 font-medium text-orange-700 texts-sm">
               <span className="ml-1">{t}</span>
@@ -41,9 +42,10 @@ export function Tags() {
             </div>
           ))}
         </div>
-      </div>
+        : null
+      }
 
-      <div className="mt-2 flex items-center gap-2 shrink-0">
+      <div className="flex items-center gap-2 shrink-0">
         <input
           type="text"
           className="w-full rounded-2xl border border-zinc-300 bg-white/95 p-2"
@@ -61,7 +63,7 @@ export function Tags() {
         <button
           type="button"
           onClick={() => addTag(inputTag)}
-          className="inline-flex items-center gap-2 rounded-full bg-linear-to-r from-slate-200 to-slate-300 border border-white/70 px-3 py-2 text-sm font-medium text-slate-700 shadow-lg cursor-pointer hover:brightness-90 active:brightness-75"
+          className="inline-flex items-center gap-2 rounded-full bg-linear-to-r from-slate-200 to-slate-300 px-3 py-2 text-sm font-medium text-slate-700 cursor-pointer hover:brightness-90 active:brightness-75"
         >
           <TagIcon size={12} />
           Add

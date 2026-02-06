@@ -39,7 +39,7 @@ export function RecipeImage({
           src={signedUrl}
           alt={alt}
           fill={true}
-          className="object-cover object-center"
+          className="object-cover object-top-left"
           unoptimized
           priority={false}
         />
@@ -55,7 +55,7 @@ export function RecipeImage({
         <img
           src={normalizedExternalUrl}
           alt={alt}
-          className="w-full h-full object-cover object-center"
+          className="w-full h-full object-cover object-top-left"
           loading="lazy"
           referrerPolicy="no-referrer"
         />
