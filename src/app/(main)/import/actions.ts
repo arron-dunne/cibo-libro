@@ -88,30 +88,35 @@ export async function importRecipe(formData: FormData) {
     select: { id: true },
   });
 
+  // Check blockers before fetching
+  const denied = isDenylisted(url.hostname.toLowerCase());
+  const robotsAllowed = denied ? true : await isRobotsAllowed(url);
+
+  // Always fetch page for OG data (used on link card fallback)
+  const { ok, status, html, og } = await fetchHtmlWithMeta(url);
+
   // Denylisted
-  if (isDenylisted(url.hostname.toLowerCase())) {
+  if (denied) {
     await failJob(job.id, "DENYLIST");
-    redirect(buildPromptUrl(url, undefined));
+    redirect(buildLinkCardUrl(url, og));
   }
 
   // Robots.txt
-  const allowed = await isRobotsAllowed(url);
-  if (!allowed) {
+  if (!robotsAllowed) {
     await failJob(job.id, "ROBOTS");
-    redirect(buildPromptUrl(url, undefined));
+    redirect(buildLinkCardUrl(url, og));
   }
 
-  // Fetch page
-  const { ok, status, html, og } = await fetchHtmlWithMeta(url);
+  // Fetch failed
   if (!ok || !html) {
     await failJob(job.id, "ERROR", `FETCH_FAILED_${status ?? "0"}`);
-    redirect(buildPromptUrl(url, og));
+    redirect(buildLinkCardUrl(url, og));
   }
 
   // Paywall detection via JSON-LD
   if (detectPaywall(html)) {
     await failJob(job.id, "PAYWALL");
-    redirect(buildPromptUrl(url, og));
+    redirect(buildLinkCardUrl(url, og));
   }
 
   // JSON-LD
@@ -125,14 +130,14 @@ export async function importRecipe(formData: FormData) {
   // TODO: Release 1
   // Microdata
   // const microdataRecipe = parseMicrodata(html);
-  // if (microdataRecipe) { 
-  //   saveRecipe(userId, url.toString(), microdataRecipe); 
+  // if (microdataRecipe) {
+  //   saveRecipe(userId, url.toString(), microdataRecipe);
   //   return;
   // }
 
   // if no data extracted, redirect to link card
   await failJob(job.id, "NO_SCHEMA");
-  redirect(buildPromptUrl(url, og));
+  redirect(buildLinkCardUrl(url, og));
 }
 
 // TODO: improve, currently user agents on consecutive lines arnt handled correctly
@@ -208,7 +213,7 @@ async function saveRecipe(
   // sourceUrl should of been checked when initially fetching so this should never throw
   if (!(await isSafeUrl(sourceUrl))) throw Error("unsafe url");
 
-  const title = (recipe.title || humanizeUrl(sourceUrl)).trim();
+  const title = (recipe.title || getTitleFromUrl(new URL(sourceUrl))).trim();
   const slug = await uniqueRecipeSlug(title);
 
   const created = await prisma.recipe.create({
@@ -240,29 +245,24 @@ async function saveRecipe(
 }
 
 // build the url for link card with open graph data if available
-function buildPromptUrl(u: URL, og?: OpenGraphMeta) {
-  const title = (og?.title?.trim() || synthesizeTitleFromUrl(u)).slice(0, 120);
+function buildLinkCardUrl(u: URL, og?: OpenGraphMeta) {
+  const title = (og?.title?.trim() || getTitleFromUrl(u)).slice(0, 120);
   const params = new URLSearchParams({ url: u.toString(), title });
   if (og?.image) params.set("image", og.image);
-  if (og?.description) params.set("description", og.description);
+  if (og?.description) params.set("description", og.description.slice(0, 500));
   return `/import/link?${params.toString()}`;
 }
 
-// fallback title synthesised from URL
-function synthesizeTitleFromUrl(u: URL): string {
+// fallback title derived from URL's last path segment
+function getTitleFromUrl(u: URL): string {
   const last = decodeURIComponent(u.pathname.split("/").filter(Boolean).pop() || u.hostname);
-  const s = last.replace(/\.(html?|php|aspx?)$/i, "").replace(/[-_]+/g, " ").replace(/\s+/g, " ").trim();
+  const s = last
+    .replace(/\.(html?|php|aspx?)$/i, "")
+    .replace(/[-_]+/g, " ")
+    .replace(/\b\d+\b/g, "")
+    .replace(/\s+/g, " ")
+    .trim();
   return s ? s.replace(/\b\w/g, (c) => c.toUpperCase()) : u.hostname.replace(/^www\./, "");
-}
-
-function humanizeUrl(u: string): string {
-  try {
-    const url = new URL(u);
-    const path = url.pathname.replace(/\/+$/, "");
-    return path && path !== "/" ? `${url.hostname}${path.split("/").slice(0, 3).join("/")}` : url.hostname;
-  } catch {
-    return u;
-  }
 }
 
 // Update the job to FAILED with optional info

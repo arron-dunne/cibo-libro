@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { LogOut } from "lucide-react";
 
@@ -18,10 +18,10 @@ export function LogoutButton({ action }: LogoutButtonProps) {
   useEffect(() => setHasMounted(true), []) // useEffect fires after mount
 
   const openDialog = () => setIsDialogOpen(true);
-  const closeDialog = () => {
+  const closeDialog = useCallback(() => {
     if (isSubmitting) return;
     setIsDialogOpen(false);
-  };
+  }, [isSubmitting]);
 
   // close popup with escape key
   useEffect(() => {

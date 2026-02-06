@@ -7,7 +7,7 @@ import Link from "next/link";
 
 export default function ReportIssuesPage() {
 
-  const [state, formAction, isPending] = useActionState(submitIssue, { status: null });
+  const [state, formAction] = useActionState(submitIssue, { status: null });
 
   const [issueCategory, setIssueCategory] = useState<string>("");
 

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { describe, test, expect, vi, beforeEach } from "vitest";
 import dns from "node:dns/promises";
 import { isSafeUrl } from "@/lib/import/safeUrl";
