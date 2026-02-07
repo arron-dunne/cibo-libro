@@ -6,23 +6,23 @@ on:
   pull_request:
     branches: [dev, main]
 
+env:
+  E2E: "1"
+  DATABASE_URL: ${{ secrets.DATABASE_URL }}
+  AUTH_SECRET: ${{ secrets.AUTH_SECRET }}
+  R2_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+  R2_ACCOUNT_ID: ${{ secrets.R2_ACCOUNT_ID }}
+  R2_BUCKET_NAME: ${{ secrets.R2_BUCKET_NAME }}
+  R2_ENDPOINT_URL: ${{ secrets.R2_ENDPOINT_URL }}
+  R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+
+
 jobs:
-  test-smoke:
+  test-e2e:
+    name: End-to-End Tests
     runs-on: ubuntu-latest
-    timeout-minutes: 20
-
-    env:
-      NODE_ENV: test
-      E2E: "1"
-      DATABASE_URL: ${{ secrets.DATABASE_URL_TEST }}
-      DIRECT_URL: ${{ secrets.DIRECT_URL_TEST }}
-      AUTH_SECRET: ${{ secrets.AUTH_SECRET }}
-      R2_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
-      R2_ACCOUNT_ID: ${{ secrets.R2_ACCOUNT_ID }}
-      R2_BUCKET_NAME: ${{ secrets.R2_BUCKET_NAME }}
-      R2_ENDPOINT_URL: ${{ secrets.R2_ENDPOINT_URL }}
-      R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
-
+    environment: preview
+    timeout-minutes: 60
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -30,7 +30,7 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: "20"
+          node-version: 20
           cache: "npm"
 
       - name: Install deps
@@ -39,26 +39,15 @@ jobs:
       - name: Build
         run: npm run build
 
-      - name: Install Playwright (browsers + system deps)
+      - name: Install Playwright
         run: npx playwright install --with-deps chromium
 
-      - name: Generate Prisma client
-        run: npx prisma generate
-
-      - name: Migrate DB (Neon test branch)
+      - name: Migrate DB
         run: npx prisma migrate deploy
 
-      - name: Seed DB (minimal e2e data)
-        run: |
-          if [ -f prisma/seed-e2e.ts ]; then
-            npx ts-node --compiler-options '{"module":"CommonJS"}' prisma/seed-e2e.ts
-          else
-            echo "No prisma/seed-e2e.ts present; skipping"
-          fi
-
       # Playwright will start the server via playwright.config.ts (webServer)
-      - name: Run smoke tests
-        run: npx playwright test -g "@smoke"
+      - name: Run e2e tests
+        run: npm run test:e2e
 
       - name: Upload Playwright report (on failure)
         if: failure()
