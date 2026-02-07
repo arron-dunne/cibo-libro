@@ -8,7 +8,7 @@ export function detectPaywall(html: string): boolean {
   const allJsonld = $('script[type="application/ld+json"]');
   if (!allJsonld.length) return false;
 
-  const data: Object[] = [];
+  const data: object[] = [];
 
   // Parse the json ld tags into a json object, skipping any malformed data
   allJsonld.each((_, el) => {
