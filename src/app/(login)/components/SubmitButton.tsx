@@ -13,7 +13,7 @@ export function SubmitButton({ text, pendingText }: { text?: string; pendingText
         text-white text-lg font-bold flex items-center justify-center gap-4
         shadow-lg cursor-pointer
         transition hover:scale-105 hover:brightness-90 active:translate-y-0"
-      aria-label="Login"
+      aria-label={text}
       disabled={pending}
     >
       {pending ? (
