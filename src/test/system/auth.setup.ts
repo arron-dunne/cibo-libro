@@ -1,5 +1,5 @@
 import { test, expect } from "@playwright/test";
-import { uniqueEmail } from "./helpers";
+import { uniqueEmail } from "./e2e/helpers";
 
 test("bootstrap auth and save storage", async ({ page, context, baseURL }) => {
   const email = uniqueEmail();
