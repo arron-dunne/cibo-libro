@@ -1,5 +1,5 @@
 import { test, expect } from "@playwright/test";
-import { uniqueEmail } from "./e2e/helpers";
+import { uniqueEmail } from "./helpers";
 
 test("bootstrap auth and save storage", async ({ page, context, baseURL }) => {
   const email = uniqueEmail();
@@ -12,7 +12,7 @@ test("bootstrap auth and save storage", async ({ page, context, baseURL }) => {
   await page.getByLabel("Confirm Password").fill(password);
   await page.getByRole("button", { name: "Register" }).click();
 
-  // Redirected to /login?created=1 with banner
+  // Redirected to /login with success banner
   await expect(page).toHaveURL(/\/login/);
   await expect(page.getByText("Account created. You can sign in now.")).toBeVisible();
 
@@ -21,9 +21,9 @@ test("bootstrap auth and save storage", async ({ page, context, baseURL }) => {
   await page.getByLabel("Password").fill(password);
   await page.getByRole("button", { name: "Login" }).click();
 
-  // Land on home, "Signed in as ..." text visible
+  // Land on home, email visible
   await expect(page).toHaveURL(new RegExp(`${baseURL?.replace(/[.*+?^${}()|[\]\\]/g, "\\$&") ?? ""}/?$`));
-  await expect(page.getByText("Signed in as").first()).toBeVisible();
+  await expect(page.getByText(email)).toBeVisible();
 
   // Persist auth state for dependent projects
   await context.storageState({ path: ".auth/storage.json" });

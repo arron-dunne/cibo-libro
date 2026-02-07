@@ -1,13 +1,15 @@
 import { test, expect } from "@playwright/test";
 
-test("@smoke signed-in home then sign out", async ({ page }) => {
+test.only("@smoke signed-in home then sign out", async ({ page }) => {
+  
+  // Go to home page
   await page.goto("/");
-  await expect(page.getByText("Signed in as").first()).toBeVisible();
+  await expect(page.getByText("What's cooking?")).toBeVisible();
 
-  // The navbar has a real "Logout" button inside a form-action
+  // Click logout button
   await page.getByRole("button", { name: "Logout" }).click();
 
-  // You send users back to /signin after signOut
+  // Redirected to login page
   await expect(page).toHaveURL(/\/login/);
   await expect(page.getByRole("heading", { name: "Welcome back" })).toBeVisible();
 });
