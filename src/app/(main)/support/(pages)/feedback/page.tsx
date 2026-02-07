@@ -12,7 +12,6 @@ import {
   CircleX,
   Send,
   Home,
-  ArrowRight,
 } from "lucide-react";
 
 import { useState, useActionState, useEffect } from "react";
@@ -147,7 +146,7 @@ export default function FeedbackPage() {
         <section className="rounded-3xl border border-white/70 bg-white/95 p-8 shadow-lg backdrop-blur">
           <h2 className="text-2xl font-semibold text-orange-950 mb-4 flex items-center gap-4">
             <Heart size={28} className="text-orange-500" />
-            Anything else you'd like to share?
+            Anything else you&apos;d like to share?
           </h2>
 
           <textarea

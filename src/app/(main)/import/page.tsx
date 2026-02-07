@@ -1,59 +1,66 @@
 import Image from "next/image";
 import { importRecipe } from "./actions";
 import { UrlInput } from "./UrlInput";
-import { Download, ShieldCheck, Zap, StickyNote, ClipboardPaste } from "lucide-react";
+import { Download, LucideProps, MousePointerClick, UserPen, Handshake } from "lucide-react";
 
 export default function ImportPage() {
   return (
-    <div className="max-w-4xl w-full mx-auto mt-8 p-6 sm:p-8 rounded-3xl border border-white/70 bg-white/95 backdrop-blur shadow-lg">
-      {/* Header */}
-      <div className="mb-6 flex items-start gap-6 md:mb-8">
-        <div className="flex h-20 w-20 items-center justify-center rounded-2xl border border-rose-200 bg-rose-50 text-rose-500">
-          <Download size={36} aria-hidden="true" />
+    <div className="max-w-4xl w-full mx-auto">
+      <div className="mt-8 p-6 sm:p-8 rounded-3xl border border-white/70 bg-white/95 backdrop-blur shadow-lg">
+        {/* Header */}
+        <div className="mb-6 flex flex-col sm:flex-row items-center sm:items-start gap-3 sm:gap-6 md:mb-8">
+          <div className="hidden sm:flex w-20 h-18 items-center justify-center rounded-3xl sm:rounded-3xl bg-linear-to-br from-rose-300 to-fuchsia-300 text-rose-900">
+            <Download aria-hidden="true" className="w-8 h-8 sm:w-10 sm:h-10"/>
+          </div>
+          <div className="text-center sm:text-start">
+            <h1 className="text-3xl font-bold leading-tight text-gray-900 md:text-4xl">
+              Import a recipe
+            </h1>
+            <p className="mt-2 text-[15px] text-gray-700">
+              Paste a link to add it to your personal cookbook
+            </p>
+          </div>
         </div>
-        <div>
-          <h1 className="text-3xl font-bold leading-tight text-gray-900 md:text-4xl">
-            Import a recipe
-          </h1>
-          <p className="mt-2 text-[15px] text-gray-700">
-            Paste a link to add it to your personal cookbook
-          </p>
-        </div>
+
+        {/* Form */}
+        <form action={importRecipe} className="space-y-5">
+          {/* Honeypot (bot trap) */}
+          <div aria-hidden="true" className="hidden">
+            <label className="block">
+              Leave this empty:
+              <input name="website" type="text" tabIndex={-1} autoComplete="off" />
+            </label>
+          </div>
+
+          {/* URL field with pill layout */}
+          <UrlInput />
+
+        </form>
       </div>
 
-      {/* Form */}
-      <form action={importRecipe} className="space-y-5">
-        {/* Honeypot (bot trap) */}
-        <div aria-hidden="true" className="hidden">
-          <label className="block">
-            Leave this empty:
-            <input name="website" type="text" tabIndex={-1} autoComplete="off" />
-          </label>
-        </div>
+      {/* Feature cards */}
+      <Image className="mt-12 w-60 mx-auto md:mx-4" src="/images/how-it-works.png" alt="How it works" width={830} height={112}/>
 
-        {/* URL field with pill layout */}
-        <UrlInput />
-        
-
-        {/* Feature cards */}
-        <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
-          <InfoCard
-            icon={<Zap className="h-5 w-5" />}
-            title="Import in one click"
-            desc="Paste a recipe link and we’ll grab the essentials—title, ingredients, steps, and timings—straight into your cookbook."
+      <div className="mt-8 flex flex-col md:flex-row gap-8 md:gap-4">
+        <InfoCard
+          Icon={MousePointerClick}
+          title="Import in one click"
+          desc="Paste a recipe link and we’ll save the it straight to your cookbook"
+          iconStyle="bg-linear-to-br from-blue-300 to-cyan-300 text-blue-900"
           />
-          <InfoCard
-            icon={<StickyNote className="h-5 w-5" />}
-            title="No recipe? No problem"
-            desc="If a site won’t share, we’ll save a handy card with the title and link so you can always find it again."
+        <InfoCard
+          Icon={Handshake}
+          title="We respect other sites"
+          desc="If a site won’t share, we’ll save a handy link card instead so you can easily remember"
+          iconStyle="bg-linear-to-br from-green-300 to-lime-300 text-green-900"
           />
-          <InfoCard
-            icon={<ShieldCheck className="h-5 w-5" />}
-            title="We play nice"
-            desc="We follow the rules—no paywall dodging or sneaky scraping. Everything stays tidy, safe, and fair."
-          />
-        </div>
-      </form>
+        <InfoCard
+          Icon={UserPen}
+          title="Personalise it your way"
+          desc="Add your personal tags, notes and rating to any recipe"
+          iconStyle="bg-linear-to-br from-purple-300 to-fuchsia-300 text-purple-900"
+        />
+      </div>
     </div>
   )
 }

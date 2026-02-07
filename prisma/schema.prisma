@@ -1,10 +1,10 @@
 generator client {
   provider = "prisma-client"
-  output   = "../src/prisma/generated/"  
+  output   = "../src/prisma/generated/"
 }
 
 datasource db {
-  provider  = "postgresql"
+  provider = "postgresql"
 }
 
 enum RecipeType {

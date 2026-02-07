@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { prisma } from "@/lib/prisma";
-import { Pencil, ChefHat, Trash2, ArrowLeft, Heart, ExternalLink } from "lucide-react";
+import { Pencil, ChefHat, ArrowLeft, Heart, ExternalLink } from "lucide-react";
 import { RecipeImage } from "@/app/components/recipes/RecipeImage";
 import { deleteRecipe } from "./actions";
 import { DeleteButton } from "./DeleteButton";

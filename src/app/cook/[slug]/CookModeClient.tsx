@@ -11,7 +11,6 @@ import { StepText } from "./components/StepText";
 import {
   ArrowLeft,
   UtensilsCrossed,
-  Lock,
   Circle,
   CheckCircle2,
   ChevronLeft,
