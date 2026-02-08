@@ -2,7 +2,7 @@ import { handleSignIn } from "./actions";
 import { SubmitButton } from "../components/SubmitButton";
 import { CircleAlert } from "lucide-react";
 
-export default async function SigninPage({
+export default async function LoginPage({
   searchParams,
 }: {
   searchParams: Promise<{ created?: string; error?: string }>;
