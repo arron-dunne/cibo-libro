@@ -47,8 +47,8 @@ export default function RecipeForm({ mode, recipe, action }: RecipeFormProps) {
   const [prepMins, setPrepMins] = useState<number | null>(recipe?.prepMins ?? null);
   const [cookMins, setCookMins] = useState<number | null>(recipe?.cookMins ?? null);
   const [servings, setServings] = useState<number | null>(recipe?.servings ?? null);
-  const [ingredients, setIngredients] = useState<string[]>(recipe?.ingredients ?? []);
-  const [steps, setSteps] = useState<string[]>(recipe?.steps ?? []);
+  const [ingredients, setIngredients] = useState<string[]>(recipe?.ingredients ?? [""]);
+  const [steps, setSteps] = useState<string[]>(recipe?.steps ?? [""]);
   const [tags, setTags] = useState<string[]>(recipe?.tags ?? []);
   const [note, setNote] = useState<string>(recipe?.note ?? "");
   const [saving, setSaving] = useState(false);
@@ -352,19 +352,21 @@ export default function RecipeForm({ mode, recipe, action }: RecipeFormProps) {
               <Panel ref={sectionsRef.details} id="details" title="Details" subtitle="Title, description, times, servings, and tags.">
                 <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                   <div className="sm:col-span-2">
-                    <Label>Title</Label>
+                    <Label htmlFor="title">Title</Label>
                     <input
+                      id="title"
                       type="text"
                       className="w-full rounded-lg border border-zinc-300 bg-white/95 px-3 py-2 outline-none focus:ring-2 focus:ring-orange-400"
-                      placeholder="e.g. Grandma’s Best Lasagna"
+                      placeholder="e.g. Grandma's Best Lasagna"
                       value={title}
                       onChange={(e) => setTitle(e.target.value)}
                     />
                   </div>
 
                   <div className="sm:col-span-2">
-                    <Label>Description</Label>
+                    <Label htmlFor="description">Description</Label>
                     <textarea
+                      id="description"
                       rows={3}
                       className="w-full rounded-lg border border-zinc-300 bg-white/95 px-3 py-2 outline-none focus:ring-2 focus:ring-orange-400"
                       placeholder="Short note about the dish"
@@ -423,6 +425,7 @@ export default function RecipeForm({ mode, recipe, action }: RecipeFormProps) {
                     <div key={`ing-${i}`} className="flex items-center gap-2">
                       <input
                         type="text"
+                        aria-label={`Ingredient ${i + 1}`}
                         className="ingredient-input w-full rounded-lg border border-zinc-300 bg-white/95 px-3 py-2 outline-none focus:ring-2 focus:ring-orange-400"
                         placeholder={i === 0 ? "e.g. 250g dried pasta" : ""}
                         value={val}
@@ -465,6 +468,7 @@ export default function RecipeForm({ mode, recipe, action }: RecipeFormProps) {
                     <div key={`step-${i}`} className="flex items-center gap-2">
                       <input
                         type="text"
+                        aria-label={`Step ${i + 1}`}
                         className="step-input w-full rounded-lg border border-zinc-300 bg-white/95 px-3 py-2 outline-none focus:ring-2 focus:ring-orange-400"
                         placeholder={i === 0 ? "e.g. Preheat oven to 180°C (fan)." : ""}
                         value={val}
@@ -674,8 +678,8 @@ function TagsEditor({ value, onChange }: { value: string[]; onChange: (xs: strin
   );
 }
 
-const Label = ({ children }: { children: React.ReactNode }) => (
-  <label className="mb-1 block text-sm font-medium">{children}</label>
+const Label = ({ htmlFor, children }: { htmlFor?: string; children: React.ReactNode }) => (
+  <label htmlFor={htmlFor} className="mb-1 block text-sm font-medium">{children}</label>
 );
 
 // ────────────────────────────────────────────────────────────────────────────
