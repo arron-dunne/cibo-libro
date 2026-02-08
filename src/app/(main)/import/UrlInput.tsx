@@ -32,6 +32,7 @@ export function UrlInput() {
           type="url"
           required
           inputMode="url"
+          aria-label="Recipe URL"
           placeholder="https://example.com/best-lasagne-ever"
           pattern="https?://.+"
           autoFocus
