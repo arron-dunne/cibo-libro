@@ -1,5 +1,5 @@
 import { test, expect } from "@playwright/test";
-import { uniqueTitle } from "./helpers";
+import { uniqueTitle } from "../helpers";
 
 test("@smoke create recipe via manual form, then find it in grid and open detail", async ({ page }) => {
   // Start logged-in (storageState from setup)
