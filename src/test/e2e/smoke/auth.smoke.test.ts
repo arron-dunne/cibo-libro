@@ -1,6 +1,6 @@
 import { test, expect } from "@playwright/test";
 
-test.only("@smoke signed-in home then sign out", async ({ page }) => {
+test("logged-in on home then logoout", async ({ page }) => {
   
   // Go to home page
   await page.goto("/");
