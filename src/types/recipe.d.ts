@@ -1,4 +1,4 @@
-import type { RecipeStatus, RecipeType } from "@prisma/client";
+import type { RecipeStatus, RecipeType } from "@/prisma/generated/enums";
 
 declare global {
   interface Recipe {
