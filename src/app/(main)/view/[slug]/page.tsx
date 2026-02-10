@@ -66,7 +66,7 @@ export default async function ViewRecipePage({
       </Link>
 
       {/* Hero section */}
-      <section className="relative mt-4 overflow-hidden rounded-4xl border border-white/70 bg-white shadow-2xl min-h-[50vh] flex flex-col md:flex-row">
+      <section className="h-max md:h-120 relative mt-4 overflow-hidden rounded-4xl border border-white/70 bg-white shadow-2xl flex flex-col md:flex-row">
         {/* Source URL */}
         {recipe.sourceUrl && (
           <Link
@@ -84,7 +84,7 @@ export default async function ViewRecipePage({
         )}
 
         {/* Image */}
-        <div className="w-full md:w-1/2 h-full max-h-120 overflow-hidden">
+        <div className="w-full md:w-1/2 h-full max-h-100 md:max-h-120 overflow-hidden">
           <RecipeImage
             imageKey={recipe.imageKey ?? undefined}
             externalUrl={recipe.imageExternalUrl ?? undefined}
@@ -136,7 +136,7 @@ export default async function ViewRecipePage({
           </div>
 
           {/* Button bar  */}
-          <div className="flex gap-2">
+          <div className="mt-4 flex gap-2">
 
             {/* TODO: refactor secondary button */}
             <div
@@ -146,7 +146,7 @@ export default async function ViewRecipePage({
               cursor-pointer hover:brightness-90 active:brightness-75"
               >
               <Heart size={20} />
-              <span>Favourite</span>
+              <span className="hidden lg:block">Favourite</span>
             </div>
 
             <Link
@@ -157,7 +157,7 @@ export default async function ViewRecipePage({
                 cursor-pointer hover:brightness-90 active:brightness-75"
             >
               <Pencil size={20} />
-              <span>Edit</span>
+              <span className="hidden lg:block">Edit</span>
             </Link>
 
             <DeleteButton slug={slug} action={deleteRecipe} />

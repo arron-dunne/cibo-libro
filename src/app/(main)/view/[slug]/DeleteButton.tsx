@@ -58,7 +58,7 @@ export function DeleteButton({ slug, action }: DeleteButtonProps) {
                 cursor-pointer hover:brightness-90 active:brightness-75"
         >
           <Trash2 size={20} />
-          <span>Delete</span>
+          <span className="hidden lg:block">Delete</span>
         </button>
       </form>
 
