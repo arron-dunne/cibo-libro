@@ -1,36 +1,30 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Cibo Libro
 
-## Getting Started
+A recipe management web app for saving, organizing, and cooking your favorite recipes.
 
-First, run the development server:
+## About
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+Cibo Libro lets you build a personal recipe collection from anywhere on the web or from scratch. Import recipes from URLs with automatic extraction, or add them manually. When you're ready to cook, a distraction-free cook mode walks you through each step — no more scrolling past life stories.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Features
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+- **Recipe import** — paste a URL and recipes are automatically extracted via JSON-LD parsing
+- **Link cards** — when full import isn't possible (paywalled sites, missing data), save a quick-reference link card instead
+- **Manual recipes** — add your own recipes with a full-featured form
+- **Cook mode** — step-by-step distraction-free cooking view
+- **Tags** — organize recipes with custom tags
+- **Search, sort & filter** — find recipes across your collection by title, tags, and other properties
+- **Image uploads** — recipe images stored on Cloudflare R2 with presigned URLs
+- **Mobile-first** — responsive design optimized for phones and desktops
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Tech Stack
 
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+| Category | Technology |
+|---|---|
+| Framework | Next.js |
+| Language | TypeScript |
+| Database | PostgreSQL + Prisma |
+| Auth | NextAuth v5 |
+| Styling | Tailwind CSS |
+| Image Storage | Cloudflare R2 |
+| Deployment | Vercel |
