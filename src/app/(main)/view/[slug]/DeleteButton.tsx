@@ -52,7 +52,7 @@ export function DeleteButton({ slug, action }: DeleteButtonProps) {
         <button
           type="button"
           onClick={openModal}
-          className="px-3 py-2 flex gap-2 items-center
+          className="px-3 h-11 flex gap-2 items-center
                 bg-linear-to-br from-slate-100 to-slate-200
                 rounded-full text-slate-800 border border-slate-300
                 cursor-pointer hover:brightness-90 active:brightness-75"
