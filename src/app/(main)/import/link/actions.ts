@@ -7,8 +7,8 @@ import { prisma } from "@/lib/prisma";
 import { uniqueRecipeSlug } from "@/lib/uniqueSlug";
 
 const PayloadSchema = z.object({
-  url: z.url(),         // required
-  title: z.string().min(1),    // required
+  url: z.url(), // required
+  title: z.string().min(1), // required
   imageUrl: z.url().optional(),
   description: z.string().max(10000).optional(),
   tags: z.array(z.string().trim().min(1).max(48)).optional().default([]),
@@ -20,7 +20,8 @@ const PayloadSchema = z.object({
  */
 export async function saveLinkCard(formData: FormData) {
   const session = await auth();
-  if (!session?.user?.id) throw new Error("You must be signed in to save link recipes.");
+  if (!session?.user?.id)
+    throw new Error("You must be signed in to save link recipes.");
 
   const raw = {
     url: formData.get("url"),
@@ -53,7 +54,6 @@ export async function saveLinkCard(formData: FormData) {
         isPublic: false,
       },
     });
-
   } catch (err) {
     // Keep log minimal; DB/schema mismatches surface here.
     console.error("[create] error:", err);

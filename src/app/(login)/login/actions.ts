@@ -11,7 +11,6 @@ const LoginSchema = z.object({
 });
 
 export async function handleSignIn(formData: FormData) {
-
   const raw = {
     email: formData.get("email"),
     password: formData.get("password"),
@@ -29,7 +28,6 @@ export async function handleSignIn(formData: FormData) {
       redirectTo: "/",
     });
   } catch (err) {
-    
     if (err instanceof AuthError) {
       redirect("/login?error=invalid");
     }

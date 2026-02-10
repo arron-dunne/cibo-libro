@@ -1,9 +1,9 @@
 import { test, expect } from "@playwright/test";
 import { uniqueTitle } from "../helpers";
 
-
-test("import denylisted URL as link card, edit details and add tag, verify in grid", async ({ page }) => {
-
+test("import denylisted URL as link card, edit details and add tag, verify in grid", async ({
+  page,
+}) => {
   const testUrl = "https://www.allrecipes.com/recipe/12345/test-recipe/";
   const title = uniqueTitle();
   const description = "A quick smoke-test link card";
@@ -11,7 +11,9 @@ test("import denylisted URL as link card, edit details and add tag, verify in gr
 
   // Go to import page
   await page.goto("/import");
-  await expect(page.getByRole("heading", { name: "Import a recipe" })).toBeVisible();
+  await expect(
+    page.getByRole("heading", { name: "Import a recipe" }),
+  ).toBeVisible();
 
   // Fill in URL and submit
   await page.getByLabel("Recipe URL").fill(testUrl);
@@ -40,6 +42,8 @@ test("import denylisted URL as link card, edit details and add tag, verify in gr
   await expect(page).toHaveURL(/\/all/, { timeout: 15_000 });
 
   // Recipe card with the unique title and description appears in the grid
-  await expect(page.getByRole("heading", { level: 2, name: title })).toBeVisible({ timeout: 10_000 });
+  await expect(
+    page.getByRole("heading", { level: 2, name: title }),
+  ).toBeVisible({ timeout: 10_000 });
   await expect(page.getByText(description)).toBeVisible();
 });

@@ -2,10 +2,12 @@ import { auth } from "@/lib/auth/auth";
 import { CookingPot, Import, PlusCircle, Search } from "lucide-react";
 import Link from "next/link";
 import { prisma } from "@/lib/prisma";
-import { RecipeCard, RecipeCardProps } from "@/app/components/recipes/RecipeCard";
+import {
+  RecipeCard,
+  RecipeCardProps,
+} from "@/app/components/recipes/RecipeCard";
 
 export default async function HomePage() {
-
   const session = await auth();
 
   const recentRecipes = await prisma?.recipe.findMany({
@@ -19,15 +21,14 @@ export default async function HomePage() {
       slug: true,
       imageKey: true,
       imageExternalUrl: true,
-    }
-  })
+    },
+  });
 
   const tagsData = await prisma.recipe.findMany({
     where: { ownerId: session?.user.id },
     select: { tags: true },
   });
-  const allTags = [...new Set(tagsData.flatMap(r => r.tags ?? []))];
-
+  const allTags = [...new Set(tagsData.flatMap((r) => r.tags ?? []))];
 
   return (
     <>
@@ -72,11 +73,7 @@ export default async function HomePage() {
         </p>
 
         {/* Search Bar */}
-        <form
-          action="/all"
-          method="get"
-          className="relative mb-6 max-w-lg"
-        >
+        <form action="/all" method="get" className="relative mb-6 max-w-lg">
           <input
             type="text"
             name="search"
@@ -87,7 +84,7 @@ export default async function HomePage() {
             type="submit"
             className="absolute right-2 top-1/2 -translate-y-1/2 rounded-full bg-orange-500 p-2 text-white shadow-md transition hover:scale-105 hover:bg-orange-600"
           >
-            <Search/>
+            <Search />
           </button>
         </form>
 
@@ -138,7 +135,10 @@ function ActionButton({
   label: string;
 }) {
   return (
-    <Link href={href} className={`${color} flex items-center gap-2 rounded-full px-4 py-2 font-medium text-white shadow-md transition cursor-pointer hover:scale-105`}>
+    <Link
+      href={href}
+      className={`${color} flex items-center gap-2 rounded-full px-4 py-2 font-medium text-white shadow-md transition cursor-pointer hover:scale-105`}
+    >
       {icon}
       {label}
     </Link>

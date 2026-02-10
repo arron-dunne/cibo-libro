@@ -1,4 +1,4 @@
-import { load } from "cheerio"; 
+import { load } from "cheerio";
 
 // Look for a paywall in the JSON-LD, return true if we find one
 export function detectPaywall(html: string): boolean {
@@ -27,8 +27,9 @@ export function detectPaywall(html: string): boolean {
 
 // Recursive function to search nested JSON object for paywall flags
 export function hasPaywallFlag(data: unknown): boolean {
-
-  if (!data) { return false; }
+  if (!data) {
+    return false;
+  }
 
   // Recursive call for each element in an array
   if (Array.isArray(data)) {
@@ -37,7 +38,8 @@ export function hasPaywallFlag(data: unknown): boolean {
 
   if (typeof data === "object") {
     for (const [key, val] of Object.entries(data)) {
-      if (key === "isAccessibleForFree" &&
+      if (
+        key === "isAccessibleForFree" &&
         (val === false || val === "false" || val === 0 || val === "0")
       ) {
         return true;
@@ -51,5 +53,4 @@ export function hasPaywallFlag(data: unknown): boolean {
   }
 
   return false;
-
 }

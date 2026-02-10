@@ -2,21 +2,19 @@ import Link from "next/link";
 
 export default function PrivacyPage() {
   return (
-    <article className="max-w-none rounded-3xl p-8 shadow backdrop-blur
+    <article
+      className="max-w-none rounded-3xl p-8 shadow backdrop-blur
       border border-white/70 bg-white/90 text-orange-950 
       prose prose-orange prose-headings:font-semibold prose-headings:text-orange-900"
     >
-
-      <h1 className="text-center text-4xl font-bold mb-2">
-        Privacy Policy
-      </h1>
+      <h1 className="text-center text-4xl font-bold mb-2">Privacy Policy</h1>
       <p className="text-center text-sm text-orange-700 border-t pt-2">
         Last updated: November 2025
       </p>
 
       <p>
-        This Privacy Policy explains how Cibo Libro Ltd (“we,” “us,” or
-        “our”) collects, uses, and protects your personal data.
+        This Privacy Policy explains how Cibo Libro Ltd (“we,” “us,” or “our”)
+        collects, uses, and protects your personal data.
       </p>
 
       <h2>1. Who We Are</h2>
@@ -66,9 +64,9 @@ export default function PrivacyPage() {
 
       <h2>5. Third-Party Processors</h2>
       <p>
-        We use GDPR-compliant vendors such as Vercel (hosting), Neon
-        (database), Cloudflare R2 (storage), PostHog (analytics), and Sentry
-        (error tracking).
+        We use GDPR-compliant vendors such as Vercel (hosting), Neon (database),
+        Cloudflare R2 (storage), PostHog (analytics), and Sentry (error
+        tracking).
       </p>
 
       <h2>6. Data Retention</h2>
@@ -89,8 +87,7 @@ export default function PrivacyPage() {
         <li>Withdraw consent (where applicable)</li>
         <li>Request data export</li>
         <li>
-          Lodge a complaint with the UK Information Commissioner’s Office
-          (ICO)
+          Lodge a complaint with the UK Information Commissioner’s Office (ICO)
         </li>
       </ul>
 
@@ -108,8 +105,8 @@ export default function PrivacyPage() {
 
       <h2>11. Updates</h2>
       <p>
-        We may update this policy periodically. Material changes will be
-        posted on this page.
+        We may update this policy periodically. Material changes will be posted
+        on this page.
       </p>
 
       <h2>12. Contact</h2>

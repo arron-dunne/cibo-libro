@@ -1,15 +1,24 @@
 "use client";
 
 import React, { useMemo, useState, useRef, useEffect } from "react";
-import { RecipeCard, RecipeCardProps } from "@/app/components/recipes/RecipeCard";
-import { Search, ChevronDown, Funnel, ArrowUpDown, FileQuestionMark } from "lucide-react";
+import {
+  RecipeCard,
+  RecipeCardProps,
+} from "@/app/components/recipes/RecipeCard";
+import {
+  Search,
+  ChevronDown,
+  Funnel,
+  ArrowUpDown,
+  FileQuestionMark,
+} from "lucide-react";
 import { SORT_OPTIONS, SortOptionKey } from "./options";
 import { RecipeCardRecipe } from "./page";
 
 type ClientRecipesGridProps = {
   recipes: RecipeCardRecipe[];
   initialSort: SortOptionKey;
-  initialSearch: string,
+  initialSearch: string;
   initialTags?: string[];
 };
 
@@ -17,13 +26,12 @@ export function ClientRecipesGrid({
   recipes,
   initialSort = "updated",
   initialSearch = "",
-  initialTags = []
+  initialTags = [],
 }: ClientRecipesGridProps) {
+  const [sortMenu, setSortMenu] = useState<boolean>(false);
+  const [filterMenu, setFilterMenu] = useState<boolean>(false);
 
-  const [sortMenu, setSortMenu] = useState<boolean>(false)
-  const [filterMenu, setFilterMenu] = useState<boolean>(false)
-
-  const [sort, setSort] = useState<SortOptionKey>(initialSort)
+  const [sort, setSort] = useState<SortOptionKey>(initialSort);
   const [search, setSearch] = useState<string>(initialSearch);
 
   const sortRef = useRef<HTMLDivElement>(null);
@@ -37,7 +45,8 @@ export function ClientRecipesGrid({
     const onClick = (e: MouseEvent) => {
       const t = e.target as Node;
       if (sortRef.current && !sortRef.current.contains(t)) setSortMenu(false);
-      if (filterRef.current && !filterRef.current.contains(t)) setFilterMenu(false);
+      if (filterRef.current && !filterRef.current.contains(t))
+        setFilterMenu(false);
     };
     window.addEventListener("click", onClick);
     return () => window.removeEventListener("click", onClick);
@@ -59,17 +68,21 @@ export function ClientRecipesGrid({
     () =>
       recipes.map((r) => ({
         ...r,
-        _query: [r.title, r.description, ...(r.tags ?? [])].join(" ").toLowerCase(),
-        _time: ((r.prepMins ?? 0) + (r.cookMins ?? 0)) || undefined,
+        _query: [r.title, r.description, ...(r.tags ?? [])]
+          .join(" ")
+          .toLowerCase(),
+        _time: (r.prepMins ?? 0) + (r.cookMins ?? 0) || undefined,
       })),
-    [recipes]
+    [recipes],
   );
 
   const visible = useMemo(() => {
     const q = search.trim().toLowerCase();
     let list = normalized.filter((r) => {
       const matchesQuery = q ? r._query.includes(q) : true;
-      const matchesTags = selectedTags.length ? (r.tags ?? []).some((t) => selectedTags.includes(t)) : true;
+      const matchesTags = selectedTags.length
+        ? (r.tags ?? []).some((t) => selectedTags.includes(t))
+        : true;
       return matchesQuery && matchesTags;
     });
     switch (sort) {
@@ -81,11 +94,17 @@ export function ClientRecipesGrid({
         break;
       case "created":
         // newest to oldest
-        list = list.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+        list = list.sort(
+          (a, b) =>
+            new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
+        );
         break;
       case "updated":
         // newest to oldest
-        list = list.sort((a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime())
+        list = list.sort(
+          (a, b) =>
+            new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime(),
+        );
         break;
       default:
         // Keep server order (assume updatedAt desc)
@@ -104,7 +123,7 @@ export function ClientRecipesGrid({
         return prev.filter((t) => t !== tag);
       }
     });
-  };
+  }
 
   // Reset the search input to empty
   function resetSearchInput() {
@@ -124,7 +143,7 @@ export function ClientRecipesGrid({
             placeholder="Search recipes…"
             className="w-full h-11 md:h-12 rounded-full border border-white/70 bg-white backdrop-blur-md pl-10 pr-4 text-sm shadow-lg"
             aria-label="Search recipes"
-            onChange={e => setSearch(e.target.value)}
+            onChange={(e) => setSearch(e.target.value)}
           />
           <Search
             size={18}
@@ -181,7 +200,8 @@ export function ClientRecipesGrid({
               e.stopPropagation();
               setFilterMenu((s) => !s);
               setSortMenu(false);
-            }}>
+            }}
+          >
             <Funnel className="block sm:hidden" size={18} />
             <span className="hidden sm:block grow">Filter</span>
             <ChevronDown size={16} className="text-zinc-500" />
@@ -193,7 +213,9 @@ export function ClientRecipesGrid({
               className="absolute right-0 z-6 w-64 rounded-2xl border border-zinc-200 bg-white shadow-xl p-3"
               role="menu"
             >
-              <p className="text-xs font-semibold text-zinc-500 mb-2">Filter by</p>
+              <p className="text-xs font-semibold text-zinc-500 mb-2">
+                Filter by
+              </p>
 
               {/* Tag filters */}
               <div className="mb-3">
@@ -227,12 +249,14 @@ export function ClientRecipesGrid({
             </div>
           )}
         </div>
-
       </div>
 
       {/* Empty states */}
       {recipes.length === 0 && (
-        <EmptyState title="No recipes yet" subtitle="Add your first recipe to see it here." />
+        <EmptyState
+          title="No recipes yet"
+          subtitle="Add your first recipe to see it here."
+        />
       )}
       {recipes.length > 0 && visible.length === 0 && (
         <EmptyState
@@ -248,14 +272,17 @@ export function ClientRecipesGrid({
       )}
 
       {/* Grid */}
-      <ul className="mt-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5 md:gap-6" role="list">
+      <ul
+        className="mt-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5 md:gap-6"
+        role="list"
+      >
         {visible.map((recipe, i) => (
           <li key={i}>
             <RecipeCard recipe={recipe as RecipeCardProps} />
           </li>
         ))}
       </ul>
-    </div >
+    </div>
   );
 }
 
@@ -275,7 +302,9 @@ function EmptyState({
       <div className="my-12 w-max justify-self-center flex flex-col items-center justify-center rounded-3xl border border-white/40 bg-white/65 backdrop-blur py-10 px-20 text-center">
         <FileQuestionMark size={52} className="text-orange-700 mb-4" />
         <h2 className="text-3xl font-bold text-slate-900">{title}</h2>
-        {subtitle && <p className="mt-4 max-w-md text-base text-slate-700">{subtitle}</p>}
+        {subtitle && (
+          <p className="mt-4 max-w-md text-base text-slate-700">{subtitle}</p>
+        )}
         {actionLabel && onAction && (
           <button
             onClick={onAction}

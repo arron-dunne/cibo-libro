@@ -3,9 +3,7 @@ import Link from "next/link";
 export default function TermsPage() {
   return (
     <article className="max-w-none rounded-3xl border border-white/70 bg-white/95 p-8 shadow-lg backdrop-blur text-orange-950 prose prose-orange prose-headings:font-semibold prose-headings:text-orange-900">
-      <h1 className="text-center text-4xl font-bold mb-2">
-        Terms of Use
-      </h1>
+      <h1 className="text-center text-4xl font-bold mb-2">Terms of Use</h1>
 
       <p className="mb-6 text-center text-sm text-orange-700 border-t pt-2">
         Last updated: November 2025
@@ -26,9 +24,8 @@ export default function TermsPage() {
       <h2>1. About Us</h2>
       <p>
         Cibo Libro is operated by <strong>Cibo Libro Ltd</strong>, a company
-        registered in England and Wales (Company No. [TBD]), with its
-        registered office at [Registered Office Address, UK]. You can contact
-        us at{" "}
+        registered in England and Wales (Company No. [TBD]), with its registered
+        office at [Registered Office Address, UK]. You can contact us at{" "}
         <a href="mailto:support@cibolibro.com">support@cibolibro.com</a>.
       </p>
 
@@ -59,13 +56,13 @@ export default function TermsPage() {
       <h2>4. Copyright and Imported Content</h2>
       <p>
         Imported recipes are stored privately for your personal use only. You
-        must not republish, distribute, or make public any imported content
-        that you do not own.
+        must not republish, distribute, or make public any imported content that
+        you do not own.
       </p>
       <p>
         If you publish recipes publicly, you warrant that you own or have
-        permission to publish them. Rights-holders can file takedown notices
-        via our{" "}
+        permission to publish them. Rights-holders can file takedown notices via
+        our{" "}
         <Link href="/legal/dmca" className="underline">
           DMCA / Copyright Policy
         </Link>{" "}
@@ -74,12 +71,12 @@ export default function TermsPage() {
 
       <h2>5. Intellectual Property</h2>
       <p>
-        All Cibo Libro trademarks, designs, and software are owned by Cibo
-        Libro Ltd. You retain ownership of your own recipes or content.
+        All Cibo Libro trademarks, designs, and software are owned by Cibo Libro
+        Ltd. You retain ownership of your own recipes or content.
       </p>
       <p>
-        By using the Service, you grant us a limited licence to store,
-        process, and display your content solely to operate the platform.
+        By using the Service, you grant us a limited licence to store, process,
+        and display your content solely to operate the platform.
       </p>
 
       <h2>6. Privacy</h2>
@@ -107,17 +104,17 @@ export default function TermsPage() {
 
       <h2>9. Disclaimer</h2>
       <p>
-        Cibo Libro is provided “as is” without warranties of any kind. We do
-        not guarantee recipe accuracy, nutritional information, or dietary
+        Cibo Libro is provided “as is” without warranties of any kind. We do not
+        guarantee recipe accuracy, nutritional information, or dietary
         suitability. Use your own judgment when cooking.
       </p>
 
       <h2>10. Limitation of Liability</h2>
       <p>
-        To the maximum extent permitted by law, Cibo Libro Ltd is not liable
-        for any indirect, incidental, or consequential damages. Our total
-        liability shall not exceed the amount (if any) you paid us in the 12
-        months prior to the claim.
+        To the maximum extent permitted by law, Cibo Libro Ltd is not liable for
+        any indirect, incidental, or consequential damages. Our total liability
+        shall not exceed the amount (if any) you paid us in the 12 months prior
+        to the claim.
       </p>
 
       <h2>11. Termination</h2>
@@ -128,8 +125,8 @@ export default function TermsPage() {
 
       <h2>12. Governing Law</h2>
       <p>
-        These Terms are governed by the laws of England and Wales. The courts
-        of England and Wales have exclusive jurisdiction.
+        These Terms are governed by the laws of England and Wales. The courts of
+        England and Wales have exclusive jurisdiction.
       </p>
 
       <h2>13. Contact</h2>

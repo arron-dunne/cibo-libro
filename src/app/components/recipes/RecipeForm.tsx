@@ -14,7 +14,9 @@ import { RecipeFormRecipe } from "@/types/recipe";
 interface RecipeFormProps {
   mode: "new" | "edit";
   recipe?: Recipe; // optional existing recipe data
-  action: (recipe: RecipeFormRecipe) => Promise<{ success: boolean, slug?: string, error?: string }>; // server action for handling submitted recipe
+  action: (
+    recipe: RecipeFormRecipe,
+  ) => Promise<{ success: boolean; slug?: string; error?: string }>; // server action for handling submitted recipe
 }
 
 type SectionKey = "details" | "ingredients" | "steps" | "pictures";
@@ -33,7 +35,6 @@ type SignUploadResponse = {
 // Main Component
 // ────────────────────────────────────────────────────────────────────────────
 export default function RecipeForm({ mode, recipe, action }: RecipeFormProps) {
-
   const SECTIONS: [SectionKey, string][] = [
     ["details", "Details"],
     ["ingredients", "Ingredients"],
@@ -43,11 +44,21 @@ export default function RecipeForm({ mode, recipe, action }: RecipeFormProps) {
 
   // form states
   const [title, setTitle] = useState<string>(recipe?.title ?? "");
-  const [description, setDescription] = useState<string>(recipe?.description ?? "");
-  const [prepMins, setPrepMins] = useState<number | null>(recipe?.prepMins ?? null);
-  const [cookMins, setCookMins] = useState<number | null>(recipe?.cookMins ?? null);
-  const [servings, setServings] = useState<number | null>(recipe?.servings ?? null);
-  const [ingredients, setIngredients] = useState<string[]>(recipe?.ingredients ?? [""]);
+  const [description, setDescription] = useState<string>(
+    recipe?.description ?? "",
+  );
+  const [prepMins, setPrepMins] = useState<number | null>(
+    recipe?.prepMins ?? null,
+  );
+  const [cookMins, setCookMins] = useState<number | null>(
+    recipe?.cookMins ?? null,
+  );
+  const [servings, setServings] = useState<number | null>(
+    recipe?.servings ?? null,
+  );
+  const [ingredients, setIngredients] = useState<string[]>(
+    recipe?.ingredients ?? [""],
+  );
   const [steps, setSteps] = useState<string[]>(recipe?.steps ?? [""]);
   const [tags, setTags] = useState<string[]>(recipe?.tags ?? []);
   const [note, setNote] = useState<string>(recipe?.note ?? "");
@@ -94,66 +105,75 @@ export default function RecipeForm({ mode, recipe, action }: RecipeFormProps) {
       steps: sanitizeLines(steps),
       tags,
       note,
-      imageKey
+      imageKey,
     });
-
 
     if (result.success && result.slug) {
       redirect(`/view/${result.slug}`);
     } else {
-      console.log(result.error)
+      console.log(result.error);
     }
 
     setSaving(false);
-
   };
 
   const scrollTo = (key: SectionKey) => {
     const el = sectionsRef[key].current;
     if (!el) return;
     setCurrentSection(key);
-    el.scrollIntoView({ behavior: "smooth", block: "start", inline: "nearest" });
+    el.scrollIntoView({
+      behavior: "smooth",
+      block: "start",
+      inline: "nearest",
+    });
     const heading = el.querySelector("h2") as HTMLElement | null;
     setTimeout(() => heading?.focus?.(), 350);
   };
 
-  const addRow = (setter: React.Dispatch<React.SetStateAction<string[]>>) => setter((xs) => [...xs, ""]);
+  const addRow = (setter: React.Dispatch<React.SetStateAction<string[]>>) =>
+    setter((xs) => [...xs, ""]);
 
-  const removeRow = (setter: React.Dispatch<React.SetStateAction<string[]>>, idx: number) =>
-    setter((xs) => (xs.length > 1 ? xs.filter((_, i) => i !== idx) : xs));
+  const removeRow = (
+    setter: React.Dispatch<React.SetStateAction<string[]>>,
+    idx: number,
+  ) => setter((xs) => (xs.length > 1 ? xs.filter((_, i) => i !== idx) : xs));
 
   const onPasteMulti =
     (setter: React.Dispatch<React.SetStateAction<string[]>>, idx: number) =>
-      (e: React.ClipboardEvent<HTMLInputElement>) => {
-        const text = e.clipboardData.getData("text");
-        if (text.includes("\n")) {
-          e.preventDefault();
-          const lines = sanitizeLines(text.split("\n"));
-          setter((xs) => {
-            const copy = [...xs];
-            copy[idx] = (copy[idx] || "") + lines[0];
-            if (lines.length > 1) copy.splice(idx + 1, 0, ...lines.slice(1));
-            return copy;
-          });
-        }
-      };
+    (e: React.ClipboardEvent<HTMLInputElement>) => {
+      const text = e.clipboardData.getData("text");
+      if (text.includes("\n")) {
+        e.preventDefault();
+        const lines = sanitizeLines(text.split("\n"));
+        setter((xs) => {
+          const copy = [...xs];
+          copy[idx] = (copy[idx] || "") + lines[0];
+          if (lines.length > 1) copy.splice(idx + 1, 0, ...lines.slice(1));
+          return copy;
+        });
+      }
+    };
 
   const handleEnter =
-    (setter: React.Dispatch<React.SetStateAction<string[]>>, idx: number, selector: string) =>
-      (e: React.KeyboardEvent<HTMLInputElement>) => {
-        if (e.key === "Enter") {
-          e.preventDefault();
-          setter((xs) => {
-            const copy = [...xs];
-            copy.splice(idx + 1, 0, "");
-            return copy;
-          });
-          requestAnimationFrame(() => {
-            const inputs = document.querySelectorAll<HTMLInputElement>(selector);
-            inputs[idx + 1]?.focus();
-          });
-        }
-      };
+    (
+      setter: React.Dispatch<React.SetStateAction<string[]>>,
+      idx: number,
+      selector: string,
+    ) =>
+    (e: React.KeyboardEvent<HTMLInputElement>) => {
+      if (e.key === "Enter") {
+        e.preventDefault();
+        setter((xs) => {
+          const copy = [...xs];
+          copy.splice(idx + 1, 0, "");
+          return copy;
+        });
+        requestAnimationFrame(() => {
+          const inputs = document.querySelectorAll<HTMLInputElement>(selector);
+          inputs[idx + 1]?.focus();
+        });
+      }
+    };
 
   // ──────────────────────────────────────────────────────────────────────────
   // Picture upload flow
@@ -183,8 +203,7 @@ export default function RecipeForm({ mode, recipe, action }: RecipeFormProps) {
     }
 
     loadPreview();
-
-  }, [mode, recipe?.imageKey])
+  }, [mode, recipe?.imageKey]);
 
   const onPick = async (e: React.ChangeEvent<HTMLInputElement>) => {
     setUploadError(null);
@@ -202,7 +221,7 @@ export default function RecipeForm({ mode, recipe, action }: RecipeFormProps) {
     if (previousKey) {
       // Fire-and-forget delete (cleanup handled by background job if it fails)
       deleteImageSilent(previousKey);
-      setImageKey(null)
+      setImageKey(null);
     }
 
     // 3) Upload new image
@@ -215,27 +234,45 @@ export default function RecipeForm({ mode, recipe, action }: RecipeFormProps) {
         preferWebP: true,
       });
       if (compressed.size > MAX_SIZE_BYTES) {
-        throw new Error(`File too large (max ${Math.floor(MAX_SIZE_BYTES / (1024 * 1024))} MB)`);
+        throw new Error(
+          `File too large (max ${Math.floor(MAX_SIZE_BYTES / (1024 * 1024))} MB)`,
+        );
       }
 
       const signRes = await fetch("/api/images/sign-upload", {
         method: "POST",
         headers: { "content-type": "application/json" },
-        body: JSON.stringify({ contentType: compressed.type, size: compressed.size }),
+        body: JSON.stringify({
+          contentType: compressed.type,
+          size: compressed.size,
+        }),
       });
       if (!signRes.ok) throw new Error(`Sign failed: ${signRes.status}`);
-      const { method, url, key, requiredHeaders } = (await signRes.json()) as SignUploadResponse;
+      const { method, url, key, requiredHeaders } =
+        (await signRes.json()) as SignUploadResponse;
 
       const putOnce = async () => {
-        const r = await fetch(url, { method, headers: requiredHeaders, body: compressed });
+        const r = await fetch(url, {
+          method,
+          headers: requiredHeaders,
+          body: compressed,
+        });
         if (!r.ok) throw new Error(`Upload failed: ${r.status}`);
       };
-      try { await putOnce(); } catch { await putOnce(); }
+      try {
+        await putOnce();
+      } catch {
+        await putOnce();
+      }
 
       setImageKey(key);
 
-      const fileName = (raw.name.replace(/\.\w+$/, "") || "image") + extFromMime(compressed.type);
-      const compressedFile = new File([compressed], fileName, { type: compressed.type });
+      const fileName =
+        (raw.name.replace(/\.\w+$/, "") || "image") +
+        extFromMime(compressed.type);
+      const compressedFile = new File([compressed], fileName, {
+        type: compressed.type,
+      });
       setFileInput(compressedFile);
 
       setUploadError(null);
@@ -300,7 +337,7 @@ export default function RecipeForm({ mode, recipe, action }: RecipeFormProps) {
       method: "POST",
       headers: { "content-type": "application/json" },
       body: JSON.stringify({ key }),
-    }).catch(() => { });
+    }).catch(() => {});
   }
 
   // ──────────────────────────────────────────────────────────────────────────
@@ -316,8 +353,7 @@ export default function RecipeForm({ mode, recipe, action }: RecipeFormProps) {
               key={key}
               onClick={() => scrollTo(key)}
               className={`shrink-0 rounded-full px-3 py-1.5 text-sm font-medium transition
-                ${currentSection === key ? "bg-orange-500 text-white shadow" : "bg-white/90 text-zinc-700 hover:bg-white"}`
-              }
+                ${currentSection === key ? "bg-orange-500 text-white shadow" : "bg-white/90 text-zinc-700 hover:bg-white"}`}
             >
               {label}
             </button>
@@ -349,7 +385,12 @@ export default function RecipeForm({ mode, recipe, action }: RecipeFormProps) {
           <section className="mt-4 min-w-0 flex-1 md:mt-0">
             <form className="flex flex-col gap-5" onSubmit={handleSubmit}>
               {/* Details */}
-              <Panel ref={sectionsRef.details} id="details" title="Details" subtitle="Title, description, times, servings, and tags.">
+              <Panel
+                ref={sectionsRef.details}
+                id="details"
+                title="Details"
+                subtitle="Title, description, times, servings, and tags."
+              >
                 <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                   <div className="sm:col-span-2">
                     <Label htmlFor="title">Title</Label>
@@ -382,7 +423,11 @@ export default function RecipeForm({ mode, recipe, action }: RecipeFormProps) {
                       inputMode="numeric"
                       className="w-full rounded-lg border border-zinc-300 bg-white/95 px-3 py-2 outline-none focus:ring-2 focus:ring-orange-400"
                       value={prepMins ?? ""}
-                      onChange={(e) => setPrepMins(e.target.value ? Number(e.target.value) : null)}
+                      onChange={(e) =>
+                        setPrepMins(
+                          e.target.value ? Number(e.target.value) : null,
+                        )
+                      }
                     />
                   </div>
                   <div>
@@ -392,7 +437,11 @@ export default function RecipeForm({ mode, recipe, action }: RecipeFormProps) {
                       inputMode="numeric"
                       className="w-full rounded-lg border border-zinc-300 bg-white/95 px-3 py-2 outline-none focus:ring-2 focus:ring-orange-400"
                       value={cookMins ?? ""}
-                      onChange={(e) => setCookMins(e.target.value ? Number(e.target.value) : null)}
+                      onChange={(e) =>
+                        setCookMins(
+                          e.target.value ? Number(e.target.value) : null,
+                        )
+                      }
                     />
                   </div>
                   <div>
@@ -402,7 +451,11 @@ export default function RecipeForm({ mode, recipe, action }: RecipeFormProps) {
                       inputMode="numeric"
                       className="w-full rounded-lg border border-zinc-300 bg-white/95 px-3 py-2 outline-none focus:ring-2 focus:ring-orange-400"
                       value={servings ?? ""}
-                      onChange={(e) => setServings(e.target.value ? Number(e.target.value) : null)}
+                      onChange={(e) =>
+                        setServings(
+                          e.target.value ? Number(e.target.value) : null,
+                        )
+                      }
                     />
                   </div>
 
@@ -429,9 +482,19 @@ export default function RecipeForm({ mode, recipe, action }: RecipeFormProps) {
                         className="ingredient-input w-full rounded-lg border border-zinc-300 bg-white/95 px-3 py-2 outline-none focus:ring-2 focus:ring-orange-400"
                         placeholder={i === 0 ? "e.g. 250g dried pasta" : ""}
                         value={val}
-                        onChange={(e) => setIngredients((xs) => xs.map((x, idx) => (idx === i ? e.target.value : x)))}
+                        onChange={(e) =>
+                          setIngredients((xs) =>
+                            xs.map((x, idx) =>
+                              idx === i ? e.target.value : x,
+                            ),
+                          )
+                        }
                         onPaste={onPasteMulti(setIngredients, i)}
-                        onKeyDown={handleEnter(setIngredients, i, "input.ingredient-input")}
+                        onKeyDown={handleEnter(
+                          setIngredients,
+                          i,
+                          "input.ingredient-input",
+                        )}
                       />
                       <button
                         type="button"
@@ -470,9 +533,17 @@ export default function RecipeForm({ mode, recipe, action }: RecipeFormProps) {
                         type="text"
                         aria-label={`Step ${i + 1}`}
                         className="step-input w-full rounded-lg border border-zinc-300 bg-white/95 px-3 py-2 outline-none focus:ring-2 focus:ring-orange-400"
-                        placeholder={i === 0 ? "e.g. Preheat oven to 180°C (fan)." : ""}
+                        placeholder={
+                          i === 0 ? "e.g. Preheat oven to 180°C (fan)." : ""
+                        }
                         value={val}
-                        onChange={(e) => setSteps((xs) => xs.map((x, idx) => (idx === i ? e.target.value : x)))}
+                        onChange={(e) =>
+                          setSteps((xs) =>
+                            xs.map((x, idx) =>
+                              idx === i ? e.target.value : x,
+                            ),
+                          )
+                        }
                         onPaste={onPasteMulti(setSteps, i)}
                         onKeyDown={handleEnter(setSteps, i, "input.step-input")}
                       />
@@ -542,7 +613,9 @@ export default function RecipeForm({ mode, recipe, action }: RecipeFormProps) {
 
                     {!uploading && !deleting && imageKey && !uploadError && (
                       <div className="flex items-center gap-3">
-                        <span className="text-emerald-600">Uploaded successfully</span>
+                        <span className="text-emerald-600">
+                          Uploaded successfully
+                        </span>
                         <button
                           type="button"
                           disabled={uploading || deleting}
@@ -550,7 +623,9 @@ export default function RecipeForm({ mode, recipe, action }: RecipeFormProps) {
                             // This path is an explicit *delete*; shows "Deleting…"
                             try {
                               await deleteImage();
-                            } catch { /* helpers set notices */ }
+                            } catch {
+                              /* helpers set notices */
+                            }
                           }}
                           className="rounded-md border border-zinc-300 bg-white px-2 py-1 text-xs hover:bg-zinc-50 disabled:opacity-50"
                         >
@@ -559,8 +634,14 @@ export default function RecipeForm({ mode, recipe, action }: RecipeFormProps) {
                       </div>
                     )}
 
-                    {uploadError && <span className="text-red-600">Upload failed: {uploadError}</span>}
-                    {imageNotice && <span className="text-zinc-700">{imageNotice}</span>}
+                    {uploadError && (
+                      <span className="text-red-600">
+                        Upload failed: {uploadError}
+                      </span>
+                    )}
+                    {imageNotice && (
+                      <span className="text-zinc-700">{imageNotice}</span>
+                    )}
                   </div>
 
                   {/* Preview image */}
@@ -598,13 +679,14 @@ export default function RecipeForm({ mode, recipe, action }: RecipeFormProps) {
                   disabled={saving || uploading || deleting}
                 >
                   <span className="flex items-center gap-2">
-                    {saving ?
+                    {saving ? (
                       <>
                         <span className="animate-spin h-4 w-4 border-2 border-white border-t-transparent rounded-full"></span>
                         <span>Saving…</span>
                       </>
-                      : <span>Save</span>
-                    }
+                    ) : (
+                      <span>Save</span>
+                    )}
                   </span>
                 </button>
               </div>
@@ -621,7 +703,19 @@ export default function RecipeForm({ mode, recipe, action }: RecipeFormProps) {
 // ────────────────────────────────────────────────────────────────────────────
 
 // Floating panel wrapper
-function Panel({ id, title, subtitle, children, ref }: { id: string; title: string; subtitle?: string; children: React.ReactNode; ref: React.RefObject<HTMLDivElement | null> }) {
+function Panel({
+  id,
+  title,
+  subtitle,
+  children,
+  ref,
+}: {
+  id: string;
+  title: string;
+  subtitle?: string;
+  children: React.ReactNode;
+  ref: React.RefObject<HTMLDivElement | null>;
+}) {
   return (
     <div
       ref={ref}
@@ -634,10 +728,16 @@ function Panel({ id, title, subtitle, children, ref }: { id: string; title: stri
       {subtitle && <p className="mt-1 text-sm text-zinc-600">{subtitle}</p>}
       <div className="mt-4">{children}</div>
     </div>
-  )
+  );
 }
 
-function TagsEditor({ value, onChange }: { value: string[]; onChange: (xs: string[]) => void }) {
+function TagsEditor({
+  value,
+  onChange,
+}: {
+  value: string[];
+  onChange: (xs: string[]) => void;
+}) {
   const [draft, setDraft] = useState("");
   const add = () => {
     const v = draft.trim();
@@ -650,9 +750,17 @@ function TagsEditor({ value, onChange }: { value: string[]; onChange: (xs: strin
     <div className="rounded-xl border border-zinc-300 bg-white p-2">
       <div className="flex flex-wrap gap-2">
         {value.map((t) => (
-          <span key={t} className="inline-flex items-center gap-1 rounded-full bg-zinc-100 px-2 py-1 text-xs">
+          <span
+            key={t}
+            className="inline-flex items-center gap-1 rounded-full bg-zinc-100 px-2 py-1 text-xs"
+          >
             #{t}
-            <button type="button" className="text-zinc-500 hover:text-zinc-700" onClick={() => remove(t)} aria-label={`Remove ${t}`}>
+            <button
+              type="button"
+              className="text-zinc-500 hover:text-zinc-700"
+              onClick={() => remove(t)}
+              aria-label={`Remove ${t}`}
+            >
               ×
             </button>
           </span>
@@ -665,12 +773,18 @@ function TagsEditor({ value, onChange }: { value: string[]; onChange: (xs: strin
           onChange={(e) => setDraft(e.target.value)}
           onKeyDown={(e) => {
             if (e.key === "Enter") add();
-            if (e.key === "Backspace" && draft === "" && value.length) remove(value[value.length - 1]);
+            if (e.key === "Backspace" && draft === "" && value.length)
+              remove(value[value.length - 1]);
           }}
           placeholder="Add a tag and press Enter"
           className="flex-1 rounded-lg border border-zinc-300 bg-white/95 px-3 py-2 outline-none focus:ring-2 focus:ring-orange-400"
         />
-        <button type="button" className="rounded-lg border border-zinc-300 bg-white px-3 py-2 text-sm hover:bg-zinc-50" onClick={add} aria-label="Add tag">
+        <button
+          type="button"
+          className="rounded-lg border border-zinc-300 bg-white px-3 py-2 text-sm hover:bg-zinc-50"
+          onClick={add}
+          aria-label="Add tag"
+        >
           ＋
         </button>
       </div>
@@ -678,8 +792,16 @@ function TagsEditor({ value, onChange }: { value: string[]; onChange: (xs: strin
   );
 }
 
-const Label = ({ htmlFor, children }: { htmlFor?: string; children: React.ReactNode }) => (
-  <label htmlFor={htmlFor} className="mb-1 block text-sm font-medium">{children}</label>
+const Label = ({
+  htmlFor,
+  children,
+}: {
+  htmlFor?: string;
+  children: React.ReactNode;
+}) => (
+  <label htmlFor={htmlFor} className="mb-1 block text-sm font-medium">
+    {children}
+  </label>
 );
 
 // ────────────────────────────────────────────────────────────────────────────

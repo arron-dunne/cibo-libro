@@ -2,7 +2,6 @@ import { describe, it, expect } from "vitest";
 import { parseJsonLd } from "@/lib/import/jsonld";
 
 describe("parseJsonLd (integration)", () => {
-
   it("extracts a recipe from valid JSON-LD with HowToStep instructions", () => {
     const html = `
       <html>
@@ -99,5 +98,4 @@ describe("parseJsonLd (integration)", () => {
 
     expect(recipe?.title).toBe("Nested Recipe");
   });
-
 });

@@ -1,9 +1,7 @@
 import { describe, it, expect } from "vitest";
 import { extractOpenGraph } from "@/lib/import/opengraph";
 
-
 describe("extractOpenGraph image URLs (integration)", () => {
-
   it("allows public IP", async () => {
     const html = `<head>
       <meta property="og:title" content="Recipe" />

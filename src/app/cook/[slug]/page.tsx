@@ -9,10 +9,10 @@ export default async function Page({
   params,
   searchParams,
 }: {
-  params: Promise<{ slug: string }>
+  params: Promise<{ slug: string }>;
   searchParams: Promise<SearchParams>;
 }) {
-  const slug = await params.then(p => p.slug);
+  const slug = await params.then((p) => p.slug);
 
   const sp = ((await searchParams) ?? {}) as SearchParams;
   const stepParamRaw = Array.isArray(sp.step) ? sp.step[0] : sp.step;
@@ -25,18 +25,20 @@ export default async function Page({
       id: true,
       title: true,
       ingredients: true, // string[]
-      steps: true,       // string[]
+      steps: true, // string[]
     },
   });
 
   if (!recipe) notFound();
 
   const title = recipe.title ?? "Untitled Recipe";
-  const ingredients: string[] = Array.isArray(recipe.ingredients) ? recipe.ingredients : [];
+  const ingredients: string[] = Array.isArray(recipe.ingredients)
+    ? recipe.ingredients
+    : [];
   const steps: string[] = Array.isArray(recipe.steps) ? recipe.steps : [];
 
   return (
-    <CookModeClient 
+    <CookModeClient
       slug={slug}
       title={title}
       ingredients={ingredients}

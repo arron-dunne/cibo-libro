@@ -6,10 +6,11 @@ import { updateRecipe } from "./actions";
 
 export const dynamic = "force-dynamic";
 
-export default async function EditRecipePage({ params }: 
-  { params: Promise<{ slug: string }> }
-) {
-  
+export default async function EditRecipePage({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}) {
   const slug = await params.then((p) => p.slug);
 
   const session = await auth();
@@ -21,7 +22,5 @@ export default async function EditRecipePage({ params }:
 
   if (!recipe || recipe.ownerId !== session.user.id) notFound();
 
-  return (
-    <RecipeForm mode="edit" recipe={recipe} action={updateRecipe} />
-  );
+  return <RecipeForm mode="edit" recipe={recipe} action={updateRecipe} />;
 }

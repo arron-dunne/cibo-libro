@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import Image from "next/image";
 import { useState, useEffect } from "react";
@@ -13,18 +13,17 @@ export function RecipeImage({
   externalUrl?: string | null;
   alt: string;
 }) {
-
   const [signedUrl, setSignedUrl] = useState<string | null>(null);
 
   useEffect(() => {
     async function run(imageKey: string) {
-      const url = await getSignedImageUrl(imageKey)
-      setSignedUrl(url)
+      const url = await getSignedImageUrl(imageKey);
+      setSignedUrl(url);
     }
     if (imageKey) {
       run(imageKey);
     }
-  }, [imageKey])
+  }, [imageKey]);
 
   const normalizedExternalUrl = externalUrl ? normalizeUrl(externalUrl) : null;
 
@@ -69,25 +68,30 @@ export function RecipeImage({
       <div className="text-orange-400">
         <ImageIcon size={32} />
       </div>
-      <p className="mt-2 text-xs font-medium text-zinc-500">No image available</p>
+      <p className="mt-2 text-xs font-medium text-zinc-500">
+        No image available
+      </p>
     </div>
   );
-
 }
 
 async function getSignedImageUrl(key?: string): Promise<string | null> {
-  if (!key) { return null; }
+  if (!key) {
+    return null;
+  }
   try {
     const res = await fetch("/api/images/sign-download", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ key }),
     });
-    if (!res.ok) { return null; }
+    if (!res.ok) {
+      return null;
+    }
     const data = await res.json();
-    return data.url
+    return data.url;
   } catch {
-    console.log("Failed to get signed image url")
+    console.log("Failed to get signed image url");
     return null;
   }
 }

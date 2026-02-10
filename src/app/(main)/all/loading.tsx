@@ -20,7 +20,7 @@ export default function LoadingRecipesGrid() {
             <div className="flex h-full flex-col overflow-hidden rounded-2xl border border-zinc-200/50 bg-white/40 backdrop-blur-sm shadow-sm">
               {/* Image placeholder */}
               <div className="aspect-[4/3] w-full bg-zinc-200/30 animate-pulse" />
-              
+
               {/* Text & tags placeholder */}
               <div className="p-4 flex-1">
                 <div className="h-5 w-2/3 rounded bg-zinc-200/30 animate-pulse mb-3" />

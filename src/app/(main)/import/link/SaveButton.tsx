@@ -1,10 +1,9 @@
 "use client";
 
 import { useFormStatus } from "react-dom";
-import { ArrowRight, Loader2 } from "lucide-react"
+import { ArrowRight, Loader2 } from "lucide-react";
 
 export function SaveButton() {
-
   const { pending } = useFormStatus();
 
   return (
@@ -15,18 +14,19 @@ export function SaveButton() {
         bg-linear-to-br from-orange-500 to-rose-500 text-white font-bold text-lg
         ${pending ? "brightness-75 cursor-wait" : "hover:brightness-90 active:brightness-75 cursor-pointer"}`}
     >
-      {pending ?
+      {pending ? (
         <>
           Saving
           <Loader2 size={20} className="animate-spin" />
-        </> :
+        </>
+      ) : (
         <>
           Save
           <ArrowRight size={20} />
         </>
-      }
+      )}
     </button>
-  )
+  );
 }
 
 // export function QuickSaveButton() {
@@ -38,8 +38,8 @@ export function SaveButton() {
 //       type="submit"
 //       disabled={pending}
 //       className={`mt-2 sm:mt-0 w-34 self-end inline-flex gap-2 items-center justify-center
-//         rounded-full py-2 px-4 shadow border border-white/70 
-//         text-sm font-semibold bg-linear-to-br from bg-slate-200 to-slate-300 
+//         rounded-full py-2 px-4 shadow border border-white/70
+//         text-sm font-semibold bg-linear-to-br from bg-slate-200 to-slate-300
 //         ${pending ? "brightness-90 cursor-wait" : "hover:brightness-90 active:brightness-75 cursor-pointer"}`}>
 //       {pending ?
 //         <>

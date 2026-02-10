@@ -1,22 +1,28 @@
-import 'server-only';
-import fs from 'node:fs';
-import path from 'node:path';
+import "server-only";
+import fs from "node:fs";
+import path from "node:path";
 
-const FILE_PATH = path.join(process.cwd(), 'src', 'config', 'denylist.txt');
+const FILE_PATH = path.join(process.cwd(), "src", "config", "denylist.txt");
 
 function normalize(input: string): string {
   // Accept URL or hostname; trim scheme/paths, lowercase, drop leading www.
   let s = input.trim();
-  if (!s) return '';
+  if (!s) return "";
   try {
-    if (s.includes('://')) s = new URL(s).hostname;
-  } catch {/* ignore */}
-  s = s.toLowerCase().replace(/^www\./, '').replace(/\/.*$/, '').replace(/\.+$/, '');
+    if (s.includes("://")) s = new URL(s).hostname;
+  } catch {
+    /* ignore */
+  }
+  s = s
+    .toLowerCase()
+    .replace(/^www\./, "")
+    .replace(/\/.*$/, "")
+    .replace(/\.+$/, "");
   return s;
 }
 
 function matches(host: string, pattern: string): boolean {
-  if (pattern.startsWith('*.')) {
+  if (pattern.startsWith("*.")) {
     const base = pattern.slice(2); // "example.com"
     return host === base || host.endsWith(`.${base}`);
   }
@@ -29,12 +35,15 @@ function loadPatterns(): string[] {
   try {
     const stat = fs.statSync(FILE_PATH);
     if (!cache || cache.mtimeMs !== stat.mtimeMs) {
-      const raw = fs.readFileSync(FILE_PATH, 'utf8');
-      const lines = raw.split(/\r?\n/).map(l => {
-        // allow comments with # and inline comments after space-#
-        const cleaned = l.replace(/\s+#.*$/, ''); 
-        return normalize(cleaned);
-      }).filter(Boolean);
+      const raw = fs.readFileSync(FILE_PATH, "utf8");
+      const lines = raw
+        .split(/\r?\n/)
+        .map((l) => {
+          // allow comments with # and inline comments after space-#
+          const cleaned = l.replace(/\s+#.*$/, "");
+          return normalize(cleaned);
+        })
+        .filter(Boolean);
       // de-dupe
       const patterns = Array.from(new Set(lines));
       cache = { patterns, mtimeMs: stat.mtimeMs };

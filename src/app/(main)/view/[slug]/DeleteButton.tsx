@@ -5,7 +5,7 @@ import { createPortal } from "react-dom";
 import { Trash2 } from "lucide-react";
 
 type DeleteButtonProps = {
-  slug: string,
+  slug: string;
   action: (formData: FormData) => Promise<void>;
 };
 
@@ -16,7 +16,7 @@ export function DeleteButton({ slug, action }: DeleteButtonProps) {
 
   // needed to avoid hydration mismatch
   const [hasMounted, setHasMounted] = useState<boolean>(false);
-  useEffect(() => setHasMounted(true), []) // useEffect fires after mount
+  useEffect(() => setHasMounted(true), []); // useEffect fires after mount
 
   const openModal = () => setIsModalOpen(true);
   const closeModal = useCallback(() => {
@@ -60,7 +60,8 @@ export function DeleteButton({ slug, action }: DeleteButtonProps) {
       </form>
 
       {/* Dialog */}
-      {hasMounted && typeof window !== "undefined" &&
+      {hasMounted &&
+        typeof window !== "undefined" &&
         createPortal(
           <div
             className={`fixed inset-0 z-20 flex items-center justify-center bg-black/50 backdrop-blur-sm px-4 transition duration-200 ${isModalOpen ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"}`}
@@ -75,7 +76,9 @@ export function DeleteButton({ slug, action }: DeleteButtonProps) {
               <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-linear-to-br from-orange-100 to-rose-100 text-rose-500">
                 <Trash2 size={28} />
               </div>
-              <h2 className="mt-4 text-xl font-semibold text-gray-900">Are you sure you want to delete this recipe?</h2>
+              <h2 className="mt-4 text-xl font-semibold text-gray-900">
+                Are you sure you want to delete this recipe?
+              </h2>
               <p className="mt-2 text-sm text-gray-500">
                 This action can&apos;t be undone.
               </p>
@@ -100,9 +103,8 @@ export function DeleteButton({ slug, action }: DeleteButtonProps) {
               </div>
             </div>
           </div>,
-          document.body
-        )
-      }
+          document.body,
+        )}
     </>
   );
 }

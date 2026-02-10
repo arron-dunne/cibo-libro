@@ -1,8 +1,9 @@
 import { test, expect } from "@playwright/test";
 import { uniqueTitle } from "../helpers";
 
-test("create recipe manually, then verify it on the view page", async ({ page }) => {
-
+test("create recipe manually, then verify it on the view page", async ({
+  page,
+}) => {
   const title = uniqueTitle();
   const description = "A simple test recipe";
   const ingredient = "250g dried pasta";
@@ -27,7 +28,9 @@ test("create recipe manually, then verify it on the view page", async ({ page })
 
   // Redirected to view page
   await expect(page).toHaveURL(/\/view\//);
-  await expect(page.getByRole("heading", { level: 1, name: title })).toBeVisible();
+  await expect(
+    page.getByRole("heading", { level: 1, name: title }),
+  ).toBeVisible();
 
   // All entered content is visible on the view page
   await expect(page.getByText(description)).toBeVisible();

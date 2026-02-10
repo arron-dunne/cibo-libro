@@ -80,7 +80,7 @@ jobs:
           cache: "npm"
 
       - run: npm ci
-      
+
       - name: Build
         run: npm run build
 
@@ -93,6 +93,3 @@ jobs:
       # Playwright will start the server via playwright.config.ts (webServer)
       - name: Run smoke tests
         run: npm run test:e2e
-
-
-  

@@ -24,7 +24,7 @@ export default function FeedbackPage() {
   const initialState = { status: null, message: "" };
   const [state, formAction, isPending] = useActionState(
     submitFeedback,
-    initialState
+    initialState,
   );
 
   // Scroll to top on submission
@@ -43,8 +43,13 @@ export default function FeedbackPage() {
             <CheckCircle size={28} />
             Your feedback was submitted
           </h2>
-          <p className="ml-11">Thank you for taking the time to make Cibo Libro a better place</p>
-          <Link href="/home" className="ml-10 mt-4 w-max text-black flex items-center gap-2 rounded-full px-4 py-2 bg-slate-200 border border-black/10 cursor-pointer hover:brightness-90 active:brightness-75">
+          <p className="ml-11">
+            Thank you for taking the time to make Cibo Libro a better place
+          </p>
+          <Link
+            href="/home"
+            className="ml-10 mt-4 w-max text-black flex items-center gap-2 rounded-full px-4 py-2 bg-slate-200 border border-black/10 cursor-pointer hover:brightness-90 active:brightness-75"
+          >
             <Home size={20} />
             Home
           </Link>
@@ -59,7 +64,10 @@ export default function FeedbackPage() {
             Something went wrong
           </h2>
           <p className="ml-11">Please try again or come back later</p>
-          <Link href="/home" className="ml-11 mt-2 w-max text-black flex items-center gap-2 rounded-full px-4 py-2 bg-slate-200 border border-white cursor-pointer hover:brightness-90 active:brightness-75">
+          <Link
+            href="/home"
+            className="ml-11 mt-2 w-max text-black flex items-center gap-2 rounded-full px-4 py-2 bg-slate-200 border border-white cursor-pointer hover:brightness-90 active:brightness-75"
+          >
             <ChevronLeft />
             Home
           </Link>
@@ -95,9 +103,10 @@ export default function FeedbackPage() {
                 disabled={isPending}
                 onClick={() => setRating(n)}
                 className={`h-12 w-12 flex items-center justify-center rounded-full border transition shadow-sm text-lg font-medium cursor-pointer
-                  ${rating === n
-                    ? "bg-orange-500 text-white border-orange-600 shadow-md scale-105"
-                    : "bg-white/80 text-orange-900 border-orange-200 hover:border-orange-400 hover:scale-105"
+                  ${
+                    rating === n
+                      ? "bg-orange-500 text-white border-orange-600 shadow-md scale-105"
+                      : "bg-white/80 text-orange-900 border-orange-200 hover:border-orange-400 hover:scale-105"
                   }
                   ${isPending ? "opacity-50 cursor-not-allowed" : ""}
                 `}

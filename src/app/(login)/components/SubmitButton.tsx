@@ -3,8 +3,13 @@
 import { useFormStatus } from "react-dom";
 import { Loader2, ChevronRight } from "lucide-react";
 
-export function SubmitButton({ text, pendingText }: { text?: string; pendingText?: string }) {
-
+export function SubmitButton({
+  text,
+  pendingText,
+}: {
+  text?: string;
+  pendingText?: string;
+}) {
   const { pending } = useFormStatus();
 
   return (
@@ -19,14 +24,14 @@ export function SubmitButton({ text, pendingText }: { text?: string; pendingText
       {pending ? (
         <>
           <Loader2 className="h-5 w-5 animate-spin" />
-          { pendingText }
+          {pendingText}
         </>
       ) : (
         <>
-          { text }
+          {text}
           <ChevronRight className="h-5 w-5" />
         </>
       )}
     </button>
-  )
+  );
 }

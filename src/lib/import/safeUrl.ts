@@ -3,7 +3,6 @@ import ipaddr from "ipaddr.js";
 
 // Check URL is safe to fetch to prevent from SSRF attacks
 export async function isSafeUrl(inputUrl: URL | string): Promise<boolean> {
-
   // Cast to URL object if given a string input
   const url = typeof inputUrl === "string" ? new URL(inputUrl) : inputUrl;
 
@@ -18,11 +17,12 @@ export async function isSafeUrl(inputUrl: URL | string): Promise<boolean> {
   }
 
   try {
-
     // Resolve domain name to IP
     const addresses = await dns.lookup(url.hostname, { all: true, family: 4 });
 
-    if (addresses.length < 1) { return false; }
+    if (addresses.length < 1) {
+      return false;
+    }
 
     // Check each IP returned from DNS resolution
     for (const { address } of addresses) {
@@ -30,9 +30,7 @@ export async function isSafeUrl(inputUrl: URL | string): Promise<boolean> {
         return false;
       }
     }
-
-  }
-  catch {
+  } catch {
     return false;
   }
 

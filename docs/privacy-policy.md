@@ -39,20 +39,20 @@ We **do not** sell personal data or use it for advertising.
 
 We use your data to:
 
-* Operate and improve our Service;
-* Authenticate and secure your account;
-* Respond to support requests;
-* Comply with legal obligations (e.g., DMCA);
-* Analyze usage (aggregated and anonymized).
+- Operate and improve our Service;
+- Authenticate and secure your account;
+- Respond to support requests;
+- Comply with legal obligations (e.g., DMCA);
+- Analyze usage (aggregated and anonymized).
 
 ---
 
 ## 4. Data Storage & Security
 
-* Data is stored on **Vercel**, **Neon Postgres**, and **Cloudflare R2** (global infrastructure).
-* All connections use HTTPS/TLS encryption.
-* Passwords are securely hashed using industry-standard algorithms.
-* We limit access to authorized personnel only.
+- Data is stored on **Vercel**, **Neon Postgres**, and **Cloudflare R2** (global infrastructure).
+- All connections use HTTPS/TLS encryption.
+- Passwords are securely hashed using industry-standard algorithms.
+- We limit access to authorized personnel only.
 
 ---
 
@@ -75,9 +75,9 @@ Each acts as a **data processor** under our instruction and has its own Data Pro
 
 ## 6. Data Retention
 
-* You can delete your account anytime — all recipes and associated data are deleted within **30 days**.
-* Backup copies may persist briefly for disaster recovery (max 90 days).
-* Legal logs (takedowns, abuse reports) may be retained as required by law.
+- You can delete your account anytime — all recipes and associated data are deleted within **30 days**.
+- Backup copies may persist briefly for disaster recovery (max 90 days).
+- Legal logs (takedowns, abuse reports) may be retained as required by law.
 
 ---
 
@@ -92,10 +92,10 @@ We rely on **Standard Contractual Clauses (SCCs)** and equivalent safeguards for
 
 You have the right to:
 
-* Access, correct, or delete your data;
-* Withdraw consent (where applicable);
-* Request data export;
-* Lodge a complaint with the **UK Information Commissioner’s Office (ICO)**.
+- Access, correct, or delete your data;
+- Withdraw consent (where applicable);
+- Request data export;
+- Lodge a complaint with the **UK Information Commissioner’s Office (ICO)**.
 
 To exercise your rights, contact **[privacy@cibolibro.com](mailto:privacy@cibolibro.com)**.
 
@@ -105,8 +105,8 @@ To exercise your rights, contact **[privacy@cibolibro.com](mailto:privacy@ciboli
 
 We use minimal, privacy-respecting cookies for:
 
-* Authentication (session management)
-* Analytics (PostHog, anonymous)
+- Authentication (session management)
+- Analytics (PostHog, anonymous)
 
 You can disable cookies in your browser, but some features may not work properly.
 

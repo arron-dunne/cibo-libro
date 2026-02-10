@@ -1,7 +1,6 @@
 import { test, expect } from "@playwright/test";
 
 test("logged-in on home then logoout", async ({ page }) => {
-  
   // Go to home page
   await page.goto("/");
   await expect(page.getByText("What's cooking?")).toBeVisible();
@@ -11,9 +10,14 @@ test("logged-in on home then logoout", async ({ page }) => {
 
   // Confirm on logout modal
   await expect(page.getByRole("dialog")).toBeVisible();
-  await page.getByRole("dialog").getByRole("button", { name: "Logout" }).click();
+  await page
+    .getByRole("dialog")
+    .getByRole("button", { name: "Logout" })
+    .click();
 
   // Redirected to login page
   await expect(page).toHaveURL(/\/login/);
-  await expect(page.getByRole("heading", { name: "Welcome back" })).toBeVisible();
+  await expect(
+    page.getByRole("heading", { name: "Welcome back" }),
+  ).toBeVisible();
 });

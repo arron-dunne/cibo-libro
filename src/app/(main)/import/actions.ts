@@ -12,7 +12,6 @@ import { isSafeUrl } from "@/lib/import/safeUrl";
 import { parseJsonLd, StructuredRecipe } from "@/lib/import/jsonld";
 import { extractOpenGraph, OpenGraphMeta } from "@/lib/import/opengraph";
 
-
 class UnsafeUrlError extends Error {
   name = "UnsafeUrlError";
 }
@@ -24,13 +23,21 @@ const IMPORTER_USER_AGENT =
   "CiboLibroBot/0.1 (+https://cibolibro.com; contact support@cibolibro.com)";
 const IMPORTER_TIMEOUT_MS = Number(process.env.IMPORTER_TIMEOUT_MS ?? 7000);
 
-type ImportFailReason = "ROBOTS" | "DENYLIST" | "PAYWALL" | "ERROR" | "NO_SCHEMA";
+type ImportFailReason =
+  | "ROBOTS"
+  | "DENYLIST"
+  | "PAYWALL"
+  | "ERROR"
+  | "NO_SCHEMA";
 
 // Form payload validation (with honeypot)
 const ImportSchema = z.object({
   url: z.url().max(2000),
   // Honeypot (bot trap). Must be absent/empty.
-  website: z.string().optional().refine((v) => !v),
+  website: z
+    .string()
+    .optional()
+    .refine((v) => !v),
 });
 
 // Safe fetcher which checks URL is safe before fetching and contains options
@@ -39,19 +46,22 @@ const safeFetcher = ky.extend({
   timeout: IMPORTER_TIMEOUT_MS,
   headers: {
     "User-Agent": IMPORTER_USER_AGENT,
-    Accept: "text/html,text/plain,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8",
+    Accept:
+      "text/html,text/plain,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8",
   },
   redirect: "follow",
   credentials: "omit",
   cache: "no-store",
   hooks: {
     // Check URL is safe before every request
-    beforeRequest: [async (req) => {
-      const safe = await isSafeUrl(req.url);
-      if (!safe) {
-        throw new UnsafeUrlError();
-      }
-    }]
+    beforeRequest: [
+      async (req) => {
+        const safe = await isSafeUrl(req.url);
+        if (!safe) {
+          throw new UnsafeUrlError();
+        }
+      },
+    ],
   },
   retry: {
     limit: 3,
@@ -61,16 +71,16 @@ const safeFetcher = ky.extend({
         return false;
       }
       return true;
-    }
-  }
+    },
+  },
 });
 
 // Server action
 export async function importRecipe(formData: FormData) {
-
   // Authentication
   const session = await auth();
-  if (!session?.user?.id) throw new Error("You must be signed in to import recipes.");
+  if (!session?.user?.id)
+    throw new Error("You must be signed in to import recipes.");
   const userId = session.user.id;
 
   // Parse form data
@@ -146,7 +156,7 @@ async function isRobotsAllowed(url: URL): Promise<boolean> {
   const robotsUrl = `${url.protocol}//${url.host}/robots.txt`;
 
   try {
-    const res = await safeFetcher(robotsUrl)
+    const res = await safeFetcher(robotsUrl);
 
     // allow if robots.txt doesnt exist
     if (!res.ok) return true;
@@ -173,7 +183,6 @@ async function isRobotsAllowed(url: URL): Promise<boolean> {
     const ourRules = blocks[ua] || blocks["*"] || [];
     const fullBlock = ourRules.some((p) => p === "/");
     return !fullBlock;
-
   } catch {
     // allow if error (common practice)
     return true;
@@ -183,7 +192,12 @@ async function isRobotsAllowed(url: URL): Promise<boolean> {
 // fetch HTML and basic OG from URL
 async function fetchHtmlWithMeta(
   url: URL,
-): Promise<{ ok: boolean; status?: number; html?: string; og?: OpenGraphMeta }> {
+): Promise<{
+  ok: boolean;
+  status?: number;
+  html?: string;
+  og?: OpenGraphMeta;
+}> {
   try {
     // fetch URL with the safe fetcher (URL checking)
     const res = await safeFetcher.get(url);
@@ -196,9 +210,9 @@ async function fetchHtmlWithMeta(
     const og = await extractOpenGraph(html);
 
     return { ok: true, status, html, og };
-  } catch(e) {
+  } catch (e) {
     // status 1 means unsafe URL
-    if (e instanceof UnsafeUrlError) return {ok: false, status:1}
+    if (e instanceof UnsafeUrlError) return { ok: false, status: 1 };
     return { ok: false };
   }
 }
@@ -209,7 +223,6 @@ async function saveRecipe(
   sourceUrl: string,
   recipe: StructuredRecipe,
 ): Promise<string> {
-
   // sourceUrl should of been checked when initially fetching so this should never throw
   if (!(await isSafeUrl(sourceUrl))) throw Error("unsafe url");
 
@@ -232,16 +245,16 @@ async function saveRecipe(
       isPublic: false,
       slug,
       // status: "PUBLISHED",
-      imageExternalUrl: recipe.image 
-        ? await isSafeUrl(recipe.image) 
-          ? recipe.image 
+      imageExternalUrl: recipe.image
+        ? (await isSafeUrl(recipe.image))
+          ? recipe.image
           : null
-        : null
+        : null,
     },
     select: { slug: true },
   });
 
-  return created.slug
+  return created.slug;
 }
 
 // build the url for link card with open graph data if available
@@ -255,18 +268,26 @@ function buildLinkCardUrl(u: URL, og?: OpenGraphMeta) {
 
 // fallback title derived from URL's last path segment
 function getTitleFromUrl(u: URL): string {
-  const last = decodeURIComponent(u.pathname.split("/").filter(Boolean).pop() || u.hostname);
+  const last = decodeURIComponent(
+    u.pathname.split("/").filter(Boolean).pop() || u.hostname,
+  );
   const s = last
     .replace(/\.(html?|php|aspx?)$/i, "")
     .replace(/[-_]+/g, " ")
     .replace(/\b\d+\b/g, "")
     .replace(/\s+/g, " ")
     .trim();
-  return s ? s.replace(/\b\w/g, (c) => c.toUpperCase()) : u.hostname.replace(/^www\./, "");
+  return s
+    ? s.replace(/\b\w/g, (c) => c.toUpperCase())
+    : u.hostname.replace(/^www\./, "");
 }
 
 // Update the job to FAILED with optional info
-async function failJob(jobId: string, reason: ImportFailReason, message?: string) {
+async function failJob(
+  jobId: string,
+  reason: ImportFailReason,
+  message?: string,
+) {
   await prisma.importJob.update({
     where: { id: jobId },
     data: { status: "FAILED", errorMsg: message ?? reason },
@@ -280,5 +301,3 @@ async function succeedJob(jobId: string) {
     data: { status: "SUCCESS" },
   });
 }
-
-

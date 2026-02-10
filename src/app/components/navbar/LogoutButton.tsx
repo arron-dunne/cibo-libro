@@ -15,7 +15,7 @@ export function LogoutButton({ action }: LogoutButtonProps) {
 
   // needed to avoid hydration mismatch
   const [hasMounted, setHasMounted] = useState<boolean>(false);
-  useEffect(() => setHasMounted(true), []) // useEffect fires after mount
+  useEffect(() => setHasMounted(true), []); // useEffect fires after mount
 
   const openDialog = () => setIsDialogOpen(true);
   const closeDialog = useCallback(() => {
@@ -58,7 +58,8 @@ export function LogoutButton({ action }: LogoutButtonProps) {
       </form>
 
       {/* Dialog */}
-      {hasMounted && typeof window !== "undefined" &&
+      {hasMounted &&
+        typeof window !== "undefined" &&
         createPortal(
           <div
             className={`fixed inset-0 z-20 flex items-center justify-center bg-black/50 backdrop-blur-sm px-4 transition duration-200 ${isDialogOpen ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"}`}
@@ -74,7 +75,9 @@ export function LogoutButton({ action }: LogoutButtonProps) {
               <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-linear-to-br from-orange-100 to-rose-100 text-rose-500">
                 <LogOut size={28} />
               </div>
-              <h2 className="mt-4 text-xl font-semibold text-gray-900">Are you sure you want to log out?</h2>
+              <h2 className="mt-4 text-xl font-semibold text-gray-900">
+                Are you sure you want to log out?
+              </h2>
               <p className="mt-2 text-sm text-gray-500">
                 You can always sign back in to keep cooking.
               </p>
@@ -99,9 +102,8 @@ export function LogoutButton({ action }: LogoutButtonProps) {
               </div>
             </div>
           </div>,
-          document.body
-        )
-      }
+          document.body,
+        )}
     </>
   );
 }

@@ -13,19 +13,18 @@ export type RecipeCardRecipe = {
   imageKey?: string | null;
   imageExternalUrl?: string | null;
   tags?: string[];
-  note?: string
+  note?: string;
   sourceUrl?: string | null;
   slug: string;
   createdAt: Date;
   updatedAt: Date;
-}
+};
 
 export default async function RecipesPage({
-  searchParams
+  searchParams,
 }: {
-  searchParams: Promise<{ search?: string, sort?: string, tags?: string[] }>
+  searchParams: Promise<{ search?: string; sort?: string; tags?: string[] }>;
 }) {
-
   const session = await auth();
   if (!session?.user) {
     redirect("/login");
@@ -34,8 +33,8 @@ export default async function RecipesPage({
   const params = await searchParams;
 
   const sortParam: SortOptionKey = getValidSortKey(params.sort ?? null);
-  const searchParam: string = params.search ?? ""
-  const tagsParam: string[] = params.tags ?? []
+  const searchParam: string = params.search ?? "";
+  const tagsParam: string[] = params.tags ?? [];
 
   // Pull all fields we need for the grid, including the external image URL.
   const rows = await prisma.recipe.findMany({
@@ -69,22 +68,22 @@ export default async function RecipesPage({
     servings: r.servings ?? null,
     sourceUrl: r.sourceUrl ?? null,
     createdAt: r.createdAt,
-    updatedAt: r.updatedAt
+    updatedAt: r.updatedAt,
   }));
 
   return (
-    <ClientRecipesGrid 
-      recipes={recipes} 
-      initialSearch={searchParam} 
-      initialSort={sortParam} 
-      initialTags={tagsParam} 
+    <ClientRecipesGrid
+      recipes={recipes}
+      initialSearch={searchParam}
+      initialSort={sortParam}
+      initialTags={tagsParam}
     />
   );
 }
 
 // Takes the URL param for sort and returns a valid SortKeyOption at runtime
 function getValidSortKey(param: string | null): SortOptionKey {
-  const validKeys = SORT_OPTIONS.map(opt => opt.key);
+  const validKeys = SORT_OPTIONS.map((opt) => opt.key);
   return validKeys.includes(param as SortOptionKey)
     ? (param as SortOptionKey)
     : "updated"; // fallback

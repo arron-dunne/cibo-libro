@@ -1,9 +1,7 @@
 import { describe, it, expect } from "vitest";
 import { detectPaywall } from "@/lib/import/detectPaywall";
 
-
 describe("detectPaywall (integration)", () => {
-
   it("returns false when no JSON-LD is present", () => {
     const html = "<html><body>Hello</body></html>";
     expect(detectPaywall(html)).toBe(false);
@@ -34,5 +32,4 @@ describe("detectPaywall (integration)", () => {
     `;
     expect(detectPaywall(html)).toBe(true);
   });
-
 });

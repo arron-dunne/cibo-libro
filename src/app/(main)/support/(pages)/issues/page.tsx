@@ -1,12 +1,19 @@
 "use client";
 
-import { Bug, AlertTriangle, Layers, CircleX, ChevronLeft, Home, CheckCircle } from "lucide-react";
+import {
+  Bug,
+  AlertTriangle,
+  Layers,
+  CircleX,
+  ChevronLeft,
+  Home,
+  CheckCircle,
+} from "lucide-react";
 import { useActionState, useState } from "react";
 import { submitIssue } from "./actions";
 import Link from "next/link";
 
 export default function ReportIssuesPage() {
-
   const [state, formAction] = useActionState(submitIssue, { status: null });
 
   const [issueCategory, setIssueCategory] = useState<string>("");
@@ -23,7 +30,7 @@ export default function ReportIssuesPage() {
     "Image Uploads",
     "Settings",
     "Other",
-    "All of the above"
+    "All of the above",
   ];
 
   return (
@@ -35,8 +42,13 @@ export default function ReportIssuesPage() {
             <CheckCircle size={28} />
             Your feedback was submitted
           </h2>
-          <p className="ml-11">Thank you for taking the time to make Cibo Libro a better place</p>
-          <Link href="/home" className="ml-10 mt-4 w-max text-black flex items-center gap-2 rounded-full px-4 py-2 bg-slate-200 border border-black/10 cursor-pointer hover:brightness-90 active:brightness-75">
+          <p className="ml-11">
+            Thank you for taking the time to make Cibo Libro a better place
+          </p>
+          <Link
+            href="/home"
+            className="ml-10 mt-4 w-max text-black flex items-center gap-2 rounded-full px-4 py-2 bg-slate-200 border border-black/10 cursor-pointer hover:brightness-90 active:brightness-75"
+          >
             <Home size={20} />
             Home
           </Link>
@@ -51,22 +63,26 @@ export default function ReportIssuesPage() {
             Something went wrong
           </h2>
           <p className="ml-11">Please try again or come back later</p>
-          <Link href="/home" className="ml-11 mt-2 w-max text-black flex items-center gap-2 rounded-full px-4 py-2 bg-slate-200 border border-white cursor-pointer hover:brightness-90 active:brightness-75">
+          <Link
+            href="/home"
+            className="ml-11 mt-2 w-max text-black flex items-center gap-2 rounded-full px-4 py-2 bg-slate-200 border border-white cursor-pointer hover:brightness-90 active:brightness-75"
+          >
             <ChevronLeft />
             Home
           </Link>
           {/* {state.message ?? "Thanks for your feedback!"} */}
         </div>
       )}
-      
+
       {/* Header */}
       <section className="rounded-3xl border border-white/70 bg-white/95 p-8 shadow-lg backdrop-blur">
         <h1 className="text-3xl sm:text-4xl font-extrabold text-orange-950">
           Report an Issue
         </h1>
         <p className="mt-3 text-slate-700 leading-relaxed">
-          Found a bug, broken feature, or something that doesn’t behave as expected?
-          Let us know and we’ll look into it. Your reports help keep CiboLibro reliable.
+          Found a bug, broken feature, or something that doesn’t behave as
+          expected? Let us know and we’ll look into it. Your reports help keep
+          CiboLibro reliable.
         </p>
       </section>
 

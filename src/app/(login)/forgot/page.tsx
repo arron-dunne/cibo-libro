@@ -15,7 +15,8 @@ export default function ForgotPasswordPage() {
 
       <h2 className="mt-4 text-xl font-bold text-gray-900">Reset Password</h2>
       <p className="mt-2 text-sm text-gray-500">
-        Enter your email and we&apos;ll send you an email to reset your password.
+        Enter your email and we&apos;ll send you an email to reset your
+        password.
       </p>
 
       <form action={resetPassword} className="space-y-4 text-start">
@@ -39,5 +40,5 @@ export default function ForgotPasswordPage() {
         </button>
       </form>
     </div>
-  )
+  );
 }

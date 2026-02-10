@@ -11,7 +11,7 @@ export interface FeedbackActionState {
 
 export async function submitFeedback(
   prevState: FeedbackActionState,
-  formData: FormData
+  formData: FormData,
 ): Promise<FeedbackActionState> {
   try {
     const session = await auth();

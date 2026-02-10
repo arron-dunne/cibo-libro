@@ -26,12 +26,12 @@ export default async function LoginPage({
       </header>
 
       {/* Status banners */}
-      { created && (
+      {created && (
         <div className="mt-4 rounded-xl border border-emerald-300 bg-emerald-100 px-4 py-3 text-sm text-emerald-800">
           Account created. You can sign in now.
         </div>
       )}
-      { error === "expired" && (
+      {error === "expired" && (
         <div className="mt-4 rounded-xl border border-red-300 bg-red-100 px-4 py-3 text-sm text-red-800">
           Your session has expired. Please login again.
         </div>
@@ -40,7 +40,10 @@ export default async function LoginPage({
       {/* Form */}
       <form action={handleSignIn} className="mt-6 space-y-5">
         <div>
-          <label htmlFor="email" className="mb-1 block text-sm font-medium text-gray-800">
+          <label
+            htmlFor="email"
+            className="mb-1 block text-sm font-medium text-gray-800"
+          >
             Email
           </label>
           <input
@@ -63,7 +66,10 @@ export default async function LoginPage({
         </div>
 
         <div>
-          <label htmlFor="password" className="mb-1 block text-sm font-medium text-gray-800">
+          <label
+            htmlFor="password"
+            className="mb-1 block text-sm font-medium text-gray-800"
+          >
             Password
           </label>
           <input
@@ -80,7 +86,10 @@ export default async function LoginPage({
         </div>
 
         <div className="flex items-center justify-between text-sm">
-          <a href="/forgot" className="text-gray-500 hover:underline transition hover:text-gray-700">
+          <a
+            href="/forgot"
+            className="text-gray-500 hover:underline transition hover:text-gray-700"
+          >
             Forgot password
           </a>
           <span className="text-gray-500">

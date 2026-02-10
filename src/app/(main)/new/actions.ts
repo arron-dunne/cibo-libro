@@ -10,24 +10,43 @@ import { RecipeFormRecipe, RecipeFormActionResponse } from "@/types/recipe";
 const NewRecipeSchema = z.object({
   title: z.string().trim().min(0).max(1000).nullable().optional(),
   description: z.string().trim().min(0).max(10000).nullable().optional(),
-  prepMins: z.number().int().positive().max(24 * 60).nullable().optional(),
-  cookMins: z.number().int().positive().max(24 * 60).nullable().optional(),
+  prepMins: z
+    .number()
+    .int()
+    .positive()
+    .max(24 * 60)
+    .nullable()
+    .optional(),
+  cookMins: z
+    .number()
+    .int()
+    .positive()
+    .max(24 * 60)
+    .nullable()
+    .optional(),
   servings: z.number().int().positive().max(100).nullable().optional(),
-  ingredients: z.array(z.string()).transform((xs) => xs.map((s) => s.trim()).filter(Boolean)),
-  steps: z.array(z.string()).transform((xs) => xs.map((s) => s.trim()).filter(Boolean)),
-  tags: z.array(z.string()).transform((xs) => xs.map((s) => s.trim()).filter(Boolean)),
+  ingredients: z
+    .array(z.string())
+    .transform((xs) => xs.map((s) => s.trim()).filter(Boolean)),
+  steps: z
+    .array(z.string())
+    .transform((xs) => xs.map((s) => s.trim()).filter(Boolean)),
+  tags: z
+    .array(z.string())
+    .transform((xs) => xs.map((s) => s.trim()).filter(Boolean)),
   note: z.string().trim().min(0).max(10000).nullable().optional(),
-  imageKey: z.string().min(3).max(512).nullable().optional()
+  imageKey: z.string().min(3).max(512).nullable().optional(),
 });
 
 // Save a new recipe (create + return id/slug).
-export async function createRecipe(recipe: RecipeFormRecipe): Promise<RecipeFormActionResponse> {
-  
+export async function createRecipe(
+  recipe: RecipeFormRecipe,
+): Promise<RecipeFormActionResponse> {
   try {
-    
     // Ensure user is signed in
     const session = await auth();
-    if (!session?.user?.id) return { success: false, error: "Not authenticated" };
+    if (!session?.user?.id)
+      return { success: false, error: "Not authenticated" };
     const userId = session.user.id;
 
     // Validate data format
@@ -35,9 +54,9 @@ export async function createRecipe(recipe: RecipeFormRecipe): Promise<RecipeForm
 
     // Verifiy imageKey is provided
     if (data.imageKey) {
-
       // Format validation (prevent path traversal)
-      const SAFE_KEY_RE = /^user\/[a-zA-Z0-9_-]{10,}\/[a-f0-9-]{8,}\.(jpg|jpeg|png|webp)$/;
+      const SAFE_KEY_RE =
+        /^user\/[a-zA-Z0-9_-]{10,}\/[a-f0-9-]{8,}\.(jpg|jpeg|png|webp)$/;
 
       if (!SAFE_KEY_RE.test(data.imageKey) || data.imageKey.includes("..")) {
         return { success: false, error: "Invalid image key format" };
@@ -45,21 +64,21 @@ export async function createRecipe(recipe: RecipeFormRecipe): Promise<RecipeForm
 
       // Provenance check (check user owns and uploaded image)
       const upload = await prisma.upload.findUnique({
-        where: { key: data.imageKey }
+        where: { key: data.imageKey },
       });
 
       if (!upload || upload.userId !== userId) {
         return { success: false, error: "Unauthorized image key" };
       }
-      
+
       // Check imageKey is not already attached to another recipe
-      const existing = await prisma.recipe.findFirst({ 
+      const existing = await prisma.recipe.findFirst({
         where: { imageKey: data.imageKey },
-        select: { id: true }
+        select: { id: true },
       });
 
       if (existing) {
-        return { success: false, error: "Image key already in use"}
+        return { success: false, error: "Image key already in use" };
       }
     }
 
@@ -79,16 +98,13 @@ export async function createRecipe(recipe: RecipeFormRecipe): Promise<RecipeForm
         tags: data.tags,
         note: data.note ?? undefined,
         imageKey: data.imageKey ?? null,
-        slug
+        slug,
       },
       select: { id: true, slug: true },
     });
 
     return { success: true, slug: created.slug };
-    
   } catch (error) {
-
     return { success: false, error: (error as Error).message };
-  
   }
 }

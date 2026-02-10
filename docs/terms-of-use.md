@@ -1,4 +1,3 @@
-
 # **CIBO LIBRO LTD — TERMS OF USE**
 
 **Last updated:** November 2025
@@ -23,10 +22,10 @@ You can contact us at **[support@cibolibro.com](mailto:support@cibolibro.com)**.
 
 Cibo Libro lets users:
 
-* Save and manage personal recipes, manually or via import;
-* View recipes in a distraction-free “Cook Mode”;
-* Organize recipes using tags and search filters;
-* Optionally share owned recipes publicly.
+- Save and manage personal recipes, manually or via import;
+- View recipes in a distraction-free “Cook Mode”;
+- Organize recipes using tags and search filters;
+- Optionally share owned recipes publicly.
 
 ---
 
@@ -34,10 +33,10 @@ Cibo Libro lets users:
 
 You agree **not** to:
 
-* Upload or share content that infringes others’ copyright, trademark, or privacy rights;
-* Attempt to copy, scrape, or reverse engineer our Service;
-* Interfere with or damage the Service (e.g., malware, denial-of-service attacks);
-* Use Cibo Libro for any unlawful purpose.
+- Upload or share content that infringes others’ copyright, trademark, or privacy rights;
+- Attempt to copy, scrape, or reverse engineer our Service;
+- Interfere with or damage the Service (e.g., malware, denial-of-service attacks);
+- Use Cibo Libro for any unlawful purpose.
 
 We reserve the right to suspend or remove accounts violating these Terms.
 
@@ -50,8 +49,8 @@ You must not republish, distribute, or make public any imported content that you
 
 If you publish recipes publicly through Cibo Libro, you represent and warrant that:
 
-* You own the rights to that content, or
-* You have permission to publish it.
+- You own the rights to that content, or
+- You have permission to publish it.
 
 We comply with UK and international copyright law.
 Rights-holders can file takedown notices via our **[DMCA / Copyright Policy](/legal/dmca)** page.
@@ -100,8 +99,8 @@ Use your own judgment when cooking or following instructions.
 
 To the maximum extent permitted by law:
 
-* Cibo Libro Ltd is not liable for any indirect, incidental, or consequential damages;
-* Our total liability for any claim shall not exceed the amount (if any) you paid us in the 12 months prior to the event giving rise to the claim.
+- Cibo Libro Ltd is not liable for any indirect, incidental, or consequential damages;
+- Our total liability for any claim shall not exceed the amount (if any) you paid us in the 12 months prior to the event giving rise to the claim.
 
 Nothing in these Terms excludes liability for fraud, gross negligence, or death/personal injury caused by our negligence.
 
@@ -125,4 +124,3 @@ The courts of **England and Wales** shall have exclusive jurisdiction.
 
 Questions?
 Email **[support@cibolibro.com](mailto:support@cibolibro.com)** or visit our **[Contact page](/legal/contact)**.
-
