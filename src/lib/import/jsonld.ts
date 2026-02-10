@@ -38,16 +38,15 @@ export function parseJsonLd(html: string): StructuredRecipe | null {
   const recipeNode = findRecipeNode(data);
   if (recipeNode) {
     const recipe = extractRecipe(recipeNode);
-    
+
     // Don't import recipes with no title
-    if(!recipe.title || recipe.title === "") return null;
-    
+    if (!recipe.title || recipe.title === "") return null;
+
     return recipe;
   }
 
   return null;
 }
-
 
 export function findRecipeNode(data: unknown): Record<string, unknown> | null {
   if (!data || typeof data != "object") return null;
@@ -66,10 +65,7 @@ export function findRecipeNode(data: unknown): Record<string, unknown> | null {
 
   // Check for @type: Recipe
   const type = obj["@type"];
-  if (
-    type === "Recipe" ||
-    (Array.isArray(type) && type.includes("Recipe"))
-  ) {
+  if (type === "Recipe" || (Array.isArray(type) && type.includes("Recipe"))) {
     return obj;
   }
 
@@ -84,15 +80,10 @@ export function findRecipeNode(data: unknown): Record<string, unknown> | null {
 
 export function extractRecipe(node: Record<string, unknown>): StructuredRecipe {
   return {
-    title:
-      typeof node["name"] === "string"
-        ? node["name"].trim()
-        : "",
+    title: typeof node["name"] === "string" ? node["name"].trim() : "",
 
     description:
-      typeof node["description"] === "string"
-        ? node["description"]
-        : undefined,
+      typeof node["description"] === "string" ? node["description"] : undefined,
 
     image:
       typeof node["image"] === "string"
@@ -101,16 +92,15 @@ export function extractRecipe(node: Record<string, unknown>): StructuredRecipe {
           ? node["image"].map(String)[0]
           : undefined,
 
-    ingredients:
-      Array.isArray(node["recipeIngredient"])
-        ? node["recipeIngredient"].map(String)
-        : undefined,
+    ingredients: Array.isArray(node["recipeIngredient"])
+      ? node["recipeIngredient"].map(String)
+      : undefined,
 
     instructions: extractInstructions(node["recipeInstructions"]),
 
     servings:
       typeof node["recipeYield"] === "string" ||
-        typeof node["recipeYield"] === "number"
+      typeof node["recipeYield"] === "number"
         ? Number(node["recipeYield"])
         : undefined,
 

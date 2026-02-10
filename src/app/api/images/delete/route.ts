@@ -7,7 +7,8 @@ import { prisma } from "@/lib/prisma";
 import { deleteObject } from "@/lib/images/r2";
 
 // Only allow user-scoped keys we generate; block traversal.
-const SAFE_KEY_RE = /^user\/[a-zA-Z0-9_-]{10,}\/[a-f0-9-]{8,}\.(jpg|jpeg|png|webp)$/;
+const SAFE_KEY_RE =
+  /^user\/[a-zA-Z0-9_-]{10,}\/[a-f0-9-]{8,}\.(jpg|jpeg|png|webp)$/;
 
 const Body = z.object({
   key: z.string().min(3).max(512),
@@ -73,7 +74,7 @@ export async function POST(req: Request) {
 
   // Unattached (pending) delete path — must belong to user and not be attached
   const issued = await prisma.upload.findUnique({ where: { key } });
-  
+
   if (!issued || issued.userId !== userId) {
     return NextResponse.json({ error: "Not found" }, { status: 404 });
   }
@@ -90,7 +91,7 @@ export async function POST(req: Request) {
 
   // Best-effort delete
   try {
-    await deleteObject(key)
+    await deleteObject(key);
   } catch {
     // ignore
   }

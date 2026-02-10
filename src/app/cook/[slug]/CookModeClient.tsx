@@ -1,11 +1,11 @@
-'use client';
+"use client";
 
 import Link from "next/link";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import type { Variants } from "framer-motion";
-import { extractIngredientKeyword } from "@/lib/ingredients/extractKeywords"
+import { extractIngredientKeyword } from "@/lib/ingredients/extractKeywords";
 import { IngredientText } from "./components/IngredientText";
 import { StepText } from "./components/StepText";
 import {
@@ -35,14 +35,19 @@ const EASE_OUT = [0.22, 1, 0.36, 1] as const;
 const EASE_IN = [0.12, 0, 0.39, 0] as const;
 
 export default function CookModeClient({
-  slug, title, ingredients, steps, initialStep
+  slug,
+  title,
+  ingredients,
+  steps,
+  initialStep,
 }: CookModeClientProps) {
-
   const router = useRouter();
-  const [currentStep, setCurrentStep] = useState<StepType>(parseStep(initialStep));
+  const [currentStep, setCurrentStep] = useState<StepType>(
+    parseStep(initialStep),
+  );
   const [direction, setDirection] = useState<number>(0);
   const [checked, setChecked] = useState<Record<number, boolean>>({});
-  const [screen, setScreen] = useState<ScreenType>("mobile")
+  const [screen, setScreen] = useState<ScreenType>("mobile");
 
   const ingredientKeywords = ingredients
     .map(extractIngredientKeyword)
@@ -78,7 +83,6 @@ export default function CookModeClient({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [screen]);
 
-
   // Parse step from string to proper type
   function parseStep(step: string): StepType {
     if (step === "ings") return "ings";
@@ -88,7 +92,8 @@ export default function CookModeClient({
   }
 
   function updateUrl(step: StepType) {
-    const stepParam = step === "ings" ? "ings" : step === "finish" ? "finish" : step.toString();
+    const stepParam =
+      step === "ings" ? "ings" : step === "finish" ? "finish" : step.toString();
     const newUrl = `/cook/${slug}?step=${stepParam}`;
     router.push(newUrl);
   }
@@ -136,19 +141,19 @@ export default function CookModeClient({
     enter: (dir: number) => ({
       x: dir === 1 ? 200 : -200,
       opacity: 0,
-      transition: { duration: 0.25, ease: EASE_IN }
+      transition: { duration: 0.25, ease: EASE_IN },
     }),
     center: {
       x: 0,
       opacity: 1,
       scale: 1,
-      transition: { duration: 0.35, ease: EASE_OUT }
+      transition: { duration: 0.35, ease: EASE_OUT },
     },
     exit: (dir: number) => ({
       x: dir === 1 ? -200 : 200,
       opacity: 0,
-      transition: { duration: 0.25, ease: EASE_IN }
-    })
+      transition: { duration: 0.25, ease: EASE_IN },
+    }),
   };
 
   return (
@@ -180,7 +185,6 @@ export default function CookModeClient({
 
       {/* Main content area */}
       <section className="mx-auto w-full max-w-screen-xl flex-1 px-4 pt-4 pb-28 flex flex-col md:flex-row md:gap-6">
-
         {/* Left panel: Ingredients (desktop-only) */}
         <div
           className="
@@ -196,7 +200,16 @@ export default function CookModeClient({
           {ingredients.length ? (
             <ul className="mt-3 space-y-0.5">
               {ingredients.map((line, i) => (
-                <IngredientText key={i} text={line} stepText={typeof currentStep === "number" ? steps[currentStep - 1] : undefined} size="sidebar" />
+                <IngredientText
+                  key={i}
+                  text={line}
+                  stepText={
+                    typeof currentStep === "number"
+                      ? steps[currentStep - 1]
+                      : undefined
+                  }
+                  size="sidebar"
+                />
               ))}
             </ul>
           ) : (
@@ -238,7 +251,9 @@ export default function CookModeClient({
                             type="checkbox"
                             className="sr-only"
                             checked={!!checked[i]}
-                            onChange={() => setChecked({ ...checked, [i]: !checked[i] })}
+                            onChange={() =>
+                              setChecked({ ...checked, [i]: !checked[i] })
+                            }
                           />
                           {checked[i] ? (
                             <CheckCircle2 className="h-5 w-5 text-emerald-600" />
@@ -246,10 +261,11 @@ export default function CookModeClient({
                             <Circle className="h-5 w-5 text-orange-400" />
                           )}
                           <span
-                            className={`text-[15px] leading-6 ${checked[i]
-                              ? "text-stone-400 line-through"
-                              : "text-stone-800"
-                              }`}
+                            className={`text-[15px] leading-6 ${
+                              checked[i]
+                                ? "text-stone-400 line-through"
+                                : "text-stone-800"
+                            }`}
                           >
                             {line}
                           </span>
@@ -283,13 +299,17 @@ export default function CookModeClient({
                   <div className="h-1.5 w-full rounded-full bg-orange-100 overflow-hidden">
                     <div
                       className="h-1.5 bg-orange-500"
-                      style={{ width: `${(currentStep / steps.length) * 100}%` }}
+                      style={{
+                        width: `${(currentStep / steps.length) * 100}%`,
+                      }}
                     />
                   </div>
                 </div>
 
-                <StepText text={steps[currentStep - 1]} keywords={ingredientKeywords} />
-
+                <StepText
+                  text={steps[currentStep - 1]}
+                  keywords={ingredientKeywords}
+                />
               </motion.div>
             )}
 
@@ -353,6 +373,6 @@ export default function CookModeClient({
           </motion.button>
         </div>
       </nav>
-    </main >
+    </main>
   );
 }

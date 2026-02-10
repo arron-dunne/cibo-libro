@@ -28,7 +28,7 @@ export default async function ViewRecipePage({
       steps: true,
       imageKey: true,
       imageExternalUrl: true,
-      sourceUrl: true
+      sourceUrl: true,
     },
   });
 
@@ -46,18 +46,14 @@ export default async function ViewRecipePage({
   const total = prep + cook;
 
   // pretty domain for the badge
-  const domain =
-    recipe.sourceUrl
-      ? new URL(recipe.sourceUrl).hostname.replace(/^www\./, "")
-      : null;
-
+  const domain = recipe.sourceUrl
+    ? new URL(recipe.sourceUrl).hostname.replace(/^www\./, "")
+    : null;
 
   return (
     <>
-
       {/* Hero section */}
       <section className="relative mt-8 overflow-hidden rounded-3xl border border-white/40 bg-white shadow-2xl min-h-[50vh] flex">
-
         {/* Back button */}
         <Link
           href="/all"
@@ -68,7 +64,7 @@ export default async function ViewRecipePage({
         </Link>
 
         {/* View original */}
-        {recipe.sourceUrl &&
+        {recipe.sourceUrl && (
           <Link
             href={recipe.sourceUrl}
             target="_blank"
@@ -82,7 +78,7 @@ export default async function ViewRecipePage({
               {domain}
             </div>
           </Link>
-        }
+        )}
 
         <div className="grid gap-0 md:grid-cols-[1.2fr_1fr]">
           {/* Image */}
@@ -139,27 +135,32 @@ export default async function ViewRecipePage({
 
             {/* Button bar  */}
             <div className="flex gap-2 mt-4">
-              {recipe.type != "EXTERNAL_LINK" &&
-                <Link href={`/cook/${slug}`} className="rounded-full items-center flex gap-2 bg-linear-to-r from-orange-500 to-orange-600 border border-slate-200 text-white text-sm font-semibold px-4 py-2 shadow cursor-pointer hover:brightness-90 active:brightness-75">
+              {recipe.type != "EXTERNAL_LINK" && (
+                <Link
+                  href={`/cook/${slug}`}
+                  className="rounded-full items-center flex gap-2 bg-linear-to-r from-orange-500 to-orange-600 border border-slate-200 text-white text-sm font-semibold px-4 py-2 shadow cursor-pointer hover:brightness-90 active:brightness-75"
+                >
                   <ChefHat size={18} className="-rotate-12" />
                   <span>Start Cooking</span>
                 </Link>
-              }
+              )}
 
               <div className="rounded-full items-center flex gap-2 bg-linear-to-r from-slate-50 to-slate-100 border border-slate-200 text-slate-800 text-sm font-semibold px-4 py-2 shadow cursor-pointer hover:brightness-90 active:brightness-75">
                 <Heart size={18} />
                 <span>Favourite</span>
               </div>
 
-              {recipe.type != "EXTERNAL_LINK" &&
-                <Link href={`/edit/${slug}`} className="rounded-full items-center flex gap-2 bg-linear-to-r from-slate-50 to-slate-100 border border-slate-200 text-slate-800 text-sm font-semibold px-4 py-2 shadow cursor-pointer hover:brightness-90 active:brightness-75">
+              {recipe.type != "EXTERNAL_LINK" && (
+                <Link
+                  href={`/edit/${slug}`}
+                  className="rounded-full items-center flex gap-2 bg-linear-to-r from-slate-50 to-slate-100 border border-slate-200 text-slate-800 text-sm font-semibold px-4 py-2 shadow cursor-pointer hover:brightness-90 active:brightness-75"
+                >
                   <Pencil size={18} />
                   <span>Edit</span>
                 </Link>
-              }
+              )}
 
               <DeleteButton slug={slug} action={deleteRecipe} />
-
             </div>
           </div>
         </div>

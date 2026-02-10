@@ -59,10 +59,8 @@ beforeEach(() => {
   mockCreate.mockResolvedValue({ id: "recipe-1" } as any);
 });
 
-
 // ----------------- Tests ---------------------
 describe("saveLinkCard integration - success flow", () => {
-  
   test("saves a minimal link card", async () => {
     const fd = createFormData({
       url: "https://example.com/recipe",
@@ -130,7 +128,7 @@ describe("saveLinkCard integration - success flow", () => {
         data: expect.objectContaining({
           tags: ["trimmed", "spaces"],
         }),
-      })
+      }),
     );
   });
 
@@ -149,11 +147,10 @@ describe("saveLinkCard integration - success flow", () => {
         data: expect.objectContaining({
           tags: ["tag1", "tag2", "tag3"],
         }),
-      })
+      }),
     );
   });
 });
-
 
 describe("saveLinkCard integration - validation errors", () => {
   test("rejects when URL and title are both invalid", async () => {
@@ -178,7 +175,6 @@ describe("saveLinkCard integration - validation errors", () => {
   });
 });
 
-
 describe("saveLinkCard integration - edge cases", () => {
   test("handles URL with query parameters and fragments", async () => {
     const fd = createFormData({
@@ -193,7 +189,7 @@ describe("saveLinkCard integration - edge cases", () => {
         data: expect.objectContaining({
           sourceUrl: "https://example.com/recipe?id=123&source=app#ingredients",
         }),
-      })
+      }),
     );
   });
 
@@ -210,7 +206,7 @@ describe("saveLinkCard integration - edge cases", () => {
         data: expect.objectContaining({
           title: "Crème Brûlée aux Fraises",
         }),
-      })
+      }),
     );
   });
 
@@ -228,7 +224,7 @@ describe("saveLinkCard integration - edge cases", () => {
         data: expect.objectContaining({
           description: "This recipe is 🔥 fire!",
         }),
-      })
+      }),
     );
   });
 
@@ -247,7 +243,7 @@ describe("saveLinkCard integration - edge cases", () => {
         data: expect.objectContaining({
           tags: ["valid", "also-valid"],
         }),
-      })
+      }),
     );
   });
 });

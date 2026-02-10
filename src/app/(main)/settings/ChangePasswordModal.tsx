@@ -5,10 +5,11 @@ import { changePassword } from "./actions";
 import { KeyRound, X } from "lucide-react";
 
 export default function ChangePasswordModal() {
-
   const [dialog, setDialog] = useState<boolean>(false);
 
-  const [formState, formAction, isSubmitting] = useActionState(changePassword, { error: null })
+  const [formState, formAction, isSubmitting] = useActionState(changePassword, {
+    error: null,
+  });
 
   // close popup with escape key
   useEffect(() => {
@@ -44,7 +45,6 @@ export default function ChangePasswordModal() {
           role="dialog"
           aria-modal="true"
         >
-
           {/* Close button */}
           <button
             onClick={() => setDialog(false)}
@@ -57,7 +57,9 @@ export default function ChangePasswordModal() {
             <KeyRound size={28} />
           </div>
 
-          <h2 className="mt-4 text-xl font-bold text-gray-900">Change Password</h2>
+          <h2 className="mt-4 text-xl font-bold text-gray-900">
+            Change Password
+          </h2>
           <p className="mt-2 text-sm text-gray-500">
             Enter your current password and choose a new one.
           </p>
@@ -95,7 +97,6 @@ export default function ChangePasswordModal() {
               required
               minLength={8}
             />
-
 
             {/* Error msg */}
             {formState.error && (

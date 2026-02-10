@@ -1,13 +1,15 @@
 import { test, expect } from "@playwright/test";
 
-
-test("import recipe from URL, view it, then find it in the grid", async ({ page }) => {
-  
+test("import recipe from URL, view it, then find it in the grid", async ({
+  page,
+}) => {
   const testUrl = "https://www.recipetineats.com/chilli-lime-fish/";
-  
+
   // Go to import page
   await page.goto("/import");
-  await expect(page.getByRole("heading", { name: "Import a recipe" })).toBeVisible();
+  await expect(
+    page.getByRole("heading", { name: "Import a recipe" }),
+  ).toBeVisible();
 
   // Fill in URL and submit
   await page.getByLabel("Recipe URL").fill(testUrl);
@@ -22,5 +24,7 @@ test("import recipe from URL, view it, then find it in the grid", async ({ page 
 
   // Navigate to all recipes and verify the card appears (wait for skeleton to resolve)
   await page.goto("/all");
-  await expect(page.getByRole("heading", { level: 2, name: title! })).toBeVisible({ timeout: 10_000 });
+  await expect(
+    page.getByRole("heading", { level: 2, name: title! }),
+  ).toBeVisible({ timeout: 10_000 });
 });

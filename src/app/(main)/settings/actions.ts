@@ -2,13 +2,12 @@
 
 import { auth } from "@/lib/auth/auth";
 import { prisma } from "@/lib/prisma";
-import { hash } from "argon2"
+import { hash } from "argon2";
 import { verifyPassword } from "@/lib/auth/auth";
-
 
 export async function changePassword(
   prevState: { error: string | null },
-  formData: FormData
+  formData: FormData,
 ) {
   const currentPassword = formData.get("currentPassword") as string;
   const newPassword = formData.get("newPassword") as string;
@@ -32,16 +31,16 @@ export async function changePassword(
 
   const valid = await verifyPassword(user.passwordHash, currentPassword);
   if (!valid) {
-    return { error: "Incorrect current password" }
+    return { error: "Incorrect current password" };
   }
 
   await prisma.user.update({
     where: { id: user.id },
     data: {
       passwordHash: await hash(newPassword),
-      sessionVersion: { increment: 1 },   // kill all JWT sessions everywhere
+      sessionVersion: { increment: 1 }, // kill all JWT sessions everywhere
     },
   });
 
-  return { error: null }
+  return { error: null };
 }

@@ -4,7 +4,9 @@ export default function NotFound() {
   return (
     <div className="rounded-3xl border border-white/40 bg-white/90 p-8 text-center shadow-xl">
       <h1 className="text-2xl font-bold">Recipe not found</h1>
-      <p className="mt-2 text-gray-600">We couldn’t find that recipe, or you don’t have access.</p>
+      <p className="mt-2 text-gray-600">
+        We couldn’t find that recipe, or you don’t have access.
+      </p>
       <div className="mt-6">
         <Link
           href="/recipes"

@@ -56,7 +56,6 @@ beforeEach(() => {
   mockCreate.mockResolvedValue({ id: "recipe-1" } as any);
 });
 
-
 describe("authentication", () => {
   test("throws when session is null", async () => {
     mockAuth.mockResolvedValue(null as any);
@@ -89,14 +88,16 @@ describe("authentication", () => {
   });
 });
 
-
 describe("URL validation", () => {
   beforeEach(() => {
     mockAuth.mockResolvedValue({ user: { id: "user-1" } } as any);
   });
 
   test("accepts valid HTTPS URL", async () => {
-    const fd = createFormData({ url: "https://example.com/recipe", title: "Test" });
+    const fd = createFormData({
+      url: "https://example.com/recipe",
+      title: "Test",
+    });
 
     await saveLinkCard(fd);
 
@@ -104,7 +105,10 @@ describe("URL validation", () => {
   });
 
   test("accepts valid HTTP URL", async () => {
-    const fd = createFormData({ url: "http://example.com/recipe", title: "Test" });
+    const fd = createFormData({
+      url: "http://example.com/recipe",
+      title: "Test",
+    });
 
     await saveLinkCard(fd);
 
@@ -131,21 +135,23 @@ describe("URL validation", () => {
   });
 });
 
-
 describe("title validation", () => {
   beforeEach(() => {
     mockAuth.mockResolvedValue({ user: { id: "user-1" } } as any);
   });
 
   test("accepts valid title", async () => {
-    const fd = createFormData({ url: "https://example.com", title: "My Recipe" });
+    const fd = createFormData({
+      url: "https://example.com",
+      title: "My Recipe",
+    });
 
     await saveLinkCard(fd);
 
     expect(mockCreate).toHaveBeenCalledWith(
       expect.objectContaining({
         data: expect.objectContaining({ title: "My Recipe" }),
-      })
+      }),
     );
   });
 
@@ -163,7 +169,6 @@ describe("title validation", () => {
   });
 });
 
-
 describe("optional fields", () => {
   beforeEach(() => {
     mockAuth.mockResolvedValue({ user: { id: "user-1" } } as any);
@@ -177,7 +182,7 @@ describe("optional fields", () => {
     expect(mockCreate).toHaveBeenCalledWith(
       expect.objectContaining({
         data: expect.objectContaining({ imageExternalUrl: undefined }),
-      })
+      }),
     );
   });
 
@@ -192,8 +197,10 @@ describe("optional fields", () => {
 
     expect(mockCreate).toHaveBeenCalledWith(
       expect.objectContaining({
-        data: expect.objectContaining({ imageExternalUrl: "https://example.com/image.jpg" }),
-      })
+        data: expect.objectContaining({
+          imageExternalUrl: "https://example.com/image.jpg",
+        }),
+      }),
     );
   });
 
@@ -215,7 +222,7 @@ describe("optional fields", () => {
     expect(mockCreate).toHaveBeenCalledWith(
       expect.objectContaining({
         data: expect.objectContaining({ description: "" }),
-      })
+      }),
     );
   });
 
@@ -232,7 +239,7 @@ describe("optional fields", () => {
     expect(mockCreate).toHaveBeenCalledWith(
       expect.objectContaining({
         data: expect.objectContaining({ description: longDesc }),
-      })
+      }),
     );
   });
 
@@ -247,7 +254,6 @@ describe("optional fields", () => {
   });
 });
 
-
 describe("tags validation", () => {
   beforeEach(() => {
     mockAuth.mockResolvedValue({ user: { id: "user-1" } } as any);
@@ -261,7 +267,7 @@ describe("tags validation", () => {
     expect(mockCreate).toHaveBeenCalledWith(
       expect.objectContaining({
         data: expect.objectContaining({ tags: [] }),
-      })
+      }),
     );
   });
 
@@ -277,7 +283,7 @@ describe("tags validation", () => {
     expect(mockCreate).toHaveBeenCalledWith(
       expect.objectContaining({
         data: expect.objectContaining({ tags: ["dinner"] }),
-      })
+      }),
     );
   });
 
@@ -293,7 +299,7 @@ describe("tags validation", () => {
     expect(mockCreate).toHaveBeenCalledWith(
       expect.objectContaining({
         data: expect.objectContaining({ tags: ["dinner", "quick", "easy"] }),
-      })
+      }),
     );
   });
 
@@ -322,7 +328,7 @@ describe("tags validation", () => {
     expect(mockCreate).toHaveBeenCalledWith(
       expect.objectContaining({
         data: expect.objectContaining({ tags: [longTag] }),
-      })
+      }),
     );
   });
 
@@ -349,7 +355,7 @@ describe("tags validation", () => {
     expect(mockCreate).toHaveBeenCalledWith(
       expect.objectContaining({
         data: expect.objectContaining({ tags: [] }),
-      })
+      }),
     );
   });
 
@@ -364,7 +370,6 @@ describe("tags validation", () => {
   });
 });
 
-
 describe("successful save", () => {
   beforeEach(() => {
     mockAuth.mockResolvedValue({ user: { id: "user-1" } } as any);
@@ -378,7 +383,7 @@ describe("successful save", () => {
     expect(mockCreate).toHaveBeenCalledWith(
       expect.objectContaining({
         data: expect.objectContaining({ type: "EXTERNAL_LINK" }),
-      })
+      }),
     );
   });
 
@@ -390,7 +395,7 @@ describe("successful save", () => {
     expect(mockCreate).toHaveBeenCalledWith(
       expect.objectContaining({
         data: expect.objectContaining({ status: "PUBLISHED" }),
-      })
+      }),
     );
   });
 
@@ -402,19 +407,24 @@ describe("successful save", () => {
     expect(mockCreate).toHaveBeenCalledWith(
       expect.objectContaining({
         data: expect.objectContaining({ isPublic: false }),
-      })
+      }),
     );
   });
 
   test("maps url to sourceUrl", async () => {
-    const fd = createFormData({ url: "https://example.com/recipe", title: "Test" });
+    const fd = createFormData({
+      url: "https://example.com/recipe",
+      title: "Test",
+    });
 
     await saveLinkCard(fd);
 
     expect(mockCreate).toHaveBeenCalledWith(
       expect.objectContaining({
-        data: expect.objectContaining({ sourceUrl: "https://example.com/recipe" }),
-      })
+        data: expect.objectContaining({
+          sourceUrl: "https://example.com/recipe",
+        }),
+      }),
     );
   });
 
@@ -429,13 +439,18 @@ describe("successful save", () => {
 
     expect(mockCreate).toHaveBeenCalledWith(
       expect.objectContaining({
-        data: expect.objectContaining({ imageExternalUrl: "https://example.com/image.png" }),
-      })
+        data: expect.objectContaining({
+          imageExternalUrl: "https://example.com/image.png",
+        }),
+      }),
     );
   });
 
   test("calls uniqueRecipeSlug with title", async () => {
-    const fd = createFormData({ url: "https://example.com", title: "My Great Recipe" });
+    const fd = createFormData({
+      url: "https://example.com",
+      title: "My Great Recipe",
+    });
 
     await saveLinkCard(fd);
 
@@ -444,14 +459,17 @@ describe("successful save", () => {
 
   test("uses slug from uniqueRecipeSlug", async () => {
     mockUniqueSlug.mockResolvedValue("my-great-recipe");
-    const fd = createFormData({ url: "https://example.com", title: "My Great Recipe" });
+    const fd = createFormData({
+      url: "https://example.com",
+      title: "My Great Recipe",
+    });
 
     await saveLinkCard(fd);
 
     expect(mockCreate).toHaveBeenCalledWith(
       expect.objectContaining({
         data: expect.objectContaining({ slug: "my-great-recipe" }),
-      })
+      }),
     );
   });
 
@@ -464,7 +482,7 @@ describe("successful save", () => {
     expect(mockCreate).toHaveBeenCalledWith(
       expect.objectContaining({
         data: expect.objectContaining({ ownerId: "user-123" }),
-      })
+      }),
     );
   });
 
@@ -476,7 +494,6 @@ describe("successful save", () => {
     expect(mockRedirect).toHaveBeenCalledWith("/all");
   });
 });
-
 
 describe("error handling", () => {
   beforeEach(() => {

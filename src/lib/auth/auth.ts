@@ -1,35 +1,38 @@
-import 'server-only';
+import "server-only";
 
-export const runtime = 'nodejs';
+export const runtime = "nodejs";
 
-import NextAuth from 'next-auth';
-import Credentials from 'next-auth/providers/credentials';
-import { PrismaAdapter } from '@auth/prisma-adapter';
-import { prisma } from '@/lib/prisma';
-import { z } from 'zod';
-import type { JWT } from 'next-auth/jwt';
-import type { Session } from 'next-auth';
-import { verify } from 'argon2';
+import NextAuth from "next-auth";
+import Credentials from "next-auth/providers/credentials";
+import { PrismaAdapter } from "@auth/prisma-adapter";
+import { prisma } from "@/lib/prisma";
+import { z } from "zod";
+import type { JWT } from "next-auth/jwt";
+import type { Session } from "next-auth";
+import { verify } from "argon2";
 
 const credsSchema = z.object({
   email: z.email(),
   password: z.string().min(8),
 });
 
-export async function verifyPassword(hash: string, password: string): Promise<boolean> {
+export async function verifyPassword(
+  hash: string,
+  password: string,
+): Promise<boolean> {
   return verify(hash, password);
 }
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
   adapter: PrismaAdapter(prisma),
-  session: { strategy: 'jwt' },
+  session: { strategy: "jwt" },
   secret: process.env.AUTH_SECRET,
 
   providers: [
     Credentials({
       credentials: {
-        email: { label: 'Email', type: 'email' },
-        password: { label: 'Password', type: 'password' },
+        email: { label: "Email", type: "email" },
+        password: { label: "Password", type: "password" },
       },
       async authorize(raw) {
         const parsed = credsSchema.safeParse(raw);
@@ -45,7 +48,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         return {
           id: user.id,
           email: user.email,
-          sessionVersion: user.sessionVersion
+          sessionVersion: user.sessionVersion,
         };
       },
     }),
@@ -76,12 +79,12 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     },
 
     async session({ session, token }: { session: Session; token: JWT }) {
-      const userId = token.userId
+      const userId = token.userId;
       if (userId) {
         session.user = {
           id: userId as string,
           email: token.email as string,
-          sessionVersion: token.sessionVersion as number        
+          sessionVersion: token.sessionVersion as number,
         };
       }
       return session;

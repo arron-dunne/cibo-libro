@@ -10,7 +10,6 @@ import { logout } from "@/app/actions/logout";
 const navItems: NavLinkType[] = ["home", "all", "new", "import", "settings"];
 
 export function MobileMenu() {
-  
   const [isOpen, setIsOpen] = useState(false);
   const closeMenu = () => setIsOpen(false);
 
@@ -26,15 +25,15 @@ export function MobileMenu() {
         <span className="hidden sm:block lg:hidden">Menu</span>
       </button>
 
-      {isOpen &&
+      {isOpen && (
         <>
           {
             // black background
             typeof document !== "undefined" &&
-            createPortal(
-              <div className="fixed inset-x-0 top-0 bottom-0 z-8 bg-black/60 backdrop-blur-sm px-4 pb-6 sm:hidden" />,
-              document.body
-            )
+              createPortal(
+                <div className="fixed inset-x-0 top-0 bottom-0 z-8 bg-black/60 backdrop-blur-sm px-4 pb-6 sm:hidden" />,
+                document.body,
+              )
           }
           <div className="fixed top-16 left-0 w-full px-4">
             <div
@@ -74,7 +73,7 @@ export function MobileMenu() {
             </div>
           </div>
         </>
-      }
+      )}
     </>
   );
 }

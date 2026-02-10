@@ -4,7 +4,11 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { signPut } from "@/lib/images/r2";
-import { MAX_SIZE_BYTES, ALLOWED_TYPES, type AllowedType } from "@/lib/images/constants";
+import {
+  MAX_SIZE_BYTES,
+  ALLOWED_TYPES,
+  type AllowedType,
+} from "@/lib/images/constants";
 import { auth } from "@/lib/auth/auth";
 import { prisma } from "@/lib/prisma";
 
@@ -40,7 +44,10 @@ export async function POST(req: Request) {
 
     // Paranoia: ensure the signer actually produced a user-scoped key
     if (!isUserScopedKey(key, userId)) {
-      return NextResponse.json({ error: "Unsafe key generated" }, { status: 500 });
+      return NextResponse.json(
+        { error: "Unsafe key generated" },
+        { status: 500 },
+      );
     }
 
     // Persist issuance for provenance/authZ/GC
@@ -65,15 +72,21 @@ export async function POST(req: Request) {
         requiredHeaders, // e.g. { "Content-Type": "image/jpeg" }
         maxBytes: MAX_SIZE_BYTES,
       },
-      { status: 200 }
+      { status: 200 },
     );
   } catch (err) {
     if (err instanceof z.ZodError) {
-      return NextResponse.json({ error: "Invalid input", details: z.treeifyError(err) }, { status: 400 });
+      return NextResponse.json(
+        { error: "Invalid input", details: z.treeifyError(err) },
+        { status: 400 },
+      );
     }
     // Optional: handle Prisma unique errors gracefully if you ever reuse keys
     // if ((err as any)?.code === "P2002") { ... }
 
-    return NextResponse.json({ error: (err as Error)?.message ?? "Server error" }, { status: 500 });
+    return NextResponse.json(
+      { error: (err as Error)?.message ?? "Server error" },
+      { status: 500 },
+    );
   }
 }

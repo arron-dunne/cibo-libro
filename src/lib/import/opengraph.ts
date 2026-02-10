@@ -16,7 +16,8 @@ export async function extractOpenGraph(html: string): Promise<OpenGraphMeta> {
     $(`meta[name="${prop}"]`).attr("content") ||
     undefined;
 
-  const title = get("og:title") || $("title").first().text().trim() || undefined;
+  const title =
+    get("og:title") || $("title").first().text().trim() || undefined;
   const description = get("og:description") || undefined;
 
   const rawImage = get("og:image");

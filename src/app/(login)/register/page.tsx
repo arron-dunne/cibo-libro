@@ -1,22 +1,19 @@
-import { handleRegister } from "./actions"
+import { handleRegister } from "./actions";
 import { SubmitButton } from "../components/SubmitButton";
 import { CircleAlert } from "lucide-react";
 
 export default async function RegisterPage({
-  searchParams
+  searchParams,
 }: {
-  searchParams: Promise<{ error: string }>
+  searchParams: Promise<{ error: string }>;
 }) {
-
-  const error = await searchParams.then(params => params.error) ?? null;
+  const error = (await searchParams.then((params) => params.error)) ?? null;
 
   return (
     <>
       {/* Header */}
       <header className="text-center">
-        <h1 className="text-4xl font-semibold">
-          Create your account
-        </h1>
+        <h1 className="text-4xl font-semibold">Create your account</h1>
         <p className="mt-1 text-sm text-gray-600">
           Get started with your new digital cookbook.
         </p>
@@ -36,7 +33,10 @@ export default async function RegisterPage({
       {/* Form */}
       <form action={handleRegister} className="mt-6 space-y-5">
         <div>
-          <label htmlFor="email" className="mb-1 block text-sm font-medium text-gray-800">
+          <label
+            htmlFor="email"
+            className="mb-1 block text-sm font-medium text-gray-800"
+          >
             Email
           </label>
           <input
@@ -59,7 +59,10 @@ export default async function RegisterPage({
         </div>
 
         <div>
-          <label htmlFor="password" className="mb-1 block text-sm font-medium text-gray-800">
+          <label
+            htmlFor="password"
+            className="mb-1 block text-sm font-medium text-gray-800"
+          >
             Password (at least 8 characters)
           </label>
           <input
@@ -78,7 +81,10 @@ export default async function RegisterPage({
         </div>
 
         <div>
-          <label htmlFor="confirm-password" className="mb-1 block text-sm font-medium text-gray-800">
+          <label
+            htmlFor="confirm-password"
+            className="mb-1 block text-sm font-medium text-gray-800"
+          >
             Confirm Password
           </label>
           <input
@@ -119,7 +125,7 @@ export default async function RegisterPage({
             Login
           </a>
         </div>
-      </form >
+      </form>
     </>
   );
 }

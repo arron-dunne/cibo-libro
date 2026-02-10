@@ -2,9 +2,12 @@ import Link from "next/link";
 import { ResetPasswordForm } from "./ResetPasswordForm";
 import { ArrowLeft } from "lucide-react";
 
-export default async function ResetPasswordPage({ searchParams }: { searchParams: Promise<{ token?: string }> }) {
-
-  const token = await searchParams.then(sp => sp.token || "");
+export default async function ResetPasswordPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ token?: string }>;
+}) {
+  const token = await searchParams.then((sp) => sp.token || "");
 
   return (
     <div className="relative text-center">
@@ -18,9 +21,7 @@ export default async function ResetPasswordPage({ searchParams }: { searchParams
       </Link>
 
       <h2 className="mt-4 text-xl font-bold text-gray-900">Reset Password</h2>
-      <p className="mt-2 text-sm text-gray-500">
-        Choose a new password
-      </p>
+      <p className="mt-2 text-sm text-gray-500">Choose a new password</p>
 
       <ResetPasswordForm token={token} />
 
@@ -31,5 +32,5 @@ export default async function ResetPasswordPage({ searchParams }: { searchParams
         Request another reset email
       </Link>
     </div>
-  )
+  );
 }

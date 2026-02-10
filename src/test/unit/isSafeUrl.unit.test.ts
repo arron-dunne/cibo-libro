@@ -6,9 +6,9 @@ import { isSafeUrl } from "@/lib/import/safeUrl";
 vi.mock("node:dns/promises", () => {
   return {
     default: {
-      lookup: vi.fn()
-    }
-  }
+      lookup: vi.fn(),
+    },
+  };
 });
 
 const mockLookup = vi.mocked(dns.lookup);
@@ -16,7 +16,6 @@ const mockLookup = vi.mocked(dns.lookup);
 beforeEach(() => {
   vi.clearAllMocks();
 });
-
 
 describe("allows valid public URLs", () => {
   test.each([
@@ -35,7 +34,6 @@ describe("allows valid public URLs", () => {
   });
 });
 
-
 describe("blocks illegal protocols", () => {
   test.each([
     "file:///etc/passwd",
@@ -49,7 +47,6 @@ describe("blocks illegal protocols", () => {
     expect(mockLookup).not.toHaveBeenCalled();
   });
 });
-
 
 describe("blocks illegal ports", () => {
   test.each([
@@ -65,7 +62,6 @@ describe("blocks illegal ports", () => {
   });
 });
 
-
 describe("blocks private and reserved IP ranges", () => {
   test.each([
     "127.0.0.1", // loopback
@@ -75,9 +71,7 @@ describe("blocks private and reserved IP ranges", () => {
     "169.254.169.254", // link-local / metadata
     "0.0.0.0", // unspecified
   ])("blocks %s", async (ip) => {
-    mockLookup.mockResolvedValue([
-      { address: ip, family: 4 },
-    ] as any);
+    mockLookup.mockResolvedValue([{ address: ip, family: 4 }] as any);
 
     const url = new URL("http://example.com");
     const result = await isSafeUrl(url);
@@ -86,12 +80,11 @@ describe("blocks private and reserved IP ranges", () => {
   });
 });
 
-
 describe("blocks mixed DNS results", () => {
   test("blocks when one IP is private and one is public", async () => {
     mockLookup.mockResolvedValue([
       { address: "93.184.216.34", family: 4 }, // public
-      { address: "127.0.0.1", family: 4 },     // private
+      { address: "127.0.0.1", family: 4 }, // private
     ] as any);
 
     const url = new URL("https://example.com");

@@ -53,3 +53,31 @@ jobs:
       - run: npm ci
 
       - run: npm run test:int -- --run
+
+  test-smoke:
+    name: E2E Smoke Tests
+    runs-on: ubuntu-latest
+    environment: preview
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: "npm"
+
+      - run: npm ci
+
+      - name: Build
+        run: npm run build
+
+      - name: Install playwright
+        run: npx playwright install --with-deps chromium
+
+      - name: Migrate DB
+        run: npx prisma migrate deploy
+
+      # Playwright will start the server via playwright.config.ts (webServer)
+      - name: Run smoke tests
+        run: npm run test:e2e

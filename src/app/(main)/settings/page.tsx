@@ -1,12 +1,18 @@
 import { redirect } from "next/navigation";
 import { auth } from "@/lib/auth/auth";
-import { ArrowUpFromLine, CircleUserRound, LockKeyhole, ShieldAlert } from "lucide-react";
+import {
+  ArrowUpFromLine,
+  CircleUserRound,
+  LockKeyhole,
+  ShieldAlert,
+} from "lucide-react";
 import ChangePasswordModal from "./ChangePasswordModal";
 
 export default async function SettingsPage() {
-
   const session = await auth();
-  if (!session?.user) { redirect("/login"); }
+  if (!session?.user) {
+    redirect("/login");
+  }
 
   const email = session.user.email ?? "Unknown";
 
@@ -16,10 +22,12 @@ export default async function SettingsPage() {
         <p className="text-sm uppercase tracking-wide text-orange-500 font-semibold">
           Settings
         </p>
-        <h1 className="mt-2 text-3xl font-bold text-orange-900">Your account</h1>
+        <h1 className="mt-2 text-3xl font-bold text-orange-900">
+          Your account
+        </h1>
         <p className="mt-2 text-gray-600">
-          Manage the essentials for your Cibo Libro profile. Some features are on
-          the way, so we&apos;ve included placeholders for now.
+          Manage the essentials for your Cibo Libro profile. Some features are
+          on the way, so we&apos;ve included placeholders for now.
         </p>
       </header>
 
@@ -31,7 +39,9 @@ export default async function SettingsPage() {
               <CircleUserRound />
             </div>
             <div>
-              <h2 className="text-2xl font-semibold text-gray-900">Account Details</h2>
+              <h2 className="text-2xl font-semibold text-gray-900">
+                Account Details
+              </h2>
               {/* <p className="text-sm text-gray-500">Used for login and notifications</p> */}
             </div>
           </div>
@@ -48,7 +58,9 @@ export default async function SettingsPage() {
           <p className="mt-2 text-xs text-gray-500">
             To change your email, contact support so we can verify ownership.
           </p>
-          <label className="ml-1 mt-4 block text-sm font-medium text-gray-600">Password</label>
+          <label className="ml-1 mt-4 block text-sm font-medium text-gray-600">
+            Password
+          </label>
           <ChangePasswordModal />
         </div>
 
@@ -63,8 +75,8 @@ export default async function SettingsPage() {
             </div>
           </div>
           <p className="mt-4 text-sm text-gray-600">
-            We&apos;re finishing up the password change flow. For now, reach out to
-            support and we&apos;ll help you reset your password.
+            We&apos;re finishing up the password change flow. For now, reach out
+            to support and we&apos;ll help you reset your password.
           </p>
           <button
             disabled
@@ -82,13 +94,17 @@ export default async function SettingsPage() {
               <ArrowUpFromLine />
             </div>
             <div>
-              <h2 className="text-lg font-semibold text-gray-900">Export recipes</h2>
-              <p className="text-sm text-gray-500">Download all your delicious work</p>
+              <h2 className="text-lg font-semibold text-gray-900">
+                Export recipes
+              </h2>
+              <p className="text-sm text-gray-500">
+                Download all your delicious work
+              </p>
             </div>
           </div>
           <p className="mt-4 text-sm text-gray-600">
-            Soon you&apos;ll be able to export every recipe as a shareable file. Until
-            then, we can prep an export manually—just ping support.
+            Soon you&apos;ll be able to export every recipe as a shareable file.
+            Until then, we can prep an export manually—just ping support.
           </p>
           <button
             disabled
@@ -104,13 +120,18 @@ export default async function SettingsPage() {
               <ShieldAlert />
             </div>
             <div>
-              <h2 className="text-lg font-semibold text-gray-900">Danger zone</h2>
-              <p className="text-sm text-gray-500">Account deletion &amp; privacy</p>
+              <h2 className="text-lg font-semibold text-gray-900">
+                Danger zone
+              </h2>
+              <p className="text-sm text-gray-500">
+                Account deletion &amp; privacy
+              </p>
             </div>
           </div>
           <p className="mt-4 text-sm text-gray-600">
-            Need to delete your account or remove data? We&apos;ll add a one-click option
-            soon. In the meantime, send us a message and we&apos;ll take care of it.
+            Need to delete your account or remove data? We&apos;ll add a
+            one-click option soon. In the meantime, send us a message and
+            we&apos;ll take care of it.
           </p>
           <button
             disabled

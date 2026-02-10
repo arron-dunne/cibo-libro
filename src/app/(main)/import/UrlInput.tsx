@@ -4,18 +4,20 @@ import { useFormStatus } from "react-dom";
 import { ArrowRight, ClipboardPaste, Loader2 } from "lucide-react";
 import { useRef } from "react";
 
-
 export function UrlInput() {
-
   const inputRef = useRef<HTMLInputElement | null>(null);
 
   return (
     <div className="w-full flex flex-col md:flex-row gap-6 md:gap-4 items-center">
-      <div className="w-full flex gap-4 items-center justify-between px-5 py-3 rounded-full overflow-hidden
+      <div
+        className="w-full flex gap-4 items-center justify-between px-5 py-3 rounded-full overflow-hidden
             border border-gray-200 bg-white text-lg text-gray-900 placeholder:text-gray-400
             focus-within:outline-2 focus-within:outline-blue-500 focus-within:outline-solid"
       >
-        <button type="button" title="Paste from clipboard" className="cursor-pointer" 
+        <button
+          type="button"
+          title="Paste from clipboard"
+          className="cursor-pointer"
           onClick={async () => {
             const text = await navigator.clipboard.readText();
             if (!inputRef.current) return;
@@ -41,9 +43,8 @@ export function UrlInput() {
       </div>
       <SubmitButton />
     </div>
-  )
+  );
 }
-
 
 function SubmitButton() {
   const { pending } = useFormStatus();
@@ -55,20 +56,23 @@ function SubmitButton() {
       aria-busy={pending}
       aria-live="polite"
       className={`w-full md:w-48 flex gap-2 items-center justify-center rounded-full bg-linear-to-br from-orange-500 to-rose-500 px-6 py-2 text-lg font-bold text-white shadow-sm 
-        ${pending ? "cursor-wait brightness-90" : 
-          "hover:brightness-90 active:brightness-75 cursor-pointer"}`
-      }
+        ${
+          pending
+            ? "cursor-wait brightness-90"
+            : "hover:brightness-90 active:brightness-75 cursor-pointer"
+        }`}
     >
-      { pending ? 
+      {pending ? (
         <>
           Importing
           <Loader2 size={20} className="animate-spin" />
-        </> : 
+        </>
+      ) : (
         <>
           Import
           <ArrowRight size={20} aria-hidden="true" />
         </>
-      }
+      )}
     </button>
-  )
+  );
 }

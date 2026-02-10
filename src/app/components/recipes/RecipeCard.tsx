@@ -1,40 +1,37 @@
 "use client";
 
 import Link from "next/link";
-import { RecipeImage } from "./RecipeImage"
+import { RecipeImage } from "./RecipeImage";
 import { getHostname } from "@/lib/hostname";
 import { LinkIcon } from "lucide-react";
 
 export type RecipeCardProps = {
-  title: string,         // required
-  slug: string,          // required
-  description?: string,
-  tags?: string[],
-  prepMins?: number,
-  cookMins?: number
-  servings?: number,
-  sourceUrl?: string,
-  imageKey?: string,
-  imageExternalUrl?: string
-}
+  title: string; // required
+  slug: string; // required
+  description?: string;
+  tags?: string[];
+  prepMins?: number;
+  cookMins?: number;
+  servings?: number;
+  sourceUrl?: string;
+  imageKey?: string;
+  imageExternalUrl?: string;
+};
 
 export function RecipeCard({ recipe }: { recipe: RecipeCardProps }) {
-
   // const minutes = ((recipe.prepMins ?? 0) + (recipe.cookMins ?? 0)) || undefined;
-  const href = `/view/${recipe.slug}`
+  const href = `/view/${recipe.slug}`;
 
   return (
     <article className="relative w-full aspect-square lg:aspect-[0.7] flex flex-col overflow-hidden rounded-2xl border border-zinc-200 bg-white shadow-lg transition hover:scale-105 cursor-pointer">
-
       {/* Make whole card link */}
       <Link
         href={href}
         aria-label={`Open ${recipe.title}`}
         className="w-full h-full"
       >
-
         {/* Source URL */}
-        {recipe.sourceUrl &&
+        {recipe.sourceUrl && (
           <Link
             href={recipe.sourceUrl}
             target="_blank"
@@ -45,9 +42,8 @@ export function RecipeCard({ recipe }: { recipe: RecipeCardProps }) {
           >
             <LinkIcon size={16} />
             <p className="text-sm">{getHostname(recipe.sourceUrl)}</p>
-
           </Link>
-        }
+        )}
 
         {/* Picture */}
         <div className="w-full h-3/5 overflow-hidden bg-zinc-100">
@@ -61,12 +57,19 @@ export function RecipeCard({ recipe }: { recipe: RecipeCardProps }) {
         {/* Content */}
         <div className="px-4 py-3 h-2/5 flex flex-col justify-between">
           <div>
-            {recipe.title === "" ?
-              <h2 className="line-clamp-1 text-xl font-bold italic text-zinc-400">Untitled</h2> :
-              <h2 className="line-clamp-1 text-xl font-bold text-zinc-900">{recipe.title}</h2>
-            }
+            {recipe.title === "" ? (
+              <h2 className="line-clamp-1 text-xl font-bold italic text-zinc-400">
+                Untitled
+              </h2>
+            ) : (
+              <h2 className="line-clamp-1 text-xl font-bold text-zinc-900">
+                {recipe.title}
+              </h2>
+            )}
             {recipe.description && (
-              <p className="mt-1 line-clamp-2 text-sm text-zinc-600">{recipe.description}</p>
+              <p className="mt-1 line-clamp-2 text-sm text-zinc-600">
+                {recipe.description}
+              </p>
             )}
           </div>
           <div className="flex items-center gap-2 text-sm text-zinc-600">

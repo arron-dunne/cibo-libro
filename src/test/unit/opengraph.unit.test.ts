@@ -14,9 +14,7 @@ beforeEach(() => {
   mockIsSafeUrl.mockResolvedValue(true);
 });
 
-
 describe("extracts OG properties", () => {
-
   it("extracts title, description and image", async () => {
     const html = `<html><head>
       <meta property="og:title" content="Pasta Recipe" />
@@ -67,9 +65,7 @@ describe("extracts OG properties", () => {
   });
 });
 
-
 describe("returns undefined for missing or empty tags", () => {
-
   it("returns all undefined when no OG tags exist", async () => {
     const html = `<html><head></head><body></body></html>`;
 
@@ -103,9 +99,7 @@ describe("returns undefined for missing or empty tags", () => {
   });
 });
 
-
 describe("description extraction", () => {
-
   it("extracts a short description", async () => {
     const html = `<head>
       <meta property="og:description" content="Short description" />
@@ -129,9 +123,7 @@ describe("description extraction", () => {
   });
 });
 
-
 describe("image URL safety checking", () => {
-
   it("includes image when isSafeUrl returns true", async () => {
     mockIsSafeUrl.mockResolvedValue(true);
     const html = `<head>
@@ -166,7 +158,6 @@ describe("image URL safety checking", () => {
     expect(mockIsSafeUrl).not.toHaveBeenCalled();
   });
 
-
   it("does not include siteName in the result", async () => {
     const html = `<head>
     <meta property="og:site_name" content="Example Site" />
@@ -177,6 +168,5 @@ describe("image URL safety checking", () => {
 
     expect(og).not.toHaveProperty("siteName");
     expect(og.title).toBe("A Title");
-
   });
 });

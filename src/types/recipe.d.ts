@@ -15,7 +15,7 @@ declare global {
     ingredients?: string[];
     steps?: string[];
     tags?: string[];
-    note?: string
+    note?: string;
     sourceUrl?: string | null;
     slug: string;
     isPublic?: boolean;
@@ -23,7 +23,6 @@ declare global {
     createdAt?: Date;
     updatedAt?: Date;
   }
-
 }
 
 // Recipe used by RecipeForm (not all recipe fields)
@@ -43,7 +42,7 @@ interface RecipeFormRecipe {
 
 // Response object returned by server actions handling recipe form submissions
 interface RecipeFormActionResponse {
-  success: boolean, 
-  slug?: string, 
-  error?: string
+  success: boolean;
+  slug?: string;
+  error?: string;
 }

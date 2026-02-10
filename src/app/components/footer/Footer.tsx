@@ -1,9 +1,9 @@
-import Image from "next/image"
-import Link from "next/link"
+import Image from "next/image";
+import Link from "next/link";
 
 export function Footer() {
   return (
-    <footer className="mt-12 border-t border-white/30 bg-white/10 py-8 text-white backdrop-blur" >
+    <footer className="mt-12 border-t border-white/30 bg-white/10 py-8 text-white backdrop-blur">
       <div className="mx-auto w-[min(1150px,95%)] flex flex-wrap items-center justify-between gap-4">
         <div className="flex items-center gap-3">
           <Image
@@ -15,14 +15,26 @@ export function Footer() {
           />
         </div>
         <nav className="flex flex-wrap gap-4 text-sm">
-          <Link className="hover:underline" href="/about">About</Link>
-          <Link className="hover:underline" href="/terms">Terms of Use</Link>
-          <Link className="hover:underline" href="/privacy">Privacy Policy</Link>
-          <Link className="hover:underline" href="/contact">Contact</Link>
-          <Link className="hover:underline" href="/support">Support</Link>
+          <Link className="hover:underline" href="/about">
+            About
+          </Link>
+          <Link className="hover:underline" href="/terms">
+            Terms of Use
+          </Link>
+          <Link className="hover:underline" href="/privacy">
+            Privacy Policy
+          </Link>
+          <Link className="hover:underline" href="/contact">
+            Contact
+          </Link>
+          <Link className="hover:underline" href="/support">
+            Support
+          </Link>
         </nav>
-        <div className="text-xs/6 opacity-90">© {new Date().getFullYear()} cibo libro. All rights reserved.</div>
+        <div className="text-xs/6 opacity-90">
+          © {new Date().getFullYear()} cibo libro. All rights reserved.
+        </div>
       </div>
     </footer>
-  )
+  );
 }

@@ -1,4 +1,13 @@
-import { Bug, ChevronRight, Copyright, FileText, Lightbulb, Lock, LucideProps, MessageCircle } from "lucide-react"
+import {
+  Bug,
+  ChevronRight,
+  Copyright,
+  FileText,
+  Lightbulb,
+  Lock,
+  LucideProps,
+  MessageCircle,
+} from "lucide-react";
 import Link from "next/link";
 
 export default function SupportPage() {
@@ -8,27 +17,26 @@ export default function SupportPage() {
         Get in touch
       </p>
       <div className="flex flex-col mx-auto max-w-md md:max-w-none md:flex-row gap-4 md:gap-12 items-center justify-center">
-        <PrimaryLink name="Feedback"/>
-        <PrimaryLink name="Issues"/>
-        <PrimaryLink name="General"/>
+        <PrimaryLink name="Feedback" />
+        <PrimaryLink name="Issues" />
+        <PrimaryLink name="General" />
       </div>
 
       <p className="mt-14 mb-6 text-center text-4xl text-white font-extrabold tracking-tighter">
         More Information
       </p>
       <div className="max-w-md mx-auto flex flex-col gap-4 items-center">
-        <SecondaryLink name="Terms of Service"/>
-        <SecondaryLink name="Privacy Policy"/>
-        <SecondaryLink name="Copyright Protection"/>
+        <SecondaryLink name="Terms of Service" />
+        <SecondaryLink name="Privacy Policy" />
+        <SecondaryLink name="Copyright Protection" />
       </div>
     </div>
-  )
+  );
 }
 
-function PrimaryLink({name}: {name: string}) {
-  
-  let href : string | undefined;
-  let Icon : React.ComponentType<LucideProps>; 
+function PrimaryLink({ name }: { name: string }) {
+  let href: string | undefined;
+  let Icon: React.ComponentType<LucideProps>;
 
   switch (name) {
     case "Feedback":
@@ -36,17 +44,17 @@ function PrimaryLink({name}: {name: string}) {
       Icon = Lightbulb;
       break;
     case "Issues":
-      href = "/support/issues"
+      href = "/support/issues";
       Icon = Bug;
       break;
     case "General":
     default:
-      href = "/support/contact"
+      href = "/support/contact";
       Icon = MessageCircle;
   }
 
   return (
-    <Link 
+    <Link
       className="w-full md:aspect-square px-6 py-4 rounded-3xl shadow-lg 
         flex md:flex-col items-center justify-start md:justify-center gap-4
       bg-white/70 backdrop-blur-sm border border-white/80 
@@ -55,17 +63,16 @@ function PrimaryLink({name}: {name: string}) {
         transition-transform md:hover:scale-110 md:active:scale-105"
       href={href}
     >
-      <Icon className="w-6 md:w-20 md:h-20"/>
+      <Icon className="w-6 md:w-20 md:h-20" />
       <div className="w-full flex items-center gap-2 justify-between md:justify-center">
         <p className="text-xl">{name}</p>
         <ChevronRight />
       </div>
     </Link>
-  )
+  );
 }
 
-function SecondaryLink({name}: {name: string}) {
-  
+function SecondaryLink({ name }: { name: string }) {
   let href: string;
   let Icon: React.ComponentType<LucideProps>;
 
@@ -83,19 +90,19 @@ function SecondaryLink({name}: {name: string}) {
       href = "/support/copyright";
       Icon = Copyright;
   }
-  
+
   return (
-    <Link 
-      href={href} 
+    <Link
+      href={href}
       className="w-full flex justify-between px-6 py-4 rounded-3xl
       bg-linear-to-r from-slate-200 to-slate-300 border border-white/90
       hover:brightness-90 active:brightness-75"
     >
       <div className="flex gap-4">
-        <Icon size={24}/>
+        <Icon size={24} />
         {name}
       </div>
       <ChevronRight />
     </Link>
-  )
+  );
 }

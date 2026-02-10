@@ -38,10 +38,7 @@ describe("extractInstructions", () => {
 
     const result = extractInstructions(input);
 
-    expect(result).toEqual([
-      "Preheat oven",
-      "Bake for 20 minutes",
-    ]);
+    expect(result).toEqual(["Preheat oven", "Bake for 20 minutes"]);
   });
 
   it("returns undefined when instructions are empty or invalid", () => {

@@ -1,4 +1,4 @@
-import Link from "next/link"
+import Link from "next/link";
 import { notFound } from "next/navigation";
 import { z } from "zod";
 import { Info, LinkIcon } from "lucide-react";
@@ -7,7 +7,6 @@ import { saveLinkCard } from "./actions";
 import { Tags } from "./Tags";
 import { SaveButton } from "./SaveButton";
 import { getHostname } from "@/lib/hostname";
-
 
 const ParamsSchema = z.object({
   url: z.url(),
@@ -26,7 +25,7 @@ export default async function Page({
     description?: string;
   }>;
 }) {
-  const params = await searchParams
+  const params = await searchParams;
 
   const parsed = ParamsSchema.safeParse({
     url: normalizeParam(params.url),
@@ -44,11 +43,15 @@ export default async function Page({
   return (
     <div className="mx-auto max-w-5xl flex flex-col gap-4 md:gap-8">
       <InfoBanner />
-      <PreviewCard title={title} url={url} imageUrl={imageUrl} description={description} />
+      <PreviewCard
+        title={title}
+        url={url}
+        imageUrl={imageUrl}
+        description={description}
+      />
     </div>
   );
 }
-
 
 function PreviewCard({
   title,
@@ -56,21 +59,21 @@ function PreviewCard({
   imageUrl,
   description,
 }: {
-  title: string,
-  url: string,
-  imageUrl?: string,
-  description?: string,
+  title: string;
+  url: string;
+  imageUrl?: string;
+  description?: string;
 }) {
-
   return (
-    <form action={saveLinkCard} className="rounded-3xl border border-white/70 bg-white/90 shadow-lg backdrop-blur overflow-hidden">
-
+    <form
+      action={saveLinkCard}
+      className="rounded-3xl border border-white/70 bg-white/90 shadow-lg backdrop-blur overflow-hidden"
+    >
       {/* Hidden inputs */}
       <input name="url" value={url} hidden readOnly />
       {imageUrl && <input name="imageUrl" value={imageUrl} hidden readOnly />}
 
       <div className="flex flex-col md:flex-row">
-
         {/* Image */}
         <div className="relative w-full md:w-2/5 shrink-0">
           <div className="h-full max-h-80 md:max-h-none aspect-auto overflow-hidden">
@@ -94,7 +97,9 @@ function PreviewCard({
         {/* Form fields */}
         <div className="flex-1 p-4 sm:p-6 flex flex-col gap-4">
           <div className="shrink-0">
-            <label htmlFor="title" className="text-sm font-semibold">Title</label>
+            <label htmlFor="title" className="text-sm font-semibold">
+              Title
+            </label>
             <input
               id="title"
               name="title"
@@ -104,7 +109,9 @@ function PreviewCard({
           </div>
 
           <div className="shrink-0">
-            <label htmlFor="description" className="text-sm font-semibold">Description</label>
+            <label htmlFor="description" className="text-sm font-semibold">
+              Description
+            </label>
             <textarea
               id="description"
               name="description"
@@ -119,11 +126,9 @@ function PreviewCard({
 
           <SaveButton />
         </div>
-
       </div>
-
     </form>
-  )
+  );
 }
 
 function InfoBanner() {
@@ -131,8 +136,12 @@ function InfoBanner() {
     <div className="max-w-4xl mx-auto rounded-3xl border border-white/70 bg-white/60 px-5 py-3.5 shadow backdrop-blur flex items-center gap-3">
       <Info size={24} className="text-rose-500 shrink-0" />
       <div>
-        <span className="font-semibold text-gray-900">We couldn&apos;t import this recipe. </span>
-        <span className="font-medium text-gray-600">You can still save it as a link in your cookbook.</span>
+        <span className="font-semibold text-gray-900">
+          We couldn&apos;t import this recipe.{" "}
+        </span>
+        <span className="font-medium text-gray-600">
+          You can still save it as a link in your cookbook.
+        </span>
       </div>
     </div>
   );

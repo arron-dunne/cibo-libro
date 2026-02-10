@@ -9,11 +9,12 @@ import { signGet } from "@/lib/images/r2";
 // --- Validation --------------------------------------------------------------
 const Body = z.object({
   key: z.string().min(3).max(512),
-  recipeId: z.uuid().optional(),   // optional, helps tighten auth for recipe views
+  recipeId: z.uuid().optional(), // optional, helps tighten auth for recipe views
 });
 
 // Only allow user-scoped keys we generate, and block path traversal.
-const SAFE_KEY_RE = /^user\/[a-zA-Z0-9_-]{10,}\/[a-f0-9-]{8,}\.(jpg|jpeg|png|webp)$/;
+const SAFE_KEY_RE =
+  /^user\/[a-zA-Z0-9_-]{10,}\/[a-f0-9-]{8,}\.(jpg|jpeg|png|webp)$/;
 
 // --- Handler -----------------------------------------------------------------
 export async function POST(req: Request) {
@@ -40,7 +41,7 @@ export async function POST(req: Request) {
   // If no recipeId is given, check to see if imageKey is attached to a recipe
   const recipeIdFromKey = await prisma.recipe.findUnique({
     where: { imageKey: key },
-    select: { id: true},
+    select: { id: true },
   });
 
   const finalRecipeId: string | null = recipeId ?? recipeIdFromKey?.id ?? null;
