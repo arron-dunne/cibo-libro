@@ -7,6 +7,7 @@ import {
   ArrowLeft,
   Heart,
   Link as LinkIcon,
+  ArrowRight,
 } from "lucide-react";
 import { RecipeImage } from "@/app/components/recipes/RecipeImage";
 import { deleteRecipe } from "./actions";
@@ -73,8 +74,8 @@ export default async function ViewRecipePage({
             target="_blank"
             aria-label="View original"
             className="absolute top-4 right-4 px-3 py-2 flex gap-2 items-center
-          bg-linear-to-br from-slate-200 to-slate-300 shadow
-          rounded-full text-slate-800 border border-white/80
+          bg-linear-to-br from-slate-100 to-slate-200
+          rounded-full text-slate-800 border border-slate-300
           cursor-pointer hover:brightness-90 active:brightness-75"
           >
             <LinkIcon size={20} />
@@ -93,73 +94,86 @@ export default async function ViewRecipePage({
 
         {/* Details */}
         <div className="w-full md:w-1/2 mt-8 p-5 md:p-8 flex flex-col justify-between">
-          <h1 className="text-2xl md:text-5xl font-extrabold leading-tight ">
-            {recipe.title}
-          </h1>
+          <div>
+            <h1 className="text-2xl md:text-5xl font-extrabold leading-tight ">
+              {recipe.title}
+            </h1>
 
-          {tags.length ? (
-            <div className="mt-3 flex flex-wrap gap-2">
-              {tags.map((tag) => (
-                <span
-                  key={tag}
-                  className="inline-flex items-center gap-1 rounded-full bg-orange-100 px-2 py-1 text-sm font-medium text-orange-700 text-nowrap"
-                >
-                  <span>{tag}</span>
-                </span>
-              ))}
+            {tags.length ? (
+              <div className="mt-3 flex flex-wrap gap-2">
+                {tags.map((tag) => (
+                  <span
+                    key={tag}
+                    className="inline-flex items-center gap-1 rounded-full bg-orange-100 px-2 py-1 text-sm font-medium text-orange-700 text-nowrap"
+                  >
+                    <span>{tag}</span>
+                  </span>
+                ))}
+              </div>
+            ) : (
+              <div className="mt-3 flex gap-2">
+                <span className="h-6 w-20 rounded-full bg-slate-100" />
+                <span className="h-6 w-14 rounded-full bg-slate-100" />
+              </div>
+            )}
+
+            {recipe.description ? (
+              <p className="mt-4 max-w-prose text-sm text-slate-600">
+                {recipe.description}
+              </p>
+            ) : (
+              <p className="mt-4 max-w-prose text-sm italic text-slate-400">
+                No description provided.
+              </p>
+            )}
+
+            <div className="mt-5 grid grid-cols-2 gap-2 sm:grid-cols-4">
+              <StatChip label="Prep" value={`${prep}m`} />
+              <StatChip label="Cook" value={`${cook}m`} />
+              <StatChip label="Total" value={`${total}m`} />
+              <StatChip label="Serves" value={String(recipe.servings ?? 1)} />
             </div>
-          ) : (
-            <div className="mt-3 flex gap-2">
-              <span className="h-6 w-20 rounded-full bg-slate-100" />
-              <span className="h-6 w-14 rounded-full bg-slate-100" />
-            </div>
-          )}
-
-          {recipe.description ? (
-            <p className="mt-4 max-w-prose text-sm text-slate-600">
-              {recipe.description}
-            </p>
-          ) : (
-            <p className="mt-4 max-w-prose text-sm italic text-slate-400">
-              No description provided.
-            </p>
-          )}
-
-          <div className="mt-5 grid grid-cols-2 gap-2 sm:grid-cols-4">
-            <StatChip label="Prep" value={`${prep}m`} />
-            <StatChip label="Cook" value={`${cook}m`} />
-            <StatChip label="Total" value={`${total}m`} />
-            <StatChip label="Serves" value={String(recipe.servings ?? 1)} />
           </div>
 
           {/* Button bar  */}
-          <div className="flex gap-2 mt-4">
-            {recipe.type != "EXTERNAL_LINK" && (
-              <Link
-                href={`/cook/${slug}`}
-                className="rounded-full items-center flex gap-2 bg-linear-to-r from-orange-500 to-orange-600 border border-slate-200 text-white text-sm font-semibold px-4 py-2 shadow cursor-pointer hover:brightness-90 active:brightness-75"
-              >
-                <ChefHat size={18} className="-rotate-12" />
-                <span>Start Cooking</span>
-              </Link>
-            )}
+          <div className="flex gap-2">
 
-            <div className="rounded-full items-center flex gap-2 bg-linear-to-r from-slate-50 to-slate-100 border border-slate-200 text-slate-800 text-sm font-semibold px-4 py-2 shadow cursor-pointer hover:brightness-90 active:brightness-75">
-              <Heart size={18} />
+            {/* TODO: refactor secondary button */}
+            <div
+              className="px-3 py-2 flex gap-2 items-center
+              bg-linear-to-br from-slate-100 to-slate-200
+              rounded-full text-slate-800 border border-slate-300
+              cursor-pointer hover:brightness-90 active:brightness-75"
+              >
+              <Heart size={20} />
               <span>Favourite</span>
             </div>
 
-            {recipe.type != "EXTERNAL_LINK" && (
-              <Link
-                href={`/edit/${slug}`}
-                className="rounded-full items-center flex gap-2 bg-linear-to-r from-slate-50 to-slate-100 border border-slate-200 text-slate-800 text-sm font-semibold px-4 py-2 shadow cursor-pointer hover:brightness-90 active:brightness-75"
-              >
-                <Pencil size={18} />
-                <span>Edit</span>
-              </Link>
-            )}
+            <Link
+              href={`/edit/${slug}`}
+              className="px-3 py-2 flex gap-2 items-center
+                bg-linear-to-br from-slate-100 to-slate-200
+                rounded-full text-slate-800 border border-slate-300
+                cursor-pointer hover:brightness-90 active:brightness-75"
+            >
+              <Pencil size={20} />
+              <span>Edit</span>
+            </Link>
 
             <DeleteButton slug={slug} action={deleteRecipe} />
+
+            {recipe.type != "EXTERNAL_LINK" && (
+              <Link
+                href={`/cook/${slug}`}
+                className="px-3 py-2 flex gap-3 items-center ml-auto
+                bg-linear-to-br from-orange-500 to-rose-500
+                rounded-full text-white font-bold border
+                cursor-pointer hover:brightness-90 active:brightness-75"
+              >
+                <ChefHat size={20} className="-rotate-12" />
+                <span>Start Cooking</span>
+              </Link>
+            )}
           </div>
         </div>
       </section>
