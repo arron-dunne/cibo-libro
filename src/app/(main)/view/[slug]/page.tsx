@@ -139,19 +139,19 @@ export default async function ViewRecipePage({
           <div className="mt-4 flex gap-2">
 
             {/* TODO: refactor secondary button */}
-            <div
-              className="px-3 py-2 flex gap-2 items-center
+            <button
+              className="px-3 h-11 flex gap-2 items-center
               bg-linear-to-br from-slate-100 to-slate-200
               rounded-full text-slate-800 border border-slate-300
               cursor-pointer hover:brightness-90 active:brightness-75"
               >
               <Heart size={20} />
               <span className="hidden lg:block">Favourite</span>
-            </div>
+            </button>
 
             <Link
               href={`/edit/${slug}`}
-              className="px-3 py-2 flex gap-2 items-center
+              className="px-3 h-11 flex gap-2 items-center
                 bg-linear-to-br from-slate-100 to-slate-200
                 rounded-full text-slate-800 border border-slate-300
                 cursor-pointer hover:brightness-90 active:brightness-75"
@@ -165,13 +165,13 @@ export default async function ViewRecipePage({
             {recipe.type != "EXTERNAL_LINK" && (
               <Link
                 href={`/cook/${slug}`}
-                className="px-3 py-2 flex gap-3 items-center ml-auto
+                className="px-3 h-11 flex gap-3 items-center ml-auto flex-nowrap
                 bg-linear-to-br from-orange-500 to-rose-500
                 rounded-full text-white font-bold border
                 cursor-pointer hover:brightness-90 active:brightness-75"
               >
-                <ChefHat size={20} className="-rotate-12" />
-                <span>Start Cooking</span>
+                <ChefHat size={20} className="-rotate-12 shrink-0" />
+                <span className="text-nowrap">Start Cooking</span>
               </Link>
             )}
           </div>
