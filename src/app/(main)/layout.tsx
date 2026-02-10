@@ -19,7 +19,7 @@ export default async function Layout({
     <>
       {/* Floating navbar */}
       <nav className="sticky top-4 mt-4 z-10">
-        <div className="mx-auto px-2 md:px-4 max-w-screen-xl">
+        <div className="mx-auto px-2 md:px-4 max-w-7xl">
           <div className="flex h-14 gap-2 rounded-full border border-white/80 bg-white/60 px-4 py-2 shadow backdrop-blur">
             {/* Logo */}
             <Link href="/" className="grow" aria-label="cibo libro home">
@@ -75,7 +75,7 @@ export default async function Layout({
       </nav>
 
       {/* Page container */}
-      <main className="z-0 mx-auto max-w-screen-xl py-8 px-4 md:px-8">
+      <main className="z-0 mx-auto max-w-7xl py-8 px-4 md:px-8">
         {" "}
         {children}
       </main>
