@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { auth } from "@/lib/auth/auth";
 import { prisma } from "@/lib/prisma";
 import {
   Pencil,
@@ -19,10 +20,12 @@ export default async function ViewRecipePage({
 }: {
   params: Promise<{ slug: string }>;
 }) {
-  const { slug }  = await params;
+  const session = await auth();
+
+  const { slug } = await params;
 
   const recipe = await prisma.recipe.findFirst({
-    where: { slug },
+    where: { slug, ownerId: session?.user.id },
     select: {
       title: true,
       type: true,
