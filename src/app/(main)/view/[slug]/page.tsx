@@ -8,6 +8,7 @@ import {
   Heart,
   Link as LinkIcon,
   ArrowRight,
+  TagIcon,
 } from "lucide-react";
 import { RecipeImage } from "@/app/components/recipes/RecipeImage";
 import { deleteRecipe } from "./actions";
@@ -66,7 +67,7 @@ export default async function ViewRecipePage({
       </Link>
 
       {/* Hero section */}
-      <section className="h-max md:h-120 relative mt-4 overflow-hidden rounded-4xl border border-white/60 bg-white shadow-2xl flex flex-col md:flex-row">
+      <section className="h-max relative mt-4 overflow-hidden rounded-4xl border border-white/60 bg-white shadow-2xl flex flex-col md:flex-row">
         {/* Source URL */}
         {recipe.sourceUrl && (
           <Link
@@ -84,27 +85,41 @@ export default async function ViewRecipePage({
         )}
 
         {/* Image */}
-        <div className="w-full md:w-1/2 h-full max-h-100 md:max-h-120 overflow-hidden">
-          <RecipeImage
-            imageKey={recipe.imageKey ?? undefined}
-            externalUrl={recipe.imageExternalUrl ?? undefined}
-            alt={recipe.title || "Recipe image"}
-          />
+        <div className="w-full md:w-1/2 max-h-100 md:max-h-none overflow-hidden md:relative">
+          <div className="md:absolute md:inset-0">
+            <RecipeImage
+              imageKey={recipe.imageKey ?? undefined}
+              externalUrl={recipe.imageExternalUrl ?? undefined}
+              alt={recipe.title || "Recipe image"}
+            />
+          </div>
         </div>
 
         {/* Details */}
-        <div className="w-full md:w-1/2 mt-8 p-5 md:p-8 flex flex-col justify-between">
+        <div className="w-full md:w-1/2 mt-4 md:mt-8 p-5 md:p-8 flex flex-col justify-between">
           <div>
             <h1 className="text-2xl md:text-5xl font-extrabold leading-tight ">
               {recipe.title}
             </h1>
 
+            {recipe.description ? (
+              <p className="mt-4 max-w-prose text-sm text-slate-600">
+                {recipe.description}
+              </p>
+            ) : (
+              <p className="mt-4 max-w-prose text-sm italic text-slate-400">
+                No description provided.
+              </p>
+            )}
+
             {tags.length ? (
-              <div className="mt-3 flex flex-wrap gap-2">
+              <div className="mt-4 flex items-center flex-wrap gap-2">
+                <TagIcon size={16} />
                 {tags.map((tag) => (
                   <span
                     key={tag}
-                    className="inline-flex items-center gap-1 rounded-full bg-orange-100 px-2 py-1 text-sm font-medium text-orange-700 text-nowrap"
+                    // className="inline-flex items-center gap-1 rounded-full bg-orange-100 px-2 py-1 text-sm font-medium text-orange-700 text-nowrap"
+                    className="inline-flex items-center rounded-full bg-linear-to-br from-orange-100 to-rose-100 text-rose-500 border border-rose-200 px-3 py-1 font-medium text-nowrap"
                   >
                     <span>{tag}</span>
                   </span>
@@ -117,17 +132,7 @@ export default async function ViewRecipePage({
               </div>
             )}
 
-            {recipe.description ? (
-              <p className="mt-4 max-w-prose text-sm text-slate-600">
-                {recipe.description}
-              </p>
-            ) : (
-              <p className="mt-4 max-w-prose text-sm italic text-slate-400">
-                No description provided.
-              </p>
-            )}
-
-            <div className="mt-5 grid grid-cols-2 gap-2 sm:grid-cols-4">
+            <div className="mt-6 flex flex-wrap gap-2 sm:grid-cols-4">
               <StatChip label="Prep" value={`${prep}m`} />
               <StatChip label="Cook" value={`${cook}m`} />
               <StatChip label="Total" value={`${total}m`} />
@@ -136,7 +141,7 @@ export default async function ViewRecipePage({
           </div>
 
           {/* Button bar  */}
-          <div className="mt-4 flex gap-2">
+          <div className="mt-6 flex gap-2">
             {/* TODO: refactor secondary button */}
             <button
               className="px-3 h-11 flex gap-2 items-center
@@ -230,34 +235,11 @@ function StepsSection({ steps }: { steps: string[] }) {
   );
 }
 
-function Card({
-  title,
-  children,
-  id,
-}: {
-  title: string;
-  children: React.ReactNode;
-  id?: string;
-}) {
-  return (
-    <section
-      id={id}
-      className="h-max overflow-hidden rounded-3xl border border-white/40 bg-white p-5 shadow-xl md:p-6"
-    >
-      <div className="mb-4 flex items-center gap-2">
-        <div className="h-2 w-2 rounded-full bg-orange-500" />
-        <h2 className="text-lg font-extrabold">{title}</h2>
-      </div>
-      {children}
-    </section>
-  );
-}
-
 function StatChip({ label, value }: { label: string; value: string }) {
   return (
-    <div className="grid grid-cols-[auto_1fr_auto] items-center gap-2 rounded-full border border-orange-200/70 bg-orange-50 px-3 py-1.5 text-xs font-semibold">
-      <span className="text-slate-600">{label}</span>
-      <span className="text-slate-900 col-start-3">{value}</span>
+    <div className="grow max-w-36 min-w-26 flex justify-between items-center gap-2 rounded-full border border-gray-200 px-3 py-1.5 text-sm font-semibold">
+      <span className="text-gray-500">{label}</span>
+      <span className="text-gray-800">{value}</span>
     </div>
   );
 }
