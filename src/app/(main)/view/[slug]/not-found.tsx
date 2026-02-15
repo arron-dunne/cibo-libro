@@ -9,7 +9,7 @@ export default function NotFound() {
       </p>
       <div className="mt-6">
         <Link
-          href="/recipes"
+          href="/all"
           className="rounded-full bg-orange-600 px-4 py-2 font-semibold text-white hover:bg-orange-700"
         >
           Back to your library

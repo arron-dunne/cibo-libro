@@ -19,10 +19,10 @@ export default async function ViewRecipePage({
 }: {
   params: Promise<{ slug: string }>;
 }) {
-  const slug = await params.then((p) => p.slug);
+  const { slug }  = await params;
 
   const recipe = await prisma.recipe.findFirst({
-    where: { slug: slug },
+    where: { slug },
     select: {
       title: true,
       type: true,
@@ -42,8 +42,8 @@ export default async function ViewRecipePage({
   if (!recipe) return notFound();
 
   // Normalize timing
-  const prep = Number(recipe.prepMins ?? 0);
-  const cook = Number(recipe.cookMins ?? 0);
+  const prep = recipe.prepMins ?? 0;
+  const cook = recipe.cookMins ?? 0;
   const total = prep + cook;
 
   return (
@@ -60,7 +60,7 @@ export default async function ViewRecipePage({
       </Link>
 
       {/* Hero section */}
-      <section className="h-max relative mt-4 overflow-hidden rounded-4xl border border-white/60 bg-white shadow-2xl flex flex-col md:flex-row">
+      <section className="relative mt-4 overflow-hidden rounded-4xl border border-white/60 bg-white shadow-2xl flex flex-col md:flex-row">
         {/* Source URL */}
         {recipe.sourceUrl && (
           <Link
@@ -113,7 +113,7 @@ export default async function ViewRecipePage({
                     key={tag}
                     className="inline-flex items-center rounded-full bg-linear-to-br from-orange-100 to-rose-100 text-rose-500 border border-rose-200 px-3 py-1 font-medium text-nowrap"
                   >
-                    <span>{tag}</span>
+                    {tag}
                   </span>
                 ))}
               </div>
@@ -124,7 +124,7 @@ export default async function ViewRecipePage({
               </div>
             )}
 
-            <div className="mt-6 flex flex-wrap gap-2 sm:grid-cols-4">
+            <div className="mt-6 flex flex-wrap gap-2">
               <StatChip label="Prep" value={`${prep}m`} />
               <StatChip label="Cook" value={`${cook}m`} />
               <StatChip label="Total" value={`${total}m`} />
@@ -158,7 +158,7 @@ export default async function ViewRecipePage({
 
             <DeleteButton slug={slug} action={deleteRecipe} />
 
-            {recipe.type != "EXTERNAL_LINK" && (
+            {recipe.type !== "EXTERNAL_LINK" && (
               <Link
                 href={`/cook/${slug}`}
                 className="px-3 h-11 flex gap-3 items-center ml-auto flex-nowrap
@@ -175,7 +175,7 @@ export default async function ViewRecipePage({
       </section>
 
       {/* Steps and Ingredients */}
-      {recipe.type != "EXTERNAL_LINK" && (
+      {recipe.type !== "EXTERNAL_LINK" && (
         <section className="mt-8 flex flex-col md:flex-row gap-8">
           <IngredientsSection ingredients={recipe.ingredients} />
           <StepsSection steps={recipe.steps} />
