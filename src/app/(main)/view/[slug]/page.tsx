@@ -7,7 +7,6 @@ import {
   ArrowLeft,
   Heart,
   Link as LinkIcon,
-  ArrowRight,
   TagIcon,
 } from "lucide-react";
 import { RecipeImage } from "@/app/components/recipes/RecipeImage";
@@ -42,13 +41,7 @@ export default async function ViewRecipePage({
 
   if (!recipe) return notFound();
 
-  // Normalize shapes
-  const tags: string[] = Array.isArray(recipe.tags) ? recipe.tags : [];
-  const ingredients: string[] = Array.isArray(recipe.ingredients)
-    ? recipe.ingredients
-    : [];
-  const steps: string[] = Array.isArray(recipe.steps) ? recipe.steps : [];
-
+  // Normalize timing
   const prep = Number(recipe.prepMins ?? 0);
   const cook = Number(recipe.cookMins ?? 0);
   const total = prep + cook;
@@ -112,13 +105,12 @@ export default async function ViewRecipePage({
               </p>
             )}
 
-            {tags.length ? (
+            {recipe.tags.length ? (
               <div className="mt-4 flex items-center flex-wrap gap-2">
                 <TagIcon size={16} />
-                {tags.map((tag) => (
+                {recipe.tags.map((tag) => (
                   <span
                     key={tag}
-                    // className="inline-flex items-center gap-1 rounded-full bg-orange-100 px-2 py-1 text-sm font-medium text-orange-700 text-nowrap"
                     className="inline-flex items-center rounded-full bg-linear-to-br from-orange-100 to-rose-100 text-rose-500 border border-rose-200 px-3 py-1 font-medium text-nowrap"
                   >
                     <span>{tag}</span>
