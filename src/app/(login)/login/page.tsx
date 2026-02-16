@@ -77,14 +77,14 @@ export default async function LoginPage({
           />
         </div>
 
-        <div className="flex items-center justify-between text-sm">
+        <div className="flex items-center justify-between text-gray-600">
           <a
             href="/forgot"
-            className="text-gray-500 hover:underline transition hover:text-gray-700"
+            className=" hover:underline transition hover:text-gray-700"
           >
             Forgot password
           </a>
-          <span className="text-gray-500">
+          <span className="text-gray-600">
             Need help?{" "}
             <a href="/support" className="text-orange-700 hover:underline">
               Support
@@ -94,9 +94,9 @@ export default async function LoginPage({
 
         <SubmitButton text="Login" pendingText="Logging in" />
 
-        <div className="flex items-center justify-center gap-2 text-sm text-gray-600">
+        <div className="flex items-center justify-center gap-2 text-gray-600">
           New here?
-          <a href="/register" className="font-medium text-orange-700 underline">
+          <a href="/register" className="font-medium text-orange-700 hover:underline">
             Create an account
           </a>
         </div>
