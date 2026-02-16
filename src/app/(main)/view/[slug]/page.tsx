@@ -1,22 +1,32 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { auth } from "@/lib/auth/auth";
 import { prisma } from "@/lib/prisma";
-import { Pencil, ChefHat, ArrowLeft, Heart, ExternalLink } from "lucide-react";
+import {
+  Pencil,
+  ChefHat,
+  ArrowLeft,
+  Heart,
+  Link as LinkIcon,
+  TagIcon,
+} from "lucide-react";
 import { RecipeImage } from "@/app/components/recipes/RecipeImage";
 import { deleteRecipe } from "./actions";
 import { DeleteButton } from "./DeleteButton";
+import { getHostname } from "@/lib/hostname";
 
 export default async function ViewRecipePage({
   params,
 }: {
   params: Promise<{ slug: string }>;
 }) {
-  const slug = await params.then((p) => p.slug);
+  const session = await auth();
+
+  const { slug } = await params;
 
   const recipe = await prisma.recipe.findFirst({
-    where: { slug: slug },
+    where: { slug, ownerId: session?.user.id },
     select: {
-      id: true,
       title: true,
       type: true,
       description: true,
@@ -34,87 +44,59 @@ export default async function ViewRecipePage({
 
   if (!recipe) return notFound();
 
-  // Normalize shapes
-  const tags: string[] = Array.isArray(recipe.tags) ? recipe.tags : [];
-  const ingredients: string[] = Array.isArray(recipe.ingredients)
-    ? recipe.ingredients
-    : [];
-  const steps: string[] = Array.isArray(recipe.steps) ? recipe.steps : [];
-
-  const prep = Number(recipe.prepMins ?? 0);
-  const cook = Number(recipe.cookMins ?? 0);
+  // Normalize timing
+  const prep = recipe.prepMins ?? 0;
+  const cook = recipe.cookMins ?? 0;
   const total = prep + cook;
-
-  // pretty domain for the badge
-  const domain = recipe.sourceUrl
-    ? new URL(recipe.sourceUrl).hostname.replace(/^www\./, "")
-    : null;
 
   return (
     <>
-      {/* Hero section */}
-      <section className="relative mt-8 overflow-hidden rounded-3xl border border-white/40 bg-white shadow-2xl min-h-[50vh] flex">
-        {/* Back button */}
-        <Link
-          href="/all"
-          className="absolute top-4 left-4 z-10 flex items-center gap-2 px-2 py-1 rounded-full border border-white/70 text-sm text-slate-700 bg-linear-to-r from-slate-200 to-slate-300 shadow-lg cursor-pointer hover:brightness-90 active:brightness-75"
-        >
-          <ArrowLeft size={16} />
-          All Recipes
-        </Link>
+      {/* Back button */}
+      <Link
+        href="/all"
+        className="w-max flex items-center gap-3 text-lg font-semibold text-slate-900 cursor-pointer hover:brightness-90 active:brightness-75"
+      >
+        <div className="p-1.5 rounded-full border border-white/80 bg-linear-to-br from-slate-200 to-slate-300 shadow-lg">
+          <ArrowLeft size={20} />
+        </div>
+        All Recipes
+      </Link>
 
-        {/* View original */}
+      {/* Hero section */}
+      <section className="relative mt-4 overflow-hidden rounded-4xl border border-white/60 bg-white shadow-2xl flex flex-col md:flex-row">
+        {/* Source URL */}
         {recipe.sourceUrl && (
           <Link
             href={recipe.sourceUrl}
             target="_blank"
-            rel="noopener noreferrer"
-            aria-label={`View original on ${domain ?? "source site"}`}
-            className="absolute top-4 right-4 z-10 flex items-center gap-2 px-2 py-1 rounded-full border text-sm border-orange-200 bg-orange-50/80 text-orange-800 shadow-lg cursor-pointer hover:brightness-90 active:brightness-75"
+            aria-label="View original"
+            className="absolute top-4 right-4 px-3 py-2 flex gap-2 items-center
+          bg-linear-to-br from-slate-100 to-slate-200
+          rounded-full text-slate-800 border border-slate-300
+          cursor-pointer hover:brightness-90 active:brightness-75"
           >
-            <ExternalLink size={16} />
-            <div className="font-semibold">View Original</div>
-            <div className="text-xs bg-white/80 rounded-full px-2 py-0.5 text-orange-700 border border-orange-400/50">
-              {domain}
-            </div>
+            <LinkIcon size={20} />
+            <p className="text-sm">{getHostname(recipe.sourceUrl)}</p>
           </Link>
         )}
 
-        <div className="grid gap-0 md:grid-cols-[1.2fr_1fr]">
-          {/* Image */}
-          <div className="relative h-full overflow-hidden">
-            <div className="absolute inset-0 w-full h-full object-cover">
-              <RecipeImage
-                imageKey={recipe.imageKey ?? undefined}
-                externalUrl={recipe.imageExternalUrl ?? undefined}
-                alt={recipe.title || "Recipe image"}
-              />
-            </div>
+        {/* Image */}
+        <div className="w-full md:w-1/2 max-h-100 md:max-h-none overflow-hidden md:relative">
+          <div className="md:absolute md:inset-0">
+            <RecipeImage
+              imageKey={recipe.imageKey ?? undefined}
+              externalUrl={recipe.imageExternalUrl ?? undefined}
+              alt={recipe.title || "Recipe image"}
+            />
           </div>
+        </div>
 
-          {/* Title + meta */}
-          <div className="relative p-5 md:p-8 flex flex-col justify-center">
-            <h1 className="mt-8 text-3xl font-extrabold leading-tight md:text-5xl">
-              {recipe.title || "Untitled recipe"}
+        {/* Details */}
+        <div className="w-full md:w-1/2 mt-4 md:mt-8 p-5 md:p-8 flex flex-col justify-between">
+          <div>
+            <h1 className="text-2xl md:text-5xl font-extrabold leading-tight ">
+              {recipe.title}
             </h1>
-
-            {tags.length ? (
-              <div className="mt-3 flex flex-wrap gap-2">
-                {tags.map((tag) => (
-                  <span
-                    key={tag}
-                    className="inline-flex items-center gap-1 rounded-full bg-orange-100 px-2 py-1 text-sm font-medium text-orange-700 text-nowrap"
-                  >
-                    <span>{tag}</span>
-                  </span>
-                ))}
-              </div>
-            ) : (
-              <div className="mt-3 flex gap-2">
-                <span className="h-6 w-20 rounded-full bg-slate-100" />
-                <span className="h-6 w-14 rounded-full bg-slate-100" />
-              </div>
-            )}
 
             {recipe.description ? (
               <p className="mt-4 max-w-prose text-sm text-slate-600">
@@ -126,130 +108,133 @@ export default async function ViewRecipePage({
               </p>
             )}
 
-            <div className="mt-5 grid grid-cols-2 gap-2 sm:grid-cols-4">
+            {recipe.tags.length ? (
+              <div className="mt-4 flex items-center flex-wrap gap-2">
+                <TagIcon size={16} />
+                {recipe.tags.map((tag) => (
+                  <span
+                    key={tag}
+                    className="inline-flex items-center rounded-full bg-linear-to-br from-orange-100 to-rose-100 text-rose-500 border border-rose-200 px-3 py-1 font-medium text-nowrap"
+                  >
+                    {tag}
+                  </span>
+                ))}
+              </div>
+            ) : (
+              <div className="mt-3 flex gap-2">
+                <span className="h-6 w-20 rounded-full bg-slate-100" />
+                <span className="h-6 w-14 rounded-full bg-slate-100" />
+              </div>
+            )}
+
+            <div className="mt-6 flex flex-wrap gap-2">
               <StatChip label="Prep" value={`${prep}m`} />
               <StatChip label="Cook" value={`${cook}m`} />
               <StatChip label="Total" value={`${total}m`} />
               <StatChip label="Serves" value={String(recipe.servings ?? 1)} />
             </div>
+          </div>
 
-            {/* Button bar  */}
-            <div className="flex gap-2 mt-4">
-              {recipe.type != "EXTERNAL_LINK" && (
-                <Link
-                  href={`/cook/${slug}`}
-                  className="rounded-full items-center flex gap-2 bg-linear-to-r from-orange-500 to-orange-600 border border-slate-200 text-white text-sm font-semibold px-4 py-2 shadow cursor-pointer hover:brightness-90 active:brightness-75"
-                >
-                  <ChefHat size={18} className="-rotate-12" />
-                  <span>Start Cooking</span>
-                </Link>
-              )}
+          {/* Button bar  */}
+          <div className="mt-6 flex gap-2">
+            {/* TODO: refactor secondary button */}
+            <button
+              className="px-3 h-11 flex gap-2 items-center
+              bg-linear-to-br from-slate-100 to-slate-200
+              rounded-full text-slate-800 border border-slate-300
+              cursor-pointer hover:brightness-90 active:brightness-75"
+            >
+              <Heart size={20} />
+              <span className="hidden lg:block">Favourite</span>
+            </button>
 
-              <div className="rounded-full items-center flex gap-2 bg-linear-to-r from-slate-50 to-slate-100 border border-slate-200 text-slate-800 text-sm font-semibold px-4 py-2 shadow cursor-pointer hover:brightness-90 active:brightness-75">
-                <Heart size={18} />
-                <span>Favourite</span>
-              </div>
+            <Link
+              href={`/edit/${slug}`}
+              className="px-3 h-11 flex gap-2 items-center
+                bg-linear-to-br from-slate-100 to-slate-200
+                rounded-full text-slate-800 border border-slate-300
+                cursor-pointer hover:brightness-90 active:brightness-75"
+            >
+              <Pencil size={20} />
+              <span className="hidden lg:block">Edit</span>
+            </Link>
 
-              {recipe.type != "EXTERNAL_LINK" && (
-                <Link
-                  href={`/edit/${slug}`}
-                  className="rounded-full items-center flex gap-2 bg-linear-to-r from-slate-50 to-slate-100 border border-slate-200 text-slate-800 text-sm font-semibold px-4 py-2 shadow cursor-pointer hover:brightness-90 active:brightness-75"
-                >
-                  <Pencil size={18} />
-                  <span>Edit</span>
-                </Link>
-              )}
+            <DeleteButton slug={slug} action={deleteRecipe} />
 
-              <DeleteButton slug={slug} action={deleteRecipe} />
-            </div>
+            {recipe.type !== "EXTERNAL_LINK" && (
+              <Link
+                href={`/cook/${slug}`}
+                className="px-3 h-11 flex gap-3 items-center ml-auto flex-nowrap
+                bg-linear-to-br from-orange-500 to-rose-500
+                rounded-full text-white font-bold border
+                cursor-pointer hover:brightness-90 active:brightness-75"
+              >
+                <ChefHat size={20} className="-rotate-12 shrink-0" />
+                <span className="text-nowrap">Start Cooking</span>
+              </Link>
+            )}
           </div>
         </div>
       </section>
 
       {/* Steps and Ingredients */}
-      <section className="mt-8 grid items-start gap-6 md:grid-cols-[0.9fr_1.1fr]">
-        {/* Steps (left panel) */}
-        <div className="grid gap-6">
-          <Card title="Ingredients">
-            {ingredients.length ? (
-              <ul className="space-y-3">
-                {ingredients.map((it, idx) => (
-                  <li
-                    key={`ing-${idx}`}
-                    className="rounded-xl border border-orange-200/70 bg-white px-3 py-2 text-sm"
-                  >
-                    {it}
-                  </li>
-                ))}
-              </ul>
-            ) : (
-              <p className="text-sm text-slate-600">No ingredients.</p>
-            )}
-          </Card>
-
-          {/* <Card title="Notes">
-            <p className="text-sm text-slate-600">No notes yet.</p>
-          </Card>
-
-          <Card title="Serve with">
-            <p className="text-sm text-slate-600">Add sides or pairings.</p>
-          </Card> */}
-        </div>
-
-        {/* RIGHT COLUMN */}
-        <div className="grid gap-6">
-          <Card id="steps" title="Steps">
-            {steps.length ? (
-              <ol className="relative ml-3 space-y-6 before:absolute before:left-0 before:top-0 before:h-full before:w-1 before:rounded before:bg-linear-to-b before:from-orange-200 before:to-rose-200">
-                {steps.map((s, i) => (
-                  <li key={i} className="relative pl-6">
-                    <div className="absolute left-0 top-1 -translate-x-1/2 grid h-5 w-5 place-items-center rounded-full bg-orange-500 text-[11px] font-extrabold text-white shadow">
-                      {i + 1}
-                    </div>
-                    <p className="text-base leading-relaxed">{s}</p>
-                  </li>
-                ))}
-              </ol>
-            ) : (
-              <p className="text-sm text-slate-600">No steps yet.</p>
-            )}
-          </Card>
-        </div>
-      </section>
+      {recipe.type !== "EXTERNAL_LINK" && (
+        <section className="mt-8 flex flex-col md:flex-row gap-8">
+          <IngredientsSection ingredients={recipe.ingredients} />
+          <StepsSection steps={recipe.steps} />
+        </section>
+      )}
     </>
   );
 }
 
-/* ====== tiny SSR helpers (no client state) ====== */
-
-function Card({
-  title,
-  children,
-  id,
-}: {
-  title: string;
-  children: React.ReactNode;
-  id?: string;
-}) {
+function IngredientsSection({ ingredients }: { ingredients: string[] }) {
   return (
-    <section
-      id={id}
-      className="overflow-hidden rounded-3xl border border-white/40 bg-white p-5 shadow-xl md:p-6"
-    >
-      <div className="mb-4 flex items-center gap-2">
-        <div className="h-2 w-2 rounded-full bg-orange-500" />
-        <h2 className="text-lg font-extrabold">{title}</h2>
-      </div>
-      {children}
+    <section className="h-max w-full md:w-1/3 lg:w-2/5 rounded-4xl border border-white/60 bg-white shadow-xl p-6">
+      <h2 className="mb-4 ml-2 text-2xl font-extrabold">Ingredients</h2>
+      {ingredients.length ? (
+        <ul className="space-y-4">
+          {ingredients.map((ing, idx) => (
+            <li key={`ing-${idx}`} className="flex gap-2">
+              <div className="h-2 w-2 mt-2 shrink-0 rounded-full bg-orange-400" />
+              {ing}
+            </li>
+          ))}
+        </ul>
+      ) : (
+        <p className="text-sm text-slate-800">No ingredients.</p>
+      )}
+    </section>
+  );
+}
+
+function StepsSection({ steps }: { steps: string[] }) {
+  return (
+    <section className="h-max w-full md:w-2/3 lg:w-3/5 rounded-4xl border border-white/60 bg-white shadow-xl p-6">
+      <h2 className="mb-4 ml-2 text-2xl font-extrabold">Steps</h2>
+      {steps.length ? (
+        <ol className="relative space-y-6 before:absolute before:left-2.5 before:top-1 before:h-[98%] before:w-1 before:rounded before:bg-linear-to-b before:from-orange-200 before:to-rose-200">
+          {steps.map((s, i) => (
+            <li key={i} className="flex gap-4">
+              <div className="h-6 w-6 z-10 mt-0.5 text-center shrink-0 rounded-full bg-orange-500 font-extrabold text-white shadow">
+                {i + 1}
+              </div>
+              <p className="text-base leading-relaxed">{s}</p>
+            </li>
+          ))}
+        </ol>
+      ) : (
+        <p className="text-sm text-slate-600">No steps yet.</p>
+      )}
     </section>
   );
 }
 
 function StatChip({ label, value }: { label: string; value: string }) {
   return (
-    <div className="grid grid-cols-[auto_1fr_auto] items-center gap-2 rounded-full border border-orange-200/70 bg-orange-50 px-3 py-1.5 text-xs font-semibold">
-      <span className="text-slate-600">{label}</span>
-      <span className="text-slate-900 col-start-3">{value}</span>
+    <div className="grow max-w-36 min-w-26 flex justify-between items-center gap-2 rounded-full border border-gray-200 px-3 py-1.5 text-sm font-semibold">
+      <span className="text-gray-500">{label}</span>
+      <span className="text-gray-800">{value}</span>
     </div>
   );
 }
