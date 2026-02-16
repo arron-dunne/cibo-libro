@@ -11,25 +11,29 @@ export function SubmitButton({
   pendingText?: string;
 }) {
   const { pending } = useFormStatus();
+  // const pending = true;
 
   return (
     <button
-      className="w-full rounded-2xl bg-orange-600 px-4 py-3
-        text-white text-lg font-bold flex items-center justify-center gap-4
-        shadow-lg cursor-pointer
-        transition hover:scale-105 hover:brightness-90 active:translate-y-0"
+      className={`w-full rounded-full bg-linear-to-br from-orange-500 to-rose-500 py-3
+        text-white text-xl font-bold flex items-center justify-center gap-2 shadow-lg
+                ${
+          pending
+            ? "cursor-wait brightness-90"
+            : "hover:brightness-90 active:brightness-75 cursor-pointer"
+        }`}
       aria-label={text}
       disabled={pending}
     >
       {pending ? (
         <>
-          <Loader2 className="h-5 w-5 animate-spin" />
           {pendingText}
+          <Loader2 size={20} className="animate-spin" />
         </>
       ) : (
         <>
           {text}
-          <ChevronRight className="h-5 w-5" />
+          <ChevronRight size={24} />
         </>
       )}
     </button>
