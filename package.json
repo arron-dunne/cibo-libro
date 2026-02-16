@@ -9,7 +9,9 @@
     "lint": "eslint .",
     "postinstall": "prisma generate",
     "test:unit": "vitest unit.test.ts",
-    "test:int": "vitest int.test.ts"
+    "test:int": "vitest int.test.ts",
+    "test:e2e": "playwright test",
+    "test:smoke": "playwright test -g \"@smoke\""
   },
   "dependencies": {
     "@auth/prisma-adapter": "^2.10.0",

@@ -7,11 +7,21 @@ on:
 
 env:
   DATABASE_URL: ${{ secrets.DATABASE_URL }}
+  AUTH_SECRET: ${{ secrets.AUTH_SECRET }}
+  AUTH_TRUST_HOST: ${{ secrets.AUTH_TRUST_HOST }}
+  R2_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+  R2_ACCOUNT_ID: ${{ secrets.R2_ACCOUNT_ID }}
+  R2_BUCKET_NAME: ${{ secrets.R2_BUCKET_NAME }}
+  R2_ENDPOINT_URL: ${{ secrets.R2_ENDPOINT_URL }}
+  R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+  RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
+  NEXT_PUBLIC_VERCEL_URL: ${{ secrets.NEXT_PUBLIC_VERCEL_URL }}
 
 jobs:
   lint:
     name: Lint
     runs-on: ubuntu-latest
+    environment: preview
     steps:
       - uses: actions/checkout@v4
 
@@ -27,6 +37,7 @@ jobs:
   test-unit:
     name: Unit Tests
     runs-on: ubuntu-latest
+    environment: preview
     steps:
       - uses: actions/checkout@v4
 
@@ -42,6 +53,7 @@ jobs:
   test-integration:
     name: Integration Tests
     runs-on: ubuntu-latest
+    environment: preview
     steps:
       - uses: actions/checkout@v4
 
