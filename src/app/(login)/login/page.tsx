@@ -1,6 +1,6 @@
 import { handleSignIn } from "./actions";
 import { SubmitButton } from "../components/SubmitButton";
-import { CircleAlert } from "lucide-react";
+import { CheckCircle, CircleAlert } from "lucide-react";
 
 export default async function LoginPage({
   searchParams,
@@ -18,19 +18,19 @@ export default async function LoginPage({
       {/* Header */}
       <header className="text-center">
         <h1 className="text-4xl font-bold">Welcome</h1>
-        <p className="mt-1 text text-gray-600">
+        <p className="mt-1 text-gray-600">
           Sign in to your cookbook to save and cook recipes.
         </p>
       </header>
 
       {/* Status banners */}
       {created && (
-        <div className="mt-4 rounded-xl border border-emerald-300 bg-emerald-100 px-4 py-3 text-sm text-emerald-800">
-          Account created. You can sign in now.
+        <div className="mt-4 rounded-2xl bg-green-200/90 border border-green-800 p-8 text-green-800 px-4 py-3">
+          Account created. You can login now.
         </div>
       )}
       {error === "expired" && (
-        <div className="mt-4 rounded-xl border border-red-300 bg-red-100 px-4 py-3 text-sm text-red-800">
+        <div className="mt-4 rounded-xl border bg-red-200/90 border-red-800 px-4 py-3 text-red-800">
           Your session has expired. Please login again.
         </div>
       )}

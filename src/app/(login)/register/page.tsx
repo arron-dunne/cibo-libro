@@ -7,36 +7,22 @@ export default async function RegisterPage({
 }: {
   searchParams: Promise<{ error: string }>;
 }) {
-  const error = (await searchParams.then((params) => params.error)) ?? null;
+  const { error } = await searchParams;
 
   return (
     <>
       {/* Header */}
       <header className="text-center">
-        <h1 className="text-4xl font-semibold">Create your account</h1>
-        <p className="mt-1 text-sm text-gray-600">
+        <h1 className="text-4xl font-bold">Create your account</h1>
+        <p className="mt-1 text-gray-600">
           Get started with your new digital cookbook.
         </p>
       </header>
 
-      {/* Status banners */}
-      {/* {error && (
-        <div className="mt-4 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-800">
-          {
-            error === "existing" ? "An account with that email already exists" :
-              error === "mismatch" ? "Passwords do not match" :
-                "Invalid email or password"
-          }
-        </div>
-      )} */}
-
       {/* Form */}
       <form action={handleRegister} className="mt-6 space-y-5">
         <div>
-          <label
-            htmlFor="email"
-            className="mb-1 block text-sm font-medium text-gray-800"
-          >
+          <label htmlFor="email" className="text-sm font-semibold">
             Email
           </label>
           <input
@@ -45,10 +31,9 @@ export default async function RegisterPage({
             type="email"
             required
             placeholder="you@example.com"
-            className={`block w-full rounded-2xl border  bg-white px-4 py-3
-                    outline-none transition border-white 
-                     focus:shadow-lg focus:scale-105
-                    ${error === "existing" ? "ring-2 ring-red-400" : ""}`}
+            className={`mt-1 px-4 py-3 w-full rounded-2xl border bg-white
+              outline-none focus:ring-2 
+              ${error === "existing" ? "border-2 ring-blue-400 border-red-400" : "border-zinc-300 focus:ring-blue-500"}`}
           />
           {error === "existing" && (
             <p className="mt-2 flex items-center gap-2 text-sm font-semibold text-red-600">
@@ -59,10 +44,7 @@ export default async function RegisterPage({
         </div>
 
         <div>
-          <label
-            htmlFor="password"
-            className="mb-1 block text-sm font-medium text-gray-800"
-          >
+          <label htmlFor="password" className="text-sm font-semibold">
             Password (at least 8 characters)
           </label>
           <input
@@ -73,18 +55,14 @@ export default async function RegisterPage({
             autoComplete="new-password"
             minLength={8}
             placeholder="••••••••"
-            className={`block w-full rounded-2xl border  bg-white px-4 py-3
-                    outline-none transition border-white 
-                     focus:shadow-lg focus:scale-105
-                    ${error === "mismatch" ? "ring-2 ring-red-400" : ""}`}
+            className={`mt-1 px-4 py-3 w-full rounded-2xl border bg-white
+              outline-none focus:ring-2 
+              ${error === "mismatch" ? "border-2 ring-blue-400 border-red-400" : "border-zinc-300 focus:ring-blue-500"}`}
           />
         </div>
 
-        <div>
-          <label
-            htmlFor="confirm-password"
-            className="mb-1 block text-sm font-medium text-gray-800"
-          >
+        <div className="mb-8">
+          <label htmlFor="confirm-password" className="text-sm font-semibold">
             Confirm Password
           </label>
           <input
@@ -95,10 +73,9 @@ export default async function RegisterPage({
             autoComplete="off"
             minLength={8}
             placeholder="••••••••"
-            className={`block w-full rounded-2xl border  bg-white px-4 py-3
-                    outline-none transition border-white 
-                     focus:shadow-lg focus:scale-105
-                    ${error === "mismatch" ? "ring-2 ring-red-400" : ""}`}
+            className={`mt-1 px-4 py-3 w-full rounded-2xl border bg-white
+              outline-none focus:ring-2 
+              ${error === "mismatch" ? "border-2 ring-blue-400 border-red-400" : "border-zinc-300 focus:ring-blue-500"}`}
           />
           {error === "mismatch" && (
             <p className="mt-2 flex items-center gap-2 text-sm font-semibold text-red-600">
@@ -108,20 +85,11 @@ export default async function RegisterPage({
           )}
         </div>
 
-        <div className="flex items-start justify-between text-sm">
-          <span className="text-gray-500">
-            Need help?{" "}
-            <a href="/support" className="text-orange-700 hover:underline">
-              Support
-            </a>
-          </span>
-        </div>
+        <SubmitButton text="Sign up" pendingText="Signing up" />
 
-        <SubmitButton text="Register" pendingText="Signing up..." />
-
-        <div className="flex items-center justify-center gap-2 text-sm text-gray-600">
+        <div className="flex items-center justify-center gap-2 text-gray-600">
           Already have an account?
-          <a href="/login" className="font-medium text-orange-700 underline">
+          <a href="/login" className="font-medium text-orange-700 hover:underline">
             Login
           </a>
         </div>
