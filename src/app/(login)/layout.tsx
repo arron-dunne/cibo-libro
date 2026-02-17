@@ -8,7 +8,7 @@ export default function LoginLayout({
 }) {
   return (
     <>
-      <div className="flex flex-col px-4 w-full place-items-center">
+      <div className="w-full px-4 flex flex-col place-items-center">
         {/* Logo above panel */}
         <div className="my-10">
           <Image

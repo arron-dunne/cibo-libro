@@ -7,7 +7,7 @@ import { AuthError } from "next-auth";
 
 const LoginSchema = z.object({
   email: z.email(),
-  password: z.string().min(1),
+  password: z.string().min(8),
 });
 
 export async function handleSignIn(formData: FormData) {

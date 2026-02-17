@@ -1,6 +1,6 @@
 import { handleSignIn } from "./actions";
 import { SubmitButton } from "../components/SubmitButton";
-import { CheckCircle, CircleAlert } from "lucide-react";
+import { CircleAlert } from "lucide-react";
 
 export default async function LoginPage({
   searchParams,
