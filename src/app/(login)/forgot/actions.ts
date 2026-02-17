@@ -1,5 +1,6 @@
 "use server";
 
+import { redirect } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import { Resend } from "resend";
 import { generateResetToken } from "@/lib/auth/tokens";
@@ -11,8 +12,8 @@ export async function resetPassword(formData: FormData): Promise<void> {
 
   const user = await prisma.user.findUnique({ where: { email } });
 
-  // dont show unknown user on the UI
-  if (!user) return;
+  // same redirect whether user exists or not (prevents email enumeration)
+  if (!user) redirect("/forgot?sent=1");
 
   const { token, hashed } = generateResetToken();
 
@@ -44,5 +45,5 @@ export async function resetPassword(formData: FormData): Promise<void> {
     `,
   });
 
-  // return { ok: true };
+  redirect("/forgot?sent=1");
 }
