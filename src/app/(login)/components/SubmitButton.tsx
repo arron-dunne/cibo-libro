@@ -6,12 +6,13 @@ import { Loader2, ChevronRight } from "lucide-react";
 export function SubmitButton({
   text,
   pendingText,
+  icon,
 }: {
   text?: string;
   pendingText?: string;
+  icon?: React.ReactNode;
 }) {
   const { pending } = useFormStatus();
-  // const pending = true;
 
   return (
     <button
@@ -33,7 +34,7 @@ export function SubmitButton({
       ) : (
         <>
           {text}
-          <ChevronRight size={24} />
+          {icon ?? <ChevronRight size={24} />}
         </>
       )}
     </button>
