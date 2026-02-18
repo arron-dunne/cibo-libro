@@ -26,12 +26,6 @@ export default async function ForgotPasswordPage({
 
       <header className="mt-10 text-center">
         <h1 className="text-4xl font-bold">Reset Password</h1>
-        {!sent && (
-          <p className="mt-4 text-gray-600">
-            Enter your email address and we'll send you an email to reset your
-            password.
-          </p>
-        )}
       </header>
 
       {sent ? (

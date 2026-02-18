@@ -1,10 +1,10 @@
 "use server";
 
-import { z } from "zod";
 import { redirect } from "next/navigation";
-import { prisma } from "@/lib/prisma";
+import { z } from "zod";
 import crypto from "crypto";
 import argon2 from "argon2";
+import { prisma } from "@/lib/prisma";
 
 const PasswordSchema = z
   .object({
@@ -16,52 +16,50 @@ const PasswordSchema = z
     error: "password mismatch",
   });
 
-export async function updatePassword(
-  prevState: { error: string | null },
-  formData: FormData,
-): Promise<{ error: string | null }> {
-  
+export async function updatePassword(formData: FormData): Promise<void> {
+  const token = String(formData.get("token") || "");
+
   // Parse the form data into structured data
   const raw = {
-    token: String(formData.get("token") || ""),
+    token,
     password: String(formData.get("password") || ""),
     confirm: String(formData.get("confirm") || ""),
   };
 
   const parsed = PasswordSchema.safeParse(raw);
 
-  // Check passwords match
+  // Handle validation errors
   if (!parsed.success) {
     if (
       parsed.error.issues.some((err) => err.message === "password mismatch")
     ) {
-      return { error: "Passwords do not match" };
+      redirect(`/reset?token=${token}&error=password`);
     }
-    return { error: "An error occured" };
+    redirect(`/reset?token=${token}&error=invalid`);
   }
 
-  const { token, password } = parsed.data;
+  const { password } = parsed.data;
 
   // Check token exists
   const dbToken = await prisma.verificationToken.findUnique({
     where: { token: crypto.createHash("sha256").update(token).digest("hex") },
   });
-  if (!dbToken) return { error: "An error occured" };
+  if (!dbToken) redirect("/reset?error=token");
 
   // Check token is not expired
   const expiryDate = new Date(dbToken.expires);
-  if (expiryDate < new Date(Date.now())) return { error: "An error occured" };
+  if (expiryDate < new Date(Date.now())) redirect("/reset?error=token");
 
-  // reset password
+  // Reset password
   await prisma.user.update({
     where: { email: dbToken.identifier },
     data: { passwordHash: await argon2.hash(password) },
   });
 
-  // consume / delete token (and any others associated with this user)
-  await prisma.verificationToken.deleteMany({
-    where: { identifier: dbToken.identifier },
-  });
+  // Consume / delete token (and any others associated with this user)
+  // await prisma.verificationToken.deleteMany({
+  //   where: { identifier: dbToken.identifier },
+  // });
 
   redirect("/login?updated=1");
 }
