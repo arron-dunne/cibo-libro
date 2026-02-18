@@ -50,16 +50,19 @@ export async function updatePassword(formData: FormData): Promise<void> {
   const expiryDate = new Date(dbToken.expires);
   if (expiryDate < new Date(Date.now())) redirect("/reset?error=token");
 
-  // Reset password
+  // Reset password and invalidate existing sessions
   await prisma.user.update({
     where: { email: dbToken.identifier },
-    data: { passwordHash: await argon2.hash(password) },
+    data: {
+      passwordHash: await argon2.hash(password),
+      sessionVersion: { increment: 1 },
+    },
   });
 
   // Consume / delete token (and any others associated with this user)
-  // await prisma.verificationToken.deleteMany({
-  //   where: { identifier: dbToken.identifier },
-  // });
+  await prisma.verificationToken.deleteMany({
+    where: { identifier: dbToken.identifier },
+  });
 
   redirect("/login?updated=1");
 }

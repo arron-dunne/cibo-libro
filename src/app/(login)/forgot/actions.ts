@@ -15,6 +15,11 @@ export async function resetPassword(formData: FormData): Promise<void> {
   // same redirect whether user exists or not (prevents email enumeration)
   if (!user) redirect("/forgot?sent=1");
 
+  // Invalidate any existing reset tokens for this user
+  await prisma.verificationToken.deleteMany({
+    where: { identifier: email },
+  });
+
   const { token, hashed } = generateResetToken();
 
   // Store in DB
