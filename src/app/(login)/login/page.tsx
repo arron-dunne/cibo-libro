@@ -5,11 +5,12 @@ import { CircleAlert } from "lucide-react";
 export default async function LoginPage({
   searchParams,
 }: {
-  searchParams: Promise<{ created?: string; error?: string }>;
+  searchParams: Promise<{ created?: string; updated?: string; error?: string }>;
 }) {
   const params = await searchParams;
 
   const created = params.created === "1";
+  const updated = params.updated === "1";
 
   const error = params.error ?? null;
 
@@ -27,6 +28,11 @@ export default async function LoginPage({
       {created && (
         <div className="mt-4 rounded-2xl bg-green-200/90 border border-green-800 p-8 text-green-800 px-4 py-3">
           Account created. You can login now.
+        </div>
+      )}
+      {updated && (
+        <div className="mt-4 rounded-2xl bg-green-200/90 border border-green-800 p-8 text-green-800 px-4 py-3">
+          Password changed
         </div>
       )}
       {error === "expired" && (

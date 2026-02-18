@@ -1,6 +1,7 @@
 "use server";
 
 import { z } from "zod";
+import { redirect } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import crypto from "crypto";
 import argon2 from "argon2";
@@ -62,5 +63,5 @@ export async function updatePassword(
     where: { identifier: dbToken.identifier },
   });
 
-  return { error: "Password updated" };
+  redirect("/login?updated=1");
 }
