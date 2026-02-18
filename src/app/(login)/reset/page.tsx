@@ -7,30 +7,30 @@ export default async function ResetPasswordPage({
 }: {
   searchParams: Promise<{ token?: string }>;
 }) {
-  const token = await searchParams.then((sp) => sp.token || "");
+  const { token } = await searchParams;
 
   return (
-    <div className="relative text-center">
+    <div className="relative flex flex-col gap-2">
       {/* Back button */}
       <Link
         href="/login"
-        className="absolute text-center top-0 left-0 text-black flex gap-2"
+        className="absolute -top-4 -left-4 flex items-center gap-4 text-lg font-semibold text-slate-800 cursor-pointer hover:brightness-90 active:brightness-75"
       >
-        <ArrowLeft className="h-5 w-5" />
-        <span>Back to login</span>
+        <div className="p-2 rounded-full border border-slate-300 bg-linear-to-br from-slate-100 to-slate-200">
+          <ArrowLeft size={20} />
+        </div>
+        Back to login
       </Link>
 
-      <h2 className="mt-4 text-xl font-bold text-gray-900">Reset Password</h2>
-      <p className="mt-2 text-sm text-gray-500">Choose a new password</p>
+      <header className="mt-10 text-center">
+        <h1 className="text-4xl font-bold">Reset Password</h1>
+        <p className="mt-2 text-gray-600">
+          Choose a new password
+        </p>
+      </header>
+      
+      <ResetPasswordForm token={token ?? ""} />
 
-      <ResetPasswordForm token={token} />
-
-      <Link
-        href="/forgot"
-        className="flex justify-center items-center mt-2 w-full h-12 rounded-full bg-linear-to-br from-slate-300 to-slate-400 cursor-pointer font-bold text-lg text-black shadow hover:brightness-95 active:brightness-75 disabled:opacity-50"
-      >
-        Request another reset email
-      </Link>
     </div>
   );
 }

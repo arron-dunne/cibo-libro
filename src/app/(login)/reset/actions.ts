@@ -7,7 +7,6 @@ import argon2 from "argon2";
 
 const PasswordSchema = z
   .object({
-    // token: z.hex(),
     token: z.hex().length(64),
     password: z.string().min(8),
     confirm: z.string().min(8),
@@ -20,6 +19,7 @@ export async function updatePassword(
   prevState: { error: string | null },
   formData: FormData,
 ): Promise<{ error: string | null }> {
+  
   // Parse the form data into structured data
   const raw = {
     token: String(formData.get("token") || ""),
