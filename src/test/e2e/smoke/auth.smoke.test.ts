@@ -18,6 +18,6 @@ test("logged-in on home then logoout", async ({ page }) => {
   // Redirected to login page
   await expect(page).toHaveURL(/\/login/);
   await expect(
-    page.getByRole("heading", { name: "Welcome back" }),
+    page.getByRole("heading", { name: "Welcome" }),
   ).toBeVisible();
 });

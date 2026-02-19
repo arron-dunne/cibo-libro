@@ -10,12 +10,12 @@ test("bootstrap auth and save storage", async ({ page, context, baseURL }) => {
   await page.getByLabel("Email").fill(email);
   await page.getByLabel("Password (at least 8 characters)").fill(password);
   await page.getByLabel("Confirm Password").fill(password);
-  await page.getByRole("button", { name: "Register" }).click();
+  await page.getByRole("button", { name: "Sign up" }).click();
 
   // Redirected to /login with success banner
   await expect(page).toHaveURL(/\/login/);
   await expect(
-    page.getByText("Account created. You can sign in now."),
+    page.getByText("Account created. You can login now."),
   ).toBeVisible();
 
   // Login
