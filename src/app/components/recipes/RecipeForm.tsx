@@ -581,7 +581,7 @@ export default function RecipeForm({ mode, recipe, action }: RecipeFormProps) {
         </Panel>
 
         {/* Save button */}
-        <div className="sticky bottom-4 z-40 flex justify-center">
+        <div className="sticky bottom-4 z-10 flex justify-center">
           <div className="rounded-full w-full max-w-sm bg-white/60 backdrop-blur border border-white/70 shadow-lg px-4 py-3">
             <button
               type="submit"
