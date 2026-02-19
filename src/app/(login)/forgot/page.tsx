@@ -1,44 +1,73 @@
 import Link from "next/link";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, MailCheck, Send } from "lucide-react";
 import { resetPassword } from "./actions";
+import { SubmitButton } from "../components/SubmitButton";
 
-export default function ForgotPasswordPage() {
+export default async function ForgotPasswordPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ sent?: string }>;
+}) {
+  const params = await searchParams;
+  const sent = params.sent === "1";
+
   return (
-    <div className="relative text-center">
+    <div className="relative flex flex-col gap-2">
       {/* Back button */}
       <Link
         href="/login"
-        className="absolute text-center top-0 left-0 text-blac"
+        className="absolute -top-4 -left-4 flex items-center gap-4 text-lg font-semibold text-slate-800 cursor-pointer hover:brightness-90 active:brightness-75"
       >
-        <ArrowLeft className="h-5 w-5" />
+        <div className="p-2 rounded-full border border-slate-300 bg-linear-to-br from-slate-100 to-slate-200">
+          <ArrowLeft size={20} />
+        </div>
+        Back
       </Link>
 
-      <h2 className="mt-4 text-xl font-bold text-gray-900">Reset Password</h2>
-      <p className="mt-2 text-sm text-gray-500">
-        Enter your email and we&apos;ll send you an email to reset your
-        password.
-      </p>
+      <header className="mt-10 text-center">
+        <h1 className="text-4xl font-bold">Reset Password</h1>
+      </header>
 
-      <form action={resetPassword} className="space-y-4 text-start">
-        <label className="block text-sm font-medium text-gray-700 mt-4 mb-1">
-          Email
-        </label>
-        <input
-          name="email"
-          type="email"
-          className="w-full rounded-2xl bg-white px-4 py-3 shadow-inner"
-          required
-        />
+      {sent ? (
+        <>
+          <div className="mt-4 rounded-2xl bg-green-200/90 border border-green-800 px-4 py-4 text-green-800">
+            <div className="flex items-center gap-4">
+              <MailCheck size={26} className="shrink-0" />
+              <h3 className="text-lg font-bold">Email requested</h3>
+            </div>
+            <p className="mt-2">
+              Check your inbox (and spam folder) for instructions to reset your
+              password.
+            </p>
+          </div>
 
-        <button
-          type="submit"
-          // disabled={isSubmitting}
-          className="mt-2 w-full rounded-full bg-linear-to-br from-orange-500 to-rose-500 cursor-pointer px-4 py-3 font-bold text-lg text-white shadow hover:brightness-95 active:brightness-75 disabled:opacity-50"
-        >
-          {/* {isSubmitting ? "Updating..." : "Update Password"} */}
-          Send Reset Email
-        </button>
-      </form>
+          <Link
+            href="/forgot"
+            className="mt-6 w-full rounded-full bg-linear-to-br from-orange-500 to-rose-500 py-3
+            text-white text-xl font-bold flex items-center justify-center gap-2 shadow-lg
+            hover:brightness-90 active:brightness-75 cursor-pointer"
+          >
+            Send Another Email
+          </Link>
+        </>
+      ) : (
+        <form action={resetPassword} className="space-y-8">
+          <label htmlFor="email" className="text-sm font-semibold">
+            Email
+          </label>
+          <input
+            name="email"
+            id="email"
+            type="email"
+            required
+            placeholder="you@example.com"
+            className="mt-1 px-4 py-3 w-full rounded-2xl border bg-white
+                outline-none focus:ring-2 border-zinc-300 focus:ring-blue-500"
+          />
+
+          <SubmitButton text="Send Email" pendingText="Sending" icon={<Send size={22} />}/>
+        </form>
+      )}
     </div>
   );
 }

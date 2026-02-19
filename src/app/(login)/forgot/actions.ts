@@ -1,5 +1,6 @@
 "use server";
 
+import { redirect } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import { Resend } from "resend";
 import { generateResetToken } from "@/lib/auth/tokens";
@@ -11,8 +12,13 @@ export async function resetPassword(formData: FormData): Promise<void> {
 
   const user = await prisma.user.findUnique({ where: { email } });
 
-  // dont show unknown user on the UI
-  if (!user) return;
+  // same redirect whether user exists or not (prevents email enumeration)
+  if (!user) redirect("/forgot?sent=1");
+
+  // Invalidate any existing reset tokens for this user
+  await prisma.verificationToken.deleteMany({
+    where: { identifier: email },
+  });
 
   const { token, hashed } = generateResetToken();
 
@@ -40,9 +46,9 @@ export async function resetPassword(formData: FormData): Promise<void> {
       <p>Click the link below to set a new password:</p>
       <p><a href="${resetUrl}">Reset Password</a></p>
       <p>This link expires in 1 hour.</p>
-      <p>If you didn’t request this, you can safely ignore it.</p>
+      <p>If you didn't request this, you can safely ignore it.</p>
     `,
   });
 
-  // return { ok: true };
+  redirect("/forgot?sent=1");
 }

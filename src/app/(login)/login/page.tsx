@@ -5,11 +5,12 @@ import { CircleAlert } from "lucide-react";
 export default async function LoginPage({
   searchParams,
 }: {
-  searchParams: Promise<{ created?: string; error?: string }>;
+  searchParams: Promise<{ created?: string; updated?: string; error?: string }>;
 }) {
   const params = await searchParams;
 
   const created = params.created === "1";
+  const updated = params.updated === "1";
 
   const error = params.error ?? null;
 
@@ -17,22 +18,25 @@ export default async function LoginPage({
     <>
       {/* Header */}
       <header className="text-center">
-        <h1 className="text-4xl font-semibold">
-          {created ? "Welcome" : "Welcome back"}
-        </h1>
-        <p className="mt-1 text-sm text-gray-600">
+        <h1 className="text-4xl font-bold">Welcome</h1>
+        <p className="mt-1 text-gray-600">
           Sign in to your cookbook to save and cook recipes.
         </p>
       </header>
 
       {/* Status banners */}
       {created && (
-        <div className="mt-4 rounded-xl border border-emerald-300 bg-emerald-100 px-4 py-3 text-sm text-emerald-800">
-          Account created. You can sign in now.
+        <div className="mt-4 rounded-2xl bg-green-200/90 border border-green-800 p-8 text-green-800 px-4 py-3">
+          Account created. You can login now.
+        </div>
+      )}
+      {updated && (
+        <div className="mt-4 rounded-2xl bg-green-200/90 border border-green-800 p-8 text-green-800 px-4 py-3">
+          Password changed
         </div>
       )}
       {error === "expired" && (
-        <div className="mt-4 rounded-xl border border-red-300 bg-red-100 px-4 py-3 text-sm text-red-800">
+        <div className="mt-4 rounded-xl border bg-red-200/90 border-red-800 px-4 py-3 text-red-800">
           Your session has expired. Please login again.
         </div>
       )}
@@ -40,10 +44,7 @@ export default async function LoginPage({
       {/* Form */}
       <form action={handleSignIn} className="mt-6 space-y-5">
         <div>
-          <label
-            htmlFor="email"
-            className="mb-1 block text-sm font-medium text-gray-800"
-          >
+          <label htmlFor="email" className="text-sm font-semibold">
             Email
           </label>
           <input
@@ -53,9 +54,9 @@ export default async function LoginPage({
             required
             autoComplete="email"
             placeholder="you@example.com"
-            className={`block w-full rounded-2xl border border-white bg-white px-4 py-3
-              outline-none transition focus:scale-105
-              focus:shadow-lg ${error === "invalid" ? "ring-2 ring-red-400" : ""}`}
+            className={`mt-1 px-4 py-3 w-full rounded-2xl border bg-white
+              outline-none focus:ring-2
+              ${error === "invalid" ? "border-2 ring-blue-400 border-red-400" : "border-zinc-300 focus:ring-blue-500"}`}
           />
           {error === "invalid" && (
             <p className="mt-2 flex items-center gap-2 text-sm font-semibold text-red-600">
@@ -66,10 +67,7 @@ export default async function LoginPage({
         </div>
 
         <div>
-          <label
-            htmlFor="password"
-            className="mb-1 block text-sm font-medium text-gray-800"
-          >
+          <label htmlFor="password" className="text-sm font-semibold">
             Password
           </label>
           <input
@@ -79,20 +77,20 @@ export default async function LoginPage({
             required
             autoComplete="current-password"
             placeholder="••••••••"
-            className={`block w-full rounded-2xl border border-white bg-white px-4 py-3
-              outline-none transition
-              focus:scale-105 focus:shadow-lg ${error === "invalid" ? "ring-2 ring-red-400" : ""}`}
+            className={`mt-1 px-4 py-3 w-full rounded-2xl border bg-white
+              outline-none focus:ring-2
+              ${error === "invalid" ? "border-2 ring-blue-400 border-red-400" : "border-zinc-300 focus:ring-blue-500"}`}
           />
         </div>
 
-        <div className="flex items-center justify-between text-sm">
+        <div className="flex items-center justify-between text-gray-600">
           <a
             href="/forgot"
-            className="text-gray-500 hover:underline transition hover:text-gray-700"
+            className=" hover:underline transition hover:text-gray-700"
           >
             Forgot password
           </a>
-          <span className="text-gray-500">
+          <span className="text-gray-600">
             Need help?{" "}
             <a href="/support" className="text-orange-700 hover:underline">
               Support
@@ -100,11 +98,11 @@ export default async function LoginPage({
           </span>
         </div>
 
-        <SubmitButton text="Login" pendingText="Signing in..." />
+        <SubmitButton text="Login" pendingText="Logging in" />
 
-        <div className="flex items-center justify-center gap-2 text-sm text-gray-600">
+        <div className="flex items-center justify-center gap-2 text-gray-600">
           New here?
-          <a href="/register" className="font-medium text-orange-700 underline">
+          <a href="/register" className="font-medium text-orange-700 hover:underline">
             Create an account
           </a>
         </div>

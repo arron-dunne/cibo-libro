@@ -20,7 +20,7 @@ export default async function Layout({
       {/* Floating navbar */}
       <nav className="sticky top-4 mt-6 z-10">
         <div className="mx-auto max-w-7xl px-4">
-          <div className="flex h-14 gap-2 rounded-full border border-white/80 bg-white/60 px-4 py-2 shadow backdrop-blur">
+          <div className="flex justify-between h-14 gap-2 rounded-full border border-white/80 bg-white/60 px-4 py-2 shadow backdrop-blur">
             {/* Logo */}
             <Link href="/" className="grow" aria-label="cibo libro home">
               <Image
@@ -33,52 +33,50 @@ export default async function Layout({
               />
             </Link>
 
-            {/* Navigation */}
-            <div className="hidden gap-6 md:flex">
-              <DesktopNavLink type="home" />
-              <DesktopNavLink type="all" />
-              <DesktopNavLink type="new" />
-              <DesktopNavLink type="import" />
-              <DesktopNavLink type="settings" />
-            </div>
+            {/* Logged in navbar */}
+            {session?.user ? (
+              <>
+                {/* Navigation */}
+                <div className="hidden gap-6 md:flex">
+                  <DesktopNavLink type="home" />
+                  <DesktopNavLink type="all" />
+                  <DesktopNavLink type="new" />
+                  <DesktopNavLink type="import" />
+                  <DesktopNavLink type="settings" />
+                </div>
 
-            <div className="flex grow justify-end items-center text-sm">
-              <MobileMenu />
+                <div className="flex grow justify-end items-center text-sm">
+                  <MobileMenu />
 
-              {/* Logout */}
-              {session?.user ? (
-                <>
+                  {/* Logout */}
                   <span className="hidden lg:inline mr-0 lg:mr-4 text-gray-700">
                     {session.user.email}
                   </span>
                   <LogoutButton action={logout} />
-                </>
-              ) : (
-                <>
-                  <Link
-                    href="/login"
-                    className="rounded-full border border-orange-200 bg-white px-3 py-1.5 font-medium text-orange-700 shadow transition hover:-translate-y-0.5 hover:bg-orange-50"
-                  >
-                    Login
-                  </Link>
-                  <Link
-                    href="/register"
-                    className="rounded-full bg-orange-600 px-3 py-1.5 font-semibold text-white shadow-[0_8px_18px_rgba(234,88,12,0.35)] transition hover:-translate-y-0.5 hover:bg-orange-700"
-                  >
-                    Regsiter
-                  </Link>
-                </>
-              )}
-            </div>
+                </div>
+              </>
+            ) : (
+              <>
+                <Link
+                  href="/login"
+                  className="flex items-center justify-center rounded-full border border-white/70 bg-linear-to-br text-slate-900 from-slate-200 to-slate-300 px-4 py-2 font-semibold shadow hover:brightness-90 active:brightness-75"
+                >
+                  Login
+                </Link>
+                <Link
+                  href="/register"
+                  className="flex items-center justify-center border border-white/70 rounded-full bg-linear-to-br from-orange-500 to-rose-500 text-white px-4 py-2 font-semibold shadow hover:brightness-90 active:brightness-75"
+                >
+                  Regsiter
+                </Link>
+              </>
+            )}
           </div>
         </div>
       </nav>
 
       {/* Page container */}
-      <main className="z-0 mx-auto max-w-7xl px-8 py-4">
-        {" "}
-        {children}
-      </main>
+      <main className="z-0 mx-auto max-w-7xl px-8 py-4"> {children}</main>
 
       <Footer />
     </>
