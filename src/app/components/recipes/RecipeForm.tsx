@@ -6,6 +6,7 @@ import { useState, useRef, useEffect } from "react";
 import { compressImageFile } from "@/lib/images/compress";
 import { MAX_SIZE_BYTES } from "@/lib/images/constants";
 import { RecipeFormRecipe } from "@/types/recipe";
+import { X } from "lucide-react";
 
 // ────────────────────────────────────────────────────────────────────────────
 // Types
@@ -313,9 +314,7 @@ export default function RecipeForm({ mode, recipe, action }: RecipeFormProps) {
   // ──────────────────────────────────────────────────────────────────────────
   return (
     <div className="max-w-3xl w-full mx-auto mt-4">
-      
       <form className="flex flex-col gap-10" onSubmit={handleSubmit}>
-        
         {/* Summary Panel */}
         <Panel
           header="Details"
@@ -395,13 +394,13 @@ export default function RecipeForm({ mode, recipe, action }: RecipeFormProps) {
           header="Ingredients"
           subheader="One per line. Press Enter to add another. Paste multi-line to auto-split."
         >
-          <div className="flex flex-col gap-2">
+          <div className="flex flex-col gap-3">
             {ingredients.map((val, i) => (
-              <div key={`ing-${i}`} className="flex items-center gap-2">
+              <div key={`ing-${i}`} className="flex items-center gap-4">
                 <input
                   type="text"
                   aria-label={`Ingredient ${i + 1}`}
-                  className="ingredient-input w-full rounded-lg border border-zinc-300 bg-white/95 px-3 py-2 outline-none focus:ring-2 focus:ring-orange-400"
+                  className="ingredient-input w-full px-3 py-2.5 rounded-2xl border border-zinc-300 bg-white"
                   placeholder={i === 0 ? "e.g. 250g dried pasta" : ""}
                   value={val}
                   onChange={(e) =>
@@ -416,24 +415,28 @@ export default function RecipeForm({ mode, recipe, action }: RecipeFormProps) {
                     "input.ingredient-input",
                   )}
                 />
+
                 <button
                   type="button"
-                  className="rounded-md border border-zinc-300 px-2 py-2 text-sm hover:bg-zinc-50 disabled:opacity-50"
+                  className="shrink-0 w-10 h-10 flex items-center justify-center
+              bg-linear-to-br from-slate-100 to-slate-200
+              rounded-full text-slate-800 border border-slate-300
+              cursor-pointer hover:brightness-90 active:brightness-75"
                   onClick={() => removeRow(setIngredients, i)}
                   disabled={ingredients.length === 1}
                   aria-label="Remove ingredient"
                 >
-                  −
+                  <X size={16} />
                 </button>
               </div>
             ))}
             <div>
               <button
                 type="button"
-                className="mt-1 rounded-md border border-zinc-300 bg-white px-3 py-2 text-sm hover:bg-zinc-50"
+                className="mt-2 px-4 h-11 flex gap-2 items-center bg-linear-to-br from-slate-100 to-slate-200 rounded-full text-slate-800 border border-slate-300 cursor-pointer hover:brightness-90 active:brightness-75"
                 onClick={() => addRow(setIngredients)}
               >
-                + Add ingredient
+                Add Ingredient
               </button>
             </div>
           </div>
@@ -623,9 +626,7 @@ function Panel({
 }) {
   return (
     <section className="rounded-3xl border border-white/70 bg-white/95 p-8 shadow-lg backdrop-blur">
-      <h3 className="text-2xl font-bold">
-        {header}
-      </h3>
+      <h3 className="text-2xl font-bold">{header}</h3>
 
       {subheader && <p className="mt-1 text-sm text-zinc-600">{subheader}</p>}
 
