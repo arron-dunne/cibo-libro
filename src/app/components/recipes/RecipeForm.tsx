@@ -6,7 +6,7 @@ import { useState, useRef, useEffect } from "react";
 import { compressImageFile } from "@/lib/images/compress";
 import { MAX_SIZE_BYTES } from "@/lib/images/constants";
 import { RecipeFormRecipe } from "@/types/recipe";
-import { X } from "lucide-react";
+import { X, ChefHat } from "lucide-react";
 
 // ────────────────────────────────────────────────────────────────────────────
 // Types
@@ -313,12 +313,14 @@ export default function RecipeForm({ mode, recipe, action }: RecipeFormProps) {
   // Render
   // ──────────────────────────────────────────────────────────────────────────
   return (
-    <div className="max-w-3xl w-full mx-auto mt-4">
+    <div className="max-w-3xl w-full mx-auto mt-8">
       <form className="flex flex-col gap-10" onSubmit={handleSubmit}>
         {/* Summary Panel */}
         <Panel
-          header="Details"
+          header="Create a New Recipe"
           subheader="Title, description, times, servings, and tags."
+          first
+          icon={<ChefHat aria-hidden="true" className="w-8 h-8 sm:w-10 sm:h-10" />}
         >
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             <div className="sm:col-span-2">
@@ -622,19 +624,42 @@ export default function RecipeForm({ mode, recipe, action }: RecipeFormProps) {
 function Panel({
   header,
   subheader,
+  first,
+  icon,
   children,
 }: {
   header: string;
   subheader?: string;
+  first?: boolean;
+  icon?: React.ReactNode;
   children: React.ReactNode;
 }) {
   return (
     <section className="rounded-3xl border border-white/70 bg-white/95 p-8 shadow-lg backdrop-blur">
-      <h3 className="text-2xl font-bold">{header}</h3>
+      {first ? (
+        <div className="mb-6 flex flex-col sm:flex-row items-center sm:items-start gap-3 sm:gap-6 md:mb-8">
+          {icon && (
+            <div className="hidden sm:flex w-20 h-18 items-center justify-center rounded-3xl bg-linear-to-br from-rose-300 to-fuchsia-300 text-rose-900">
+              {icon}
+            </div>
+          )}
+          <div className="text-center sm:text-start">
+            <h1 className="text-3xl font-bold leading-tight text-gray-900 md:text-4xl">
+              {header}
+            </h1>
+            {subheader && (
+              <p className="mt-2 text-[15px] text-gray-700">{subheader}</p>
+            )}
+          </div>
+        </div>
+      ) : (
+        <>
+          <h3 className="text-2xl font-bold">{header}</h3>
+          {subheader && <p className="mt-1 text-sm text-zinc-600">{subheader}</p>}
+        </>
+      )}
 
-      {subheader && <p className="mt-1 text-sm text-zinc-600">{subheader}</p>}
-
-      <div className="mt-4">{children}</div>
+      <div className={first ? "" : "mt-4"}>{children}</div>
     </section>
   );
 }
