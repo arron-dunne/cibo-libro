@@ -455,7 +455,7 @@ export default function RecipeForm({ mode, recipe, action }: RecipeFormProps) {
                 <textarea
                   rows={2}
                   aria-label={`Step ${i + 1}`}
-                  className="step-input w-full px-3 py-2.5 rounded-2xl border border-zinc-300 bg-white resize-none"
+                  className="step-input w-full px-3 py-2.5 rounded-2xl border border-zinc-300 bg-white"
                   placeholder={
                     i === 0 ? "e.g. Preheat oven to 180°C (fan)." : ""
                   }
