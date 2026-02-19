@@ -328,7 +328,7 @@ export default function RecipeForm({ mode, recipe, action }: RecipeFormProps) {
               <input
                 id="title"
                 type="text"
-                className="w-full rounded-lg border border-zinc-300 bg-white/95 px-3 py-2 outline-none focus:ring-2 focus:ring-orange-400"
+                className="w-full px-3 py-2.5 rounded-2xl border border-zinc-300 bg-white"
                 placeholder="e.g. Grandma's Best Lasagna"
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
@@ -340,7 +340,7 @@ export default function RecipeForm({ mode, recipe, action }: RecipeFormProps) {
               <textarea
                 id="description"
                 rows={3}
-                className="w-full rounded-lg border border-zinc-300 bg-white/95 px-3 py-2 outline-none focus:ring-2 focus:ring-orange-400"
+                className="w-full px-3 py-2.5 rounded-2xl border border-zinc-300 bg-white"
                 placeholder="Short note about the dish"
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
@@ -352,7 +352,7 @@ export default function RecipeForm({ mode, recipe, action }: RecipeFormProps) {
               <input
                 type="number"
                 inputMode="numeric"
-                className="w-full rounded-lg border border-zinc-300 bg-white/95 px-3 py-2 outline-none focus:ring-2 focus:ring-orange-400"
+                className="w-full px-3 py-2.5 rounded-2xl border border-zinc-300 bg-white"
                 value={prepMins ?? ""}
                 onChange={(e) =>
                   setPrepMins(e.target.value ? Number(e.target.value) : null)
@@ -364,7 +364,7 @@ export default function RecipeForm({ mode, recipe, action }: RecipeFormProps) {
               <input
                 type="number"
                 inputMode="numeric"
-                className="w-full rounded-lg border border-zinc-300 bg-white/95 px-3 py-2 outline-none focus:ring-2 focus:ring-orange-400"
+                className="w-full px-3 py-2.5 rounded-2xl border border-zinc-300 bg-white"
                 value={cookMins ?? ""}
                 onChange={(e) =>
                   setCookMins(e.target.value ? Number(e.target.value) : null)
@@ -376,7 +376,7 @@ export default function RecipeForm({ mode, recipe, action }: RecipeFormProps) {
               <input
                 type="number"
                 inputMode="numeric"
-                className="w-full rounded-lg border border-zinc-300 bg-white/95 px-3 py-2 outline-none focus:ring-2 focus:ring-orange-400"
+                className="w-full px-3 py-2.5 rounded-2xl border border-zinc-300 bg-white"
                 value={servings ?? ""}
                 onChange={(e) =>
                   setServings(e.target.value ? Number(e.target.value) : null)
@@ -451,11 +451,11 @@ export default function RecipeForm({ mode, recipe, action }: RecipeFormProps) {
         >
           <div className="flex flex-col gap-3">
             {steps.map((val, i) => (
-              <div key={`step-${i}`} className="flex items-center gap-4">
-                <input
-                  type="text"
+              <div key={`step-${i}`} className="flex items-start gap-4">
+                <textarea
+                  rows={2}
                   aria-label={`Step ${i + 1}`}
-                  className="step-input w-full px-3 py-2.5 rounded-2xl border border-zinc-300 bg-white"
+                  className="step-input w-full px-3 py-2.5 rounded-2xl border border-zinc-300 bg-white resize-none"
                   placeholder={
                     i === 0 ? "e.g. Preheat oven to 180°C (fan)." : ""
                   }
@@ -465,8 +465,6 @@ export default function RecipeForm({ mode, recipe, action }: RecipeFormProps) {
                       xs.map((x, idx) => (idx === i ? e.target.value : x)),
                     )
                   }
-                  onPaste={onPasteMulti(setSteps, i)}
-                  onKeyDown={handleEnter(setSteps, i, "input.step-input")}
                 />
 
                 <button
@@ -502,7 +500,7 @@ export default function RecipeForm({ mode, recipe, action }: RecipeFormProps) {
         >
           <textarea
             rows={3}
-            className="w-full rounded-lg border border-zinc-300 bg-white/95 px-3 py-2 outline-none focus:ring-2 focus:ring-orange-400"
+            className="w-full px-3 py-2.5 rounded-2xl border border-zinc-300 bg-white"
             value={note}
             onChange={(e) => setNote(e.target.value)}
           />
