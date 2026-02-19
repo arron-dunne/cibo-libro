@@ -32,7 +32,7 @@ export default async function RegisterPage({
             required
             placeholder="you@example.com"
             className={`mt-1 px-4 py-3 w-full rounded-2xl border bg-white
-              outline-none focus:ring-2 
+              outline-none focus:ring-2
               ${error === "existing" ? "border-2 ring-blue-400 border-red-400" : "border-zinc-300 focus:ring-blue-500"}`}
           />
           {error === "existing" && (
@@ -56,7 +56,7 @@ export default async function RegisterPage({
             minLength={8}
             placeholder="••••••••"
             className={`mt-1 px-4 py-3 w-full rounded-2xl border bg-white
-              outline-none focus:ring-2 
+              outline-none focus:ring-2
               ${error === "mismatch" ? "border-2 ring-blue-400 border-red-400" : "border-zinc-300 focus:ring-blue-500"}`}
           />
         </div>
@@ -74,7 +74,7 @@ export default async function RegisterPage({
             minLength={8}
             placeholder="••••••••"
             className={`mt-1 px-4 py-3 w-full rounded-2xl border bg-white
-              outline-none focus:ring-2 
+              outline-none focus:ring-2
               ${error === "mismatch" ? "border-2 ring-blue-400 border-red-400" : "border-zinc-300 focus:ring-blue-500"}`}
           />
           {error === "mismatch" && (
