@@ -627,7 +627,7 @@ function Panel({
       {first ? (
         <div className="mb-6 flex flex-col sm:flex-row items-center sm:items-start gap-3 sm:gap-6 md:mb-8">
           {icon && (
-            <div className="hidden sm:flex w-20 h-18 items-center justify-center rounded-3xl bg-linear-to-br from-rose-300 to-fuchsia-300 text-rose-900">
+            <div className="hidden sm:flex w-20 h-18 items-center justify-center rounded-3xl bg-linear-to-br from-orange-100 to-rose-100 text-rose-500 border border-rose-200">
               {icon}
             </div>
           )}
