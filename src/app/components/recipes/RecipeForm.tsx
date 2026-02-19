@@ -583,20 +583,20 @@ export default function RecipeForm({ mode, recipe, action }: RecipeFormProps) {
         {/* Save button */}
         <div className="sticky bottom-4 z-40 flex justify-center">
           <div className="rounded-full w-full max-w-sm bg-white/60 backdrop-blur border border-white/70 shadow-lg px-4 py-3">
-          <button
-            type="submit"
-            className="w-full rounded-full bg-linear-to-br from-orange-500 to-rose-500 px-6 py-3 text-xl font-bold text-white shadow-lg disabled:opacity-50 cursor-pointer hover:brightness-90 active:brightness-75"
-            disabled={saving || uploading || deleting}
-          >
-            {saving ? (
-              <span className="flex items-center justify-center gap-2">
-                <span className="animate-spin h-4 w-4 border-2 border-white border-t-transparent rounded-full"></span>
-                Saving…
-              </span>
-            ) : (
-              "Save"
-            )}
-          </button>
+            <button
+              type="submit"
+              className="w-full rounded-full bg-linear-to-br from-green-500 to-lime-400 px-6 py-3 text-xl font-bold text-green-950 border border-green-500 shadow-lg disabled:opacity-50 cursor-pointer hover:brightness-90 active:brightness-75"
+              disabled={saving || uploading || deleting}
+            >
+              {saving ? (
+                <span className="flex items-center justify-center gap-2">
+                  <span className="animate-spin h-4 w-4 border-2 border-green-950 border-t-transparent rounded-full"></span>
+                  Saving…
+                </span>
+              ) : (
+                "Save"
+              )}
+            </button>
           </div>
         </div>
       </form>
