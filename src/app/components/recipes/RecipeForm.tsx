@@ -6,7 +6,7 @@ import { useState, useRef, useEffect } from "react";
 import { compressImageFile } from "@/lib/images/compress";
 import { MAX_SIZE_BYTES } from "@/lib/images/constants";
 import { RecipeFormRecipe } from "@/types/recipe";
-import { X, ChefHat } from "lucide-react";
+import { X, ChefHat, Tag as TagIcon } from "lucide-react";
 
 // ────────────────────────────────────────────────────────────────────────────
 // Types
@@ -320,7 +320,9 @@ export default function RecipeForm({ mode, recipe, action }: RecipeFormProps) {
           header="Create a New Recipe"
           subheader="Title, description, times, servings, and tags."
           first
-          icon={<ChefHat aria-hidden="true" className="w-8 h-8 sm:w-10 sm:h-10" />}
+          icon={
+            <ChefHat aria-hidden="true" className="w-8 h-8 sm:w-10 sm:h-10" />
+          }
         >
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             <div className="sm:col-span-2">
@@ -653,7 +655,9 @@ function Panel({
       ) : (
         <>
           <h3 className="text-2xl font-bold">{header}</h3>
-          {subheader && <p className="mt-1 text-sm text-zinc-600">{subheader}</p>}
+          {subheader && (
+            <p className="mt-1 text-sm text-zinc-600">{subheader}</p>
+          )}
         </>
       )}
 
@@ -671,54 +675,64 @@ function TagsEditor({
 }) {
   const [draft, setDraft] = useState("");
   const add = () => {
-    const v = draft.trim();
-    if (!v) return;
-    if (!value.includes(v)) onChange([...value, v]);
+    const clean = draft.trim().replace(/^./, (c) => c.toUpperCase());
+    if (!clean) return;
+    if (!value.includes(clean)) onChange([...value, clean]);
     setDraft("");
   };
   const remove = (t: string) => onChange(value.filter((x) => x !== t));
   return (
-    <div className="rounded-xl border border-zinc-300 bg-white p-2">
-      <div className="flex flex-wrap gap-2">
-        {value.map((t) => (
-          <span
-            key={t}
-            className="inline-flex items-center gap-1 rounded-full bg-zinc-100 px-2 py-1 text-xs"
-          >
-            #{t}
-            <button
-              type="button"
-              className="text-zinc-500 hover:text-zinc-700"
-              onClick={() => remove(t)}
-              aria-label={`Remove ${t}`}
-            >
-              ×
-            </button>
-          </span>
-        ))}
-      </div>
-      <div className="mt-2 flex items-center gap-2">
+    <div className="flex flex-col gap-4">
+      <div className="flex items-center gap-2">
         <input
           type="text"
           value={draft}
           onChange={(e) => setDraft(e.target.value)}
           onKeyDown={(e) => {
-            if (e.key === "Enter") add();
+            if (e.key === "Enter") {
+              e.preventDefault();
+              add();
+            }
             if (e.key === "Backspace" && draft === "" && value.length)
               remove(value[value.length - 1]);
           }}
-          placeholder="Add a tag and press Enter"
-          className="flex-1 rounded-lg border border-zinc-300 bg-white/95 px-3 py-2 outline-none focus:ring-2 focus:ring-orange-400"
+          placeholder="Add custom tags..."
+          className="w-full rounded-2xl border border-zinc-300 bg-white/95 px-3 py-2.5"
+          aria-label="Add tag"
         />
         <button
           type="button"
-          className="rounded-lg border border-zinc-300 bg-white px-3 py-2 text-sm hover:bg-zinc-50"
           onClick={add}
-          aria-label="Add tag"
+          className="shrink-0 px-3 py-2 flex items-center gap-2
+              bg-linear-to-br from-slate-100 to-slate-200
+              rounded-full text-sm text-slate-800 border border-slate-300
+              cursor-pointer hover:brightness-90 active:brightness-75"
         >
-          ＋
+          <TagIcon size={16} />
+          Add
         </button>
       </div>
+
+      {value.length >= 1 && (
+        <div className="w-full h-max mb-1 flex flex-wrap gap-2">
+          {value.map((t) => (
+            <div
+              key={t}
+              className="group flex items-center gap-1 rounded-full border border-orange-200 bg-orange-200/50 text-orange-600 px-2 py-1 font-medium texts-sm"
+            >
+              <span className="ml-1">{t}</span>
+              <button
+                type="button"
+                onClick={() => remove(t)}
+                aria-label={`Remove tag ${t}`}
+                className="rounded-full p-0.5 cursor-pointer"
+              >
+                <X size={14} className="text-orange-600" />
+              </button>
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 }
