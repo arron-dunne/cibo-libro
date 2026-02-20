@@ -49,7 +49,7 @@ export default async function HomePage() {
             label="My Cookbook"
           />
           <ActionButton
-            href="/new"
+            href="/add"
             icon={<PlusCircle className="h-5 w-5" />}
             color="bg-orange-500 hover:bg-orange-600"
             label="Add Recipe"

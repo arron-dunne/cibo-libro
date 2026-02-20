@@ -10,7 +10,7 @@ test("create recipe manually, then verify it on the view page", async ({
   const step = "Boil pasta until al dente";
 
   // Go to new recipe form
-  await page.goto("/new");
+  await page.goto("/add");
   await expect(page.getByRole("heading", { name: "Details" })).toBeVisible();
 
   // Fill in details
