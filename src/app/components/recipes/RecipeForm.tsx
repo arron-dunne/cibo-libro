@@ -332,6 +332,7 @@ export default function RecipeForm({ mode, recipe, action }: RecipeFormProps) {
                 type="text"
                 className="w-full px-3 py-2.5 rounded-2xl border border-zinc-300 bg-white"
                 placeholder="e.g. Spaghetti Bolognese"
+                required
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
               />
