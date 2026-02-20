@@ -318,7 +318,7 @@ export default function RecipeForm({ mode, recipe, action }: RecipeFormProps) {
         {/* Summary Panel */}
         <Panel
           header="Create a New Recipe"
-          subheader="Title, description, times, servings, and tags."
+          subheader="Fill in the details and save it to your cookbook."
           first
           icon={
             <ChefHat aria-hidden="true" className="w-8 h-8 sm:w-10 sm:h-10" />
@@ -396,7 +396,7 @@ export default function RecipeForm({ mode, recipe, action }: RecipeFormProps) {
         {/* Ingredients */}
         <Panel
           header="Ingredients"
-          subheader="One per line. Press Enter to add another. Paste multi-line to auto-split."
+          subheader="List what you'll need. Press Enter to add more."
         >
           <div className="flex flex-col gap-3">
             {ingredients.map((val, i) => (
@@ -449,7 +449,7 @@ export default function RecipeForm({ mode, recipe, action }: RecipeFormProps) {
         {/* Steps */}
         <Panel
           header="Steps"
-          subheader="One per line. Press Enter to add another. Paste multi-line to auto-split."
+          subheader="Walk through how to make it, one step at a time."
         >
           <div className="flex flex-col gap-3">
             {steps.map((val, i) => (
