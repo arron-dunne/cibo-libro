@@ -331,7 +331,7 @@ export default function RecipeForm({ mode, recipe, action }: RecipeFormProps) {
                 id="title"
                 type="text"
                 className="w-full px-3 py-2.5 rounded-2xl border border-zinc-300 bg-white"
-                placeholder="e.g. Grandma's Best Lasagna"
+                placeholder="e.g. Spaghetti Bolognese"
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
               />
@@ -343,7 +343,6 @@ export default function RecipeForm({ mode, recipe, action }: RecipeFormProps) {
                 id="description"
                 rows={3}
                 className="w-full px-3 py-2.5 rounded-2xl border border-zinc-300 bg-white"
-                placeholder="Short note about the dish"
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
               />
@@ -519,7 +518,7 @@ export default function RecipeForm({ mode, recipe, action }: RecipeFormProps) {
               type="file"
               accept="image/jpeg,image/png,image/webp"
               onChange={onPick}
-              className="block w-full rounded-lg border border-zinc-300 bg-white/95 px-3 py-2"
+              className="block w-full rounded-2xl border border-slate-300 bg-linear-to-br from-slate-100 to-slate-200 px-3 py-2.5 hover:brightness-90 active:brightness-75 cursor-pointer"
               disabled={uploading}
             />
 
@@ -684,7 +683,7 @@ function TagsEditor({
             if (e.key === "Backspace" && draft === "" && value.length)
               remove(value[value.length - 1]);
           }}
-          placeholder="Add custom tags..."
+          placeholder="e.g. Dinner, Healthy..."
           className="w-full rounded-2xl border border-zinc-300 bg-white/95 px-3 py-2.5"
           aria-label="Add tag"
         />
