@@ -41,6 +41,7 @@ export default function RecipeForm({ mode, recipe, action }: RecipeFormProps) {
   const [steps, setSteps] = useState<string[]>(recipe?.steps ?? [""]);
   const [tags, setTags] = useState<string[]>(recipe?.tags ?? []);
   const [saving, setSaving] = useState(false);
+  const [saveError, setSaveError] = useState<string | null>(null);
 
   // picture states
   const [imageKey, setImageKey] = useState<string | null>(null);
@@ -61,33 +62,38 @@ export default function RecipeForm({ mode, recipe, action }: RecipeFormProps) {
     }
 
     setSaving(true);
+    setSaveError(null);
 
-    const formData = new FormData(e.target as HTMLFormElement);
-    const title = formData.get("title") as string;
-    const description = formData.get("description") as string;
-    const prepMinsRaw = formData.get("prepMins") as string;
-    const cookMinsRaw = formData.get("cookMins") as string;
-    const servingsRaw = formData.get("servings") as string;
-    const note = formData.get("note") as string;
+    try {
+      const formData = new FormData(e.target as HTMLFormElement);
+      const title = formData.get("title") as string;
+      const description = formData.get("description") as string;
+      const prepMinsRaw = formData.get("prepMins") as string;
+      const cookMinsRaw = formData.get("cookMins") as string;
+      const servingsRaw = formData.get("servings") as string;
+      const note = formData.get("note") as string;
 
-    const result = await action({
-      id: recipe?.id ?? null,
-      title,
-      description,
-      prepMins: prepMinsRaw ? Number(prepMinsRaw) : null,
-      cookMins: cookMinsRaw ? Number(cookMinsRaw) : null,
-      servings: servingsRaw ? Number(servingsRaw) : null,
-      ingredients: sanitizeLines(ingredients),
-      steps: sanitizeLines(steps),
-      tags,
-      note,
-      imageKey,
-    });
+      const result = await action({
+        id: recipe?.id ?? null,
+        title,
+        description,
+        prepMins: prepMinsRaw ? Number(prepMinsRaw) : null,
+        cookMins: cookMinsRaw ? Number(cookMinsRaw) : null,
+        servings: servingsRaw ? Number(servingsRaw) : null,
+        ingredients: sanitizeLines(ingredients),
+        steps: sanitizeLines(steps),
+        tags,
+        note,
+        imageKey,
+      });
 
-    if (result.success && result.slug) {
-      redirect(`/view/${result.slug}`);
-    } else {
-      console.log(result.error);
+      if (result.success && result.slug) {
+        redirect(`/view/${result.slug}`);
+      } else {
+        setSaveError(result.error ?? "Something went wrong. Please try again.");
+      }
+    } catch {
+      setSaveError("Something went wrong. Please try again.");
     }
 
     setSaving(false);
@@ -238,7 +244,6 @@ export default function RecipeForm({ mode, recipe, action }: RecipeFormProps) {
       });
       setFileInput(compressedFile);
 
-      setUploadError(null);
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : "Upload failed";
       setUploadError(message);
@@ -311,7 +316,7 @@ export default function RecipeForm({ mode, recipe, action }: RecipeFormProps) {
       <form className="flex flex-col gap-10" onSubmit={handleSubmit}>
         {/* Summary Panel */}
         <Panel
-          header="Create a New Recipe"
+          header={ mode === "new" ? "Create a New Recipe" : "Edit Your Recipe" }
           subheader="Fill in the details and save it to your cookbook."
           first
           icon={
@@ -501,7 +506,7 @@ export default function RecipeForm({ mode, recipe, action }: RecipeFormProps) {
           header="Picture"
           subheader="Choose a cover picture (JPEG, PNG, WebP)"
         >
-          <div className="sm:col-span-2">
+          <div>
             <input
               ref={fileInputRef}
               type="file"
@@ -530,11 +535,7 @@ export default function RecipeForm({ mode, recipe, action }: RecipeFormProps) {
                     disabled={uploading || deleting}
                     onClick={async () => {
                       // This path is an explicit *delete*; shows "Deleting…"
-                      try {
-                        await deleteImage();
-                      } catch {
-                        /* helpers set notices */
-                      }
+                      await deleteImage();
                     }}
                     className="rounded-md border border-zinc-300 bg-white px-2 py-1 text-xs hover:bg-zinc-50 disabled:opacity-50"
                   >
@@ -569,7 +570,12 @@ export default function RecipeForm({ mode, recipe, action }: RecipeFormProps) {
         </Panel>
 
         {/* Save button */}
-        <div className="sticky bottom-4 z-10 flex justify-center">
+        <div className="sticky bottom-4 z-10 flex flex-col items-center gap-2">
+          {saveError && (
+            <div className="w-full max-w-sm rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+              {saveError}
+            </div>
+          )}
           <div className="rounded-full w-full max-w-sm bg-white/60 backdrop-blur border border-white/70 shadow-lg px-4 py-3">
             <button
               type="submit"
@@ -624,7 +630,7 @@ function Panel({
               {header}
             </h1>
             {subheader && (
-              <p className="mt-2 text-[15px] text-gray-700">{subheader}</p>
+              <p className="text-gray-700">{subheader}</p>
             )}
           </div>
         </div>
@@ -694,7 +700,7 @@ function TagsEditor({
           {value.map((t) => (
             <div
               key={t}
-              className="group flex items-center gap-1 rounded-full border border-orange-200 bg-orange-200/50 text-orange-600 px-2 py-1 font-medium texts-sm"
+              className="group flex items-center gap-1 rounded-full border border-orange-200 bg-orange-200/50 text-orange-600 px-2 py-1 font-medium text-sm"
             >
               <span className="ml-1">{t}</span>
               <button
