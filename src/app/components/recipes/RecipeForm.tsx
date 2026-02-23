@@ -6,7 +6,7 @@ import { useState, useRef, useEffect } from "react";
 import { compressImageFile } from "@/lib/images/compress";
 import { MAX_SIZE_BYTES } from "@/lib/images/constants";
 import { RecipeFormRecipe } from "@/types/recipe";
-import { X, ChefHat, Tag as TagIcon, CircleAlert } from "lucide-react";
+import { X, ChefHat, Tag as TagIcon, CircleAlert, LoaderCircle } from "lucide-react";
 
 // ────────────────────────────────────────────────────────────────────────────
 // Types
@@ -584,9 +584,9 @@ export default function RecipeForm({ mode, recipe, action }: RecipeFormProps) {
               disabled={saving || uploading || deleting}
             >
               {saving ? (
-                <span className="flex items-center justify-center gap-2">
-                  <span className="animate-spin h-4 w-4 border-2 border-green-950 border-t-transparent rounded-full"></span>
-                  Saving…
+                <span className="flex items-center justify-center gap-4">
+                  Saving...
+                  <LoaderCircle size={20} className="animate-spin" />
                 </span>
               ) : (
                 "Save"
