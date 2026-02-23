@@ -6,7 +6,7 @@ import { useState, useRef, useEffect } from "react";
 import { compressImageFile } from "@/lib/images/compress";
 import { MAX_SIZE_BYTES } from "@/lib/images/constants";
 import { RecipeFormRecipe } from "@/types/recipe";
-import { X, ChefHat, Tag as TagIcon } from "lucide-react";
+import { X, ChefHat, Tag as TagIcon, CircleAlert } from "lucide-react";
 
 // ────────────────────────────────────────────────────────────────────────────
 // Types
@@ -572,7 +572,8 @@ export default function RecipeForm({ mode, recipe, action }: RecipeFormProps) {
         {/* Save button */}
         <div className="sticky bottom-4 z-10 flex flex-col items-center gap-2">
           {saveError && (
-            <div className="w-full max-w-sm rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+            <div className="w-full max-w-sm rounded-2xl border border-red-500 bg-red-200/90 px-4 py-3 text-sm text-red-600 font-semibold flex items-center gap-2">
+              <CircleAlert height={18} className="shrink-0" />
               {saveError}
             </div>
           )}
