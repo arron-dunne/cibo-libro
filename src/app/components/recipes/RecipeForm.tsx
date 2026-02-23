@@ -64,6 +64,8 @@ export default function RecipeForm({ mode, recipe, action }: RecipeFormProps) {
     setSaving(true);
     setSaveError(null);
 
+    let redirectSlug: string | null = null;
+
     try {
       const formData = new FormData(e.target as HTMLFormElement);
       const title = formData.get("title") as string;
@@ -88,7 +90,7 @@ export default function RecipeForm({ mode, recipe, action }: RecipeFormProps) {
       });
 
       if (result.success && result.slug) {
-        redirect(`/view/${result.slug}`);
+        redirectSlug = result.slug;
       } else {
         setSaveError(result.error ?? "Something went wrong. Please try again.");
       }
@@ -97,6 +99,10 @@ export default function RecipeForm({ mode, recipe, action }: RecipeFormProps) {
     }
 
     setSaving(false);
+
+    if (redirectSlug) {
+      redirect(`/view/${redirectSlug}`);
+    }
   };
 
   const addRow = (setter: React.Dispatch<React.SetStateAction<string[]>>) =>
