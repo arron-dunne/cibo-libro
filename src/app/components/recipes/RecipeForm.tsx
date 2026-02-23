@@ -35,25 +35,11 @@ type SignUploadResponse = {
 // ────────────────────────────────────────────────────────────────────────────
 export default function RecipeForm({ mode, recipe, action }: RecipeFormProps) {
   // form states
-  const [title, setTitle] = useState<string>(recipe?.title ?? "");
-  const [description, setDescription] = useState<string>(
-    recipe?.description ?? "",
-  );
-  const [prepMins, setPrepMins] = useState<number | null>(
-    recipe?.prepMins ?? null,
-  );
-  const [cookMins, setCookMins] = useState<number | null>(
-    recipe?.cookMins ?? null,
-  );
-  const [servings, setServings] = useState<number | null>(
-    recipe?.servings ?? null,
-  );
   const [ingredients, setIngredients] = useState<string[]>(
     recipe?.ingredients ?? [""],
   );
   const [steps, setSteps] = useState<string[]>(recipe?.steps ?? [""]);
   const [tags, setTags] = useState<string[]>(recipe?.tags ?? []);
-  const [note, setNote] = useState<string>(recipe?.note ?? "");
   const [saving, setSaving] = useState(false);
 
   // picture states
@@ -76,13 +62,21 @@ export default function RecipeForm({ mode, recipe, action }: RecipeFormProps) {
 
     setSaving(true);
 
+    const formData = new FormData(e.target as HTMLFormElement);
+    const title = formData.get("title") as string;
+    const description = formData.get("description") as string;
+    const prepMinsRaw = formData.get("prepMins") as string;
+    const cookMinsRaw = formData.get("cookMins") as string;
+    const servingsRaw = formData.get("servings") as string;
+    const note = formData.get("note") as string;
+
     const result = await action({
       id: recipe?.id ?? null,
       title,
       description,
-      prepMins: prepMins ? Number(prepMins) : null,
-      cookMins: cookMins ? Number(cookMins) : null,
-      servings: servings ? Number(servings) : null,
+      prepMins: prepMinsRaw ? Number(prepMinsRaw) : null,
+      cookMins: cookMinsRaw ? Number(cookMinsRaw) : null,
+      servings: servingsRaw ? Number(servingsRaw) : null,
       ingredients: sanitizeLines(ingredients),
       steps: sanitizeLines(steps),
       tags,
@@ -329,12 +323,12 @@ export default function RecipeForm({ mode, recipe, action }: RecipeFormProps) {
               <Label htmlFor="title">Title</Label>
               <input
                 id="title"
+                name="title"
                 type="text"
                 className="w-full px-3 py-2.5 rounded-2xl border border-zinc-300 bg-white"
                 placeholder="e.g. Spaghetti Bolognese"
                 required
-                value={title}
-                onChange={(e) => setTitle(e.target.value)}
+                defaultValue={recipe?.title ?? ""}
               />
             </div>
 
@@ -342,47 +336,41 @@ export default function RecipeForm({ mode, recipe, action }: RecipeFormProps) {
               <Label htmlFor="description">Description</Label>
               <textarea
                 id="description"
+                name="description"
                 rows={3}
                 className="w-full px-3 py-2.5 rounded-2xl border border-zinc-300 bg-white"
-                value={description}
-                onChange={(e) => setDescription(e.target.value)}
+                defaultValue={recipe?.description ?? ""}
               />
             </div>
 
             <div>
               <Label>Prep time (min)</Label>
               <input
+                name="prepMins"
                 type="number"
                 inputMode="numeric"
                 className="w-full px-3 py-2.5 rounded-2xl border border-zinc-300 bg-white"
-                value={prepMins ?? ""}
-                onChange={(e) =>
-                  setPrepMins(e.target.value ? Number(e.target.value) : null)
-                }
+                defaultValue={recipe?.prepMins?.toString() ?? ""}
               />
             </div>
             <div>
               <Label>Cook time (min)</Label>
               <input
+                name="cookMins"
                 type="number"
                 inputMode="numeric"
                 className="w-full px-3 py-2.5 rounded-2xl border border-zinc-300 bg-white"
-                value={cookMins ?? ""}
-                onChange={(e) =>
-                  setCookMins(e.target.value ? Number(e.target.value) : null)
-                }
+                defaultValue={recipe?.cookMins?.toString() ?? ""}
               />
             </div>
             <div>
               <Label>Servings</Label>
               <input
+                name="servings"
                 type="number"
                 inputMode="numeric"
                 className="w-full px-3 py-2.5 rounded-2xl border border-zinc-300 bg-white"
-                value={servings ?? ""}
-                onChange={(e) =>
-                  setServings(e.target.value ? Number(e.target.value) : null)
-                }
+                defaultValue={recipe?.servings?.toString() ?? ""}
               />
             </div>
 
@@ -501,10 +489,10 @@ export default function RecipeForm({ mode, recipe, action }: RecipeFormProps) {
           subheader="Preparation notes, variations, serving ideas, or any other personal touches."
         >
           <textarea
+            name="note"
             rows={3}
             className="w-full px-3 py-2.5 rounded-2xl border border-zinc-300 bg-white"
-            value={note}
-            onChange={(e) => setNote(e.target.value)}
+            defaultValue={recipe?.note ?? ""}
           />
         </Panel>
 
