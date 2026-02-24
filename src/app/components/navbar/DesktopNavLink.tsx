@@ -45,9 +45,9 @@ export function useInfo(type: NavLinkType) {
     case "new":
       return {
         label: "Add",
-        href: "/new",
+        href: "/add",
         icon: CirclePlus,
-        highlight: pathname === "/new",
+        highlight: pathname === "/add",
       };
     case "import":
       return {

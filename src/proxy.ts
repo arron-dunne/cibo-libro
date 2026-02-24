@@ -18,7 +18,7 @@ export const config = {
     "/all/:path*",
     "/view/:path*",
     "/edit/:path*",
-    "/new/:path*",
+    "/add/:path*",
     "/import/:path*",
     "/settings/:path*",
     "/cook/:path*",

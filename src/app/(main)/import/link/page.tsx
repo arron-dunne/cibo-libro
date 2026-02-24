@@ -67,7 +67,7 @@ function PreviewCard({
   return (
     <form
       action={saveLinkCard}
-      className="rounded-3xl border border-white/70 bg-amber-50/90 shadow-lg backdrop-blur overflow-hidden"
+      className="rounded-3xl border border-white/70 bg-white/95 shadow-lg backdrop-blur overflow-hidden"
     >
       {/* Hidden inputs */}
       <input name="url" value={url} hidden readOnly />

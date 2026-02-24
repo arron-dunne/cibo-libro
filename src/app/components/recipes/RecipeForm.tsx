@@ -6,6 +6,7 @@ import { useState, useRef, useEffect } from "react";
 import { compressImageFile } from "@/lib/images/compress";
 import { MAX_SIZE_BYTES } from "@/lib/images/constants";
 import { RecipeFormRecipe } from "@/types/recipe";
+import { X, ChefHat, Tag as TagIcon, CircleAlert, LoaderCircle } from "lucide-react";
 
 // ────────────────────────────────────────────────────────────────────────────
 // Types
@@ -18,8 +19,6 @@ interface RecipeFormProps {
     recipe: RecipeFormRecipe,
   ) => Promise<{ success: boolean; slug?: string; error?: string }>; // server action for handling submitted recipe
 }
-
-type SectionKey = "details" | "ingredients" | "steps" | "pictures";
 
 type SignUploadResponse = {
   method: "PUT";
@@ -35,34 +34,14 @@ type SignUploadResponse = {
 // Main Component
 // ────────────────────────────────────────────────────────────────────────────
 export default function RecipeForm({ mode, recipe, action }: RecipeFormProps) {
-  const SECTIONS: [SectionKey, string][] = [
-    ["details", "Details"],
-    ["ingredients", "Ingredients"],
-    ["steps", "Steps"],
-    ["pictures", "Pictures"],
-  ];
-
   // form states
-  const [title, setTitle] = useState<string>(recipe?.title ?? "");
-  const [description, setDescription] = useState<string>(
-    recipe?.description ?? "",
-  );
-  const [prepMins, setPrepMins] = useState<number | null>(
-    recipe?.prepMins ?? null,
-  );
-  const [cookMins, setCookMins] = useState<number | null>(
-    recipe?.cookMins ?? null,
-  );
-  const [servings, setServings] = useState<number | null>(
-    recipe?.servings ?? null,
-  );
   const [ingredients, setIngredients] = useState<string[]>(
     recipe?.ingredients ?? [""],
   );
   const [steps, setSteps] = useState<string[]>(recipe?.steps ?? [""]);
   const [tags, setTags] = useState<string[]>(recipe?.tags ?? []);
-  const [note, setNote] = useState<string>(recipe?.note ?? "");
   const [saving, setSaving] = useState(false);
+  const [saveError, setSaveError] = useState<string | null>(null);
 
   // picture states
   const [imageKey, setImageKey] = useState<string | null>(null);
@@ -73,18 +52,8 @@ export default function RecipeForm({ mode, recipe, action }: RecipeFormProps) {
   const [imageNotice, setImageNotice] = useState<string | null>(null);
   const [deleting, setDeleting] = useState(false);
 
-  // Section anchors
-  const sectionsRef = {
-    details: useRef<HTMLDivElement>(null),
-    ingredients: useRef<HTMLDivElement>(null),
-    steps: useRef<HTMLDivElement>(null),
-    note: useRef<HTMLDivElement>(null),
-    pictures: useRef<HTMLDivElement>(null),
-  };
-  const [currentSection, setCurrentSection] = useState<SectionKey>("details");
-
   // Handle form submission
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.SubmitEvent) => {
     e.preventDefault();
 
     if (uploading || deleting) {
@@ -93,41 +62,47 @@ export default function RecipeForm({ mode, recipe, action }: RecipeFormProps) {
     }
 
     setSaving(true);
+    setSaveError(null);
 
-    const result = await action({
-      id: recipe?.id ?? null,
-      title,
-      description,
-      prepMins: prepMins ? Number(prepMins) : null,
-      cookMins: cookMins ? Number(cookMins) : null,
-      servings: servings ? Number(servings) : null,
-      ingredients: sanitizeLines(ingredients),
-      steps: sanitizeLines(steps),
-      tags,
-      note,
-      imageKey,
-    });
+    let redirectSlug: string | null = null;
 
-    if (result.success && result.slug) {
-      redirect(`/view/${result.slug}`);
-    } else {
-      console.log(result.error);
+    try {
+      const formData = new FormData(e.target as HTMLFormElement);
+      const title = formData.get("title") as string;
+      const description = formData.get("description") as string;
+      const prepMinsRaw = formData.get("prepMins") as string;
+      const cookMinsRaw = formData.get("cookMins") as string;
+      const servingsRaw = formData.get("servings") as string;
+      const note = formData.get("note") as string;
+
+      const result = await action({
+        id: recipe?.id ?? null,
+        title,
+        description,
+        prepMins: prepMinsRaw ? Number(prepMinsRaw) : null,
+        cookMins: cookMinsRaw ? Number(cookMinsRaw) : null,
+        servings: servingsRaw ? Number(servingsRaw) : null,
+        ingredients: sanitizeLines(ingredients),
+        steps: sanitizeLines(steps),
+        tags,
+        note,
+        imageKey,
+      });
+
+      if (result.success && result.slug) {
+        redirectSlug = result.slug;
+      } else {
+        setSaveError(result.error ?? "Something went wrong. Please try again.");
+      }
+    } catch {
+      setSaveError("Something went wrong. Please try again.");
     }
 
     setSaving(false);
-  };
 
-  const scrollTo = (key: SectionKey) => {
-    const el = sectionsRef[key].current;
-    if (!el) return;
-    setCurrentSection(key);
-    el.scrollIntoView({
-      behavior: "smooth",
-      block: "start",
-      inline: "nearest",
-    });
-    const heading = el.querySelector("h2") as HTMLElement | null;
-    setTimeout(() => heading?.focus?.(), 350);
+    if (redirectSlug) {
+      redirect(`/view/${redirectSlug}`);
+    }
   };
 
   const addRow = (setter: React.Dispatch<React.SetStateAction<string[]>>) =>
@@ -275,7 +250,6 @@ export default function RecipeForm({ mode, recipe, action }: RecipeFormProps) {
       });
       setFileInput(compressedFile);
 
-      setUploadError(null);
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : "Upload failed";
       setUploadError(message);
@@ -344,356 +318,289 @@ export default function RecipeForm({ mode, recipe, action }: RecipeFormProps) {
   // Render
   // ──────────────────────────────────────────────────────────────────────────
   return (
-    <div className="text-zinc-900">
-      {/* Mobile pills (top under navbar) */}
-      <div className="sticky top-16 z-30 border-b border-white/40 bg-white/80 px-4 py-3 backdrop-blur md:hidden">
-        <div className="mx-auto flex w-[min(1250px,95%)] gap-2 overflow-x-auto">
-          {SECTIONS.map(([key, label]) => (
-            <button
-              key={key}
-              onClick={() => scrollTo(key)}
-              className={`shrink-0 rounded-full px-3 py-1.5 text-sm font-medium transition
-                ${currentSection === key ? "bg-orange-500 text-white shadow" : "bg-white/90 text-zinc-700 hover:bg-white"}`}
-            >
-              {label}
-            </button>
-          ))}
-        </div>
-      </div>
-
-      {/* Content wrapper – FLEX (rail fixed, form expands) */}
-      <div className="mx-auto w-[min(1250px,95%)] px-4 md:px-6">
-        <div className="md:flex md:items-start md:gap-6">
-          {/* Side rail – desktop only */}
-          <aside className="hidden md:block sticky top-24 w-56 shrink-0">
-            <div className="rounded-2xl border border-white/60 bg-white/70 p-2 shadow-md backdrop-blur">
-              {SECTIONS.map(([key, label]) => (
-                <button
-                  key={key}
-                  onClick={() => scrollTo(key)}
-                  className={`mb-2 w-full rounded-xl px-3 py-2 text-left text-sm font-medium last:mb-0
-                    ${currentSection === key ? "bg-orange-500 text-white shadow" : "bg-white text-zinc-700 hover:bg-zinc-50"}
-                    `}
-                >
-                  {label}
-                </button>
-              ))}
+    <div className="max-w-3xl w-full mx-auto mt-8">
+      <form className="flex flex-col gap-10" onSubmit={handleSubmit}>
+        {/* Summary Panel */}
+        <Panel
+          header={ mode === "new" ? "Create a New Recipe" : "Edit Your Recipe" }
+          subheader="Fill in the details and save it to your cookbook."
+          first
+          icon={
+            <ChefHat aria-hidden="true" className="w-8 h-8 sm:w-10 sm:h-10" />
+          }
+        >
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+            <div className="sm:col-span-2">
+              <Label htmlFor="title">Title</Label>
+              <input
+                id="title"
+                name="title"
+                type="text"
+                className="w-full px-3 py-2.5 rounded-2xl border border-zinc-300 bg-white"
+                placeholder="e.g. Spaghetti Bolognese"
+                required
+                defaultValue={recipe?.title ?? ""}
+              />
             </div>
-          </aside>
 
-          {/* Form column – expands to fill remaining width */}
-          <section className="mt-4 min-w-0 flex-1 md:mt-0">
-            <form className="flex flex-col gap-5" onSubmit={handleSubmit}>
-              {/* Details */}
-              <Panel
-                ref={sectionsRef.details}
-                id="details"
-                title="Details"
-                subtitle="Title, description, times, servings, and tags."
-              >
-                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                  <div className="sm:col-span-2">
-                    <Label htmlFor="title">Title</Label>
-                    <input
-                      id="title"
-                      type="text"
-                      className="w-full rounded-lg border border-zinc-300 bg-white/95 px-3 py-2 outline-none focus:ring-2 focus:ring-orange-400"
-                      placeholder="e.g. Grandma's Best Lasagna"
-                      value={title}
-                      onChange={(e) => setTitle(e.target.value)}
-                    />
-                  </div>
+            <div className="sm:col-span-2">
+              <Label htmlFor="description">Description</Label>
+              <textarea
+                id="description"
+                name="description"
+                rows={3}
+                className="w-full px-3 py-2.5 rounded-2xl border border-zinc-300 bg-white"
+                defaultValue={recipe?.description ?? ""}
+              />
+            </div>
 
-                  <div className="sm:col-span-2">
-                    <Label htmlFor="description">Description</Label>
-                    <textarea
-                      id="description"
-                      rows={3}
-                      className="w-full rounded-lg border border-zinc-300 bg-white/95 px-3 py-2 outline-none focus:ring-2 focus:ring-orange-400"
-                      placeholder="Short note about the dish"
-                      value={description}
-                      onChange={(e) => setDescription(e.target.value)}
-                    />
-                  </div>
+            <div>
+              <Label>Prep time (min)</Label>
+              <input
+                name="prepMins"
+                type="number"
+                inputMode="numeric"
+                className="w-full px-3 py-2.5 rounded-2xl border border-zinc-300 bg-white"
+                defaultValue={recipe?.prepMins?.toString() ?? ""}
+              />
+            </div>
+            <div>
+              <Label>Cook time (min)</Label>
+              <input
+                name="cookMins"
+                type="number"
+                inputMode="numeric"
+                className="w-full px-3 py-2.5 rounded-2xl border border-zinc-300 bg-white"
+                defaultValue={recipe?.cookMins?.toString() ?? ""}
+              />
+            </div>
+            <div>
+              <Label>Servings</Label>
+              <input
+                name="servings"
+                type="number"
+                inputMode="numeric"
+                className="w-full px-3 py-2.5 rounded-2xl border border-zinc-300 bg-white"
+                defaultValue={recipe?.servings?.toString() ?? ""}
+              />
+            </div>
 
-                  <div>
-                    <Label>Prep time (min)</Label>
-                    <input
-                      type="number"
-                      inputMode="numeric"
-                      className="w-full rounded-lg border border-zinc-300 bg-white/95 px-3 py-2 outline-none focus:ring-2 focus:ring-orange-400"
-                      value={prepMins ?? ""}
-                      onChange={(e) =>
-                        setPrepMins(
-                          e.target.value ? Number(e.target.value) : null,
-                        )
-                      }
-                    />
-                  </div>
-                  <div>
-                    <Label>Cook time (min)</Label>
-                    <input
-                      type="number"
-                      inputMode="numeric"
-                      className="w-full rounded-lg border border-zinc-300 bg-white/95 px-3 py-2 outline-none focus:ring-2 focus:ring-orange-400"
-                      value={cookMins ?? ""}
-                      onChange={(e) =>
-                        setCookMins(
-                          e.target.value ? Number(e.target.value) : null,
-                        )
-                      }
-                    />
-                  </div>
-                  <div>
-                    <Label>Servings</Label>
-                    <input
-                      type="number"
-                      inputMode="numeric"
-                      className="w-full rounded-lg border border-zinc-300 bg-white/95 px-3 py-2 outline-none focus:ring-2 focus:ring-orange-400"
-                      value={servings ?? ""}
-                      onChange={(e) =>
-                        setServings(
-                          e.target.value ? Number(e.target.value) : null,
-                        )
-                      }
-                    />
-                  </div>
+            <div className="sm:col-span-2">
+              <Label>Tags</Label>
+              <TagsEditor value={tags} onChange={setTags} />
+            </div>
+          </div>
+        </Panel>
 
-                  <div className="sm:col-span-2">
-                    <Label>Tags</Label>
-                    <TagsEditor value={tags} onChange={setTags} />
-                  </div>
-                </div>
-              </Panel>
-
-              {/* Ingredients */}
-              <Panel
-                ref={sectionsRef.ingredients}
-                id="ingredients"
-                title="Ingredients"
-                subtitle="One per line. Press Enter to add another. Paste multi-line to auto-split."
-              >
-                <div className="flex flex-col gap-2">
-                  {ingredients.map((val, i) => (
-                    <div key={`ing-${i}`} className="flex items-center gap-2">
-                      <input
-                        type="text"
-                        aria-label={`Ingredient ${i + 1}`}
-                        className="ingredient-input w-full rounded-lg border border-zinc-300 bg-white/95 px-3 py-2 outline-none focus:ring-2 focus:ring-orange-400"
-                        placeholder={i === 0 ? "e.g. 250g dried pasta" : ""}
-                        value={val}
-                        onChange={(e) =>
-                          setIngredients((xs) =>
-                            xs.map((x, idx) =>
-                              idx === i ? e.target.value : x,
-                            ),
-                          )
-                        }
-                        onPaste={onPasteMulti(setIngredients, i)}
-                        onKeyDown={handleEnter(
-                          setIngredients,
-                          i,
-                          "input.ingredient-input",
-                        )}
-                      />
-                      <button
-                        type="button"
-                        className="rounded-md border border-zinc-300 px-2 py-2 text-sm hover:bg-zinc-50 disabled:opacity-50"
-                        onClick={() => removeRow(setIngredients, i)}
-                        disabled={ingredients.length === 1}
-                        aria-label="Remove ingredient"
-                      >
-                        −
-                      </button>
-                    </div>
-                  ))}
-                  <div>
-                    <button
-                      type="button"
-                      className="mt-1 rounded-md border border-zinc-300 bg-white px-3 py-2 text-sm hover:bg-zinc-50"
-                      onClick={() => addRow(setIngredients)}
-                    >
-                      + Add ingredient
-                    </button>
-                  </div>
-                </div>
-              </Panel>
-
-              {/* Steps */}
-              <Panel
-                ref={sectionsRef.steps}
-                id="steps"
-                title="Steps"
-                subtitle="One per line. Press Enter to add another. Paste multi-line to auto-split."
-              >
-                <div className="flex flex-col gap-2">
-                  {steps.map((val, i) => (
-                    <div key={`step-${i}`} className="flex items-center gap-2">
-                      <input
-                        type="text"
-                        aria-label={`Step ${i + 1}`}
-                        className="step-input w-full rounded-lg border border-zinc-300 bg-white/95 px-3 py-2 outline-none focus:ring-2 focus:ring-orange-400"
-                        placeholder={
-                          i === 0 ? "e.g. Preheat oven to 180°C (fan)." : ""
-                        }
-                        value={val}
-                        onChange={(e) =>
-                          setSteps((xs) =>
-                            xs.map((x, idx) =>
-                              idx === i ? e.target.value : x,
-                            ),
-                          )
-                        }
-                        onPaste={onPasteMulti(setSteps, i)}
-                        onKeyDown={handleEnter(setSteps, i, "input.step-input")}
-                      />
-                      <button
-                        type="button"
-                        className="rounded-md border border-zinc-300 px-2 py-2 text-sm hover:bg-zinc-50 disabled:opacity-50"
-                        onClick={() => removeRow(setSteps, i)}
-                        disabled={steps.length === 1}
-                        aria-label="Remove step"
-                      >
-                        −
-                      </button>
-                    </div>
-                  ))}
-                  <div>
-                    <button
-                      type="button"
-                      className="mt-1 rounded-md border border-zinc-300 bg-white px-3 py-2 text-sm hover:bg-zinc-50"
-                      onClick={() => addRow(setSteps)}
-                    >
-                      + Add step
-                    </button>
-                  </div>
-                </div>
-              </Panel>
-
-              {/* Notes */}
-              <Panel
-                ref={sectionsRef.note}
-                id="note"
-                title="Notes"
-                subtitle="Preparation notes, variations, serving ideas, or any other personal touches."
-              >
-                <textarea
-                  rows={3}
-                  className="w-full rounded-lg border border-zinc-300 bg-white/95 px-3 py-2 outline-none focus:ring-2 focus:ring-orange-400"
-                  value={note}
-                  onChange={(e) => setNote(e.target.value)}
-                />
-              </Panel>
-
-              {/* Cover Image */}
-              <Panel
-                ref={sectionsRef.pictures}
-                id="cover-image"
-                title="Cover Image"
-                subtitle="Choose a photo (JPEG, PNG, WebP)"
-              >
-                <div className="sm:col-span-2">
-                  <input
-                    ref={fileInputRef}
-                    type="file"
-                    accept="image/jpeg,image/png,image/webp"
-                    onChange={onPick}
-                    className="block w-full rounded-lg border border-zinc-300 bg-white/95 px-3 py-2"
-                    disabled={uploading}
-                  />
-
-                  {/* Upload status + inline delete (under the file input) */}
-                  <div className="mt-2 flex flex-wrap items-center gap-3 text-sm">
-                    {(uploading || deleting) && (
-                      <span className="flex items-center gap-2 text-zinc-600">
-                        <span className="animate-spin h-4 w-4 border-2 border-orange-500 border-t-transparent rounded-full"></span>
-                        {uploading ? "Uploading…" : "Deleting…"}
-                      </span>
-                    )}
-
-                    {!uploading && !deleting && imageKey && !uploadError && (
-                      <div className="flex items-center gap-3">
-                        <span className="text-emerald-600">
-                          Uploaded successfully
-                        </span>
-                        <button
-                          type="button"
-                          disabled={uploading || deleting}
-                          onClick={async () => {
-                            // This path is an explicit *delete*; shows "Deleting…"
-                            try {
-                              await deleteImage();
-                            } catch {
-                              /* helpers set notices */
-                            }
-                          }}
-                          className="rounded-md border border-zinc-300 bg-white px-2 py-1 text-xs hover:bg-zinc-50 disabled:opacity-50"
-                        >
-                          Remove
-                        </button>
-                      </div>
-                    )}
-
-                    {uploadError && (
-                      <span className="text-red-600">
-                        Upload failed: {uploadError}
-                      </span>
-                    )}
-                    {imageNotice && (
-                      <span className="text-zinc-700">{imageNotice}</span>
-                    )}
-                  </div>
-
-                  {/* Preview image */}
-                  {imagePreview && (
-                    <div className="mt-3 relative aspect-video w-full overflow-hidden rounded-lg border">
-                      <Image
-                        src={imagePreview}
-                        alt="Cover image preview"
-                        fill
-                        sizes="100vw"
-                        className={`object-cover ${uploadError ? "opacity-70 grayscale" : ""}`}
-                      />
-                    </div>
+        {/* Ingredients */}
+        <Panel
+          header="Ingredients"
+          subheader="List what you'll need. Press Enter to add more."
+        >
+          <div className="flex flex-col gap-3">
+            {ingredients.map((val, i) => (
+              <div key={`ing-${i}`} className="flex items-center gap-4">
+                <input
+                  type="text"
+                  aria-label={`Ingredient ${i + 1}`}
+                  className="ingredient-input w-full px-3 py-2.5 rounded-2xl border border-zinc-300 bg-white"
+                  placeholder={i === 0 ? "e.g. 250g dried pasta" : ""}
+                  value={val}
+                  onChange={(e) =>
+                    setIngredients((xs) =>
+                      xs.map((x, idx) => (idx === i ? e.target.value : x)),
+                    )
+                  }
+                  onPaste={onPasteMulti(setIngredients, i)}
+                  onKeyDown={handleEnter(
+                    setIngredients,
+                    i,
+                    "input.ingredient-input",
                   )}
-                </div>
-              </Panel>
-
-              {/* Bottom bar */}
-              <div className="sticky bottom-0 z-40 mt-2 flex items-center justify-between gap-3 rounded-2xl border border-white/60 bg-white/80 px-4 py-3 shadow-md backdrop-blur">
-                {/* <div className="flex items-center gap-2">
-                  <button
-                    type="button"
-                    className="rounded-lg border border-zinc-300 bg-white px-3 py-2 text-sm hover:bg-zinc-50 disabled:opacity-50"
-                    onClick={doUndo}
-                    disabled={!undo}
-                    title="Undo last change"
-                  >
-                    ⟲ Undo
-                  </button>
-                </div> */}
+                />
 
                 <button
-                  type="submit"
-                  className="rounded-lg border border-black/10 bg-orange-500 px-3.5 py-2 font-semibold text-white shadow disabled:opacity-50 hover:cursor-pointer"
-                  disabled={saving || uploading || deleting}
+                  type="button"
+                  className="shrink-0 w-10 h-10 flex items-center justify-center
+              bg-linear-to-br from-slate-100 to-slate-200
+              rounded-full text-slate-800 border border-slate-300
+              cursor-pointer hover:brightness-90 active:brightness-75"
+                  onClick={() => removeRow(setIngredients, i)}
+                  disabled={ingredients.length === 1}
+                  aria-label="Remove ingredient"
                 >
-                  <span className="flex items-center gap-2">
-                    {saving ? (
-                      <>
-                        <span className="animate-spin h-4 w-4 border-2 border-white border-t-transparent rounded-full"></span>
-                        <span>Saving…</span>
-                      </>
-                    ) : (
-                      <span>Save</span>
-                    )}
-                  </span>
+                  <X size={16} />
                 </button>
               </div>
-            </form>
-          </section>
+            ))}
+            <div>
+              <button
+                type="button"
+                className="mt-2 px-4 h-11 flex gap-2 items-center bg-linear-to-br from-slate-100 to-slate-200 rounded-full text-slate-800 border border-slate-300 cursor-pointer hover:brightness-90 active:brightness-75"
+                onClick={() => addRow(setIngredients)}
+              >
+                Add Ingredient
+              </button>
+            </div>
+          </div>
+        </Panel>
+
+        {/* Steps */}
+        <Panel
+          header="Steps"
+          subheader="Walk through how to make it, one step at a time."
+        >
+          <div className="flex flex-col gap-3">
+            {steps.map((val, i) => (
+              <div key={`step-${i}`} className="flex items-start gap-4">
+                <textarea
+                  rows={2}
+                  aria-label={`Step ${i + 1}`}
+                  className="step-input w-full px-3 py-2.5 rounded-2xl border border-zinc-300 bg-white"
+                  placeholder={
+                    i === 0 ? "e.g. Preheat oven to 180°C (fan)." : ""
+                  }
+                  value={val}
+                  onChange={(e) =>
+                    setSteps((xs) =>
+                      xs.map((x, idx) => (idx === i ? e.target.value : x)),
+                    )
+                  }
+                />
+
+                <button
+                  type="button"
+                  className="shrink-0 w-10 h-10 flex items-center justify-center
+              bg-linear-to-br from-slate-100 to-slate-200
+              rounded-full text-slate-800 border border-slate-300
+              cursor-pointer hover:brightness-90 active:brightness-75"
+                  onClick={() => removeRow(setSteps, i)}
+                  disabled={steps.length === 1}
+                  aria-label="Remove step"
+                >
+                  <X size={16} />
+                </button>
+              </div>
+            ))}
+            <div>
+              <button
+                type="button"
+                className="mt-2 px-4 h-11 flex gap-2 items-center bg-linear-to-br from-slate-100 to-slate-200 rounded-full text-slate-800 border border-slate-300 cursor-pointer hover:brightness-90 active:brightness-75"
+                onClick={() => addRow(setSteps)}
+              >
+                Add Step
+              </button>
+            </div>
+          </div>
+        </Panel>
+
+        {/* Notes */}
+        <Panel
+          header="Notes"
+          subheader="Preparation notes, variations, serving ideas, or any other personal touches."
+        >
+          <textarea
+            name="note"
+            rows={3}
+            className="w-full px-3 py-2.5 rounded-2xl border border-zinc-300 bg-white"
+            defaultValue={recipe?.note ?? ""}
+          />
+        </Panel>
+
+        {/* Cover Image */}
+        <Panel
+          header="Picture"
+          subheader="Choose a cover picture (JPEG, PNG, WebP)"
+        >
+          <div>
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept="image/jpeg,image/png,image/webp"
+              onChange={onPick}
+              className="block w-full rounded-2xl border border-slate-300 bg-linear-to-br from-slate-100 to-slate-200 px-3 py-2.5 hover:brightness-90 active:brightness-75 cursor-pointer"
+              disabled={uploading}
+            />
+
+            {/* Upload status + inline delete (under the file input) */}
+            <div className="mt-2 flex flex-wrap items-center gap-3 text-sm">
+              {(uploading || deleting) && (
+                <span className="flex items-center gap-2 text-zinc-600">
+                  <span className="animate-spin h-4 w-4 border-2 border-orange-500 border-t-transparent rounded-full"></span>
+                  {uploading ? "Uploading…" : "Deleting…"}
+                </span>
+              )}
+
+              {!uploading && !deleting && imageKey && !uploadError && (
+                <div className="flex items-center gap-3">
+                  <span className="text-emerald-600">
+                    Uploaded successfully
+                  </span>
+                  <button
+                    type="button"
+                    disabled={uploading || deleting}
+                    onClick={async () => {
+                      // This path is an explicit *delete*; shows "Deleting…"
+                      await deleteImage();
+                    }}
+                    className="rounded-md border border-zinc-300 bg-white px-2 py-1 text-xs hover:bg-zinc-50 disabled:opacity-50"
+                  >
+                    Remove
+                  </button>
+                </div>
+              )}
+
+              {uploadError && (
+                <span className="text-red-600">
+                  Upload failed: {uploadError}
+                </span>
+              )}
+              {imageNotice && (
+                <span className="text-zinc-700">{imageNotice}</span>
+              )}
+            </div>
+
+            {/* Preview image */}
+            {imagePreview && (
+              <div className="mt-3 relative aspect-video w-full overflow-hidden rounded-lg border">
+                <Image
+                  src={imagePreview}
+                  alt="Cover image preview"
+                  fill
+                  sizes="100vw"
+                  className={`object-cover ${uploadError ? "opacity-70 grayscale" : ""}`}
+                />
+              </div>
+            )}
+          </div>
+        </Panel>
+
+        {/* Save button */}
+        <div className="sticky bottom-4 z-10 flex flex-col items-center gap-2">
+          {saveError && (
+            <div className="w-full max-w-sm rounded-2xl border border-red-500 bg-red-200/90 px-4 py-3 text-sm text-red-600 font-semibold flex items-center gap-2">
+              <CircleAlert height={18} className="shrink-0" />
+              {saveError}
+            </div>
+          )}
+          <div className="rounded-full w-full max-w-sm bg-white/60 backdrop-blur border border-white/70 shadow-lg px-4 py-3">
+            <button
+              type="submit"
+              className="w-full rounded-full bg-linear-to-br from-green-500 to-lime-400 px-6 py-3 text-xl font-bold text-green-950 border border-green-500 shadow-lg disabled:opacity-50 cursor-pointer hover:brightness-90 active:brightness-75"
+              disabled={saving || uploading || deleting}
+            >
+              {saving ? (
+                <span className="flex items-center justify-center gap-4">
+                  Saving...
+                  <LoaderCircle size={20} className="animate-spin" />
+                </span>
+              ) : (
+                "Save"
+              )}
+            </button>
+          </div>
         </div>
-      </div>
+      </form>
     </div>
   );
 }
@@ -704,30 +611,47 @@ export default function RecipeForm({ mode, recipe, action }: RecipeFormProps) {
 
 // Floating panel wrapper
 function Panel({
-  id,
-  title,
-  subtitle,
+  header,
+  subheader,
+  first,
+  icon,
   children,
-  ref,
 }: {
-  id: string;
-  title: string;
-  subtitle?: string;
+  header: string;
+  subheader?: string;
+  first?: boolean;
+  icon?: React.ReactNode;
   children: React.ReactNode;
-  ref: React.RefObject<HTMLDivElement | null>;
 }) {
   return (
-    <div
-      ref={ref}
-      data-section={id}
-      className="w-full scroll-mt-28 rounded-2xl border border-white/60 bg-white/90 p-4 shadow-md backdrop-blur md:p-6"
-    >
-      <h2 tabIndex={-1} className="text-xl font-semibold tracking-tight">
-        {title}
-      </h2>
-      {subtitle && <p className="mt-1 text-sm text-zinc-600">{subtitle}</p>}
-      <div className="mt-4">{children}</div>
-    </div>
+    <section className="rounded-3xl border border-white/70 bg-white/95 p-8 shadow-lg backdrop-blur">
+      {first ? (
+        <div className="mb-6 flex flex-col sm:flex-row items-center sm:items-start gap-3 sm:gap-6 md:mb-8">
+          {icon && (
+            <div className="hidden sm:flex w-20 h-18 items-center justify-center rounded-3xl bg-linear-to-br from-orange-100 to-rose-100 text-rose-500 border border-rose-200">
+              {icon}
+            </div>
+          )}
+          <div className="text-center sm:text-start">
+            <h1 className="text-3xl font-bold leading-tight text-gray-900 md:text-4xl">
+              {header}
+            </h1>
+            {subheader && (
+              <p className="text-gray-700">{subheader}</p>
+            )}
+          </div>
+        </div>
+      ) : (
+        <>
+          <h3 className="text-2xl font-bold">{header}</h3>
+          {subheader && (
+            <p className="mt-1 text-sm text-zinc-600">{subheader}</p>
+          )}
+        </>
+      )}
+
+      <div className={first ? "" : "mt-4"}>{children}</div>
+    </section>
   );
 }
 
@@ -740,54 +664,64 @@ function TagsEditor({
 }) {
   const [draft, setDraft] = useState("");
   const add = () => {
-    const v = draft.trim();
-    if (!v) return;
-    if (!value.includes(v)) onChange([...value, v]);
+    const clean = draft.trim().replace(/^./, (c) => c.toUpperCase());
+    if (!clean) return;
+    if (!value.includes(clean)) onChange([...value, clean]);
     setDraft("");
   };
   const remove = (t: string) => onChange(value.filter((x) => x !== t));
   return (
-    <div className="rounded-xl border border-zinc-300 bg-white p-2">
-      <div className="flex flex-wrap gap-2">
-        {value.map((t) => (
-          <span
-            key={t}
-            className="inline-flex items-center gap-1 rounded-full bg-zinc-100 px-2 py-1 text-xs"
-          >
-            #{t}
-            <button
-              type="button"
-              className="text-zinc-500 hover:text-zinc-700"
-              onClick={() => remove(t)}
-              aria-label={`Remove ${t}`}
-            >
-              ×
-            </button>
-          </span>
-        ))}
-      </div>
-      <div className="mt-2 flex items-center gap-2">
+    <div className="flex flex-col gap-4">
+      <div className="flex items-center gap-2">
         <input
           type="text"
           value={draft}
           onChange={(e) => setDraft(e.target.value)}
           onKeyDown={(e) => {
-            if (e.key === "Enter") add();
+            if (e.key === "Enter") {
+              e.preventDefault();
+              add();
+            }
             if (e.key === "Backspace" && draft === "" && value.length)
               remove(value[value.length - 1]);
           }}
-          placeholder="Add a tag and press Enter"
-          className="flex-1 rounded-lg border border-zinc-300 bg-white/95 px-3 py-2 outline-none focus:ring-2 focus:ring-orange-400"
+          placeholder="e.g. Dinner, Healthy..."
+          className="w-full rounded-2xl border border-zinc-300 bg-white/95 px-3 py-2.5"
+          aria-label="Add tag"
         />
         <button
           type="button"
-          className="rounded-lg border border-zinc-300 bg-white px-3 py-2 text-sm hover:bg-zinc-50"
           onClick={add}
-          aria-label="Add tag"
+          className="shrink-0 px-3 py-2 flex items-center gap-2
+              bg-linear-to-br from-slate-100 to-slate-200
+              rounded-full text-sm text-slate-800 border border-slate-300
+              cursor-pointer hover:brightness-90 active:brightness-75"
         >
-          ＋
+          <TagIcon size={16} />
+          Add
         </button>
       </div>
+
+      {value.length >= 1 && (
+        <div className="w-full h-max mb-1 flex flex-wrap gap-2">
+          {value.map((t) => (
+            <div
+              key={t}
+              className="group flex items-center gap-1 rounded-full border border-orange-200 bg-orange-200/50 text-orange-600 px-2 py-1 font-medium text-sm"
+            >
+              <span className="ml-1">{t}</span>
+              <button
+                type="button"
+                onClick={() => remove(t)}
+                aria-label={`Remove tag ${t}`}
+                className="rounded-full p-0.5 cursor-pointer"
+              >
+                <X size={14} className="text-orange-600" />
+              </button>
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 }
