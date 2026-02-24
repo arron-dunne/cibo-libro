@@ -6,13 +6,13 @@ import {
   Pencil,
   ChefHat,
   ArrowLeft,
-  Heart,
   Link as LinkIcon,
   TagIcon,
 } from "lucide-react";
 import { RecipeImage } from "@/app/components/recipes/RecipeImage";
 import { deleteRecipe } from "./actions";
 import { DeleteButton } from "./DeleteButton";
+import { FavouriteButton } from "./FavouriteButton";
 import { getHostname } from "@/lib/hostname";
 
 export default async function ViewRecipePage({
@@ -39,6 +39,7 @@ export default async function ViewRecipePage({
       imageKey: true,
       imageExternalUrl: true,
       sourceUrl: true,
+      isFavourite: true,
     },
   });
 
@@ -137,16 +138,7 @@ export default async function ViewRecipePage({
 
           {/* Button bar  */}
           <div className="mt-6 flex gap-2">
-            {/* TODO: refactor secondary button */}
-            <button
-              className="px-3 h-11 flex gap-2 items-center
-              bg-linear-to-br from-slate-100 to-slate-200
-              rounded-full text-slate-800 border border-slate-300
-              cursor-pointer hover:brightness-90 active:brightness-75"
-            >
-              <Heart size={20} />
-              <span className="hidden lg:block">Favourite</span>
-            </button>
+            <FavouriteButton slug={slug} initialIsFavourite={recipe.isFavourite} />
 
             <Link
               href={`/edit/${slug}`}

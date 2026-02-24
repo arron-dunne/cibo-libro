@@ -6,6 +6,27 @@ import z from "zod";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 
+export async function toggleFavourite(slug: string): Promise<{ isFavourite: boolean }> {
+  const session = await auth();
+  if (!session?.user) throw new Error("Unauthorized");
+
+  const recipe = await prisma.recipe.findFirst({
+    where: { slug, ownerId: session.user.id },
+    select: { id: true, isFavourite: true },
+  });
+  if (!recipe) throw new Error("Not found");
+
+  const updated = await prisma.recipe.update({
+    where: { id: recipe.id },
+    data: { isFavourite: !recipe.isFavourite },
+    select: { isFavourite: true },
+  });
+
+  revalidatePath("/all");
+
+  return { isFavourite: updated.isFavourite };
+}
+
 const DeleteRecipeSchema = z.object({
   slug: z.string(),
 });
