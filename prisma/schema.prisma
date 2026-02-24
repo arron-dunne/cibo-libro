@@ -68,6 +68,7 @@ model Recipe {
   note             String       @default("")
   sourceUrl        String?
   slug             String       @unique
+  isFavourite      Boolean      @default(false)
   isPublic         Boolean      @default(false)
   status           RecipeStatus @default(PUBLISHED)
   createdAt        DateTime     @default(now())

@@ -52,6 +52,7 @@ export type RecipeMinAggregateOutputType = {
   note: string | null
   sourceUrl: string | null
   slug: string | null
+  isFavourite: boolean | null
   isPublic: boolean | null
   status: $Enums.RecipeStatus | null
   createdAt: Date | null
@@ -72,6 +73,7 @@ export type RecipeMaxAggregateOutputType = {
   note: string | null
   sourceUrl: string | null
   slug: string | null
+  isFavourite: boolean | null
   isPublic: boolean | null
   status: $Enums.RecipeStatus | null
   createdAt: Date | null
@@ -95,6 +97,7 @@ export type RecipeCountAggregateOutputType = {
   note: number
   sourceUrl: number
   slug: number
+  isFavourite: number
   isPublic: number
   status: number
   createdAt: number
@@ -129,6 +132,7 @@ export type RecipeMinAggregateInputType = {
   note?: true
   sourceUrl?: true
   slug?: true
+  isFavourite?: true
   isPublic?: true
   status?: true
   createdAt?: true
@@ -149,6 +153,7 @@ export type RecipeMaxAggregateInputType = {
   note?: true
   sourceUrl?: true
   slug?: true
+  isFavourite?: true
   isPublic?: true
   status?: true
   createdAt?: true
@@ -172,6 +177,7 @@ export type RecipeCountAggregateInputType = {
   note?: true
   sourceUrl?: true
   slug?: true
+  isFavourite?: true
   isPublic?: true
   status?: true
   createdAt?: true
@@ -282,6 +288,7 @@ export type RecipeGroupByOutputType = {
   note: string
   sourceUrl: string | null
   slug: string
+  isFavourite: boolean
   isPublic: boolean
   status: $Enums.RecipeStatus
   createdAt: Date
@@ -328,6 +335,7 @@ export type RecipeWhereInput = {
   note?: Prisma.StringFilter<"Recipe"> | string
   sourceUrl?: Prisma.StringNullableFilter<"Recipe"> | string | null
   slug?: Prisma.StringFilter<"Recipe"> | string
+  isFavourite?: Prisma.BoolFilter<"Recipe"> | boolean
   isPublic?: Prisma.BoolFilter<"Recipe"> | boolean
   status?: Prisma.EnumRecipeStatusFilter<"Recipe"> | $Enums.RecipeStatus
   createdAt?: Prisma.DateTimeFilter<"Recipe"> | Date | string
@@ -352,6 +360,7 @@ export type RecipeOrderByWithRelationInput = {
   note?: Prisma.SortOrder
   sourceUrl?: Prisma.SortOrderInput | Prisma.SortOrder
   slug?: Prisma.SortOrder
+  isFavourite?: Prisma.SortOrder
   isPublic?: Prisma.SortOrder
   status?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -379,6 +388,7 @@ export type RecipeWhereUniqueInput = Prisma.AtLeast<{
   tags?: Prisma.StringNullableListFilter<"Recipe">
   note?: Prisma.StringFilter<"Recipe"> | string
   sourceUrl?: Prisma.StringNullableFilter<"Recipe"> | string | null
+  isFavourite?: Prisma.BoolFilter<"Recipe"> | boolean
   isPublic?: Prisma.BoolFilter<"Recipe"> | boolean
   status?: Prisma.EnumRecipeStatusFilter<"Recipe"> | $Enums.RecipeStatus
   createdAt?: Prisma.DateTimeFilter<"Recipe"> | Date | string
@@ -403,6 +413,7 @@ export type RecipeOrderByWithAggregationInput = {
   note?: Prisma.SortOrder
   sourceUrl?: Prisma.SortOrderInput | Prisma.SortOrder
   slug?: Prisma.SortOrder
+  isFavourite?: Prisma.SortOrder
   isPublic?: Prisma.SortOrder
   status?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -434,6 +445,7 @@ export type RecipeScalarWhereWithAggregatesInput = {
   note?: Prisma.StringWithAggregatesFilter<"Recipe"> | string
   sourceUrl?: Prisma.StringNullableWithAggregatesFilter<"Recipe"> | string | null
   slug?: Prisma.StringWithAggregatesFilter<"Recipe"> | string
+  isFavourite?: Prisma.BoolWithAggregatesFilter<"Recipe"> | boolean
   isPublic?: Prisma.BoolWithAggregatesFilter<"Recipe"> | boolean
   status?: Prisma.EnumRecipeStatusWithAggregatesFilter<"Recipe"> | $Enums.RecipeStatus
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Recipe"> | Date | string
@@ -456,6 +468,7 @@ export type RecipeCreateInput = {
   note?: string
   sourceUrl?: string | null
   slug: string
+  isFavourite?: boolean
   isPublic?: boolean
   status?: $Enums.RecipeStatus
   createdAt?: Date | string
@@ -480,6 +493,7 @@ export type RecipeUncheckedCreateInput = {
   note?: string
   sourceUrl?: string | null
   slug: string
+  isFavourite?: boolean
   isPublic?: boolean
   status?: $Enums.RecipeStatus
   createdAt?: Date | string
@@ -502,6 +516,7 @@ export type RecipeUpdateInput = {
   note?: Prisma.StringFieldUpdateOperationsInput | string
   sourceUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   slug?: Prisma.StringFieldUpdateOperationsInput | string
+  isFavourite?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isPublic?: Prisma.BoolFieldUpdateOperationsInput | boolean
   status?: Prisma.EnumRecipeStatusFieldUpdateOperationsInput | $Enums.RecipeStatus
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -526,6 +541,7 @@ export type RecipeUncheckedUpdateInput = {
   note?: Prisma.StringFieldUpdateOperationsInput | string
   sourceUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   slug?: Prisma.StringFieldUpdateOperationsInput | string
+  isFavourite?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isPublic?: Prisma.BoolFieldUpdateOperationsInput | boolean
   status?: Prisma.EnumRecipeStatusFieldUpdateOperationsInput | $Enums.RecipeStatus
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -549,6 +565,7 @@ export type RecipeCreateManyInput = {
   note?: string
   sourceUrl?: string | null
   slug: string
+  isFavourite?: boolean
   isPublic?: boolean
   status?: $Enums.RecipeStatus
   createdAt?: Date | string
@@ -571,6 +588,7 @@ export type RecipeUpdateManyMutationInput = {
   note?: Prisma.StringFieldUpdateOperationsInput | string
   sourceUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   slug?: Prisma.StringFieldUpdateOperationsInput | string
+  isFavourite?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isPublic?: Prisma.BoolFieldUpdateOperationsInput | boolean
   status?: Prisma.EnumRecipeStatusFieldUpdateOperationsInput | $Enums.RecipeStatus
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -594,6 +612,7 @@ export type RecipeUncheckedUpdateManyInput = {
   note?: Prisma.StringFieldUpdateOperationsInput | string
   sourceUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   slug?: Prisma.StringFieldUpdateOperationsInput | string
+  isFavourite?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isPublic?: Prisma.BoolFieldUpdateOperationsInput | boolean
   status?: Prisma.EnumRecipeStatusFieldUpdateOperationsInput | $Enums.RecipeStatus
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -635,6 +654,7 @@ export type RecipeCountOrderByAggregateInput = {
   note?: Prisma.SortOrder
   sourceUrl?: Prisma.SortOrder
   slug?: Prisma.SortOrder
+  isFavourite?: Prisma.SortOrder
   isPublic?: Prisma.SortOrder
   status?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -661,6 +681,7 @@ export type RecipeMaxOrderByAggregateInput = {
   note?: Prisma.SortOrder
   sourceUrl?: Prisma.SortOrder
   slug?: Prisma.SortOrder
+  isFavourite?: Prisma.SortOrder
   isPublic?: Prisma.SortOrder
   status?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -681,6 +702,7 @@ export type RecipeMinOrderByAggregateInput = {
   note?: Prisma.SortOrder
   sourceUrl?: Prisma.SortOrder
   slug?: Prisma.SortOrder
+  isFavourite?: Prisma.SortOrder
   isPublic?: Prisma.SortOrder
   status?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -798,6 +820,7 @@ export type RecipeCreateWithoutOwnerInput = {
   note?: string
   sourceUrl?: string | null
   slug: string
+  isFavourite?: boolean
   isPublic?: boolean
   status?: $Enums.RecipeStatus
   createdAt?: Date | string
@@ -820,6 +843,7 @@ export type RecipeUncheckedCreateWithoutOwnerInput = {
   note?: string
   sourceUrl?: string | null
   slug: string
+  isFavourite?: boolean
   isPublic?: boolean
   status?: $Enums.RecipeStatus
   createdAt?: Date | string
@@ -872,6 +896,7 @@ export type RecipeScalarWhereInput = {
   note?: Prisma.StringFilter<"Recipe"> | string
   sourceUrl?: Prisma.StringNullableFilter<"Recipe"> | string | null
   slug?: Prisma.StringFilter<"Recipe"> | string
+  isFavourite?: Prisma.BoolFilter<"Recipe"> | boolean
   isPublic?: Prisma.BoolFilter<"Recipe"> | boolean
   status?: Prisma.EnumRecipeStatusFilter<"Recipe"> | $Enums.RecipeStatus
   createdAt?: Prisma.DateTimeFilter<"Recipe"> | Date | string
@@ -894,6 +919,7 @@ export type RecipeCreateManyOwnerInput = {
   note?: string
   sourceUrl?: string | null
   slug: string
+  isFavourite?: boolean
   isPublic?: boolean
   status?: $Enums.RecipeStatus
   createdAt?: Date | string
@@ -916,6 +942,7 @@ export type RecipeUpdateWithoutOwnerInput = {
   note?: Prisma.StringFieldUpdateOperationsInput | string
   sourceUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   slug?: Prisma.StringFieldUpdateOperationsInput | string
+  isFavourite?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isPublic?: Prisma.BoolFieldUpdateOperationsInput | boolean
   status?: Prisma.EnumRecipeStatusFieldUpdateOperationsInput | $Enums.RecipeStatus
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -938,6 +965,7 @@ export type RecipeUncheckedUpdateWithoutOwnerInput = {
   note?: Prisma.StringFieldUpdateOperationsInput | string
   sourceUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   slug?: Prisma.StringFieldUpdateOperationsInput | string
+  isFavourite?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isPublic?: Prisma.BoolFieldUpdateOperationsInput | boolean
   status?: Prisma.EnumRecipeStatusFieldUpdateOperationsInput | $Enums.RecipeStatus
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -960,6 +988,7 @@ export type RecipeUncheckedUpdateManyWithoutOwnerInput = {
   note?: Prisma.StringFieldUpdateOperationsInput | string
   sourceUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   slug?: Prisma.StringFieldUpdateOperationsInput | string
+  isFavourite?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isPublic?: Prisma.BoolFieldUpdateOperationsInput | boolean
   status?: Prisma.EnumRecipeStatusFieldUpdateOperationsInput | $Enums.RecipeStatus
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -985,6 +1014,7 @@ export type RecipeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs =
   note?: boolean
   sourceUrl?: boolean
   slug?: boolean
+  isFavourite?: boolean
   isPublic?: boolean
   status?: boolean
   createdAt?: boolean
@@ -1009,6 +1039,7 @@ export type RecipeSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extens
   note?: boolean
   sourceUrl?: boolean
   slug?: boolean
+  isFavourite?: boolean
   isPublic?: boolean
   status?: boolean
   createdAt?: boolean
@@ -1033,6 +1064,7 @@ export type RecipeSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extens
   note?: boolean
   sourceUrl?: boolean
   slug?: boolean
+  isFavourite?: boolean
   isPublic?: boolean
   status?: boolean
   createdAt?: boolean
@@ -1057,13 +1089,14 @@ export type RecipeSelectScalar = {
   note?: boolean
   sourceUrl?: boolean
   slug?: boolean
+  isFavourite?: boolean
   isPublic?: boolean
   status?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type RecipeOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "ownerId" | "type" | "title" | "description" | "prepMins" | "cookMins" | "servings" | "imageKey" | "imageExternalUrl" | "ingredients" | "steps" | "tags" | "note" | "sourceUrl" | "slug" | "isPublic" | "status" | "createdAt" | "updatedAt", ExtArgs["result"]["recipe"]>
+export type RecipeOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "ownerId" | "type" | "title" | "description" | "prepMins" | "cookMins" | "servings" | "imageKey" | "imageExternalUrl" | "ingredients" | "steps" | "tags" | "note" | "sourceUrl" | "slug" | "isFavourite" | "isPublic" | "status" | "createdAt" | "updatedAt", ExtArgs["result"]["recipe"]>
 export type RecipeInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   owner?: boolean | Prisma.UserDefaultArgs<ExtArgs>
 }
@@ -1096,6 +1129,7 @@ export type $RecipePayload<ExtArgs extends runtime.Types.Extensions.InternalArgs
     note: string
     sourceUrl: string | null
     slug: string
+    isFavourite: boolean
     isPublic: boolean
     status: $Enums.RecipeStatus
     createdAt: Date
@@ -1540,6 +1574,7 @@ export interface RecipeFieldRefs {
   readonly note: Prisma.FieldRef<"Recipe", 'String'>
   readonly sourceUrl: Prisma.FieldRef<"Recipe", 'String'>
   readonly slug: Prisma.FieldRef<"Recipe", 'String'>
+  readonly isFavourite: Prisma.FieldRef<"Recipe", 'Boolean'>
   readonly isPublic: Prisma.FieldRef<"Recipe", 'Boolean'>
   readonly status: Prisma.FieldRef<"Recipe", 'RecipeStatus'>
   readonly createdAt: Prisma.FieldRef<"Recipe", 'DateTime'>
