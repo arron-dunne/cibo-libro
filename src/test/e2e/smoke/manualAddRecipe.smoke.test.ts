@@ -11,7 +11,7 @@ test("create recipe manually, then verify it on the view page", async ({
 
   // Go to new recipe form
   await page.goto("/add");
-  await expect(page.getByRole("heading", { name: "Details" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Create a New Recipe" })).toBeVisible();
 
   // Fill in details
   await page.getByLabel("Title").fill(title);
