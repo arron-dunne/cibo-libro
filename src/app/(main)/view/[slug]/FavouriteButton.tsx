@@ -23,13 +23,13 @@ export function FavouriteButton({
     <button
       onClick={handleClick}
       aria-label={isFavourite ? "Remove from favourites" : "Add to favourites"}
-      className={`px-3 h-11 flex gap-2 items-center rounded-full border cursor-pointer hover:brightness-90 active:brightness-75 ${
-        isFavourite
-          ? "bg-linear-to-br from-rose-100 to-rose-200 text-rose-600 border-rose-300"
-          : "bg-linear-to-br from-slate-100 to-slate-200 text-slate-800 border-slate-300"
-      }`}
+      className="px-3 h-11 flex gap-2 items-center rounded-full border cursor-pointer hover:brightness-90 active:brightness-75 bg-linear-to-br from-slate-100 to-slate-200 text-slate-800 border-slate-300"
     >
-      <Heart size={20} fill={isFavourite ? "currentColor" : "none"} />
+      <Heart
+        size={20}
+        className={isFavourite ? "text-rose-500" : ""}
+        fill={isFavourite ? "currentColor" : "none"}
+      />
       <span className="hidden lg:block">Favourite</span>
     </button>
   );
