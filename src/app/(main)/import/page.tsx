@@ -49,15 +49,14 @@ export default function ImportPage() {
       </div>
 
       {/* Feature cards */}
-      <Image
-        className="mt-12 w-60 mx-auto md:mx-4"
-        src="/images/how-it-works.png"
-        alt="How it works"
-        width={830}
-        height={112}
-      />
+      <h3
+        className="mt-12 text-white text-4xl font-extrabold ml-2"
+        style={{ WebkitTextStroke: "4px black", paintOrder: "stroke fill" }}
+      >
+        How it works
+      </h3>
 
-      <div className="mt-8 flex flex-col md:flex-row gap-8 md:gap-4">
+      <div className="mt-4 flex flex-col md:flex-row gap-8 md:gap-4">
         <InfoCard
           Icon={MousePointerClick}
           title="Import in one click"

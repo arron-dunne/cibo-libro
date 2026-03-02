@@ -33,6 +33,7 @@ export default async function HomePage() {
   return (
     <>
       {/* Welcome card */}
+      <h1 className="text-5xl text-white font-black" style={{WebkitTextStroke: "5px black", paintOrder:"stroke fill"}}>What&apos;s cooking?</h1>
       <section className="w-full mt-8 rounded-3xl border border-white/70 bg-white/95 p-6 shadow-lg backdrop-blur sm:p-8">
         <h1 className="text-3xl sm:text-4xl font-extrabold text-orange-950">
           What&apos;s cooking?
@@ -110,7 +111,7 @@ export default async function HomePage() {
 
       {/* Recently Added */}
       <section className="mt-10">
-        <h2 className="mb-4 text-2xl font-semibold text-orange-950">
+        <h2 className="mb-4 text-4xl font-extrabold text-white" style={{WebkitTextStroke: "4px black", paintOrder:"stroke fill"}}>
           Recently Added
         </h2>
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">

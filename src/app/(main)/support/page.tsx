@@ -13,18 +13,24 @@ import Link from "next/link";
 export default function SupportPage() {
   return (
     <div className="max-w-3xl mx-auto">
-      <p className="mt-6 mb-6 text-center text-4xl text-white font-extrabold tracking-tighter">
+      <h2
+        className="mt-6 mb-6 text-center text-4xl text-white font-extrabold"
+        style={{ WebkitTextStroke: "4px black", paintOrder: "stroke fill" }}
+      >
         Get in touch
-      </p>
+      </h2>
       <div className="flex flex-col mx-auto max-w-md md:max-w-none md:flex-row gap-4 md:gap-12 items-center justify-center">
         <PrimaryLink name="Feedback" />
         <PrimaryLink name="Issues" />
         <PrimaryLink name="General" />
       </div>
 
-      <p className="mt-14 mb-6 text-center text-4xl text-white font-extrabold tracking-tighter">
+      <h3
+        className="mt-14 mb-6 text-center text-4xl text-white font-extrabold"
+        style={{ WebkitTextStroke: "4px black", paintOrder: "stroke fill" }}
+      >
         More Information
-      </p>
+      </h3>
       <div className="max-w-md mx-auto flex flex-col gap-4 items-center">
         <SecondaryLink name="Terms of Service" />
         <SecondaryLink name="Privacy Policy" />
