@@ -16,6 +16,7 @@ export type RecipeCardRecipe = {
   note?: string;
   sourceUrl?: string | null;
   slug: string;
+  isFavourite: boolean;
   createdAt: Date;
   updatedAt: Date;
 };
@@ -51,6 +52,7 @@ export default async function RecipesPage({
       cookMins: true,
       servings: true,
       sourceUrl: true,
+      isFavourite: true,
       createdAt: true,
       updatedAt: true,
     },
@@ -67,6 +69,7 @@ export default async function RecipesPage({
     cookMins: r.cookMins ?? null,
     servings: r.servings ?? null,
     sourceUrl: r.sourceUrl ?? null,
+    isFavourite: r.isFavourite,
     createdAt: r.createdAt,
     updatedAt: r.updatedAt,
   }));

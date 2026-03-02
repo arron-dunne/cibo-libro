@@ -707,7 +707,7 @@ function TagsEditor({
           {value.map((t) => (
             <div
               key={t}
-              className="group flex items-center gap-1 rounded-full border border-orange-200 bg-orange-200/50 text-orange-600 px-2 py-1 font-medium text-sm"
+              className="group flex items-center gap-1 rounded-full bg-linear-to-br from-orange-100 to-rose-100 text-rose-500 border border-rose-200 px-3 py-1 font-medium text-nowrap"
             >
               <span className="ml-1">{t}</span>
               <button
