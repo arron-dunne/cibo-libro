@@ -39,6 +39,7 @@ export function ClientRecipesGrid({
   const searchRef = useRef<HTMLInputElement>(null);
 
   const [selectedTags, setSelectedTags] = useState<string[]>(initialTags);
+  const [favoritesOnly, setFavoritesOnly] = useState<boolean>(false);
 
   // close dropdowns on click-outside
   useEffect(() => {
@@ -83,7 +84,8 @@ export function ClientRecipesGrid({
       const matchesTags = selectedTags.length
         ? (r.tags ?? []).some((t) => selectedTags.includes(t))
         : true;
-      return matchesQuery && matchesTags;
+      const matchesFavorites = favoritesOnly ? r.isFavourite : true;
+      return matchesQuery && matchesTags && matchesFavorites;
     });
     switch (sort) {
       case "az":
@@ -111,7 +113,7 @@ export function ClientRecipesGrid({
         break;
     }
     return list;
-  }, [normalized, search, selectedTags, sort]);
+  }, [normalized, search, selectedTags, favoritesOnly, sort]);
 
   function toggleTag(tag: string, checked: boolean) {
     setSelectedTags((prev) => {
@@ -217,6 +219,22 @@ export function ClientRecipesGrid({
                 Filter by
               </p>
 
+              {/* Favorites filter */}
+              <div className="mb-3">
+                <p className="text-xs font-semibold text-zinc-500 mb-1">
+                  Other
+                </p>
+                <label className="flex items-center gap-2 text-sm text-zinc-800">
+                  <input
+                    type="checkbox"
+                    className="accent-orange-500"
+                    checked={favoritesOnly}
+                    onChange={(e) => setFavoritesOnly(e.target.checked)}
+                  />
+                  Favourites only
+                </label>
+              </div>
+
               {/* Tag filters */}
               <div className="mb-3">
                 <p className="text-xs font-semibold text-zinc-500 mb-1">Tags</p>
@@ -241,7 +259,10 @@ export function ClientRecipesGrid({
               {/* Clear All button */}
               <button
                 type="button"
-                onClick={() => setSelectedTags([])}
+                onClick={() => {
+                  setSelectedTags([]);
+                  setFavoritesOnly(false);
+                }}
                 className="w-full rounded-full bg-orange-600 text-white text-sm font-semibold py-1.5 shadow hover:bg-orange-700 transition"
               >
                 Clear All
@@ -266,6 +287,7 @@ export function ClientRecipesGrid({
           onAction={() => {
             setSearch("");
             setSelectedTags([]);
+            setFavoritesOnly(false);
             resetSearchInput();
           }}
         />
