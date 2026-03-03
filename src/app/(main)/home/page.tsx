@@ -32,14 +32,12 @@ export default async function HomePage() {
 
   return (
     <>
-      {/* Welcome card */}
-      <h1 className="text-5xl text-white font-black" style={{WebkitTextStroke: "5px black", paintOrder:"stroke fill"}}>What&apos;s cooking?</h1>
+      {/* Header */}
+      <h1 className="mt-4 ml-2 text-5xl text-white font-black" style={{WebkitTextStroke: "5px black", paintOrder:"stroke fill"}}>What&apos;s cooking?</h1>
+      {/* Main actions card */}
       <section className="w-full mt-8 rounded-3xl border border-white/70 bg-white/95 p-6 shadow-lg backdrop-blur sm:p-8">
-        <h1 className="text-3xl sm:text-4xl font-extrabold text-orange-950">
-          What&apos;s cooking?
-        </h1>
-        <p className="mt-2 text-slate-700">
-          Browse your cookbook — or add a new recipe for later.
+        <p className="mt-2 font-semibold">
+          Browse your cookbook, add new recipes or import them so you never forget the food you love to cook.
         </p>
 
         <div className="mt-6 flex flex-wrap gap-4">
