@@ -156,7 +156,7 @@ function ActionButton({
   return (
     <Link
       href={href}
-      className={`${color} flex items-center gap-3 rounded-full px-6 py-4 text-lg font-bold text-white shadow-md transition border cursor-pointer hover:scale-105`}
+      className={`${color} flex items-center gap-3 rounded-full px-6 py-4 text-lg font-bold text-white shadow-md border cursor-pointer hover:brightness-90 active:brightness-75`}
     >
       <Icon size={24} />
       {header}
