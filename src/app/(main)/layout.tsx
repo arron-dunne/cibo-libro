@@ -16,7 +16,7 @@ export default async function Layout({
   const session = await auth();
 
   return (
-    <>
+    <div className="min-h-screen flex flex-col">
       {/* Floating navbar */}
       <nav className="sticky top-4 mt-6 z-10">
         <div className="mx-auto max-w-7xl px-4">
@@ -76,9 +76,9 @@ export default async function Layout({
       </nav>
 
       {/* Page container */}
-      <main className="z-0 mx-auto max-w-7xl px-8 py-4"> {children}</main>
+      <main className="z-0 mx-auto w-full max-w-7xl px-8 py-4 flex-1">{children}</main>
 
       <Footer />
-    </>
+    </div>
   );
 }
