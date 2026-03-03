@@ -56,19 +56,19 @@ export default async function HomePage() {
           <ActionButton
             href="/all"
             Icon={CookingPot}
-            color="bg-linear-to-br from-blue-500 to-cyan-500 border-blue-800/40"
+            color="bg-linear-to-br from-blue-500 to-cyan-600 border-blue-800/40"
             header="View My Cookbook"
           />
           <ActionButton
             href="/add"
             Icon={PlusCircle}
-            color="bg-linear-to-br from-red-500 to-pink-500 border-red-800/40"
+            color="bg-linear-to-br from-red-500 to-pink-600 border-red-800/40"
             header="Create a New Recipe"
             />
           <ActionButton
             href="/import"
             Icon={Import}
-            color="bg-linear-to-br from-green-500 to-lime-500 border-green-800/40"
+            color="bg-linear-to-br from-green-500 to-lime-600 border-green-800/40"
             header="Import a Recipe"
           />
         </div>
@@ -76,26 +76,26 @@ export default async function HomePage() {
 
       {/* Quick Search Section */}
       <section className="mt-10 rounded-3xl border border-white/70 bg-white/95 p-6 shadow-lg backdrop-blur-lg sm:p-8">
-        <h2 className="text-2xl font-semibold text-orange-950 mb-3">
+        <h2 className="text-2xl font-semibold mb-2">
           What do you feel like today?
         </h2>
-        <p className="text-slate-700 mb-5">
+        <p className="text-slate-700 mb-4">
           Search your recipes or explore by tag.
         </p>
 
         {/* Search Bar */}
-        <form action="/all" method="get" className="relative mb-6 max-w-lg">
+        <form action="/all" method="get" className="flex gap-2 mb-6">
           <input
             type="text"
             name="search"
             placeholder="Search for a recipe..."
-            className="w-full rounded-full border border-orange-200 bg-white/80 py-3 pl-5 pr-12 text-slate-800 shadow-sm outline-none transition placeholder:text-slate-400 focus:border-orange-400 focus:ring-2 focus:ring-orange-300"
+            className="w-full max-w-lg rounded-full border border-orange-200 bg-white/80 py-3 pl-5 pr-12 text-slate-800 shadow-sm outline-none transition placeholder:text-slate-400 focus:border-orange-400 focus:ring-2 focus:ring-orange-300"
           />
           <button
             type="submit"
-            className="absolute right-2 top-1/2 -translate-y-1/2 rounded-full bg-orange-500 p-2 text-white shadow-md transition hover:scale-105 hover:bg-orange-600"
+            className="rounded-full bg-linear-to-br from-slate-100 to-slate-200 border border-slate-300 p-2 text-black shadow-md hover:brightness-90 active:brightness-75"
           >
-            <Search />
+            <Search size={20}/>
           </button>
         </form>
 
@@ -122,7 +122,7 @@ export default async function HomePage() {
       {/* Recently Added */}
       <section className="mt-10">
         <h2
-          className="mb-4 text-4xl font-extrabold text-white"
+          className="mb-4 text-4xl font-extrabold text-white tracking-wide"
           style={{ WebkitTextStroke: "4px black", paintOrder: "stroke fill" }}
         >
           Recently Added
