@@ -1,5 +1,6 @@
 import { auth } from "@/lib/auth/auth";
 import {
+  ChevronRight,
   CookingPot,
   Import,
   LucideProps,
@@ -30,11 +31,13 @@ export default async function HomePage() {
     },
   });
 
-  const tagsData = await prisma.recipe.findMany({
-    where: { ownerId: session?.user.id },
-    select: { tags: true },
-  });
-  const allTags = [...new Set(tagsData.flatMap((r) => r.tags ?? []))];
+  const allTags = (
+    await prisma.$queryRaw<{ tag: string }[]>`
+    SELECT tag FROM "Recipe", unnest(tags) AS tag
+    WHERE "ownerId" = ${session?.user.id}
+    GROUP BY tag ORDER BY COUNT(*) DESC LIMIT 10
+  `
+  ).map((r) => r.tag);
 
   return (
     <>
@@ -64,7 +67,7 @@ export default async function HomePage() {
             Icon={PlusCircle}
             color="bg-linear-to-br from-red-500 to-pink-600 border-red-800/40"
             header="Create a New Recipe"
-            />
+          />
           <ActionButton
             href="/import"
             Icon={Import}
@@ -76,12 +79,10 @@ export default async function HomePage() {
 
       {/* Quick Search Section */}
       <section className="mt-10 rounded-3xl border border-white/70 bg-white/95 p-6 shadow-lg backdrop-blur-lg sm:p-8">
-        <h2 className="text-2xl font-semibold mb-2">
+        <h2 className="text-2xl font-semibold mb-1">
           What do you feel like today?
         </h2>
-        <p className="text-slate-700 mb-4">
-          Search your recipes or explore by tag.
-        </p>
+        <p className="text-slate-500 mb-4">Search for a recipe or jump straight to a tag.</p>
 
         {/* Search Bar */}
         <form action="/all" method="get" className="flex gap-2 mb-6">
@@ -95,28 +96,25 @@ export default async function HomePage() {
             type="submit"
             className="rounded-full h-12 w-12 flex items-center justify-center bg-linear-to-br from-slate-100 to-slate-200 border border-slate-300 text-black hover:cursor-pointer hover:brightness-90 active:brightness-75"
           >
-            <Search size={20}/>
+            <Search size={20} />
           </button>
         </form>
 
         {/* Tag Cloud */}
-        <div className="flex flex-wrap gap-2">
-          {allTags.length > 0 ? (
-            allTags.map((tag, i) => (
+        {allTags.length > 0 && (
+          <div className="flex flex-wrap gap-3">
+            {allTags.map((tag, i) => (
               <Link
                 key={i}
                 href={`/all?tags=${encodeURIComponent(tag)}`}
-                className="inline-flex items-center rounded-full bg-linear-to-br from-orange-100 to-rose-100 text-rose-500 border border-rose-200 px-3 py-1 font-medium text-nowrap transition hover:brightness-95"
+                className="inline-flex items-center gap-1 rounded-full bg-linear-to-br from-orange-100 to-rose-100 text-rose-500 border border-rose-200 px-4 py-2 font-semibold text-nowrap shadow-sm hover:brightness-95 hover:shadow-md transition"
               >
                 {tag}
+                <ChevronRight size={14} />
               </Link>
-            ))
-          ) : (
-            <p className="text-slate-500 italic">
-              No tags yet — add some recipes to see them here!
-            </p>
-          )}
-        </div>
+            ))}
+          </div>
+        )}
       </section>
 
       {/* Recently Added */}
