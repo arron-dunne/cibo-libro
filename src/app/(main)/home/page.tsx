@@ -107,10 +107,9 @@ export default async function HomePage() {
               <Link
                 key={i}
                 href={`/all?tags=${encodeURIComponent(tag)}`}
-                className="inline-flex items-center gap-1 rounded-full bg-linear-to-br from-orange-100 to-rose-100 text-rose-500 border border-rose-200 px-4 py-2 font-semibold text-nowrap shadow-sm hover:brightness-95 hover:shadow-md transition"
+                className="inline-flex items-center rounded-full bg-linear-to-br from-orange-100 to-rose-100 text-rose-500 border border-rose-200 px-4 py-2 font-semibold text-nowrap shadow-sm hover:brightness-95 hover:shadow-md transition"
               >
                 {tag}
-                <ChevronRight size={14} />
               </Link>
             ))}
           </div>
@@ -119,12 +118,20 @@ export default async function HomePage() {
 
       {/* Recently Added */}
       <section className="mt-10">
-        <h2
-          className="mb-4 text-4xl font-extrabold text-white tracking-wide"
-          style={{ WebkitTextStroke: "4px black", paintOrder: "stroke fill" }}
-        >
-          Recently Added
-        </h2>
+        <div className="flex items-center justify-between mb-4">
+          <h2
+            className="text-4xl font-extrabold text-white tracking-wide"
+            style={{ WebkitTextStroke: "4px black", paintOrder: "stroke fill" }}
+          >
+            Recently Added
+          </h2>
+          <Link
+            href="/all?sort=created"
+            className="inline-flex items-center gap-1 rounded-full bg-linear-to-br from-slate-200 to-slate-300 border border-white/40 px-4 py-2 text-sm font-semibold text-slate-700 shadow hover:brightness-90 active:brightness-75"
+          >
+            View More <ChevronRight size={14} />
+          </Link>
+        </div>
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
           {recentRecipes.map((recipe, i) => (
             <RecipeCard key={i} recipe={recipe as RecipeCardProps} />
