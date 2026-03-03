@@ -89,26 +89,26 @@ export default async function HomePage() {
             type="text"
             name="search"
             placeholder="Search for a recipe..."
-            className="w-full max-w-lg rounded-full border border-orange-200 bg-white/80 py-3 pl-5 pr-12 text-slate-800 shadow-sm outline-none transition placeholder:text-slate-400 focus:border-orange-400 focus:ring-2 focus:ring-orange-300"
+            className="w-full max-w-lg rounded-full border border-slate-300 bg-white py-3 px-5"
           />
           <button
             type="submit"
-            className="rounded-full bg-linear-to-br from-slate-100 to-slate-200 border border-slate-300 p-2 text-black shadow-md hover:brightness-90 active:brightness-75"
+            className="rounded-full h-12 w-12 flex items-center justify-center bg-linear-to-br from-slate-100 to-slate-200 border border-slate-300 text-black hover:cursor-pointer hover:brightness-90 active:brightness-75"
           >
             <Search size={20}/>
           </button>
         </form>
 
         {/* Tag Cloud */}
-        <div className="flex flex-wrap gap-3">
+        <div className="flex flex-wrap gap-2">
           {allTags.length > 0 ? (
             allTags.map((tag, i) => (
               <Link
                 key={i}
                 href={`/all?tags=${encodeURIComponent(tag)}`}
-                className="group rounded-full border border-orange-200 bg-linear-to-br from-orange-50 to-orange-100/70 px-4 py-2 text-sm font-medium text-orange-950 shadow-sm transition hover:scale-105 hover:border-orange-400 hover:from-orange-100 hover:to-orange-200/80 hover:shadow-md"
+                className="inline-flex items-center rounded-full bg-linear-to-br from-orange-100 to-rose-100 text-rose-500 border border-rose-200 px-3 py-1 font-medium text-nowrap transition hover:brightness-95"
               >
-                <span className="group-hover:text-orange-600">{tag}</span>
+                {tag}
               </Link>
             ))
           ) : (
