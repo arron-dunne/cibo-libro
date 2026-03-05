@@ -30,6 +30,9 @@ export function Footer() {
           <Link className="hover:underline" href="/support">
             Contact
           </Link>
+          <Link className="hover:underline" href="/support">
+            Support
+          </Link>
         </nav>
         <div className="text-xs/6 opacity-90">
           © {new Date().getFullYear()} cibo libro. All rights reserved.
