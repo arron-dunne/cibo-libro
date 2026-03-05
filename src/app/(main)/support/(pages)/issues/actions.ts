@@ -11,7 +11,7 @@ export interface FormActionState {
 }
 
 const FormDataObject = z.object({
-  issueCatgory: z.enum([
+  issueCategory: z.enum([
     "bug",
     "ui",
     "performance",
@@ -36,7 +36,7 @@ export async function submitIssue(
       issueCategory: String(formData.get("issueCategory")) ?? "",
       otherCategoryDetail: String(formData.get("otherCategoryDetail")) ?? "",
       issueDescription: String(formData.get("issueDescription")) ?? "",
-      affectedPages: formData.get("affectedPages"),
+      affectedPages: formData.getAll("affectedPages"),
     };
 
     const parsed = FormDataObject.safeParse(raw);
@@ -52,7 +52,7 @@ export async function submitIssue(
       responses.push({ question: "issueCategory", answer: issueCategory });
     }
 
-    const otherCategoryDetail = String(formData.get("issueCategory")) ?? "";
+    const otherCategoryDetail = String(formData.get("otherCategoryDetail")) ?? "";
     if (otherCategoryDetail) {
       responses.push({
         question: "otherCategoryDetail",
@@ -68,19 +68,7 @@ export async function submitIssue(
       });
     }
 
-    const affectedPages = formData.get("affectedPages");
-    // if (issueDescription) { responses.push({ question: "issueDescription", answer: issueDescription })}
-    console.log(affectedPages);
-
-    // for (const [key, value] of formData.entries()) {
-    //   if (!key) continue;
-
-    //   const question = String(key);
-    //   const answer = String(value).trim();
-
-    //   if (answer === "") continue; // skip empty fields
-    //   responses.push({ question, answer });
-    // }
+    const affectedPages = formData.getAll("affectedPages");
 
     // Get the user agent
     const headersList = await headers();
@@ -96,7 +84,6 @@ export async function submitIssue(
     });
     return { status: "success" };
   } catch (err) {
-    console.error("Issue submit error:", err);
     return { status: "error" };
   }
 }

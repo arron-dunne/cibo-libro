@@ -6,7 +6,8 @@ import { useState, useRef, useEffect } from "react";
 import { compressImageFile } from "@/lib/images/compress";
 import { MAX_SIZE_BYTES } from "@/lib/images/constants";
 import { RecipeFormRecipe } from "@/types/recipe";
-import { X, ChefHat, Tag as TagIcon, CircleAlert, LoaderCircle } from "lucide-react";
+import { X, ChefHat, Tag as TagIcon, CircleAlert } from "lucide-react";
+import { FormSubmitButton } from "@/app/components/forms/FormSubmitButton";
 
 // ────────────────────────────────────────────────────────────────────────────
 // Types
@@ -576,30 +577,21 @@ export default function RecipeForm({ mode, recipe, action }: RecipeFormProps) {
         </Panel>
 
         {/* Save button */}
-        <div className="sticky bottom-4 z-10 flex flex-col items-center gap-2">
-          {saveError && (
+        {saveError && (
+          <div className="flex justify-center">
             <div className="w-full max-w-sm rounded-2xl border border-red-500 bg-red-200/90 px-4 py-3 text-sm text-red-600 font-semibold flex items-center gap-2">
               <CircleAlert height={18} className="shrink-0" />
               {saveError}
             </div>
-          )}
-          <div className="rounded-full w-full max-w-sm bg-white/60 backdrop-blur border border-white/70 shadow-lg px-4 py-3">
-            <button
-              type="submit"
-              className="w-full rounded-full bg-linear-to-br from-green-500 to-lime-400 px-6 py-3 text-xl font-bold text-green-950 border border-green-500 shadow-lg disabled:opacity-50 cursor-pointer hover:brightness-90 active:brightness-75"
-              disabled={saving || uploading || deleting}
-            >
-              {saving ? (
-                <span className="flex items-center justify-center gap-4">
-                  Saving...
-                  <LoaderCircle size={20} className="animate-spin" />
-                </span>
-              ) : (
-                "Save"
-              )}
-            </button>
           </div>
-        </div>
+        )}
+        <FormSubmitButton
+          pendingLabel="Saving..."
+          isPending={saving}
+          disabled={uploading || deleting}
+        >
+          Save
+        </FormSubmitButton>
       </form>
     </div>
   );
