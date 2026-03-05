@@ -21,7 +21,7 @@ export default function LoginLayout({
         </div>
 
         {/* Floating panel */}
-        <section className="w-full max-w-md overflow-hidden rounded-4xl border border-white bg-amber-50/90 p-10 shadow-2xl backdrop-blur">
+        <section className="w-full max-w-md overflow-hidden rounded-3xl border border-white/70 bg-white/95 p-10 shadow-lg backdrop-blur">
           {children}
         </section>
       </div>

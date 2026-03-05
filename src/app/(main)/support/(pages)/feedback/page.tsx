@@ -106,7 +106,7 @@ export default function FeedbackPage() {
                   ${
                     rating === n
                       ? "bg-orange-500 text-white border-orange-600 shadow-md scale-105"
-                      : "bg-white/80 text-orange-900 border-orange-200 hover:border-orange-400 hover:scale-105"
+                      : "bg-white text-slate-700 border-zinc-300 hover:border-zinc-400 hover:scale-105"
                   }
                   ${isPending ? "opacity-50 cursor-not-allowed" : ""}
                 `}
@@ -131,7 +131,7 @@ export default function FeedbackPage() {
             placeholder="Tell us your idea…"
             disabled={isPending}
             rows={4}
-            className="w-full rounded-2xl border border-orange-200 bg-white/80 p-4 text-slate-800 shadow-sm outline-none transition placeholder:text-slate-400 focus:border-orange-400 focus:ring-2 focus:ring-orange-300 disabled:opacity-50"
+            className="w-full rounded-2xl border border-zinc-300 bg-white p-4 text-slate-800 placeholder:text-slate-400 disabled:opacity-50"
           />
         </section>
 
@@ -147,7 +147,7 @@ export default function FeedbackPage() {
             placeholder="What slowed you down, or didn’t work as expected?"
             disabled={isPending}
             rows={4}
-            className="w-full rounded-2xl border border-orange-200 bg-white/80 p-4 text-slate-800 shadow-sm outline-none transition placeholder:text-slate-400 focus:border-orange-400 focus:ring-2 focus:ring-orange-300 disabled:opacity-50"
+            className="w-full rounded-2xl border border-zinc-300 bg-white p-4 text-slate-800 placeholder:text-slate-400 disabled:opacity-50"
           />
         </section>
 
@@ -163,7 +163,7 @@ export default function FeedbackPage() {
             placeholder="Anything at all — we're listening."
             disabled={isPending}
             rows={4}
-            className="w-full rounded-2xl border border-orange-200 bg-white/80 p-4 text-slate-800 shadow-sm outline-none transition placeholder:text-slate-400 focus:border-orange-400 focus:ring-2 focus:ring-orange-300 disabled:opacity-50"
+            className="w-full rounded-2xl border border-zinc-300 bg-white p-4 text-slate-800 placeholder:text-slate-400 disabled:opacity-50"
           />
         </section>
 
