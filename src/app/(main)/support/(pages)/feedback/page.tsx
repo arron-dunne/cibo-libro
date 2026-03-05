@@ -38,49 +38,33 @@ export default function FeedbackPage() {
     <div>
       {/* Feedback Panel */}
       {state.status === "success" && (
-        <div className="mb-4 rounded-3xl bg-green-200/90 border border-green-800 p-8 text-green-800 shadow">
-          <h2 className="text-2xl font-semibold mb-1 flex items-center gap-4">
-            <CheckCircle size={28} />
+        <div className="mb-8 rounded-3xl bg-green-200/90 border border-green-500/50 p-8 text-green-900 shadow">
+          <h2 className="text-xl sm:text-2xl font-semibold mb-1 flex items-center gap-4">
+            <CheckCircle size={28} className="hidden sm:block shrink-0" />
             Your feedback was submitted
           </h2>
-          <p className="ml-11">
+          <p className="sm:ml-11 text-sm sm:text-base">
             Thank you for taking the time to make Cibo Libro a better place
           </p>
-          <Link
-            href="/home"
-            className="ml-10 mt-4 w-max text-black flex items-center gap-2 rounded-full px-4 py-2 bg-slate-200 border border-black/10 cursor-pointer hover:brightness-90 active:brightness-75"
-          >
-            <Home size={20} />
-            Home
-          </Link>
-          {/* {state.message ?? "Thanks for your feedback!"} */}
         </div>
       )}
 
       {state.status === "error" && (
-        <div className="mb-4 rounded-3xl bg-red-200/90 border border-red-800 p-8 text-red-800 shadow">
-          <h2 className="text-2xl font-semibold mb-1 flex items-center gap-4">
-            <CircleX size={28} />
+        <div className="mb-8 rounded-3xl bg-red-200/90 border border-red-500/50 p-8 text-red-800 shadow">
+          <h2 className="text-xl sm:text-2xl font-semibold mb-1 flex items-center gap-4">
+            <CircleX size={28} className="hidden sm:block shrink-0" />
             Something went wrong
           </h2>
-          <p className="ml-11">Please try again or come back later</p>
-          <Link
-            href="/home"
-            className="ml-11 mt-2 w-max text-black flex items-center gap-2 rounded-full px-4 py-2 bg-slate-200 border border-white cursor-pointer hover:brightness-90 active:brightness-75"
-          >
-            <ChevronLeft />
-            Home
-          </Link>
-          {/* {state.message ?? "Thanks for your feedback!"} */}
+          <p className="sm:ml-11 text-sm sm:text-base">Please try again or come back later</p>
         </div>
       )}
 
       {/* Header Card */}
       <section className="rounded-3xl border border-white/70 bg-white/95 p-8 shadow-lg backdrop-blur">
-        <h1 className="text-3xl sm:text-4xl font-extrabold text-orange-950">
+        <h1 className="text-3xl sm:text-4xl font-extrabold text-black">
           We’d love your feedback
         </h1>
-        <p className="mt-3 text-slate-700 leading-relaxed">
+        <p className="mt-3 text-sm sm:text-base text-slate-700 leading-relaxed">
           Help us improve CiboLibro by sharing your thoughts, frustrations, and
           ideas. Your feedback directly shapes the future of the app.
         </p>
@@ -90,23 +74,23 @@ export default function FeedbackPage() {
       <form action={formAction} className="mt-10 space-y-10">
         {/* Rating Card */}
         <section className="rounded-3xl border border-white/70 bg-white/95 p-8 shadow-lg backdrop-blur">
-          <h2 className="text-2xl font-semibold text-orange-950 mb-4 flex items-center gap-4">
-            <Star size={28} className="text-orange-500" />
+          <h2 className="text-2xl font-semibold text-black mb-4 flex items-center gap-4">
+            <Star size={28} className="hidden sm:block shrink-0 text-orange-500" />
             Overall, how are you enjoying CiboLibro?
           </h2>
 
-          <div className="flex gap-4 mt-4">
+          <div className="flex gap-4 mt-6">
             {[1, 2, 3, 4, 5].map((n) => (
               <button
                 type="button"
                 key={n}
                 disabled={isPending}
                 onClick={() => setRating(n)}
-                className={`h-12 w-12 flex items-center justify-center rounded-full border transition shadow-sm text-lg font-medium cursor-pointer
+                className={`h-12 w-12 flex items-center justify-center rounded-full border transition text-lg font-medium cursor-pointer
                   ${
                     rating === n
-                      ? "bg-orange-500 text-white border-orange-600 shadow-md scale-105"
-                      : "bg-white text-slate-700 border-zinc-300 hover:border-zinc-400 hover:scale-105"
+                      ? "bg-linear-to-br from-orange-500 to-rose-500 text-white font-semibold border-orange-600 scale-105"
+                      : "bg-white text-slate-700 border-zinc-300 hover:brightness-95 active:brightness-75"
                   }
                   ${isPending ? "opacity-50 cursor-not-allowed" : ""}
                 `}
@@ -121,8 +105,8 @@ export default function FeedbackPage() {
 
         {/* Feature Request */}
         <section className="rounded-3xl border border-white/70 bg-white/95 p-8 shadow-lg backdrop-blur">
-          <h2 className="text-2xl font-semibold text-orange-950 mb-4 flex items-center gap-4">
-            <MessageCircleQuestionMark size={28} className="text-orange-500" />
+          <h2 className="text-2xl font-semibold text-black mb-4 flex items-center gap-4">
+            <MessageCircleQuestionMark size={28} className="hidden sm:block shrink-0 text-orange-500" />
             What feature would you love to see next?
           </h2>
 
@@ -137,8 +121,8 @@ export default function FeedbackPage() {
 
         {/* UI Pain Points */}
         <section className="rounded-3xl border border-white/70 bg-white/95 p-8 shadow-lg backdrop-blur">
-          <h2 className="text-2xl font-semibold text-orange-950 flex gap-4 items-center mb-4">
-            <Bug size={28} className="text-orange-500" />
+          <h2 className="text-2xl font-semibold text-black flex gap-4 items-center mb-4">
+            <Bug size={28} className="hidden sm:block shrink-0 text-orange-500" />
             What feels confusing or frustrating?
           </h2>
 
@@ -153,8 +137,8 @@ export default function FeedbackPage() {
 
         {/* Additional Thoughts */}
         <section className="rounded-3xl border border-white/70 bg-white/95 p-8 shadow-lg backdrop-blur">
-          <h2 className="text-2xl font-semibold text-orange-950 mb-4 flex items-center gap-4">
-            <Heart size={28} className="text-orange-500" />
+          <h2 className="text-2xl font-semibold text-black mb-4 flex items-center gap-4">
+            <Heart size={28} className="hidden sm:block shrink-0 text-orange-500" />
             Anything else you&apos;d like to share?
           </h2>
 
