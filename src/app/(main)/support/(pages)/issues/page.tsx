@@ -8,7 +8,9 @@ import {
   ChevronLeft,
   Home,
   CheckCircle,
+  Send,
 } from "lucide-react";
+import { FormSubmitButton } from "@/app/components/forms/FormSubmitButton";
 import { useActionState, useState } from "react";
 import { submitIssue } from "./actions";
 import Link from "next/link";
@@ -164,14 +166,9 @@ export default function ReportIssuesPage() {
         </section>
 
         {/* Submit */}
-        <div className="flex justify-center">
-          <button
-            type="submit"
-            className="rounded-full bg-white/60 border border-white px-8 py-3 text-lg font-semibold text-slate-600 shadow-lg backdrop-blur hover:brightness-90 active:brightness-75 cursor-pointer"
-          >
-            Submit Issue
-          </button>
-        </div>
+        <FormSubmitButton pendingLabel="Submitting...">
+          Submit Issue <Send size={22} />
+        </FormSubmitButton>
       </form>
     </div>
   );

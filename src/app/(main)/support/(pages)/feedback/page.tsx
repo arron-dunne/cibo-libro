@@ -6,13 +6,13 @@ import {
   Heart,
   Bug,
   MessageCircleQuestionMark,
-  LoaderCircle,
   CheckCircle,
   ChevronLeft,
   CircleX,
   Send,
   Home,
 } from "lucide-react";
+import { FormSubmitButton } from "@/app/components/forms/FormSubmitButton";
 
 import { useState, useActionState, useEffect } from "react";
 import { submitFeedback } from "./actions";
@@ -168,29 +168,9 @@ export default function FeedbackPage() {
         </section>
 
         {/* Submit Button */}
-        <div className="sticky bottom-4 z-10 flex justify-center">
-          <div className="rounded-full w-full max-w-sm bg-white/60 backdrop-blur border border-white/70 shadow-lg px-4 py-3">
-            <button
-              type="submit"
-              disabled={isPending}
-              className="w-full h-14 rounded-full flex justify-center items-center gap-4
-              bg-linear-to-br from-green-500 to-lime-400 border border-green-500 shadow-lg
-              text-xl font-bold text-green-950 cursor-pointer
-              hover:brightness-90 active:brightness-75 disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              {isPending ? (
-                <>
-                  <LoaderCircle className="animate-spin" size={22} />
-                </>
-              ) : (
-                <>
-                  <p>Submit Feedback</p>
-                  <Send size={22} />
-                </>
-              )}
-            </button>
-          </div>
-        </div>
+        <FormSubmitButton pendingLabel="Submitting...">
+          Submit Feedback <Send size={22} />
+        </FormSubmitButton>
       </form>
     </div>
   );
