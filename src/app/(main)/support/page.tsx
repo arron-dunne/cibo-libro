@@ -34,7 +34,7 @@ export default function SupportPage() {
       <div className="max-w-md mx-auto flex flex-col gap-4 items-center">
         <SecondaryLink name="Terms of Service" />
         <SecondaryLink name="Privacy Policy" />
-        <SecondaryLink name="Copyright Protection" />
+        {/* <SecondaryLink name="Copyright Protection" /> */}
       </div>
     </div>
   );
@@ -43,38 +43,50 @@ export default function SupportPage() {
 function PrimaryLink({ name }: { name: string }) {
   let href: string | undefined;
   let Icon: React.ComponentType<LucideProps>;
+  let gradient: string;
+  let textColor: string;
+  let border: string;
 
   switch (name) {
     case "Feedback":
       href = "/support/feedback";
       Icon = Lightbulb;
+      gradient = "bg-linear-to-br from-yellow-500 to-yellow-300";
+      textColor = "text-yellow-950";
+      border = "border border-yellow-500/80";
       break;
     case "Issues":
       href = "/support/issues";
       Icon = Bug;
+      gradient = "bg-linear-to-br from-rose-400 to-pink-300";
+      textColor = "text-rose-950";
+      border = "border border-rose-500/80";
       break;
     case "General":
     default:
       href = "/support/contact";
       Icon = MessageCircle;
+      gradient = "bg-linear-to-br from-blue-400 to-cyan-300";
+      textColor = "text-blue-950";
+      border = "border border-blue-500/80";
   }
 
   return (
-    <Link
-      className="w-full md:aspect-square px-6 py-4 rounded-3xl shadow-lg 
-        flex md:flex-col items-center justify-start md:justify-center gap-4
-      bg-white/70 backdrop-blur-sm border border-white/80 
-      text-orange-600 font-bold
-        hover:brightness-110 active:brightness-125 md:hover:brightness-100 md:active:brightness-100 
-        transition-transform md:hover:scale-110 md:active:scale-105"
-      href={href}
-    >
-      <Icon className="w-6 md:w-20 md:h-20" />
-      <div className="w-full flex items-center gap-2 justify-between md:justify-center">
-        <p className="text-xl">{name}</p>
-        <ChevronRight />
-      </div>
-    </Link>
+    <div className="w-full md:aspect-square rounded-4xl bg-white/60 backdrop-blur-sm border border-white/70 shadow-lg p-3">
+      <Link
+        className={`w-full h-full px-4 py-3 rounded-3xl
+          flex md:flex-col items-center justify-start md:justify-center gap-4
+          ${gradient} ${border} ${textColor} font-bold
+          hover:brightness-90 active:brightness-75`}
+        href={href}
+      >
+        <Icon className="w-6 md:w-20 md:h-20" />
+        <div className="w-full flex items-center gap-2 justify-between md:justify-center">
+          <p className="text-xl">{name}</p>
+          <ChevronRight />
+        </div>
+      </Link>
+    </div>
   );
 }
 
