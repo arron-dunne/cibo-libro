@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 import { auth } from "@/lib/auth/auth";
 import { ArrowUpFromLine, CircleUserRound } from "lucide-react";
 import ChangePasswordModal from "./ChangePasswordModal";
+import ExportRecipesModal from "./ExportRecipesModal";
 import { signOutAllDevices } from "./actions";
 
 export default async function SettingsPage() {
@@ -60,15 +61,12 @@ export default async function SettingsPage() {
           Export Recipes
         </h2>
         <p className="text-sm sm:text-base text-slate-700 leading-relaxed">
-          Soon you&apos;ll be able to export all your recipes as a shareable file.
-          Until then, we can prep an export manually — just ping support.
+          Download all your recipes as a file you can keep, share, or import
+          elsewhere.
         </p>
-        <button
-          disabled
-          className="mt-6 w-full rounded-full bg-zinc-100 px-4 py-3 font-semibold text-zinc-400 cursor-not-allowed"
-        >
-          Export all recipes (coming soon)
-        </button>
+        <div className="mt-6">
+          <ExportRecipesModal />
+        </div>
       </section>
     </div>
   );
