@@ -4,6 +4,21 @@ import { auth } from "@/lib/auth/auth";
 import { prisma } from "@/lib/prisma";
 import { hash } from "argon2";
 import { verifyPassword } from "@/lib/auth/auth";
+import { redirect } from "next/navigation";
+
+export async function signOutAllDevices() {
+  const session = await auth();
+  if (!session?.user?.id) {
+    throw new Error("Not authenticated");
+  }
+
+  await prisma.user.update({
+    where: { id: session.user.id },
+    data: { sessionVersion: { increment: 1 } },
+  });
+
+  redirect("/login");
+}
 
 export async function changePassword(
   prevState: { error: string | null },

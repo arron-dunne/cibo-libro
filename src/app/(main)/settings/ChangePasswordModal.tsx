@@ -1,11 +1,14 @@
 "use client";
 
 import { useState, useEffect, useActionState } from "react";
+import { createPortal } from "react-dom";
 import { changePassword } from "./actions";
 import { KeyRound, X } from "lucide-react";
 
 export default function ChangePasswordModal() {
   const [dialog, setDialog] = useState<boolean>(false);
+  const [hasMounted, setHasMounted] = useState<boolean>(false);
+  useEffect(() => setHasMounted(true), []);
 
   const [formState, formAction, isSubmitting] = useActionState(changePassword, {
     error: null,
@@ -29,95 +32,90 @@ export default function ChangePasswordModal() {
       {/* Trigger Button */}
       <button
         onClick={() => setDialog(true)}
-        className="mt-1 bg-linear-to-br from-orange-500 to-rose-500 rounded-full px-4 py-3 font-bold shadow text-white cursor-pointer hover:brightness-95 active:brightness-75"
+        className="w-full rounded-full bg-linear-to-br from-slate-100 to-slate-200 border border-slate-300 px-4 py-3 font-semibold text-slate-800 cursor-pointer hover:brightness-90 active:brightness-75"
       >
         Change Password
       </button>
 
       {/* Modal */}
-      <div
-        className={`fixed inset-0 z-20 flex items-center justify-center bg-black/50 backdrop-blur-sm transition ${dialog ? "opactiy-100 pointer-events-auto" : "opacity-0 pointer-events-none"}`}
-        aria-hidden={!dialog}
-      >
-        {/* Panel */}
+      {hasMounted && typeof window !== "undefined" && createPortal(
         <div
-          className="relative w-full max-w-md rounded-3xl bg-white p-6 text-center shadow-xl"
-          role="dialog"
-          aria-modal="true"
+          className={`fixed inset-0 z-20 flex items-center justify-center bg-black/50 backdrop-blur-sm px-4 transition duration-200 ${dialog ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"}`}
+          aria-hidden={!dialog}
         >
-          {/* Close button */}
-          <button
-            onClick={() => setDialog(false)}
-            className="absolute right-4 top-4 text-gray-400 hover:text-gray-600"
+          <div
+            className="relative w-full max-w-md rounded-3xl bg-orange-50 p-6 text-center shadow-xl"
+            role="dialog"
+            aria-modal="true"
           >
-            <X className="h-5 w-5" />
-          </button>
-
-          <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-linear-to-br from-orange-100 to-rose-100 text-rose-500">
-            <KeyRound size={28} />
-          </div>
-
-          <h2 className="mt-4 text-xl font-bold text-gray-900">
-            Change Password
-          </h2>
-          <p className="mt-2 text-sm text-gray-500">
-            Enter your current password and choose a new one.
-          </p>
-
-          <form action={formAction} className="space-y-4 text-start">
-            <label className="block text-sm font-medium text-gray-700 mt-4 mb-1">
-              Current Password
-            </label>
-            <input
-              name="currentPassword"
-              type="password"
-              // className="w-full rounded-2xl border border-gray-200 px-4 py-3 bg-gray-50 focus:border-orange-400 focus:outline-none"
-              className="w-full rounded-2xl border border-gray-300 px-4 py-3 shadow-inner"
-              required
-            />
-
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              New Password
-            </label>
-            <input
-              name="newPassword"
-              type="password"
-              className="w-full rounded-2xl border border-gray-300 px-4 py-3 shadow-inner"
-              required
-              minLength={8}
-            />
-
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Confirm New Password
-            </label>
-            <input
-              name="confirmPassword"
-              type="password"
-              className="w-full rounded-2xl border border-gray-300 px-4 py-3 shadow-inner"
-              required
-              minLength={8}
-            />
-
-            {/* Error msg */}
-            {formState.error && (
-              <p className="text-sm text-red-600">{formState.error}</p>
-            )}
-
-            {/* Success msg */}
-            {/* {success && (
-                <p className="text-sm text-emerald-600">{success}</p>
-              )} */}
-
+            {/* Close button */}
             <button
-              type="submit"
-              disabled={isSubmitting}
-              className="mt-2 w-full rounded-full bg-linear-to-br from-orange-500 to-rose-500 cursor-pointer px-4 py-3 font-bold text-lg text-white shadow hover:brightness-95 active:brightness-75 disabled:opacity-50"
+              onClick={() => setDialog(false)}
+              className="absolute right-4 top-4 text-gray-400 hover:text-gray-600"
             >
-              {isSubmitting ? "Updating..." : "Update Password"}
+              <X className="h-5 w-5" />
             </button>
-          </form>
-        </div>
-      </div>
+
+            <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-linear-to-br from-orange-100 to-rose-100 text-rose-500">
+              <KeyRound size={28} />
+            </div>
+
+            <h2 className="mt-4 text-xl font-bold text-gray-900">
+              Change Password
+            </h2>
+            <p className="mt-2 text-sm text-gray-500">
+              Enter your current password and choose a new one.
+            </p>
+
+            <form action={formAction} className="space-y-4 text-start">
+              <label className="block text-sm font-medium text-gray-700 mt-4 mb-1">
+                Current Password
+              </label>
+              <input
+                name="currentPassword"
+                type="password"
+                className="w-full rounded-2xl border border-zinc-300 bg-white px-4 py-3"
+                required
+              />
+
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                New Password
+              </label>
+              <input
+                name="newPassword"
+                type="password"
+                className="w-full rounded-2xl border border-zinc-300 bg-white px-4 py-3"
+                required
+                minLength={8}
+              />
+
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Confirm New Password
+              </label>
+              <input
+                name="confirmPassword"
+                type="password"
+                className="w-full rounded-2xl border border-zinc-300 bg-white px-4 py-3"
+                required
+                minLength={8}
+              />
+
+              {formState.error && (
+                <p className="text-sm text-red-600">{formState.error}</p>
+              )}
+
+              <button
+                type="submit"
+                disabled={isSubmitting}
+                className="mt-2 w-full rounded-full bg-linear-to-br from-orange-500 to-rose-500 cursor-pointer px-4 py-3 font-bold text-lg text-white shadow hover:brightness-95 active:brightness-75 disabled:opacity-50"
+              >
+                {isSubmitting ? "Updating..." : "Update Password"}
+              </button>
+            </form>
+          </div>
+        </div>,
+        document.body,
+      )}
     </>
   );
 }

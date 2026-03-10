@@ -1,7 +1,8 @@
 import { redirect } from "next/navigation";
 import { auth } from "@/lib/auth/auth";
-import { ArrowUpFromLine, CircleUserRound, ShieldAlert } from "lucide-react";
+import { ArrowUpFromLine, CircleUserRound } from "lucide-react";
 import ChangePasswordModal from "./ChangePasswordModal";
+import { signOutAllDevices } from "./actions";
 
 export default async function SettingsPage() {
   const session = await auth();
@@ -27,24 +28,29 @@ export default async function SettingsPage() {
           Account Details
         </h2>
 
-        <label className="block text-sm font-medium text-slate-600 mb-1">
-          Email
-        </label>
-        <input
-          type="email"
-          value={email}
-          readOnly
-          disabled
-          className="w-full rounded-2xl border border-zinc-200 bg-zinc-50 px-4 py-3 text-slate-700"
-        />
-        <p className="mt-2 text-xs text-slate-500">
-          To change your email, contact support so we can verify ownership.
-        </p>
+        <div className="flex items-center justify-between mb-8">
+          <p className="text-sm font-medium text-slate-600">Email</p>
+          <p className="text-lg text-slate-800">{email}</p>
+        </div>
 
-        <label className="block text-sm font-medium text-slate-600 mt-6 mb-1">
-          Password
-        </label>
-        <ChangePasswordModal />
+        <div className="flex flex-col gap-4">
+          <ChangePasswordModal />
+
+          <form action={signOutAllDevices}>
+            <button
+              type="submit"
+              className="w-full rounded-full bg-linear-to-br from-slate-100 to-slate-200 border border-slate-300 px-4 py-3 font-semibold text-slate-800 cursor-pointer hover:brightness-90 active:brightness-75"
+            >
+              Sign out of all devices
+            </button>
+          </form>
+
+          <button
+            className="w-full rounded-full bg-linear-to-br from-red-500 to-pink-600 border border-red-800/40 px-4 py-3 font-semibold text-white shadow-lg cursor-pointer hover:brightness-90 active:brightness-75"
+          >
+            Delete my account
+          </button>
+        </div>
       </section>
 
       {/* Export Recipes */}
@@ -62,25 +68,6 @@ export default async function SettingsPage() {
           className="mt-6 w-full rounded-full bg-zinc-100 px-4 py-3 font-semibold text-zinc-400 cursor-not-allowed"
         >
           Export all recipes (coming soon)
-        </button>
-      </section>
-
-      {/* Danger Zone */}
-      <section className="rounded-3xl border border-red-200/70 bg-white/95 p-8 shadow-lg backdrop-blur">
-        <h2 className="text-2xl font-semibold text-black mb-4 flex items-center gap-4">
-          <ShieldAlert size={28} className="hidden sm:block shrink-0 text-red-500" />
-          Danger Zone
-        </h2>
-        <p className="text-sm sm:text-base text-slate-700 leading-relaxed">
-          Need to delete your account or remove your data? We&apos;ll add a
-          one-click option soon. In the meantime, send us a message and
-          we&apos;ll take care of it.
-        </p>
-        <button
-          disabled
-          className="mt-6 w-full rounded-full bg-red-50 px-4 py-3 font-semibold text-red-400 cursor-not-allowed"
-        >
-          Delete my account (contact us)
         </button>
       </section>
     </div>
