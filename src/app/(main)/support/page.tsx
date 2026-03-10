@@ -34,7 +34,7 @@ export default function SupportPage() {
       <div className="max-w-md mx-auto flex flex-col gap-4 items-center">
         <SecondaryLink name="Terms of Service" />
         <SecondaryLink name="Privacy Policy" />
-        <SecondaryLink name="Copyright Protection" />
+        {/* <SecondaryLink name="Copyright Protection" /> */}
       </div>
     </div>
   );
