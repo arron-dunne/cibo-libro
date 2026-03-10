@@ -69,6 +69,12 @@ export async function submitIssue(
     }
 
     const affectedPages = formData.getAll("affectedPages");
+    if (affectedPages.length > 0) {
+      responses.push({
+        question: "affectedPages",
+        answer: affectedPages.join(", "),
+      });
+    }
 
     // Get the user agent
     const headersList = await headers();
