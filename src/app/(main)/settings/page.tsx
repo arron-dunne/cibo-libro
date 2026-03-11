@@ -46,11 +46,11 @@ export default async function SettingsPage() {
             </button>
           </form>
 
-          <button
+          {/* <button
             className="w-full rounded-full bg-linear-to-br from-red-500 to-pink-600 border border-red-800/40 px-4 py-3 font-semibold text-white shadow-lg cursor-pointer hover:brightness-90 active:brightness-75"
           >
             Delete my account
-          </button>
+          </button> */}
         </div>
       </section>
 

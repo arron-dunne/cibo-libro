@@ -58,7 +58,7 @@ export async function exportRecipes(
   const sections = recipes.map((r) => {
     const lines: string[] = [];
     lines.push(`## ${r.title || "Untitled"}`);
-    if (r.description) lines.push(`\n> ${r.description}`);
+    if (r.description) lines.push(`\n${r.description}`);
 
     const meta: string[] = [];
     if (r.prepMins != null) meta.push(`**Prep:** ${r.prepMins} mins`);
