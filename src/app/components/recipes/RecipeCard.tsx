@@ -2,7 +2,6 @@
 
 import Link from "next/link";
 import { RecipeImage } from "./RecipeImage";
-import { getHostname } from "@/lib/hostname";
 import { Heart, LinkIcon } from "lucide-react";
 
 export type RecipeCardProps = {
@@ -31,19 +30,13 @@ export function RecipeCard({ recipe }: { recipe: RecipeCardProps }) {
         aria-label={`Open ${recipe.title}`}
         className="w-full h-full"
       >
-        {/* Source URL */}
+        {/* External recipe indicator */}
         {recipe.sourceUrl && (
-          <Link
-            href={recipe.sourceUrl}
-            target="_blank"
-            className="absolute top-3 right-3 px-2 py-1 flex gap-1 items-center
+          <div className="absolute top-3 right-3 p-1.5 flex items-center
           bg-linear-to-br from-slate-200 to-slate-300 shadow
-          rounded-full text-slate-700 border border-white/80
-          cursor-pointer hover:brightness-90 active:brightness-75"
-          >
-            <LinkIcon size={16} />
-            <p className="text-sm">{getHostname(recipe.sourceUrl)}</p>
-          </Link>
+          rounded-full text-slate-700 border border-white/80">
+            <LinkIcon size={14} />
+          </div>
         )}
 
         {/* Picture */}

@@ -57,44 +57,43 @@ export default function CookModeClient({
   const canGoNext = currentStep !== "finish";
 
   return (
-    <main className="min-h-dvh mx-auto max-w-screen-xl py-4 text-white flex flex-col">
+    <main className="min-h-dvh mx-auto max-w-7xl px-4 py-4 text-white flex flex-col">
       {/* Header */}
       <header className="sticky top-4 z-10">
-        <div className="mx-auto w-full max-w-screen-xl">
-          <div className="rounded-full w-full h-14 flex gap-2 justify-between items-center border border-white/80 bg-white/60 backdrop-blur px-3 sm:px-4 py-2 shadow">
-            <Link
-              href={`/view/${slug}`}
-              aria-label="Back to recipe"
-              className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-white bg-linear-to-r from-slate-200 to-slate-300 shadow text-slate-700 hover:brightness-90 active:brightness-75"
-            >
-              <ArrowLeft className="h-5 w-5" aria-hidden />
-            </Link>
+        <div className="rounded-full w-full h-14 flex gap-2 justify-between items-center border border-white/60 bg-white/70 backdrop-blur-md px-3 shadow-lg">
+          <Link
+            href={`/view/${slug}`}
+            aria-label="Back to recipe"
+            className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-white/60 bg-linear-to-br from-slate-100 to-slate-200 shadow text-slate-700 hover:brightness-90 active:brightness-75"
+          >
+            <ArrowLeft className="h-4 w-4" aria-hidden />
+          </Link>
 
-            <h1 className="text-2xl text-black font-semibold">{title}</h1>
+          <h1 className="text-lg font-extrabold text-gray-900 truncate px-2">
+            {title}
+          </h1>
 
-            <div className="inline-flex items-center gap-2 rounded-full bg-linear-to-br from-orange-300 to-rose-300 text-rose-600 shadow px-3 py-1">
-              <UtensilsCrossed size={18} aria-hidden />
-              <span className="font-semibold">Cook Mode</span>
-            </div>
+          <div className="inline-flex shrink-0 items-center gap-1.5 rounded-full bg-linear-to-br from-orange-500 to-rose-500 text-white shadow px-3 py-1.5">
+            <UtensilsCrossed size={15} aria-hidden />
+            <span className="text-sm font-bold">Cook Mode</span>
           </div>
         </div>
       </header>
 
       {/* Main content area */}
-      <section className="mx-auto w-full max-w-screen-xl flex-1 px-4 pt-4 pb-28">
-
-        {/* Prepare Ingredients step — full width */}
+      <section className="flex-1 pt-5 pb-28">
+        {/* Prepare Ingredients step */}
         {currentStep === "ings" && (
-          <div className="max-w-2xl mx-auto mt-5 rounded-3xl p-6 bg-white/90 shadow-xl text-stone-900">
-            <h3 className="text-center text-sm font-semibold text-orange-800 border-b border-orange-200/70 pb-3">
+          <div className="max-w-2xl mx-auto rounded-4xl border border-white/60 bg-white shadow-xl text-gray-900 overflow-hidden">
+            <h2 className="px-8 pt-8 pb-5 text-2xl font-semibold text-black text-center">
               Prepare Ingredients
-            </h3>
+            </h2>
 
             {ingredients.length ? (
-              <ul className="mt-4 space-y-1">
+              <ul className="px-4 pb-4 space-y-0.5">
                 {ingredients.map((line, i) => (
                   <li key={i}>
-                    <label className="group flex items-center gap-3 px-4 py-3 cursor-pointer rounded-xl hover:bg-orange-50 transition">
+                    <label className="flex items-center gap-3 px-3 py-2.5 cursor-pointer rounded-2xl hover:bg-orange-50 transition-colors">
                       <input
                         type="checkbox"
                         className="sr-only"
@@ -104,15 +103,15 @@ export default function CookModeClient({
                         }
                       />
                       {checked[i] ? (
-                        <CheckCircle2 className="h-5 w-5 shrink-0 text-emerald-600" />
+                        <CheckCircle2 className="h-5 w-5 shrink-0 text-emerald-500" />
                       ) : (
-                        <Circle className="h-5 w-5 shrink-0 text-orange-400" />
+                        <Circle className="h-5 w-5 shrink-0 text-orange-300" />
                       )}
                       <span
-                        className={`text-[15px] leading-6 ${
+                        className={`text-base leading-6 ${
                           checked[i]
-                            ? "text-stone-400 line-through"
-                            : "text-stone-800"
+                            ? "text-gray-400 line-through"
+                            : "text-gray-800"
                         }`}
                       >
                         {line}
@@ -122,7 +121,7 @@ export default function CookModeClient({
                 ))}
               </ul>
             ) : (
-              <p className="mt-4 text-sm text-stone-700">
+              <p className="px-8 pb-8 text-sm text-gray-500 text-center">
                 No ingredients found for this recipe.
               </p>
             )}
@@ -131,15 +130,14 @@ export default function CookModeClient({
 
         {/* Step view — sidebar + step panel */}
         {typeof currentStep === "number" && (
-          <div className="mt-5 flex flex-col sm:flex-row gap-6">
+          <div className="flex flex-col sm:flex-row gap-4">
             {/* Slim ingredients sidebar */}
-            <div className="h-max sm:w-[38%] bg-white/90 rounded-3xl p-5 border border-white/40 shadow-lg text-stone-900">
-              <h3 className="text-center text-[13px] font-semibold tracking-tight text-orange-800 border-b border-orange-200/70 pb-2">
+            <div className="h-max sm:w-[38%] rounded-4xl border border-white/60 bg-white shadow-xl text-gray-900 overflow-hidden">
+              <h3 className="px-6 pt-8 pb-5 text-2xl font-semibold text-black text-center">
                 Ingredients
               </h3>
-
               {ingredients.length ? (
-                <ul className="mt-3 space-y-0.5">
+                <ul className="px-4 pb-4 space-y-0.5">
                   {ingredients.map((line, i) => (
                     <IngredientText
                       key={i}
@@ -150,53 +148,59 @@ export default function CookModeClient({
                   ))}
                 </ul>
               ) : (
-                <p className="mt-3 text-sm text-stone-700">
+                <p className="px-6 pb-8 text-sm text-gray-500 text-center">
                   No ingredients found.
                 </p>
               )}
             </div>
 
             {/* Step panel */}
-            <div className="h-max sm:w-[62%] rounded-3xl p-6 bg-white/90 shadow-xl border border-orange-100 text-stone-900">
-              <div className="text-center border-b border-orange-200/60 pb-4">
-                <p className="text-xs font-medium text-orange-700/80 mb-2">
-                  Step {currentStep} of {steps.length}
-                </p>
-                <div className="h-1.5 w-full rounded-full bg-orange-100 overflow-hidden">
+            <div className="h-max sm:w-[62%] rounded-4xl border border-white/60 bg-white shadow-xl text-gray-900 overflow-hidden">
+              <div className="px-8 pt-8 pb-5">
+                <div className="flex items-end justify-center gap-2">
+                  <h3 className="text-2xl font-semibold text-black">
+                    Step {currentStep}
+                  </h3>
+                  <span className="text-sm font-medium text-gray-400 mb-0.5">
+                    of {steps.length}
+                  </span>
+                </div>
+                <div className="mt-4 h-1.5 w-full rounded-full bg-gray-100 overflow-hidden">
                   <div
-                    className="h-1.5 bg-orange-500"
+                    className="h-1.5 rounded-full bg-linear-to-r from-orange-500 to-rose-500"
                     style={{
                       width: `${(currentStep / steps.length) * 100}%`,
                     }}
                   />
                 </div>
               </div>
-
-              <StepText
-                text={steps[currentStep - 1]}
-                keywords={ingredientKeywords}
-              />
+              <div className="px-8 pb-8">
+                <StepText
+                  text={steps[currentStep - 1]}
+                  keywords={ingredientKeywords}
+                />
+              </div>
             </div>
           </div>
         )}
 
-        {/* Finish panel — full width */}
+        {/* Finish panel */}
         {currentStep === "finish" && (
-          <div className="max-w-2xl mx-auto mt-5 rounded-3xl p-8 bg-white/95 text-orange-950 shadow-2xl border border-orange-100 text-center">
-            <div className="flex items-center justify-center gap-3 text-emerald-700">
-              <BadgeCheck className="h-7 w-7" />
-              <p className="text-sm font-semibold">Finished</p>
+          <div className="max-w-2xl mx-auto rounded-4xl border border-white/60 bg-white shadow-xl text-gray-900 text-center p-10">
+            <div className="inline-flex items-center justify-center h-16 w-16 rounded-full bg-linear-to-br from-emerald-400 to-emerald-600 shadow-lg mx-auto">
+              <BadgeCheck className="h-8 w-8 text-white" />
             </div>
-            <h2 className="mt-3 text-3xl font-semibold text-orange-900">
+            <h2 className="mt-4 text-3xl font-extrabold text-gray-900">
               Bon appétit!
             </h2>
-            <p className="mt-2 text-orange-900/80">
+            <p className="mt-2 text-gray-500">
               You&apos;ve completed all the steps. Enjoy your meal.
             </p>
             <Link
               href={`/view/${slug}`}
-              className="mt-6 inline-flex items-center justify-center rounded-full bg-orange-600 text-white ring-1 ring-orange-700/40 shadow px-6 py-3 font-semibold hover:bg-orange-700 transition"
+              className="mt-6 inline-flex items-center justify-center gap-2 rounded-full bg-linear-to-br from-orange-500 to-rose-500 text-white border border-white/40 shadow px-6 py-3 font-bold hover:brightness-90 active:brightness-75"
             >
+              <ArrowLeft className="h-4 w-4" />
               Back to recipe
             </Link>
           </div>
@@ -204,12 +208,12 @@ export default function CookModeClient({
       </section>
 
       {/* Bottom navigation */}
-      <nav className="fixed inset-x-0 bottom-0 z-30 mx-auto max-w-screen-xl px-4 pb-4">
-        <div className="rounded-full h-20 flex gap-2 justify-between items-center border border-white/80 bg-white/60 backdrop-blur px-3 sm:px-4 py-2 shadow">
+      <nav className="fixed inset-x-0 bottom-0 z-30 px-4 pb-4 max-w-7xl mx-auto">
+        <div className="rounded-full h-18 flex gap-2 items-center border border-white/60 bg-white/70 backdrop-blur-md px-2 shadow-lg">
           <button
             onClick={goToPrevious}
             disabled={!canGoPrevious}
-            className="h-14 w-1/2 rounded-full text-lg font-semibold flex items-center justify-center gap-2 disabled:bg-white/60 disabled:text-orange-900/60 transition border border-white bg-linear-to-r from-slate-200 to-slate-300 shadow text-slate-700 hover:brightness-90 active:brightness-75"
+            className="h-12 w-1/2 rounded-full font-bold flex items-center justify-center gap-1.5 bg-linear-to-br from-slate-100 to-slate-200 border border-white/60 shadow text-slate-700 hover:brightness-90 active:brightness-75 disabled:opacity-40 disabled:cursor-not-allowed"
           >
             <ChevronLeft className="h-5 w-5" /> Prev
           </button>
@@ -217,7 +221,7 @@ export default function CookModeClient({
           <button
             onClick={goToNext}
             disabled={!canGoNext}
-            className="w-1/2 bg-linear-to-r from-orange-500 border border-white/70 to-rose-500 h-14 rounded-full text-lg font-semibold flex items-center justify-center gap-2 transition disabled:opacity-60 disabled:cursor-not-allowed"
+            className="h-12 w-1/2 rounded-full font-bold flex items-center justify-center gap-1.5 bg-linear-to-br from-orange-500 to-rose-500 border border-white/40 shadow text-white hover:brightness-90 active:brightness-75 disabled:opacity-40 disabled:cursor-not-allowed"
           >
             Next <ChevronRight className="h-5 w-5" />
           </button>

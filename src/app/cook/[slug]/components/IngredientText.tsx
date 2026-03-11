@@ -29,7 +29,7 @@ export function IngredientText({
   const active = stepText ? ingredientUsedInStep(text, stepText) : false;
 
   const baseSize =
-    size === "full" ? "text-[15px] leading-6" : "text-[14px] leading-5";
+    size === "full" ? "text-base leading-6" : "text-[15px] leading-6";
 
   let textClass = "text-stone-800";
   if (checked) textClass = "text-stone-400 line-through";
