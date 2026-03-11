@@ -24,7 +24,7 @@ export default async function Layout({
             {/* Logo */}
             <Link href="/" className="grow" aria-label="cibo libro home">
               <Image
-                src="/images/logo.png"
+                src="/logo.png"
                 alt="cibo libro"
                 width={150}
                 height={36}

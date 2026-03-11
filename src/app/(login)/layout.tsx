@@ -12,7 +12,7 @@ export default function LoginLayout({
         {/* Logo above panel */}
         <div className="my-10">
           <Image
-            src="/images/logo.png"
+            src="/logo.png"
             alt="Cibo Libro"
             width={300}
             height={70}

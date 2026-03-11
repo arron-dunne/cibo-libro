@@ -7,7 +7,7 @@ export function Footer() {
       <div className="mx-auto w-[min(1150px,95%)] flex flex-wrap items-center justify-between gap-4">
         <div className="flex items-center gap-3">
           <Image
-            src="/images/logo.png"
+            src="/logo.png"
             alt="cibo libro"
             width={140}
             height={32}
