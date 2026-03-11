@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { extractIngredientKeyword } from "@/lib/ingredients/extractKeywords";
 import { IngredientText } from "./components/IngredientText";
 import { StepText } from "./components/StepText";
@@ -24,8 +24,6 @@ interface CookModeClientProps {
 
 type StepType = "ings" | "finish" | number;
 
-type ScreenType = "desktop" | "mobile";
-
 export default function CookModeClient({
   slug,
   title,
@@ -34,33 +32,10 @@ export default function CookModeClient({
 }: CookModeClientProps) {
   const [currentStep, setCurrentStep] = useState<StepType>("ings");
   const [checked, setChecked] = useState<Record<number, boolean>>({});
-  const [screen, setScreen] = useState<ScreenType>("mobile");
 
   const ingredientKeywords = ingredients
     .map(extractIngredientKeyword)
     .filter(Boolean) as string[];
-
-  // Detect the screen size
-  useEffect(() => {
-    if (typeof window === "undefined") return;
-
-    const checkScreen = () => {
-      const isDesktop = window.matchMedia("(min-width: 768px)").matches;
-      setScreen(isDesktop ? "desktop" : "mobile");
-    };
-
-    checkScreen();
-    window.addEventListener("resize", checkScreen);
-    return () => window.removeEventListener("resize", checkScreen);
-  }, []);
-
-  // Skip ingredients step entirely for desktop users
-  useEffect(() => {
-    if (screen === "desktop" && currentStep === "ings") {
-      setCurrentStep(1);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [screen]);
 
   function goToNext() {
     if (currentStep === "ings") {
@@ -74,11 +49,7 @@ export default function CookModeClient({
     if (currentStep === "finish") {
       setCurrentStep(steps.length > 0 ? steps.length : "ings");
     } else if (typeof currentStep === "number") {
-      if (currentStep > 1) {
-        setCurrentStep(currentStep - 1);
-      } else if (screen === "mobile") {
-        setCurrentStep("ings");
-      }
+      setCurrentStep(currentStep > 1 ? currentStep - 1 : "ings");
     }
   }
 
@@ -91,7 +62,6 @@ export default function CookModeClient({
       <header className="sticky top-4 z-10">
         <div className="mx-auto w-full max-w-screen-xl">
           <div className="rounded-full w-full h-14 flex gap-2 justify-between items-center border border-white/80 bg-white/60 backdrop-blur px-3 sm:px-4 py-2 shadow">
-            {/* Back button */}
             <Link
               href={`/view/${slug}`}
               aria-label="Back to recipe"
@@ -100,10 +70,8 @@ export default function CookModeClient({
               <ArrowLeft className="h-5 w-5" aria-hidden />
             </Link>
 
-            {/* Title */}
             <h1 className="text-2xl text-black font-semibold">{title}</h1>
 
-            {/* Cook mode icon */}
             <div className="inline-flex items-center gap-2 rounded-full bg-linear-to-br from-orange-300 to-rose-300 text-rose-600 shadow px-3 py-1">
               <UtensilsCrossed size={18} aria-hidden />
               <span className="font-semibold">Cook Mode</span>
@@ -113,92 +81,83 @@ export default function CookModeClient({
       </header>
 
       {/* Main content area */}
-      <section className="mx-auto w-full max-w-screen-xl flex-1 px-4 pt-4 pb-28 flex flex-col md:flex-row md:gap-6">
-        {/* Left panel: Ingredients (desktop-only) */}
-        <div
-          className="
-            hidden md:block md:w-[42%]
-            bg-white/90 rounded-3xl p-5
-            border border-white/40 shadow-lg text-stone-900
-          "
-        >
-          <h3 className="text-center text-[13px] font-semibold tracking-tight text-orange-800 border-b border-orange-200/70 pb-2">
-            Ingredients
-          </h3>
+      <section className="mx-auto w-full max-w-screen-xl flex-1 px-4 pt-4 pb-28">
 
-          {ingredients.length ? (
-            <ul className="mt-3 space-y-0.5">
-              {ingredients.map((line, i) => (
-                <IngredientText
-                  key={i}
-                  text={line}
-                  stepText={
-                    typeof currentStep === "number"
-                      ? steps[currentStep - 1]
-                      : undefined
-                  }
-                  size="sidebar"
-                />
-              ))}
-            </ul>
-          ) : (
-            <p className="mt-3 text-sm text-stone-700">
-              No ingredients found for this recipe.
-            </p>
-          )}
-        </div>
+        {/* Prepare Ingredients step — full width */}
+        {currentStep === "ings" && (
+          <div className="max-w-2xl mx-auto mt-5 rounded-3xl p-6 bg-white/90 shadow-xl text-stone-900">
+            <h3 className="text-center text-sm font-semibold text-orange-800 border-b border-orange-200/70 pb-3">
+              Prepare Ingredients
+            </h3>
 
-        {/* Right panel: Steps */}
-        <div className="w-full md:w-[58%]">
-          {/* Ingredients panel (mobile only) */}
-          {currentStep === "ings" && (
-            <div className="mt-5 md:mt-0 rounded-3xl p-6 bg-white/90 border-white/40 shadow-xl text-stone-900 md:hidden">
-              <h3 className="text-center text-sm font-semibold text-orange-800 border-b border-orange-200/70 pb-3">
-                Prepare Ingredients
+            {ingredients.length ? (
+              <ul className="mt-4 space-y-1">
+                {ingredients.map((line, i) => (
+                  <li key={i}>
+                    <label className="group flex items-center gap-3 px-4 py-3 cursor-pointer rounded-xl hover:bg-orange-50 transition">
+                      <input
+                        type="checkbox"
+                        className="sr-only"
+                        checked={!!checked[i]}
+                        onChange={() =>
+                          setChecked({ ...checked, [i]: !checked[i] })
+                        }
+                      />
+                      {checked[i] ? (
+                        <CheckCircle2 className="h-5 w-5 shrink-0 text-emerald-600" />
+                      ) : (
+                        <Circle className="h-5 w-5 shrink-0 text-orange-400" />
+                      )}
+                      <span
+                        className={`text-[15px] leading-6 ${
+                          checked[i]
+                            ? "text-stone-400 line-through"
+                            : "text-stone-800"
+                        }`}
+                      >
+                        {line}
+                      </span>
+                    </label>
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <p className="mt-4 text-sm text-stone-700">
+                No ingredients found for this recipe.
+              </p>
+            )}
+          </div>
+        )}
+
+        {/* Step view — sidebar + step panel */}
+        {typeof currentStep === "number" && (
+          <div className="mt-5 flex flex-col sm:flex-row gap-6">
+            {/* Slim ingredients sidebar */}
+            <div className="h-max sm:w-[38%] bg-white/90 rounded-3xl p-5 border border-white/40 shadow-lg text-stone-900">
+              <h3 className="text-center text-[13px] font-semibold tracking-tight text-orange-800 border-b border-orange-200/70 pb-2">
+                Ingredients
               </h3>
 
               {ingredients.length ? (
-                <ul className="mt-4 space-y-1">
+                <ul className="mt-3 space-y-0.5">
                   {ingredients.map((line, i) => (
-                    <li key={i}>
-                      <label className="group flex items-center gap-3 px-4 py-3 cursor-pointer rounded-xl hover:bg-orange-50 transition">
-                        <input
-                          type="checkbox"
-                          className="sr-only"
-                          checked={!!checked[i]}
-                          onChange={() =>
-                            setChecked({ ...checked, [i]: !checked[i] })
-                          }
-                        />
-                        {checked[i] ? (
-                          <CheckCircle2 className="h-5 w-5 text-emerald-600" />
-                        ) : (
-                          <Circle className="h-5 w-5 text-orange-400" />
-                        )}
-                        <span
-                          className={`text-[15px] leading-6 ${
-                            checked[i]
-                              ? "text-stone-400 line-through"
-                              : "text-stone-800"
-                          }`}
-                        >
-                          {line}
-                        </span>
-                      </label>
-                    </li>
+                    <IngredientText
+                      key={i}
+                      text={line}
+                      stepText={steps[currentStep - 1]}
+                      size="sidebar"
+                    />
                   ))}
                 </ul>
               ) : (
-                <p className="mt-4 text-sm text-stone-700">
-                  No ingredients found for this recipe yet.
+                <p className="mt-3 text-sm text-stone-700">
+                  No ingredients found.
                 </p>
               )}
             </div>
-          )}
 
-          {/* Step panel */}
-          {typeof currentStep === "number" && (
-            <div className="mt-5 md:mt-0 rounded-3xl p-6 bg-white/90 shadow-xl border border-orange-100 text-stone-900">
+            {/* Step panel */}
+            <div className="h-max sm:w-[62%] rounded-3xl p-6 bg-white/90 shadow-xl border border-orange-100 text-stone-900">
               <div className="text-center border-b border-orange-200/60 pb-4">
                 <p className="text-xs font-medium text-orange-700/80 mb-2">
                   Step {currentStep} of {steps.length}
@@ -218,30 +177,30 @@ export default function CookModeClient({
                 keywords={ingredientKeywords}
               />
             </div>
-          )}
+          </div>
+        )}
 
-          {/* Finish panel */}
-          {currentStep === "finish" && (
-            <div className="mt-5 md:mt-0 rounded-3xl p-8 bg-white/95 text-orange-950 shadow-2xl border border-orange-100 text-center">
-              <div className="flex items-center justify-center gap-3 text-emerald-700">
-                <BadgeCheck className="h-7 w-7" />
-                <p className="text-sm font-semibold">Finished</p>
-              </div>
-              <h2 className="mt-3 text-3xl font-semibold text-orange-900">
-                Bon appétit!
-              </h2>
-              <p className="mt-2 text-orange-900/80">
-                You&apos;ve completed all the steps. Enjoy your meal.
-              </p>
-              <Link
-                href={`/view/${slug}`}
-                className="mt-6 inline-flex items-center justify-center rounded-full bg-orange-600 text-white ring-1 ring-orange-700/40 shadow px-6 py-3 font-semibold hover:bg-orange-700 transition"
-              >
-                Back to recipe
-              </Link>
+        {/* Finish panel — full width */}
+        {currentStep === "finish" && (
+          <div className="max-w-2xl mx-auto mt-5 rounded-3xl p-8 bg-white/95 text-orange-950 shadow-2xl border border-orange-100 text-center">
+            <div className="flex items-center justify-center gap-3 text-emerald-700">
+              <BadgeCheck className="h-7 w-7" />
+              <p className="text-sm font-semibold">Finished</p>
             </div>
-          )}
-        </div>
+            <h2 className="mt-3 text-3xl font-semibold text-orange-900">
+              Bon appétit!
+            </h2>
+            <p className="mt-2 text-orange-900/80">
+              You&apos;ve completed all the steps. Enjoy your meal.
+            </p>
+            <Link
+              href={`/view/${slug}`}
+              className="mt-6 inline-flex items-center justify-center rounded-full bg-orange-600 text-white ring-1 ring-orange-700/40 shadow px-6 py-3 font-semibold hover:bg-orange-700 transition"
+            >
+              Back to recipe
+            </Link>
+          </div>
+        )}
       </section>
 
       {/* Bottom navigation */}
