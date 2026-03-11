@@ -1,17 +1,16 @@
-// prisma/schema.prisma
 generator client {
-  provider = "prisma-client-js"
+  provider = "prisma-client"
+  output   = "../src/prisma/generated/"
 }
 
 datasource db {
-  provider  = "postgresql"
-  url       = env("DATABASE_URL") // pooled (runtime)
-  directUrl = env("DIRECT_URL") // direct (migrations, studio)
+  provider = "postgresql"
 }
 
 enum RecipeType {
   OWNED
-  EXTERNAL
+  EXTERNAL_FULL
+  EXTERNAL_LINK
 }
 
 enum ImportStatus {
@@ -25,6 +24,14 @@ enum RecipeStatus {
   PUBLISHED
 }
 
+enum UserContactType {
+  FEEDBACK
+  BUG
+  DMCA
+  REPORT
+  GENERAL
+}
+
 model User {
   id           String   @id @default(cuid())
   email        String   @unique
@@ -32,37 +39,58 @@ model User {
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
 
+  sessionVersion Int @default(0)
+
   // Relations
   recipes    Recipe[]
   importJobs ImportJob[] // ← add this line
   accounts   Account[]
   sessions   Session[]
+
+  uploads      Upload[]
+  userContacts UserContact[]
 }
 
 model Recipe {
-  id          String       @id @default(cuid())
-  ownerId     String
-  type        RecipeType
-  title       String
-  description String       @default("")
-  prepMins    Int?
-  cookMins    Int?
-  servings    Int?
-  imageUrl    String?
-  ingredients String[] // Postgres text[]
-  steps       String[]
-  tags        String[]
-  sourceUrl   String?
-  slug        String?      @unique
-  isPublic    Boolean      @default(false)
-  status      RecipeStatus @default(PUBLISHED)
-  createdAt   DateTime     @default(now())
-  updatedAt   DateTime     @updatedAt
+  id               String       @id @default(cuid())
+  ownerId          String
+  type             RecipeType
+  title            String       @default("")
+  description      String       @default("")
+  prepMins         Int?
+  cookMins         Int?
+  servings         Int?
+  imageKey         String?      @unique
+  imageExternalUrl String?
+  ingredients      String[]
+  steps            String[]
+  tags             String[]
+  note             String       @default("")
+  sourceUrl        String?
+  slug             String       @unique
+  isFavourite      Boolean      @default(false)
+  isPublic         Boolean      @default(false)
+  status           RecipeStatus @default(PUBLISHED)
+  createdAt        DateTime     @default(now())
+  updatedAt        DateTime     @updatedAt
 
   owner User @relation(fields: [ownerId], references: [id], onDelete: Cascade)
 
   @@index([ownerId])
   @@index([isPublic])
+}
+
+model Upload {
+  id          String   @id @default(uuid()) // "uploadId" returned to client
+  userId      String
+  key         String   @unique // e.g. user/<userId>/<uuid>.<ext>
+  size        Int // bytes (after client compression)
+  contentType String // image/jpeg | image/png | image/webp
+  createdAt   DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
 }
 
 model ImportJob {
@@ -80,6 +108,20 @@ model ImportJob {
 
   @@index([userId, status])
   @@index([sourceUrl])
+}
+
+model UserContact {
+  id          String          @id @default(cuid())
+  userId      String?
+  contactType UserContactType @default(GENERAL)
+  metaData    Json?
+  data        Json?
+  createdAt   DateTime        @default(now())
+
+  user User? @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([contactType])
+  @@index([userId])
 }
 
 /**

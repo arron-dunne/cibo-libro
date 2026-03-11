@@ -5,6 +5,7 @@ A concise, copy‑pastable playbook for deploying the Cibo Libro MVP with Vercel
 ---
 
 ## 1) Objectives
+
 - Keep infra **$0–$20/mo** until traction.
 - Ship safely with **staging → prod** promotion.
 - Run **typecheck, unit tests, and Playwright E2E** automatically.
@@ -13,11 +14,13 @@ A concise, copy‑pastable playbook for deploying the Cibo Libro MVP with Vercel
 ---
 
 ## 2) Branching & Release Flow (PR‑lite)
+
 - **main** → **Production** (protected)
 - **develop** → **Staging** (protected)
-- **feature/*** → Work branch. Open a **self‑PR** to `develop` when you want a preview.
+- **feature/\*** → Work branch. Open a **self‑PR** to `develop` when you want a preview.
 
 **Day‑to‑day:**
+
 1. `git switch -c feature/<topic>`
 2. Push WIP as often as you like.
 3. Open **PR to `develop`** → Vercel **Preview** URL spins up automatically.
@@ -31,21 +34,25 @@ A concise, copy‑pastable playbook for deploying the Cibo Libro MVP with Vercel
 ## 3) Environment Mapping
 
 ### Vercel
+
 - **Production**: branch `main` → domain `cibolibro.com`
 - **Staging**: branch `develop` → domain `staging.cibolibro.com`
 - **Preview**: every PR gets its own preview URL
 
 ### Database (Neon)
+
 - **Prod DB**: used by `main`
 - **Staging DB**: used by `develop`
 - **(Optional)** Ephemeral **Neon branch per PR** for risky DB changes
 
 ### Object Storage
+
 - **Cloudflare R2** (images). Public bucket via Cloudflare CDN on `img.cibolibro.com`.
 
 ---
 
 ## 4) Secrets & Env Vars
+
 Create these in **Vercel Project → Settings → Environment Variables** (replicate per env):
 
 ```
@@ -62,6 +69,7 @@ POSTHOG_KEY                         # optional
 ```
 
 Add a GitHub repo secret:
+
 ```
 STAGING_URL = https://staging.cibolibro.com
 ```
@@ -69,6 +77,7 @@ STAGING_URL = https://staging.cibolibro.com
 ---
 
 ## 5) CI: Typecheck, Unit, Build, Playwright (local server)
+
 Create `.github/workflows/ci.yml`:
 
 ```yaml
@@ -90,7 +99,7 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 20
-          cache: 'pnpm'
+          cache: "pnpm"
 
       - name: Setup pnpm
         uses: pnpm/action-setup@v4
@@ -130,9 +139,11 @@ jobs:
 ---
 
 ## 6) Optional: Smoke E2E vs Staging After Deploy
+
 Minimal suite to verify env wiring (secrets/DB) on the real staging URL.
 
 `.github/workflows/e2e-staging.yml`:
+
 ```yaml
 name: E2E Staging
 on:
@@ -148,7 +159,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
-        with: { node-version: 20, cache: 'pnpm' }
+        with: { node-version: 20, cache: "pnpm" }
       - uses: pnpm/action-setup@v4
         with: { version: 9 }
       - run: pnpm install --frozen-lockfile
@@ -164,27 +175,32 @@ jobs:
 ---
 
 ## 7) Playwright Config (local + remote)
-`playwright.config.ts`:
-```ts
-import { defineConfig, devices } from '@playwright/test';
 
-const baseURL = process.env.PLAYWRIGHT_BASE_URL || 'http://localhost:3000';
+`playwright.config.ts`:
+
+```ts
+import { defineConfig, devices } from "@playwright/test";
+
+const baseURL = process.env.PLAYWRIGHT_BASE_URL || "http://localhost:3000";
 
 export default defineConfig({
-  testDir: './e2e',
+  testDir: "./e2e",
   timeout: 30_000,
-  use: { baseURL, trace: 'on-first-retry' },
-  projects: [ { name: 'chromium', use: { ...devices['Desktop Chrome'] } } ],
-  webServer: !process.env.PLAYWRIGHT_BASE_URL ? {
-    command: 'pnpm dev',
-    port: 3000,
-    reuseExistingServer: !process.env.CI,
-    timeout: 120_000,
-  } : undefined,
+  use: { baseURL, trace: "on-first-retry" },
+  projects: [{ name: "chromium", use: { ...devices["Desktop Chrome"] } }],
+  webServer: !process.env.PLAYWRIGHT_BASE_URL
+    ? {
+        command: "pnpm dev",
+        port: 3000,
+        reuseExistingServer: !process.env.CI,
+        timeout: 120_000,
+      }
+    : undefined,
 });
 ```
 
 Example folder structure:
+
 ```
 /e2e
   ├─ onboarding.spec.ts           # @smoke
@@ -196,12 +212,14 @@ Example folder structure:
 ---
 
 ## 8) Database Migrations & Seeding
+
 - In Vercel **Build Command** for `develop` and `main`, run:
   - `pnpm prisma migrate deploy`
 - Provide a tiny seed script for **staging** only (not prod). Example `pnpm db:seed:staging`.
 - For risky schema changes, create a **temporary Neon branch** and point the PR preview to it.
 
 **Seeding snippet (example):**
+
 ```bash
 pnpm ts-node prisma/seed.ts
 ```
@@ -209,6 +227,7 @@ pnpm ts-node prisma/seed.ts
 ---
 
 ## 9) Rollbacks
+
 - **App**: Vercel → Deployments → "Redeploy previous".
 - **DB**: Neon **Point‑in‑Time Recovery** (enable PITR). For minor issues, ship a hotfix migration.
 
@@ -217,6 +236,7 @@ pnpm ts-node prisma/seed.ts
 ---
 
 ## 10) Observability & Guardrails
+
 - **Sentry** (app errors + performance) — init early.
 - **Logtail/Better Stack** (structured logs) — optional.
 - **PostHog** (events: `RecipeImported`, `CookStarted`, `ListCreated`).
@@ -226,6 +246,7 @@ pnpm ts-node prisma/seed.ts
 ---
 
 ## 11) Cost Guardrails
+
 - Vercel Free: fine for MVP; upgrade to Pro when >100 WAUs or long‑running jobs appear.
 - Neon Free: OK for early beta; monitor storage and connection limits.
 - Cloudflare R2 Free: ample for initial images.
@@ -237,6 +258,7 @@ pnpm ts-node prisma/seed.ts
 ## 12) Checklists
 
 ### New Feature
+
 - [ ] Feature flags if risky
 - [ ] Unit tests added/updated
 - [ ] E2E updated (happy path)
@@ -244,11 +266,13 @@ pnpm ts-node prisma/seed.ts
 - [ ] Docs/README updated
 
 ### Before Merging to `develop`
+
 - [ ] CI green (typecheck, unit, E2E local)
 - [ ] PR description: what changed, how to test
 - [ ] Preview URL sanity check
 
 ### Before Promoting to `main`
+
 - [ ] Staging smoke tests green
 - [ ] Manual sanity on `staging.cibolibro.com`
 - [ ] Migration risk reviewed
@@ -257,6 +281,7 @@ pnpm ts-node prisma/seed.ts
 ---
 
 ## 13) Appendix: `package.json` Scripts (suggested)
+
 ```json
 {
   "scripts": {
@@ -279,5 +304,5 @@ pnpm ts-node prisma/seed.ts
 ---
 
 ### That’s it
-This guide is your single source of truth for deployment while you solo the MVP. Adjust as you grow (e.g., mandatory PRs, more environments, dedicated job runners).
 
+This guide is your single source of truth for deployment while you solo the MVP. Adjust as you grow (e.g., mandatory PRs, more environments, dedicated job runners).

@@ -1,22 +1,47 @@
+// app/layout.tsx
 import "@/styles/globals.css";
-import type { Metadata } from "next";
 import { Analytics } from "@vercel/analytics/next";
+import { SpeedInsights } from "@vercel/speed-insights/next";
+import type { Metadata } from "next";
+import { Nunito } from "next/font/google";
 
 export const metadata: Metadata = {
   title: "Cibo Libro",
-  description: "We’re cooking something tasty. Back soon!",
-  robots: { index: true, follow: true },
-  icons: {
-    icon: "/icon.png",
-  },
+  description: "A digital cookbook.",
 };
 
-export default function ComingSoonLayout({ children }: { children: React.ReactNode }) {
+const nunito = Nunito({ subsets: ["latin"], variable: "--font-nunito" });
+
+export default async function RootLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   return (
-    <html lang="en" className="h-[100svh] overflow-hidden">
-      <body className="h-[100svh] overflow-hidden text-slate-900 antialiased">
+    <html lang="en">
+      <body className={nunito.className}>
         <Analytics />
-        {children}
+        <SpeedInsights />
+
+        <div className="min-h-screen text-gray-900 antialiased">
+          {/* Background */}
+          <div className="fixed h-screen w-full -z-10 overscroll-none inset-0">
+            <div
+              aria-hidden
+              className="absolute w-full h-full inset-0 bg-linear-to-br from-orange-400 via-orange-500 to-rose-500"
+            />
+            <div
+              aria-hidden
+              className="fixed -top-24 -left-24 h-72 w-72 rounded-full bg-orange-200/35 blur-3xl pointer-events-none "
+            />
+            <div
+              aria-hidden
+              className="fixed inset-0 bg-linear-to-b from-transparent to-white/10 pointer-events-none"
+            />
+          </div>
+
+          {children}
+        </div>
       </body>
     </html>
   );
