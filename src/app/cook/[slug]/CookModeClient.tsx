@@ -136,11 +136,12 @@ export default function CookModeClient({
             <div className="sm:hidden rounded-4xl border border-white/60 bg-white shadow-xl text-gray-900 overflow-hidden">
               <button
                 onClick={() => setIngredientsOpen((o) => !o)}
-                className="w-full flex items-center justify-between px-6 py-4 font-semibold text-gray-800"
+                className="w-full flex items-center justify-between px-6 py-3 font-semibold text-slate-700 bg-linear-to-r from-slate-200 to-slate-300 cursor-pointer transition hover:brightness-90 active:brightness-75"
               >
                 <span>Ingredients</span>
                 <ChevronDown
-                  className={`h-5 w-5 text-gray-500 transition-transform ${ingredientsOpen ? "rotate-180" : ""}`}
+                  size={16}
+                  className={`text-zinc-500 transition-transform ${ingredientsOpen ? "rotate-180" : ""}`}
                 />
               </button>
               {ingredientsOpen && ingredients.length > 0 && (
