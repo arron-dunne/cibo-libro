@@ -86,7 +86,7 @@ export default function CookModeClient({
         {/* Prepare Ingredients step */}
         {currentStep === "ings" && (
           <div className="max-w-2xl mx-auto rounded-4xl border border-white/60 bg-white shadow-xl text-gray-900 overflow-hidden">
-            <h2 className="px-8 pt-8 pb-5 text-2xl font-semibold text-black text-center">
+            <h2 className="pt-6 pb-4 text-2xl font-bold text-black text-center">
               Prepare Ingredients
             </h2>
 
@@ -179,7 +179,7 @@ export default function CookModeClient({
             </div>
 
             {/* Step panel */}
-            <div className="h-max sm:w-[62%] rounded-4xl border border-white/60 bg-white shadow-xl text-gray-900 overflow-hidden">
+            <div className="h-max mx-2 sm:mx-0 sm:w-[62%] rounded-4xl border border-white/60 bg-white shadow-xl text-gray-900 overflow-hidden">
               <div className="px-8 pt-8 pb-5">
                 <div className="flex items-end justify-center gap-2">
                   <h3 className="text-2xl font-semibold text-black">
