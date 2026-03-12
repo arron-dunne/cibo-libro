@@ -110,7 +110,7 @@ export default function CookModeClient({
                       <span
                         className={`text-base leading-6 ${
                           checked[i]
-                            ? "text-gray-400 line-through"
+                            ? "text-gray-400"
                             : "text-gray-800"
                         }`}
                       >
