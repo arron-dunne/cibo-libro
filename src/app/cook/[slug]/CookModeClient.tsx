@@ -3,7 +3,6 @@
 import Link from "next/link";
 import { useState } from "react";
 import { extractIngredientKeyword } from "@/lib/ingredients/extractKeywords";
-import { IngredientText } from "./components/IngredientText";
 import { StepText } from "./components/StepText";
 import {
   ArrowLeft,
@@ -137,14 +136,11 @@ export default function CookModeClient({
                 Ingredients
               </h3>
               {ingredients.length ? (
-                <ul className="px-4 pb-4 space-y-0.5">
+                <ul className="px-6 pb-6 space-y-1 list-disc list-inside">
                   {ingredients.map((line, i) => (
-                    <IngredientText
-                      key={i}
-                      text={line}
-                      stepText={steps[currentStep - 1]}
-                      size="sidebar"
-                    />
+                    <li key={i} className="text-[15px] leading-6 text-stone-800">
+                      {line}
+                    </li>
                   ))}
                 </ul>
               ) : (
