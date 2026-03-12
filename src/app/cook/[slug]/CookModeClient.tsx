@@ -133,10 +133,10 @@ export default function CookModeClient({
         {typeof currentStep === "number" && (
           <div className="flex flex-col sm:flex-row gap-4">
             {/* Mobile ingredients dropdown */}
-            <div className="sm:hidden rounded-4xl border border-white/60 bg-white shadow-xl text-gray-900 overflow-hidden">
+            <div className="sm:hidden">
               <button
                 onClick={() => setIngredientsOpen((o) => !o)}
-                className="w-full flex items-center justify-between px-6 py-3 font-semibold text-slate-700 bg-linear-to-r from-slate-200 to-slate-300 cursor-pointer transition hover:brightness-90 active:brightness-75"
+                className="w-full flex items-center justify-between px-6 py-3 rounded-full border border-white/70 font-semibold text-slate-700 bg-linear-to-r from-slate-200 to-slate-300 cursor-pointer transition hover:brightness-90 active:brightness-75"
               >
                 <span>Ingredients</span>
                 <ChevronDown
@@ -145,13 +145,16 @@ export default function CookModeClient({
                 />
               </button>
               {ingredientsOpen && ingredients.length > 0 && (
-                <ul className="px-6 pb-5 space-y-1 list-disc list-inside border-t border-gray-100 pt-3">
-                  {ingredients.map((line, i) => (
-                    <li key={i} className="text-[15px] leading-6 text-stone-800">
-                      {line}
-                    </li>
-                  ))}
-                </ul>
+                <div className="relative -z-10 -top-6 mx-2 -mb-4 pt-10 pb-8 px-6 rounded-bl-3xl rounded-br-3xl bg-white shadow">
+                  <ul className="space-y-4">
+                    {ingredients.map((line, i) => (
+                      <li key={i} className="flex gap-2 text-stone-800">
+                        <div className="h-2 w-2 mt-2 shrink-0 rounded-full bg-orange-400" />
+                        {line}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
               )}
             </div>
 
