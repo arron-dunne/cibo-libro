@@ -6,13 +6,13 @@ import { extractIngredientKeyword } from "@/lib/ingredients/extractKeywords";
 import { StepText } from "./components/StepText";
 import {
   ArrowLeft,
-  UtensilsCrossed,
   Circle,
   CheckCircle2,
   ChevronLeft,
   ChevronRight,
   BadgeCheck,
   ChevronDown,
+  CookingPot,
 } from "lucide-react";
 
 interface CookModeClientProps {
@@ -64,10 +64,12 @@ export default function CookModeClient({
         <Link
           href={`/view/${slug}`}
           aria-label="Back to recipe"
-          className="shrink-0 flex items-center gap-2 px-4 py-2 rounded-full bg-white/60 border border-white/80 text-slate-800 font-semibold hover:brightness-90 active:brightness-75"
+          className="shrink-0 w-max flex items-center gap-3 text-xl font-semibold text-slate-900 cursor-pointer hover:brightness-90 active:brightness-75"
         >
-          <ArrowLeft size={18} aria-hidden />
-          <span className="text-sm">Back</span>
+          <div className="p-2 rounded-full border border-white/80 bg-linear-to-br from-slate-200 to-slate-300 shadow-lg">
+            <ArrowLeft size={20} />
+          </div>
+          Back
         </Link>
 
         <h1
@@ -77,17 +79,17 @@ export default function CookModeClient({
           {title}
         </h1>
 
-        <div className="hidden sm:inline-flex shrink-0 items-center gap-1.5 rounded-full bg-linear-to-br from-orange-500 to-rose-500 text-white border border-white/30 shadow px-3 py-2">
-          <UtensilsCrossed size={15} aria-hidden />
-          <span className="text-sm font-bold">Cook Mode</span>
+        <div className="hidden sm:flex gap-2 shrink-0 items-center rounded-full bg-white/60 border border-white/80 text-black shadow px-4 py-2">
+          <CookingPot size={24} className="text-rose-500" aria-hidden />
+          <span className="text-lg font-semibold">Cook Mode</span>
         </div>
       </header>
 
       {/* Main content area */}
-      <section className="flex-1 pt-5 pb-28">
+      <section className="w-full max-w-4xl mx-auto flex-1 pt-8">
         {/* Prepare Ingredients step */}
         {currentStep === "ings" && (
-          <div className="max-w-2xl mx-auto rounded-4xl border border-white/60 bg-white shadow-xl text-gray-900 overflow-hidden">
+          <div className="w-full max-w-2xl mx-auto rounded-4xl border border-white/60 bg-white shadow-xl text-gray-900 overflow-hidden">
             <h2 className="pt-6 pb-4 text-2xl font-bold text-black text-center">
               Prepare Ingredients
             </h2>
