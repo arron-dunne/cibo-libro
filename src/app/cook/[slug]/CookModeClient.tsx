@@ -12,6 +12,7 @@ import {
   ChevronLeft,
   ChevronRight,
   BadgeCheck,
+  ChevronDown,
 } from "lucide-react";
 
 interface CookModeClientProps {
@@ -31,6 +32,7 @@ export default function CookModeClient({
 }: CookModeClientProps) {
   const [currentStep, setCurrentStep] = useState<StepType>("ings");
   const [checked, setChecked] = useState<Record<number, boolean>>({});
+  const [ingredientsOpen, setIngredientsOpen] = useState(false);
 
   const ingredientKeywords = ingredients
     .map(extractIngredientKeyword)
@@ -130,8 +132,30 @@ export default function CookModeClient({
         {/* Step view — sidebar + step panel */}
         {typeof currentStep === "number" && (
           <div className="flex flex-col sm:flex-row gap-4">
-            {/* Slim ingredients sidebar */}
-            <div className="h-max sm:w-[38%] rounded-4xl border border-white/60 bg-white shadow-xl text-gray-900 overflow-hidden">
+            {/* Mobile ingredients dropdown */}
+            <div className="sm:hidden rounded-4xl border border-white/60 bg-white shadow-xl text-gray-900 overflow-hidden">
+              <button
+                onClick={() => setIngredientsOpen((o) => !o)}
+                className="w-full flex items-center justify-between px-6 py-4 font-semibold text-gray-800"
+              >
+                <span>Ingredients</span>
+                <ChevronDown
+                  className={`h-5 w-5 text-gray-500 transition-transform ${ingredientsOpen ? "rotate-180" : ""}`}
+                />
+              </button>
+              {ingredientsOpen && ingredients.length > 0 && (
+                <ul className="px-6 pb-5 space-y-1 list-disc list-inside border-t border-gray-100 pt-3">
+                  {ingredients.map((line, i) => (
+                    <li key={i} className="text-[15px] leading-6 text-stone-800">
+                      {line}
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </div>
+
+            {/* Desktop ingredients sidebar */}
+            <div className="hidden sm:block h-max sm:w-[38%] rounded-4xl border border-white/60 bg-white shadow-xl text-gray-900 overflow-hidden">
               <h3 className="px-6 pt-8 pb-5 text-2xl font-semibold text-black text-center">
                 Ingredients
               </h3>
