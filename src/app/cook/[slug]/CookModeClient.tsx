@@ -58,26 +58,28 @@ export default function CookModeClient({
   const canGoNext = currentStep !== "finish";
 
   return (
-    <main className="min-h-dvh mx-auto max-w-7xl px-4 py-4 text-white flex flex-col">
+    <main className="min-h-dvh mx-auto max-w-7xl px-4 py-8 text-white flex flex-col">
       {/* Header */}
-      <header className="sticky top-4 z-10">
-        <div className="rounded-full w-full h-14 flex gap-2 justify-between items-center border border-white/60 bg-white/70 backdrop-blur-md px-3 shadow-lg">
-          <Link
-            href={`/view/${slug}`}
-            aria-label="Back to recipe"
-            className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-white/60 bg-linear-to-br from-slate-100 to-slate-200 shadow text-slate-700 hover:brightness-90 active:brightness-75"
-          >
-            <ArrowLeft className="h-4 w-4" aria-hidden />
-          </Link>
+      <header className="sticky top-4 z-10 flex items-center justify-between gap-3">
+        <Link
+          href={`/view/${slug}`}
+          aria-label="Back to recipe"
+          className="shrink-0 flex items-center gap-2 px-4 py-2 rounded-full bg-white/60 border border-white/80 text-slate-800 font-semibold hover:brightness-90 active:brightness-75"
+        >
+          <ArrowLeft size={18} aria-hidden />
+          <span className="text-sm">Back</span>
+        </Link>
 
-          <h1 className="text-lg font-extrabold text-gray-900 truncate px-2">
-            {title}
-          </h1>
+        <h1
+          className="text-5xl font-black text-white truncate"
+          style={{ WebkitTextStroke: "6px black", paintOrder: "stroke fill" }}
+        >
+          {title}
+        </h1>
 
-          <div className="inline-flex shrink-0 items-center gap-1.5 rounded-full bg-linear-to-br from-orange-500 to-rose-500 text-white shadow px-3 py-1.5">
-            <UtensilsCrossed size={15} aria-hidden />
-            <span className="text-sm font-bold">Cook Mode</span>
-          </div>
+        <div className="hidden sm:inline-flex shrink-0 items-center gap-1.5 rounded-full bg-linear-to-br from-orange-500 to-rose-500 text-white border border-white/30 shadow px-3 py-2">
+          <UtensilsCrossed size={15} aria-hidden />
+          <span className="text-sm font-bold">Cook Mode</span>
         </div>
       </header>
 
