@@ -30,7 +30,22 @@ The abstract features are in bold with some examples of features and how we coul
 
 ### UI/UX
 
-TODO - detail the design astectic, feel, key fonts and compoents stylings
+The aesthetic is warm, rounded, and premium — food-forward without being cold or clinical.
+
+**Palette:** Orange-to-rose gradient as the primary brand colour (`from-orange-400 via-orange-500 to-rose-500`). White cards and surfaces sit on top of the gradient background. Zinc greys (`zinc-600`, `zinc-900`) for text. Rose accents for tags and interactive highlights.
+
+**Background:** Fixed full-screen gradient with a soft blur orb (`bg-orange-200/35 blur-3xl`) for depth. Inspired by Apple liquid glass — layered, not flat.
+
+**Font:** [Nunito](https://fonts.google.com/specimen/Nunito) (Google Fonts) — rounded, friendly, highly legible. Applied globally via `--font-nunito`.
+
+**Components:**
+- Cards: `rounded-2xl` / `rounded-3xl`, `shadow-lg`, white background, subtle `border-zinc-200`
+- Buttons: Gradient orange-to-rose pill shape, white text, `hover:brightness-90 active:brightness-75`
+- Tags: Pill badges with `from-orange-100 to-rose-100` fill and `border-rose-200`
+- Modals/menus: White `rounded-3xl` with `shadow-2xl`, `backdrop-blur-sm` overlays
+- Hover interactions: `hover:scale-105` on cards; brightness shifts on buttons
+
+**Icons:** Lucide React throughout.
 
 ### Business Model
 
@@ -38,7 +53,23 @@ The app should generate revenue but its not an essential part. Most apps these d
 
 ### TOOLS
 
-TODO - detail the tools, frameworks, major libraries
+| Category | Tool |
+| -------- | ---- |
+| Framework | Next.js 16 (App Router, Turbopack) |
+| Language | TypeScript 5 |
+| Styling | Tailwind CSS v4 + `@tailwindcss/typography` |
+| Database | PostgreSQL via Prisma ORM |
+| Auth | NextAuth v5 (credentials provider, JWT sessions) |
+| Password hashing | Argon2 |
+| Storage | Cloudflare R2 (AWS S3 SDK — presigned URLs) |
+| Email | Resend |
+| HTTP client | ky |
+| HTML parsing | Cheerio |
+| Validation | Zod v4 |
+| Icons | Lucide React |
+| Dates | Temporal polyfill |
+| Testing | Vitest (unit + integration) + Playwright (e2e) |
+| Deployment | Vercel (Analytics + Speed Insights) |
 
 ## MVP
 
