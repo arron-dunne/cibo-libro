@@ -4,7 +4,71 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-Cibo Libro is a full-stack Next.js recipe management web application. It uses prisma for database, tailwind for css, playwright for system testing and vitest for integration and unit testing. The main features are user accounts which are created and logged in to. Users can save recipes manually with manual form, import from URLs (via JSON-LD parsing), or save handy link cards when importing fails (fetch errors, paywalled, domain on deny list etc). Recipes can be organized with tags. All a users recipes can be viewed in a grid of recipe cards. Users can and view recipes in a distraction-free cook mode which takes the users through the recipe step by step. The website theme is a playful but not cringey vibe, utilising a colored background with floating (shadowed) white panels containing page content. The user interface is best in class, and the user experience is perfect. It is optimised to work on both mobile and desktop (mobile first if a compromise is needed). Other recipe managing apps exists but the aim of Cibo Libro is to be the best of the lot. Currently we are working on the MVP.
+Cibo Libro is a web app designed to be the best digital cookbook and assistant available. The goal is to be user's one-stop cooking app for all things food related. We want to orangise users recipes so they never forget one again. Let them browse and choose what to cook for dinner easily. We want to provide all the tools a food lover needs: unit conversion, browsing friends recipes, keeping a shopping list, and so much more. In the future we want to leverage the power of AI to be the cooking-brain for people: generating recipes, smart recommendations, orchastrating cooking and shopping seamlessly, and more. We want this to be a revenue-making product, but not greedy or expensive.
+
+### Philosophy
+
+Cibo Libro translates literally from Italain as Food Book. We are the bridge between the wonderful world of food and the powerful world of technology. By taking the cognitive load off users, there's more room to enjoy food and cooking.
+
+### Goal
+
+The goal is to acheive millions of regular users by providing an essential product that improves people's lives. The app should be the best on the market and beat every competitor out there on at least 1 front - price, features, visuals, performance etc. The visual design should be world-class - think apple liquid glass and not ai slop.
+
+### Features
+
+The abstract features are in bold with some examples of features and how we could provide them to users. This is not an exhaustive nor finalised list and discussion and adaptation is encouraged.
+
+- **Importing recipe**: from a url, a video, directly from another site.
+- **Adding personal recipes**: manually via a web form, uploading a photo.
+- **Adding other recipes**: saving recipes from other users on the app, AI generated recipes.
+- **Organising recipes**: organise, filter, sort, search and present recipes in a quick, easy-to-use, and convenient way.
+- **Planning**: meal planner, shopping list/planner
+- **Sharing**: share recipes with friends, interact with others about the food you made, the town square for food lovers
+- **Cooking**: act as a cooking assistant when user's are cooking, presenting ingredients, steps, timer.
+- **Learning**: teach users how to cook, cooking skills around the world, from beginner to advanced.
+- **Create physical cookbooks**: from the recipes saved, users can create a physical cookbook, like ones made by profressional chefs, add personal touches, choose a style.
+
+### UI/UX
+
+TODO - detail the design astectic, feel, key fonts and compoents stylings
+
+### Business Model
+
+The app should generate revenue but its not an essential part. Most apps these days provide a good service, but lock regular use behind a paywall. Users of Cibo Libro should be able to use the app freely with generous limits. Over 100 saved recipes, unlimited imports, additions. Users should feel like they are getting a useful and valuable tool for free, and the payment is for additional stuff, not the necessaties. Where infrastructure costs are low - like data storage and simple compute - we can potentially offer it for free. Advanced features like learning courses, physical cookbook creation and ai recipe generation should require payment. Paywalls could protect against power-users who rack up massive costs (like AI generating lots of recipes). We will not have adverts. Consider both subscription and pay-as-you-go payment models. 
+
+### TOOLS
+
+TODO - detail the tools, frameworks, major libraries
+
+## MVP
+
+THE PROJECT IS CURRENTLY IN THE MVP STAGE, THEREFORE EVERYTHING IN THIS SECTION CURRENTLY APPLIES. IF ANYTHING IN THIS SECTION CONTRADICTS OTHER PARTS, THIS SECTION TAKES PRECEDENCE.
+
+#### MVP Overview
+
+The Minimum Viable Product for Cibo Libro is a web app that users can use to upload/save their recipes, and easily organise and view them. We are helping users manage ALL their recipes and presenting them in a convenient way to seamlessly navigate and find them. We also need to provide some simple application features like accounts/auth, data storage, deployment on the web, basic settings etc. This is a slice of the full product and the aim is to give users something they will like and come back to, as quickly as possible. The goal is user sign-up, retention and feedback.
+The MVP is a work in progess and you are encouraged to discuss modifications, adpatations and enhancements where applicable, and within the scope.
+
+#### MVP Pages & Features
+
+| Feature | Pages |
+| ------- | ----- |
+| Creating user accounts with email and password | `/login`, `/register` |
+| Manually adding recipes via a web form | `/add` |
+| Importing recipes from a URL | `/import` |
+| Viewing all recipes and being able to seach, sort, and filter them | `/add` |
+| Viewing individual recipes with all the details, ingredients, steps | `/view` |
+| Cooking assistant showing ingredients, steps, timers | `/cook` |
+
+
+#### MVP Limitations
+
+- Recipes are only accessible by the user that made it - sharing and viewing other users recipes is not allowed
+
+#### MVP Business Model
+
+The MVP does not have to be revenue-generating and is focussed more on user sign-up and retention.
+
 
 ## Commands
 
