@@ -21,8 +21,6 @@ export function IngredientText({
     const keyword = extractIngredientKeyword(ingredient);
     if (!keyword) return false;
     const regex = new RegExp(keyword, "i");
-    if (keyword === "mushrooms")
-      console.log({ text, keyword, regex: regex.test(stepText), stepText });
     return regex.test(stepText);
   }
 

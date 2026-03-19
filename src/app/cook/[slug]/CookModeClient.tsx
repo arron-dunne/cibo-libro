@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useState } from "react";
 import { extractIngredientKeyword } from "@/lib/ingredients/extractKeywords";
 import { StepText } from "./components/StepText";
+import { IngredientText } from "./components/IngredientText";
 import {
   ArrowLeft,
   Circle,
@@ -86,7 +87,7 @@ export default function CookModeClient({
       </header>
 
       {/* Main content area */}
-      <section className="w-full max-w-4xl mx-auto flex-1 pt-8">
+      <section className="w-full max-w-5xl mx-auto flex-1 pt-8">
         {/* Prepare Ingredients step */}
         {currentStep === "ings" && (
           <div className="w-full max-w-2xl mx-auto rounded-4xl border border-white/60 bg-white shadow-xl text-gray-900 overflow-hidden">
@@ -150,12 +151,14 @@ export default function CookModeClient({
               </button>
               {ingredientsOpen && ingredients.length > 0 && (
                 <div className="relative -z-10 -top-6 mx-2 -mb-4 pt-10 pb-8 px-6 rounded-bl-3xl rounded-br-3xl bg-white shadow">
-                  <ul className="space-y-4">
+                  <ul className="space-y-1">
                     {ingredients.map((line, i) => (
-                      <li key={i} className="flex gap-2 text-stone-800">
-                        <div className="h-2 w-2 mt-2 shrink-0 rounded-full bg-orange-400" />
-                        {line}
-                      </li>
+                      <IngredientText
+                        key={i}
+                        text={line}
+                        size="sidebar"
+                        stepText={typeof currentStep === "number" ? steps[currentStep - 1] : undefined}
+                      />
                     ))}
                   </ul>
                 </div>
@@ -163,16 +166,19 @@ export default function CookModeClient({
             </div>
 
             {/* Desktop ingredients sidebar */}
-            <div className="hidden sm:block h-max sm:w-[38%] rounded-4xl border border-white/60 bg-white shadow-xl text-gray-900 overflow-hidden">
+            <div className="hidden sm:block h-max sm:w-[33%] rounded-4xl border border-white/60 bg-white shadow-xl text-gray-900 overflow-hidden">
               <h3 className="px-6 pt-8 pb-5 text-2xl font-semibold text-black text-center">
                 Ingredients
               </h3>
               {ingredients.length ? (
-                <ul className="px-6 pb-6 space-y-1 list-disc list-inside">
+                <ul className="px-3 pb-6 space-y-0.5">
                   {ingredients.map((line, i) => (
-                    <li key={i} className="text-[15px] leading-6 text-stone-800">
-                      {line}
-                    </li>
+                    <IngredientText
+                      key={i}
+                      text={line}
+                      size="sidebar"
+                      stepText={typeof currentStep === "number" ? steps[currentStep - 1] : undefined}
+                    />
                   ))}
                 </ul>
               ) : (
