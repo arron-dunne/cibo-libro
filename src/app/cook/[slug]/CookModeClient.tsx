@@ -161,13 +161,13 @@ export default function CookModeClient({
               </button>
               {ingredientsOpen && ingredients.length > 0 && (
                 <div className="relative -z-10 -top-6 mx-2 -mb-4 pt-10 pb-8 px-6 rounded-bl-3xl rounded-br-3xl bg-white shadow">
-                  <ul className="space-y-4">
+                  <ul className="space-y-1">
                     {ingredients.map((line, i) => (
                       <li
                         key={i}
-                        className={`flex gap-2 rounded-lg px-2 py-1 transition-colors ${activeIngredients.has(i) ? "bg-orange-600 text-white" : "text-stone-800"}`}
+                        className={`text-black flex gap-2 items-center rounded-lg px-3 py-1 ${activeIngredients.has(i) ? "bg-linear-to-r from-orange-100 to-rose-100 font-bold" : ""}`}
                       >
-                        <div className="h-2 w-2 mt-2 shrink-0 rounded-full bg-orange-400" />
+                        <div className="h-2 w-2 shrink-0 rounded-full bg-orange-400" />
                         {line}
                       </li>
                     ))}
@@ -182,12 +182,13 @@ export default function CookModeClient({
                 Ingredients
               </h3>
               {ingredients.length ? (
-                <ul className="px-3 pb-6 space-y-0.5">
+                <ul className="px-3 pb-6 space-y-1">
                   {ingredients.map((line, i) => (
                     <li
                       key={i}
-                      className={`text-[15px] leading-6 rounded-lg px-3 py-1.5 transition-colors ${activeIngredients.has(i) ? "bg-orange-600 text-white" : "text-stone-800"}`}
+                      className={`flex gap-2 items-center rounded-lg px-3 py-1 ${activeIngredients.has(i) ? "bg-linear-to-r from-orange-100 to-rose-100 font-bold" : ""}`}
                     >
+                      <div className="h-2 w-2 shrink-0 rounded-full bg-orange-400" />
                       {line}
                     </li>
                   ))}
