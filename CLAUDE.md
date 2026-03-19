@@ -212,8 +212,14 @@ import { prisma } from "@/lib/prisma";
 import { auth } from "@/lib/auth/auth";
 ```
 
-## Branching
+## Version Control
 
-- `main` - Production
-- `dev` - Staging/development
-- `feature/*` - Work branches, PR to `dev`
+We use Git and a remote Github repo for version control. The important branches are:
+
+- `main` - Production: contains the live deployed system on the public internet, must be stable and secure
+- `dev` - Development: contains new features ready to go to production. This branch should be stable and work, but not as vitally as `main`
+- `feature/*` - Features: work in progress on new feautures, used as a remote backup so can contain broken code
+
+Write short, concise commit messages. If there are a lot of changed in a single commit use a more generic message like "improving ui on recipe page".
+
+NEVER MENTION CLAUDE IN COMMIT MESSAGES
