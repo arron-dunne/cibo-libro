@@ -38,18 +38,7 @@ export function IngredientText({
       <label
         className={`group flex items-center gap-2.5 px-3 py-2 rounded-lg hover:bg-orange-50 transition ${active ? "bg-orange-200" : ""}`}
       >
-        {/* checkbox */}
-        <input
-          type="checkbox"
-          className="sr-only"
-          checked={checked}
-          onChange={() => setChecked(!checked)}
-        />
-        {checked ? (
-          <CheckCircle2 className="h-4 w-4 text-emerald-600" />
-        ) : (
-          <Circle className="h-4 w-4 text-orange-400" />
-        )}
+
 
         {/* text */}
         <span
