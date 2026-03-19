@@ -18,7 +18,7 @@ The goal is to acheive millions of regular users by providing an essential produ
 
 The abstract features are in bold with some examples of features and how we could provide them to users. This is not an exhaustive nor finalised list and discussion and adaptation is encouraged.
 
-- **Importing recipe**: from a url, a video, directly from another site.
+- **Importing recipe**: from a url, a video, social media, directly from another cooking site.
 - **Adding personal recipes**: manually via a web form, uploading a photo.
 - **Adding other recipes**: saving recipes from other users on the app, AI generated recipes.
 - **Organising recipes**: organise, filter, sort, search and present recipes in a quick, easy-to-use, and convenient way.
