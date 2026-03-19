@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useState } from "react";
 import { extractIngredientKeyword } from "@/lib/ingredients/extractKeywords";
 import { StepText } from "./components/StepText";
+import { HighlightToggle } from "./components/HighlightToggle";
 import {
   ArrowLeft,
   Circle,
@@ -33,6 +34,7 @@ export default function CookModeClient({
   const [currentStep, setCurrentStep] = useState<StepType>("ings");
   const [checked, setChecked] = useState<Record<number, boolean>>({});
   const [ingredientsOpen, setIngredientsOpen] = useState(false);
+  const [highlightEnabled, setHighlightEnabled] = useState(true);
 
   const ingredientKeywords = ingredients
     .map(extractIngredientKeyword)
@@ -165,13 +167,18 @@ export default function CookModeClient({
                     {ingredients.map((line, i) => (
                       <li
                         key={i}
-                        className={`text-black flex gap-2 items-center rounded-lg px-3 py-1 ${activeIngredients.has(i) ? "bg-linear-to-r from-orange-100 to-rose-100 font-bold" : ""}`}
+                        className={`text-black flex gap-2 items-center rounded-lg px-3 py-1 ${highlightEnabled && activeIngredients.has(i) ? "bg-linear-to-r from-orange-100 to-rose-100 font-bold" : ""}`}
                       >
                         <div className="h-2 w-2 shrink-0 rounded-full bg-orange-400" />
                         {line}
                       </li>
                     ))}
                   </ul>
+                  <HighlightToggle
+                    enabled={highlightEnabled}
+                    onToggle={() => setHighlightEnabled((h) => !h)}
+                    className="mt-4"
+                  />
                 </div>
               )}
             </div>
@@ -182,17 +189,24 @@ export default function CookModeClient({
                 Ingredients
               </h3>
               {ingredients.length ? (
-                <ul className="px-3 pb-6 space-y-1">
-                  {ingredients.map((line, i) => (
-                    <li
-                      key={i}
-                      className={`flex gap-2 items-center rounded-lg px-3 py-1 ${activeIngredients.has(i) ? "bg-linear-to-r from-orange-100 to-rose-100 font-bold" : ""}`}
-                    >
-                      <div className="h-2 w-2 shrink-0 rounded-full bg-orange-400" />
-                      {line}
-                    </li>
-                  ))}
-                </ul>
+                <>
+                  <ul className="px-3 space-y-1">
+                    {ingredients.map((line, i) => (
+                      <li
+                        key={i}
+                        className={`flex gap-2 items-center rounded-lg px-3 py-1 ${highlightEnabled && activeIngredients.has(i) ? "bg-linear-to-r from-orange-100 to-rose-100 font-bold" : ""}`}
+                      >
+                        <div className="h-2 w-2 shrink-0 rounded-full bg-orange-400" />
+                        {line}
+                      </li>
+                    ))}
+                  </ul>
+                  <HighlightToggle
+                    enabled={highlightEnabled}
+                    onToggle={() => setHighlightEnabled((h) => !h)}
+                    className="px-6 py-4"
+                  />
+                </>
               ) : (
                 <p className="px-6 pb-8 text-sm text-gray-500 text-center">
                   No ingredients found.
