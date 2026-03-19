@@ -153,7 +153,7 @@ export default function CookModeClient({
             <div className="sm:hidden">
               <button
                 onClick={() => setIngredientsOpen((o) => !o)}
-                className="w-full flex items-center justify-between px-6 py-3 rounded-full border border-white/70 font-semibold text-slate-700 bg-linear-to-r from-slate-200 to-slate-300 cursor-pointer transition hover:brightness-90 active:brightness-75"
+                className="relative z-10 w-full flex items-center justify-between px-6 py-3 rounded-full border border-white/70 font-semibold text-slate-700 bg-linear-to-r from-slate-200 to-slate-300 cursor-pointer transition hover:brightness-90 active:brightness-75"
               >
                 <span>Ingredients</span>
                 <ChevronDown
@@ -162,7 +162,7 @@ export default function CookModeClient({
                 />
               </button>
               {ingredientsOpen && ingredients.length > 0 && (
-                <div className="relative -z-10 -top-6 mx-2 -mb-4 pt-10 pb-8 px-6 rounded-bl-3xl rounded-br-3xl bg-white shadow">
+                <div className="relative -top-6 mx-2 -mb-4 pt-10 pb-8 px-6 rounded-bl-3xl rounded-br-3xl bg-white shadow">
                   <ul className="space-y-1">
                     {ingredients.map((line, i) => (
                       <li
@@ -177,7 +177,7 @@ export default function CookModeClient({
                   <HighlightToggle
                     enabled={highlightEnabled}
                     onToggle={() => setHighlightEnabled((h) => !h)}
-                    className="mt-4"
+                    className="z-10 mt-4"
                   />
                 </div>
               )}
