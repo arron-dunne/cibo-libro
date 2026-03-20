@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { extractIngredientKeyword } from "@/lib/ingredients/extractKeywords";
 import { StepText } from "./components/StepText";
 import { HighlightToggle } from "./components/HighlightToggle";
@@ -13,7 +13,6 @@ import {
   ChevronRight,
   BadgeCheck,
   ChevronDown,
-  CookingPot,
 } from "lucide-react";
 
 interface CookModeClientProps {
@@ -35,6 +34,36 @@ export default function CookModeClient({
   const [checked, setChecked] = useState<Record<number, boolean>>({});
   const [ingredientsOpen, setIngredientsOpen] = useState(false);
   const [highlightEnabled, setHighlightEnabled] = useState(true);
+  const [wakeLockActive, setWakeLockActive] = useState(false);
+  const wakeLockRef = useRef<WakeLockSentinel | null>(null);
+
+  useEffect(() => {
+    if (!("wakeLock" in navigator)) return;
+
+    async function requestWakeLock() {
+      try {
+        wakeLockRef.current = await navigator.wakeLock.request("screen");
+        setWakeLockActive(true);
+        wakeLockRef.current.addEventListener("release", () =>
+          setWakeLockActive(false),
+        );
+      } catch {
+        setWakeLockActive(false);
+      }
+    }
+
+    requestWakeLock();
+
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === "visible") requestWakeLock();
+    };
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+
+    return () => {
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
+      wakeLockRef.current?.release();
+    };
+  }, []);
 
   const ingredientKeywords = ingredients
     .map(extractIngredientKeyword)
@@ -92,9 +121,16 @@ export default function CookModeClient({
           {title}
         </h1>
 
-        <div className="hidden sm:flex gap-2 shrink-0 items-center rounded-full bg-white/60 border border-white/80 text-black shadow px-4 py-2">
-          <CookingPot size={24} className="text-rose-500" aria-hidden />
-          <span className="text-lg font-semibold">Cook Mode</span>
+        <div className="hidden sm:flex gap-2.5 shrink-0 items-center rounded-full bg-white/60 border border-white/80 text-black shadow px-4 py-2">
+          {wakeLockActive ? (
+            <span className="relative flex h-2.5 w-2.5">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
+              <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500" />
+            </span>
+          ) : (
+            <span className="inline-flex rounded-full h-2.5 w-2.5 bg-zinc-300" />
+          )}
+          <span className="text-base font-semibold">Screen Awake</span>
         </div>
       </header>
 
