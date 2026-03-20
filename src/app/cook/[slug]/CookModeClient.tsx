@@ -1,21 +1,19 @@
 "use client";
 
 import Link from "next/link";
-import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
-import { motion, AnimatePresence } from "framer-motion";
-import type { Variants } from "framer-motion";
+import { useEffect, useRef, useState } from "react";
 import { extractIngredientKeyword } from "@/lib/ingredients/extractKeywords";
-import { IngredientText } from "./components/IngredientText";
 import { StepText } from "./components/StepText";
+import { HighlightToggle } from "./components/HighlightToggle";
 import {
   ArrowLeft,
-  UtensilsCrossed,
   Circle,
   CheckCircle2,
   ChevronLeft,
   ChevronRight,
-  BadgeCheck,
+  ChevronDown,
+  CookingPot,
+  Pencil,
 } from "lucide-react";
 
 interface CookModeClientProps {
@@ -23,354 +21,349 @@ interface CookModeClientProps {
   title: string;
   ingredients: string[];
   steps: string[];
-  initialStep: string;
 }
 
 type StepType = "ings" | "finish" | number;
-
-type ScreenType = "desktop" | "mobile";
-
-// Bezier easings (type-safe for Framer Motion)
-const EASE_OUT = [0.22, 1, 0.36, 1] as const;
-const EASE_IN = [0.12, 0, 0.39, 0] as const;
 
 export default function CookModeClient({
   slug,
   title,
   ingredients,
   steps,
-  initialStep,
 }: CookModeClientProps) {
-  const router = useRouter();
-  const [currentStep, setCurrentStep] = useState<StepType>(
-    parseStep(initialStep),
-  );
-  const [direction, setDirection] = useState<number>(0);
+  const [currentStep, setCurrentStep] = useState<StepType>("ings");
   const [checked, setChecked] = useState<Record<number, boolean>>({});
-  const [screen, setScreen] = useState<ScreenType>("mobile");
+  const [ingredientsOpen, setIngredientsOpen] = useState(false);
+  const [highlightEnabled, setHighlightEnabled] = useState(true);
+  const [wakeLockActive, setWakeLockActive] = useState(false);
+  const wakeLockRef = useRef<WakeLockSentinel | null>(null);
+
+  useEffect(() => {
+    if (!("wakeLock" in navigator)) return;
+
+    async function requestWakeLock() {
+      try {
+        wakeLockRef.current = await navigator.wakeLock.request("screen");
+        setWakeLockActive(true);
+        wakeLockRef.current.addEventListener("release", () =>
+          setWakeLockActive(false),
+        );
+      } catch {
+        setWakeLockActive(false);
+      }
+    }
+
+    requestWakeLock();
+
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === "visible") requestWakeLock();
+    };
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+
+    return () => {
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
+      wakeLockRef.current?.release();
+    };
+  }, []);
 
   const ingredientKeywords = ingredients
     .map(extractIngredientKeyword)
     .filter(Boolean) as string[];
 
-  // // Check if a given ingredient appears in the current step
-  // function ingredientUsedInStep(ingredient: string, stepText: string): boolean {
-  //   const keyword = extractIngredientKeyword(ingredient)[0];
-  //   if (!keyword) return false;
-  //   const regex = new RegExp(`\\b${keyword}\\b`, "i");
-  //   return regex.test(stepText);
-  // }
+  const currentStepText =
+    typeof currentStep === "number" ? steps[currentStep - 1] : null;
 
-  // Detect the screen size
-  useEffect(() => {
-    if (typeof window === "undefined") return;
-
-    const checkScreen = () => {
-      const isDesktop = window.matchMedia("(min-width: 768px)").matches;
-      setScreen(isDesktop ? "desktop" : "mobile");
-    };
-
-    checkScreen(); // run once
-    window.addEventListener("resize", checkScreen);
-    return () => window.removeEventListener("resize", checkScreen);
-  }, []);
-
-  // Skip ingredients step entirely for desktop users
-  useEffect(() => {
-    if (screen === "desktop" && currentStep === "ings") {
-      navigateToStep(1);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [screen]);
-
-  // Parse step from string to proper type
-  function parseStep(step: string): StepType {
-    if (step === "ings") return "ings";
-    if (step === "finish") return "finish";
-    const num = parseInt(step, 10);
-    return isNaN(num) ? "ings" : Math.max(1, Math.min(num, steps.length));
-  }
-
-  function updateUrl(step: StepType) {
-    const stepParam =
-      step === "ings" ? "ings" : step === "finish" ? "finish" : step.toString();
-    const newUrl = `/cook/${slug}?step=${stepParam}`;
-    router.push(newUrl);
-  }
-
-  function navigateToStep(newStep: StepType) {
-    const oldStepIndex = getStepIndex(currentStep);
-    const newStepIndex = getStepIndex(newStep);
-
-    setDirection(newStepIndex > oldStepIndex ? 1 : 0);
-    setCurrentStep(newStep);
-    updateUrl(newStep);
-  }
+  const activeIngredients = new Set(
+    ingredients.flatMap((ing, i) => {
+      const kw = extractIngredientKeyword(ing);
+      if (!kw || !currentStepText) return [];
+      return new RegExp(kw, "i").test(currentStepText) ? [i] : [];
+    }),
+  );
 
   function goToNext() {
     if (currentStep === "ings") {
-      navigateToStep(steps.length > 0 ? 1 : "finish");
+      setCurrentStep(steps.length > 0 ? 1 : "finish");
     } else if (typeof currentStep === "number") {
-      navigateToStep(currentStep < steps.length ? currentStep + 1 : "finish");
+      setCurrentStep(currentStep < steps.length ? currentStep + 1 : "finish");
     }
   }
 
   function goToPrevious() {
     if (currentStep === "finish") {
-      navigateToStep(steps.length > 0 ? steps.length : "ings");
+      setCurrentStep(steps.length > 0 ? steps.length : "ings");
     } else if (typeof currentStep === "number") {
-      if (currentStep > 1) {
-        navigateToStep(currentStep - 1);
-      } else if (screen === "mobile") {
-        // dont allow navigation to ings page on desktop
-        navigateToStep("ings");
-      }
+      setCurrentStep(currentStep > 1 ? currentStep - 1 : "ings");
     }
-  }
-
-  function getStepIndex(step: StepType): number {
-    if (step === "ings") return 0;
-    if (step === "finish") return steps.length + 1;
-    return step;
   }
 
   const canGoPrevious = currentStep !== "ings";
   const canGoNext = currentStep !== "finish";
 
-  const slideVariants: Variants = {
-    enter: (dir: number) => ({
-      x: dir === 1 ? 200 : -200,
-      opacity: 0,
-      transition: { duration: 0.25, ease: EASE_IN },
-    }),
-    center: {
-      x: 0,
-      opacity: 1,
-      scale: 1,
-      transition: { duration: 0.35, ease: EASE_OUT },
-    },
-    exit: (dir: number) => ({
-      x: dir === 1 ? -200 : 200,
-      opacity: 0,
-      transition: { duration: 0.25, ease: EASE_IN },
-    }),
-  };
-
   return (
-    <main className="min-h-dvh mx-auto max-w-screen-xl py-4 text-white flex flex-col">
+    <main className="min-h-dvh mx-auto max-w-7xl px-4 py-4 sm:py-8 text-white flex flex-col">
       {/* Header */}
-      <header className="sticky top-4 z-10">
-        <div className="mx-auto w-full max-w-screen-xl">
-          <div className="rounded-full w-full h-14 flex gap-2 justify-between items-center border border-white/80 bg-white/60 backdrop-blur px-3 sm:px-4 py-2 shadow">
-            {/* Back button */}
+      <header className="flex flex-col gap-3 mb-4">
+        {/* Desktop header */}
+        <div className="hidden sm:flex items-center justify-between gap-3">
+          <Link
+            href={`/view/${slug}`}
+            aria-label="Back to recipe"
+            className="shrink-0 w-max flex items-center gap-3 text-xl font-semibold text-slate-900 cursor-pointer hover:brightness-90 active:brightness-75"
+          >
+            <div className="p-2 rounded-full border border-white/80 bg-linear-to-br from-slate-200 to-slate-300 shadow-lg">
+              <ArrowLeft size={20} />
+            </div>
+            Back
+          </Link>
+          <h1
+            className="text-5xl font-black text-white truncate"
+            style={{ WebkitTextStroke: "6px black", paintOrder: "stroke fill" }}
+          >
+            {title}
+          </h1>
+          <div className="flex gap-2.5 shrink-0 items-center rounded-full bg-white/60 border border-white/80 text-black shadow px-4 py-2">
+            {wakeLockActive ? (
+              <span className="relative flex h-2.5 w-2.5">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
+                <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500" />
+              </span>
+            ) : (
+              <span className="inline-flex rounded-full h-2.5 w-2.5 bg-zinc-300" />
+            )}
+            <span className="text-base font-semibold">Screen Awake</span>
+          </div>
+        </div>
+
+        {/* Mobile header */}
+        <div className="sm:hidden">
+          <div className="flex items-center justify-between gap-3">
             <Link
               href={`/view/${slug}`}
               aria-label="Back to recipe"
-              className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-white bg-linear-to-r from-slate-200 to-slate-300 shadow text-slate-700 hover:brightness-90 active:brightness-75"
+              className="shrink-0 w-max flex items-center gap-2 text-base font-semibold text-slate-900 cursor-pointer hover:brightness-90 active:brightness-75"
             >
-              <ArrowLeft className="h-5 w-5" aria-hidden />
+              <div className="p-2 rounded-full border border-white/80 bg-linear-to-br from-slate-200 to-slate-300 shadow-lg">
+                <ArrowLeft size={18} />
+              </div>
+              Back
             </Link>
-
-            {/* Title */}
-            <h1 className="text-2xl text-black font-semibold">{title}</h1>
-
-            {/* Cook mode icon */}
-            <div className="inline-flex items-center gap-2 rounded-full bg-linear-to-br from-orange-300 to-rose-300 text-rose-600 shadow px-3 py-1">
-              <UtensilsCrossed size={18} aria-hidden />
-              <span className="font-semibold">Cook Mode</span>
+            <div className="flex gap-2 shrink-0 items-center rounded-full bg-white/60 border border-white/80 text-black shadow px-3 py-1.5">
+              {wakeLockActive ? (
+                <span className="relative flex h-2.5 w-2.5">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
+                  <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500" />
+                </span>
+              ) : (
+                <span className="inline-flex rounded-full h-2.5 w-2.5 bg-zinc-300" />
+              )}
+              <span className="text-sm font-semibold">Screen Awake</span>
             </div>
           </div>
+          <h1
+            className="mt-4 text-4xl font-black text-white text-center"
+            style={{ WebkitTextStroke: "4px black", paintOrder: "stroke fill" }}
+          >
+            {title}
+          </h1>
         </div>
       </header>
 
       {/* Main content area */}
-      <section className="mx-auto w-full max-w-screen-xl flex-1 px-4 pt-4 pb-28 flex flex-col md:flex-row md:gap-6">
-        {/* Left panel: Ingredients (desktop-only) */}
-        <div
-          className="
-            hidden md:block md:w-[42%]
-            bg-white/90 rounded-3xl p-5
-            border border-white/40 shadow-lg text-stone-900
-          "
-        >
-          <h3 className="text-center text-[13px] font-semibold tracking-tight text-orange-800 border-b border-orange-200/70 pb-2">
-            Ingredients
-          </h3>
+      <section className="w-full max-w-5xl mx-auto flex-1 sm:pt-8 pb-20">
+        {/* Prepare Ingredients step */}
+        {currentStep === "ings" && (
+          <div className="w-full max-w-2xl mx-auto rounded-4xl border border-white/60 bg-white shadow-xl text-gray-900 overflow-hidden">
+            <h2 className="pt-6 pb-4 text-2xl font-bold text-black text-center">
+              Prepare Ingredients
+            </h2>
 
-          {ingredients.length ? (
-            <ul className="mt-3 space-y-0.5">
-              {ingredients.map((line, i) => (
-                <IngredientText
-                  key={i}
-                  text={line}
-                  stepText={
-                    typeof currentStep === "number"
-                      ? steps[currentStep - 1]
-                      : undefined
-                  }
-                  size="sidebar"
-                />
-              ))}
-            </ul>
-          ) : (
-            <p className="mt-3 text-sm text-stone-700">
-              No ingredients found for this recipe.
-            </p>
-          )}
-        </div>
-
-        {/* Right panel: Steps */}
-        <div className="w-full md:w-[58%]">
-          <AnimatePresence mode="wait" initial={false} custom={direction}>
-            {/* Ingredients panel (mobile only) */}
-            {currentStep === "ings" && (
-              <motion.div
-                key="ings"
-                variants={slideVariants}
-                initial="enter"
-                animate="center"
-                exit="exit"
-                custom={direction}
-                className="mt-5 md:mt-0 rounded-3xl p-6 bg-white/90 border-white/40 shadow-xl text-stone-900 md:hidden"
-              >
-                <h3 className="text-center text-sm font-semibold text-orange-800 border-b border-orange-200/70 pb-3">
-                  Prepare Ingredients
-                </h3>
-
-                {ingredients.length ? (
-                  <ul className="mt-4 space-y-1">
-                    {ingredients.map((line, i) => (
-                      <motion.li
-                        key={i}
-                        initial={{ opacity: 0, y: 10 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: i * 0.05 }}
+            {ingredients.length ? (
+              <ul className="px-4 pb-4 space-y-0.5">
+                {ingredients.map((line, i) => (
+                  <li key={i}>
+                    <label className="flex items-center gap-3 px-3 py-2.5 cursor-pointer rounded-2xl hover:bg-orange-50 transition-colors">
+                      <input
+                        type="checkbox"
+                        className="sr-only"
+                        checked={!!checked[i]}
+                        onChange={() =>
+                          setChecked({ ...checked, [i]: !checked[i] })
+                        }
+                      />
+                      {checked[i] ? (
+                        <CheckCircle2 className="h-5 w-5 shrink-0 text-emerald-500" />
+                      ) : (
+                        <Circle className="h-5 w-5 shrink-0 text-orange-300" />
+                      )}
+                      <span
+                        className={`text-base leading-6 ${
+                          checked[i] ? "text-gray-400" : "text-gray-800"
+                        }`}
                       >
-                        <label className="group flex items-center gap-3 px-4 py-3 cursor-pointer rounded-xl hover:bg-orange-50 transition">
-                          <input
-                            type="checkbox"
-                            className="sr-only"
-                            checked={!!checked[i]}
-                            onChange={() =>
-                              setChecked({ ...checked, [i]: !checked[i] })
-                            }
-                          />
-                          {checked[i] ? (
-                            <CheckCircle2 className="h-5 w-5 text-emerald-600" />
-                          ) : (
-                            <Circle className="h-5 w-5 text-orange-400" />
-                          )}
-                          <span
-                            className={`text-[15px] leading-6 ${
-                              checked[i]
-                                ? "text-stone-400 line-through"
-                                : "text-stone-800"
-                            }`}
-                          >
-                            {line}
-                          </span>
-                        </label>
-                      </motion.li>
+                        {line}
+                      </span>
+                    </label>
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <p className="px-8 pb-8 text-sm text-gray-500 text-center">
+                No ingredients found for this recipe.
+              </p>
+            )}
+          </div>
+        )}
+
+        {/* Step view — sidebar + step panel */}
+        {typeof currentStep === "number" && (
+          <div className="flex flex-col sm:flex-row gap-4">
+            {/* Mobile ingredients dropdown */}
+            <div className="sm:hidden">
+              <button
+                onClick={() => setIngredientsOpen((o) => !o)}
+                className="relative z-10 w-full flex items-center justify-between px-6 py-3 rounded-full border border-white/70 font-semibold text-slate-700 bg-linear-to-r from-slate-200 to-slate-300 cursor-pointer transition hover:brightness-90 active:brightness-75"
+              >
+                <span>Ingredients</span>
+                <ChevronDown
+                  size={16}
+                  className={`text-zinc-500 transition-transform ${ingredientsOpen ? "rotate-180" : ""}`}
+                />
+              </button>
+              {ingredientsOpen && ingredients.length > 0 && (
+                <div className="relative -top-6 mx-2 -mb-4 pt-10 pb-8 px-6 rounded-bl-3xl rounded-br-3xl bg-white shadow">
+                  <ul className="space-y-1">
+                    {ingredients.map((line, i) => (
+                      <li
+                        key={i}
+                        className={`text-black flex gap-2 items-center rounded-lg px-3 py-1 ${highlightEnabled && activeIngredients.has(i) ? "bg-linear-to-r from-orange-100 to-rose-100 font-bold" : ""}`}
+                      >
+                        <div className="h-2 w-2 shrink-0 rounded-full bg-orange-400" />
+                        {line}
+                      </li>
                     ))}
                   </ul>
-                ) : (
-                  <p className="mt-4 text-sm text-stone-700">
-                    No ingredients found for this recipe yet.
-                  </p>
-                )}
-              </motion.div>
-            )}
+                  <HighlightToggle
+                    enabled={highlightEnabled}
+                    onToggle={() => setHighlightEnabled((h) => !h)}
+                    className="z-10 mt-4"
+                  />
+                </div>
+              )}
+            </div>
+
+            {/* Desktop ingredients sidebar */}
+            <div className="hidden sm:block h-max sm:w-[33%] rounded-4xl border border-white/60 bg-white shadow-xl text-gray-900 overflow-hidden">
+              <h3 className="px-6 pt-8 pb-5 text-2xl font-semibold text-black text-center">
+                Ingredients
+              </h3>
+              {ingredients.length ? (
+                <>
+                  <ul className="px-3 space-y-1">
+                    {ingredients.map((line, i) => (
+                      <li
+                        key={i}
+                        className={`flex gap-2 items-center rounded-lg px-3 py-1 ${highlightEnabled && activeIngredients.has(i) ? "bg-linear-to-r from-orange-100 to-rose-100 font-bold" : ""}`}
+                      >
+                        <div className="h-2 w-2 shrink-0 rounded-full bg-orange-400" />
+                        {line}
+                      </li>
+                    ))}
+                  </ul>
+                  <HighlightToggle
+                    enabled={highlightEnabled}
+                    onToggle={() => setHighlightEnabled((h) => !h)}
+                    className="px-6 py-4"
+                  />
+                </>
+              ) : (
+                <p className="px-6 pb-8 text-sm text-gray-500 text-center">
+                  No ingredients found.
+                </p>
+              )}
+            </div>
 
             {/* Step panel */}
-            {typeof currentStep === "number" && (
-              <motion.div
-                key={`step-${currentStep}`}
-                variants={slideVariants}
-                initial="enter"
-                animate="center"
-                exit="exit"
-                custom={direction}
-                className="mt-5 md:mt-0 rounded-3xl p-6 bg-white/90 shadow-xl border border-orange-100 text-stone-900"
-              >
-                <div className="text-center border-b border-orange-200/60 pb-4">
-                  <p className="text-xs font-medium text-orange-700/80 mb-2">
-                    Step {currentStep} of {steps.length}
-                  </p>
-                  <div className="h-1.5 w-full rounded-full bg-orange-100 overflow-hidden">
-                    <div
-                      className="h-1.5 bg-orange-500"
-                      style={{
-                        width: `${(currentStep / steps.length) * 100}%`,
-                      }}
-                    />
-                  </div>
+            <div className="h-max sm:w-[66%] rounded-4xl border border-white/60 bg-white shadow-xl text-gray-900 overflow-hidden">
+              <div className="px-5 pt-5 pb-4 sm:px-8 sm:pt-8 sm:pb-5">
+                <div className="flex items-end justify-center gap-2">
+                  <h3 className="text-lg sm:text-2xl font-semibold text-black">
+                    Step {currentStep}
+                  </h3>
+                  <span className="text-sm font-medium text-gray-400 mb-0.5">
+                    of {steps.length}
+                  </span>
                 </div>
-
+                <div className="mt-4 h-1.5 w-full rounded-full bg-gray-100 overflow-hidden">
+                  <div
+                    className="h-1.5 rounded-full bg-linear-to-r from-orange-500 to-rose-500"
+                    style={{
+                      width: `${(currentStep / steps.length) * 100}%`,
+                    }}
+                  />
+                </div>
+              </div>
+              <div className="px-5 pb-5 sm:px-8 sm:pb-8">
                 <StepText
                   text={steps[currentStep - 1]}
                   keywords={ingredientKeywords}
                 />
-              </motion.div>
-            )}
+              </div>
+            </div>
+          </div>
+        )}
 
-            {/* Finish panel */}
-            {currentStep === "finish" && (
-              <motion.div
-                key="finish"
-                variants={slideVariants}
-                initial="enter"
-                animate="center"
-                exit="exit"
-                custom={direction}
-                className="mt-5 md:mt-0 rounded-3xl p-8 bg-white/95 text-orange-950 shadow-2xl border border-orange-100 text-center"
+        {/* Finish panel */}
+        {currentStep === "finish" && (
+          <div className="max-w-2xl mx-auto rounded-4xl border border-white/60 bg-white shadow-xl text-gray-900 text-center px-10 pt-10 pb-8">
+            <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-linear-to-br from-orange-100 to-rose-100 text-rose-500">
+              <CookingPot size={28} />
+            </div>
+            <h2 className="mt-4 text-3xl font-bold text-gray-900">
+              Enjoy your meal!
+            </h2>
+            <p className="mt-2 text-gray-500">
+              All steps done — now comes the best part.
+            </p>
+
+            <div className="mt-6 flex flex-col gap-3 sm:flex-row">
+              <Link
+                href="/all"
+                className="w-full inline-flex items-center justify-center gap-2 rounded-full bg-linear-to-r from-orange-500 to-rose-500 px-4 py-3 text-base font-semibold text-white hover:brightness-95 active:brightness-75"
               >
-                <motion.div
-                  initial={{ scale: 0.7, opacity: 0 }}
-                  animate={{ scale: 1, opacity: 1 }}
-                  transition={{ duration: 0.4, type: "spring" }}
-                  className="flex items-center justify-center gap-3 text-emerald-700"
-                >
-                  <BadgeCheck className="h-7 w-7" />
-                  <p className="text-sm font-semibold">Finished</p>
-                </motion.div>
-                <h2 className="mt-3 text-3xl font-semibold text-orange-900">
-                  Bon appétit!
-                </h2>
-                <p className="mt-2 text-orange-900/80">
-                  You&apos;ve completed all the steps. Enjoy your meal.
-                </p>
-                <Link
-                  href={`/view/${slug}`}
-                  className="mt-6 inline-flex items-center justify-center rounded-full bg-orange-600 text-white ring-1 ring-orange-700/40 shadow px-6 py-3 font-semibold hover:bg-orange-700 transition"
-                >
-                  Back to recipe
-                </Link>
-              </motion.div>
-            )}
-          </AnimatePresence>
-        </div>
+                <ArrowLeft className="h-4 w-4" />
+                Back to cookbook
+              </Link>
+              <Link
+                href={`/edit/${slug}`}
+                className="w-full inline-flex items-center justify-center gap-2 rounded-full bg-linear-to-br from-slate-100 to-slate-200 border border-slate-300 px-4 py-3 text-base font-semibold text-slate-800 hover:brightness-90 active:brightness-75"
+              >
+                <Pencil className="h-4 w-4" />
+                Edit this recipe
+              </Link>
+            </div>
+          </div>
+        )}
       </section>
 
       {/* Bottom navigation */}
-      <nav className="fixed inset-x-0 bottom-0 z-30 mx-auto max-w-screen-xl px-4 pb-4">
-        <div className="rounded-full h-20 flex gap-2 justify-between items-center border border-white/80 bg-white/60 backdrop-blur px-3 sm:px-4 py-2 shadow">
-          <motion.button
-            whileTap={{ scale: 0.95 }}
+      <nav className="fixed inset-x-0 bottom-0 z-30 px-4 pb-4">
+        <div className="max-w-2xl mx-auto rounded-full h-18 flex gap-3 items-center border border-white/60 bg-white/70 backdrop-blur-md px-4 shadow-lg">
+          <button
             onClick={goToPrevious}
             disabled={!canGoPrevious}
-            className="h-14 w-1/2 rounded-full text-lg font-semibold flex items-center justify-center gap-2 disabled:bg-white/60 disabled:text-orange-900/60 transition border border-white bg-linear-to-r from-slate-200 to-slate-300 shadow text-slate-700 hover:brightness-90 active:brightness-75"
+            className="h-12 w-1/2 rounded-full font-bold flex items-center justify-center gap-1.5 bg-linear-to-br from-slate-100 to-slate-200 border border-white/60 shadow text-slate-700 cursor-pointer hover:brightness-90 active:brightness-75 disabled:opacity-40 disabled:cursor-not-allowed"
           >
             <ChevronLeft className="h-5 w-5" /> Prev
-          </motion.button>
+          </button>
 
-          <motion.button
-            whileTap={{ scale: 0.95 }}
+          <button
             onClick={goToNext}
             disabled={!canGoNext}
-            className="w-1/2 bg-linear-to-r from-orange-500 border border-white/70 to-rose-500 h-14 rounded-full text-lg font-semibold flex items-center justify-center gap-2 transition disabled:opacity-60 disabled:cursor-not-allowed"
+            className="h-12 w-1/2 rounded-full font-bold flex items-center justify-center gap-1.5 bg-linear-to-br from-green-500 to-lime-400 border border-green-500 shadow text-green-950 cursor-pointer hover:brightness-90 active:brightness-75 disabled:opacity-40 disabled:cursor-not-allowed"
           >
             Next <ChevronRight className="h-5 w-5" />
-          </motion.button>
+          </button>
         </div>
       </nav>
     </main>

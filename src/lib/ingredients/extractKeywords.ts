@@ -71,6 +71,28 @@ const UNITS = [
   "block",
   "blocks",
 
+  // Plant parts / natural form descriptors
+  "bulb",
+  "bulbs",
+  "stalk",
+  "stalks",
+  "head",
+  "heads",
+  "spear",
+  "spears",
+  "floret",
+  "florets",
+  "leaf",
+  "leaves",
+
+  // Food forms / preparations (not food nouns — strip these)
+  "extract",
+  "powder",
+  "paste",
+  "flakes",
+  "concentrate",
+  "spray",
+
   // Misc / colloquial
   "dash",
   "pinch",
@@ -202,6 +224,7 @@ export function extractIngredientKeyword(line: string | null): string | null {
 
   let clean = line
     .toLowerCase()
+    .replace(/\(.*?\)/g, "") // remove parenthetical notes like (cored and diced)
     .replace(/\d+\/\d+|\d+(\.\d+)?/g, "") // remove numbers like 500, 1/2, 2.5
     .replace(/[^\w\s]/g, " ") // remove punctuation
     .trim();
@@ -224,10 +247,9 @@ export function extractIngredientKeyword(line: string | null): string | null {
   // remove extra spaces
   clean = clean.replace(/\s+/g, " ").trim();
 
-  // take last or main noun word
-  const words = clean.split(" ");
+  // take the last word — the noun — since units/descriptors appear before the food name
+  const words = clean.split(" ").filter(Boolean);
   if (!words.length) return null;
 
-  // prioritize the last 1–2 words (since units/descriptors are usually before the food)
-  return words.slice(-2).join(" ");
+  return words[words.length - 1];
 }
