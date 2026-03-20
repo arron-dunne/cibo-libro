@@ -21,24 +21,28 @@ const features = [
     title: "Import from anywhere",
     description:
       "Paste any URL and Cibo Libro extracts the full recipe automatically — from food blogs, YouTube, and cooking sites.",
+    band: "bg-linear-to-br from-blue-400 to-cyan-500",
   },
   {
     Icon: PlusCircle,
     title: "Add your own recipes",
     description:
       "Build your personal cookbook with your own creations, family recipes, and anything in between.",
+    band: "bg-linear-to-br from-emerald-400 to-green-600",
   },
   {
     Icon: Search,
     title: "Find it instantly",
     description:
       "Search by name, filter by tags, and sort your entire collection. Never lose a recipe again.",
+    band: "bg-linear-to-br from-violet-400 to-purple-600",
   },
   {
     Icon: CookingPot,
     title: "Cook mode",
     description:
       "A distraction-free screen walks you through every step with built-in timers and highlighted ingredients.",
+    band: "bg-linear-to-br from-orange-400 to-rose-500",
   },
 ];
 
@@ -47,16 +51,19 @@ const steps = [
     number: "01",
     title: "Create a free account",
     description: "Sign up in seconds. No credit card, no catch.",
+    band: "bg-linear-to-br from-blue-400 to-indigo-500",
   },
   {
     number: "02",
     title: "Add your recipes",
     description: "Import from a URL or type them in yourself.",
+    band: "bg-linear-to-br from-emerald-400 to-teal-500",
   },
   {
     number: "03",
     title: "Cook and enjoy",
     description: "Browse, search, and cook with a beautiful guided experience.",
+    band: "bg-linear-to-br from-orange-400 to-rose-500",
   },
 ];
 
@@ -111,97 +118,106 @@ export default function LandingPage() {
   return (
     <div className="min-h-screen flex flex-col">
       {/* ── Navbar ── */}
-      <nav className="sticky top-4 mt-6 z-10">
-        <div className="mx-auto max-w-7xl px-4">
-          <div className="flex justify-between items-center h-14 gap-2 rounded-full border border-white/80 bg-white/60 px-4 py-2 shadow backdrop-blur">
-            <Link href="/landing" aria-label="Cibo Libro home">
-              <Image
-                src="/logo.png"
-                alt="Cibo Libro"
-                width={150}
-                height={36}
-                className="h-9 w-auto drop-shadow"
-                priority
-              />
+      <nav className="sticky top-0 z-10 pt-6 pb-2">
+        <div className="mx-auto max-w-7xl px-6 flex justify-between items-center">
+          <Link href="/landing" aria-label="Cibo Libro home">
+            <Image
+              src="/logo.png"
+              alt="Cibo Libro"
+              width={150}
+              height={36}
+              className="h-9 w-auto drop-shadow-[0_2px_8px_rgba(0,0,0,0.25)]"
+              priority
+            />
+          </Link>
+          <div className="flex gap-2">
+            <Link
+              href="/login"
+              className="flex items-center justify-center rounded-full border border-white/50 bg-white/15 text-white px-5 py-2 font-semibold backdrop-blur-sm hover:bg-white/25 transition"
+            >
+              Login
             </Link>
-            <div className="flex gap-2">
-              <Link
-                href="/login"
-                className="flex items-center justify-center rounded-full border border-white/70 bg-linear-to-br from-slate-200 to-slate-300 text-slate-900 px-5 py-2 font-semibold shadow hover:brightness-90 active:brightness-75 transition"
-              >
-                Login
-              </Link>
-              <Link
-                href="/register"
-                className="flex items-center justify-center rounded-full border border-white/40 bg-linear-to-br from-orange-500 to-rose-500 text-white px-5 py-2 font-semibold shadow hover:brightness-90 active:brightness-75 transition"
-              >
-                Sign Up Free
-              </Link>
-            </div>
+            <Link
+              href="/register"
+              className="flex items-center justify-center rounded-full bg-white text-orange-600 px-5 py-2 font-semibold shadow hover:brightness-95 transition"
+            >
+              Sign Up Free
+            </Link>
           </div>
         </div>
       </nav>
 
       {/* ── Hero ── */}
-      <section className="mx-auto max-w-7xl w-full px-4 pt-16 pb-12 md:pt-24 md:pb-20 flex flex-col items-center text-center gap-6">
-        {/* Badge */}
-        <span className="inline-flex items-center gap-2 rounded-full bg-white/20 border border-white/40 px-4 py-1.5 text-sm font-semibold text-white backdrop-blur-sm">
-          <ChefHat size={14} />
-          The digital cookbook for food lovers
-        </span>
+      <section className="mx-auto max-w-7xl w-full px-6 pt-10 pb-12 md:pt-16 md:pb-20">
+        <div className="flex flex-col md:flex-row items-center gap-10 md:gap-14">
 
-        {/* Headline */}
-        <h1
-          className="text-5xl md:text-7xl font-black text-white leading-tight tracking-tight"
-          style={{ WebkitTextStroke: "4px black", paintOrder: "stroke fill" }}
-        >
-          Your recipes.
-          <br />
-          Always within reach.
-        </h1>
+          {/* Left: text content */}
+          <div className="flex-1 flex flex-col items-center md:items-start text-center md:text-left gap-5">
+            {/* Badge */}
+            <span className="inline-flex items-center gap-2 rounded-full bg-white/20 border border-white/40 px-4 py-1.5 text-sm font-semibold text-white backdrop-blur-sm">
+              <ChefHat size={14} />
+              The digital cookbook for food lovers
+            </span>
 
-        {/* Sub-copy */}
-        <p className="max-w-xl text-lg md:text-xl text-white/90 font-medium leading-relaxed">
-          Import from any website, add your own creations, and cook with a
-          beautiful guided experience. Everything in one place — free.
-        </p>
+            {/* Headline */}
+            <h1
+              className="text-5xl md:text-6xl lg:text-7xl font-black text-white leading-tight tracking-tight"
+              style={{ WebkitTextStroke: "4px black", paintOrder: "stroke fill" }}
+            >
+              Your recipes.
+              <br />
+              Always within
+              <br />
+              reach.
+            </h1>
 
-        {/* CTAs */}
-        <div className="flex flex-wrap gap-3 justify-center">
-          <Link
-            href="/register"
-            className="inline-flex items-center gap-2 rounded-full bg-white text-orange-600 px-8 py-3.5 text-lg font-bold shadow-lg hover:brightness-95 active:brightness-90 transition"
-          >
-            Get Started Free
-          </Link>
-          <a
-            href="#features"
-            className="inline-flex items-center gap-2 rounded-full border border-white/50 bg-white/20 text-white px-8 py-3.5 text-lg font-semibold backdrop-blur-sm hover:bg-white/30 transition"
-          >
-            See the features
-          </a>
-        </div>
+            {/* Sub-copy */}
+            <p className="max-w-md text-lg text-white/90 font-medium leading-relaxed">
+              Import from any website, add your own creations, and cook with a
+              beautiful guided experience. Everything in one place — free.
+            </p>
 
-        {/* Hero visual placeholder */}
-        <div className="mt-6 w-full max-w-4xl rounded-3xl border-2 border-dashed border-white/35 bg-white/10 backdrop-blur-sm aspect-video flex flex-col items-center justify-center gap-3">
-          <div className="w-16 h-16 rounded-2xl bg-white/20 border border-white/30 flex items-center justify-center">
-            <BookOpen size={28} className="text-white/60" />
+            {/* CTAs */}
+            <div className="flex flex-wrap gap-3 justify-center md:justify-start">
+              <Link
+                href="/register"
+                className="inline-flex items-center gap-2 rounded-full bg-white text-orange-600 px-8 py-3.5 text-lg font-bold shadow-lg hover:brightness-95 active:brightness-90 transition"
+              >
+                Get Started Free
+              </Link>
+              <a
+                href="#features"
+                className="inline-flex items-center gap-2 rounded-full border border-white/50 bg-white/20 text-white px-8 py-3.5 text-lg font-semibold backdrop-blur-sm hover:bg-white/30 transition"
+              >
+                See the features
+              </a>
+            </div>
+
+            {/* Trust strip */}
+            <div className="flex flex-wrap justify-center md:justify-start gap-x-6 gap-y-1 text-white/70 text-sm font-medium">
+              <span>✓ Free forever for essentials</span>
+              <span>✓ No adverts</span>
+              <span>✓ Import from 100+ recipe sites</span>
+            </div>
           </div>
-          <p className="text-sm font-medium text-white/50 tracking-wide">
-            [ App Screenshot / Hero Animation ]
-          </p>
-        </div>
 
-        {/* Trust strip */}
-        <div className="flex flex-wrap justify-center gap-6 mt-2 text-white/70 text-sm font-medium">
-          <span>✓ Free forever for essentials</span>
-          <span>✓ No adverts</span>
-          <span>✓ Import from 100+ recipe sites</span>
+          {/* Right: hero visual placeholder */}
+          <div className="flex-1 w-full max-w-sm md:max-w-none">
+            <div className="rounded-3xl border-2 border-dashed border-white/35 bg-white/10 backdrop-blur-sm aspect-[3/4] flex flex-col items-center justify-center gap-3">
+              <div className="w-16 h-16 rounded-2xl bg-white/20 border border-white/30 flex items-center justify-center">
+                <BookOpen size={28} className="text-white/60" />
+              </div>
+              <p className="text-sm font-medium text-white/50 tracking-wide">
+                [ App Screenshot / Hero Animation ]
+              </p>
+            </div>
+          </div>
+
         </div>
       </section>
 
       {/* ── Features ── */}
-      <section id="features" className="mx-auto max-w-7xl w-full px-4 py-16">
+      <section id="features" className="mx-auto max-w-7xl w-full px-6 py-16">
         <div className="text-center mb-12">
           <h2
             className="text-4xl md:text-5xl font-black text-white"
@@ -216,63 +232,59 @@ export default function LandingPage() {
 
         <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
           {features.map((feature) => (
-            <div
+            <CardWithBand
               key={feature.title}
-              className="rounded-3xl border border-white/70 bg-white/95 p-6 shadow-lg backdrop-blur flex flex-col gap-3"
-            >
-              <div className="w-12 h-12 rounded-2xl bg-linear-to-br from-orange-400 to-rose-500 flex items-center justify-center shadow-md shrink-0">
-                <feature.Icon size={22} className="text-white" />
-              </div>
-              <h3 className="text-lg font-bold text-zinc-900">{feature.title}</h3>
-              <p className="text-sm text-zinc-600 leading-relaxed">
-                {feature.description}
-              </p>
-            </div>
+              band={feature.band}
+              bandContent={<feature.Icon size={28} className="text-white drop-shadow" />}
+              title={feature.title}
+              description={feature.description}
+            />
           ))}
         </div>
       </section>
 
       {/* ── How It Works ── */}
-      <section className="mx-auto max-w-7xl w-full px-4 py-16">
-        <div className="rounded-3xl border border-white/70 bg-white/95 p-8 md:p-12 shadow-lg backdrop-blur">
-          <div className="text-center mb-10">
-            <h2 className="text-3xl md:text-4xl font-black text-zinc-900">
-              Up and running in minutes
-            </h2>
-            <p className="mt-2 text-zinc-500 text-lg">
-              No complicated setup. Just sign up and start cooking.
-            </p>
-          </div>
+      <section className="mx-auto max-w-7xl w-full px-6 py-16">
+        <div className="text-center mb-12">
+          <h2
+            className="text-4xl md:text-5xl font-black text-white"
+            style={{ WebkitTextStroke: "3px black", paintOrder: "stroke fill" }}
+          >
+            Up and running in minutes
+          </h2>
+          <p className="mt-3 text-white/80 text-lg font-medium max-w-lg mx-auto">
+            No complicated setup. Just sign up and start cooking.
+          </p>
+        </div>
 
-          <div className="flex flex-col md:flex-row items-start">
-            {steps.map((step, i) => (
-              <Fragment key={step.number}>
-                <div className="flex-1 flex flex-col items-center text-center gap-3 px-6 py-4">
-                  <div className="w-16 h-16 rounded-full bg-linear-to-br from-orange-400 to-rose-500 flex items-center justify-center shadow-lg shrink-0">
-                    <span className="text-white font-black text-lg">
-                      {step.number}
-                    </span>
-                  </div>
-                  <h3 className="text-xl font-bold text-zinc-900">
-                    {step.title}
-                  </h3>
-                  <p className="text-zinc-500 text-sm leading-relaxed max-w-48">
-                    {step.description}
-                  </p>
+        <div className="flex flex-col sm:flex-row items-stretch gap-4 sm:gap-0">
+          {steps.map((step, i) => (
+            <Fragment key={step.number}>
+              <CardWithBand
+                band={step.band}
+                bandHeight="h-24"
+                bandContent={
+                  <>
+                    <span className="text-white/60 text-xs font-bold tracking-widest uppercase">Step</span>
+                    <span className="text-white font-black text-4xl leading-none drop-shadow">{step.number}</span>
+                  </>
+                }
+                title={step.title}
+                description={step.description}
+                className="flex-1"
+              />
+              {i < steps.length - 1 && (
+                <div className="hidden sm:flex items-center justify-center px-3 shrink-0">
+                  <div className="w-6 h-0.5 bg-white/50 rounded-full" />
                 </div>
-                {i < steps.length - 1 && (
-                  <div className="hidden md:flex items-center pt-8 shrink-0">
-                    <div className="w-12 h-0.5 bg-linear-to-r from-orange-200 to-rose-200 rounded-full" />
-                  </div>
-                )}
-              </Fragment>
-            ))}
-          </div>
+              )}
+            </Fragment>
+          ))}
         </div>
       </section>
 
       {/* ── Recipe Showcase ── */}
-      <section className="mx-auto max-w-7xl w-full px-4 py-16">
+      <section className="mx-auto max-w-7xl w-full px-6 py-16">
         <div className="text-center mb-10">
           <h2
             className="text-4xl md:text-5xl font-black text-white"
@@ -293,7 +305,7 @@ export default function LandingPage() {
       </section>
 
       {/* ── Bottom CTA ── */}
-      <section className="mx-auto max-w-7xl w-full px-4 py-16">
+      <section className="mx-auto max-w-7xl w-full px-6 py-16">
         <div className="rounded-3xl border border-white/70 bg-white/95 p-10 md:p-16 shadow-xl backdrop-blur text-center">
           <div className="w-16 h-16 rounded-full bg-linear-to-br from-orange-400 to-rose-500 flex items-center justify-center shadow-lg mx-auto mb-6">
             <UtensilsCrossed size={28} className="text-white" />
@@ -327,6 +339,36 @@ export default function LandingPage() {
       </section>
 
       <Footer />
+    </div>
+  );
+}
+
+// ─── Shared card with coloured header band ────────────────────────────────────
+
+function CardWithBand({
+  band,
+  bandHeight = "h-20",
+  bandContent,
+  title,
+  description,
+  className,
+}: {
+  band: string;
+  bandHeight?: string;
+  bandContent: React.ReactNode;
+  title: string;
+  description: string;
+  className?: string;
+}) {
+  return (
+    <div className={`rounded-3xl overflow-hidden border border-zinc-200 bg-white shadow-lg flex flex-col ${className ?? ""}`}>
+      <div className={`${bandHeight} ${band} flex flex-col items-center justify-center shrink-0`}>
+        {bandContent}
+      </div>
+      <div className="p-5 flex flex-col gap-2">
+        <h3 className="text-lg font-bold text-zinc-900">{title}</h3>
+        <p className="text-sm text-zinc-600 leading-relaxed">{description}</p>
+      </div>
     </div>
   );
 }
