@@ -273,7 +273,7 @@ export default function CookModeClient({
           <button
             onClick={goToPrevious}
             disabled={!canGoPrevious}
-            className="h-12 w-1/2 rounded-full font-bold flex items-center justify-center gap-1.5 bg-linear-to-br from-slate-100 to-slate-200 border border-white/60 shadow text-slate-700 hover:brightness-90 active:brightness-75 disabled:opacity-40 disabled:cursor-not-allowed"
+            className="h-12 w-1/2 rounded-full font-bold flex items-center justify-center gap-1.5 bg-linear-to-br from-slate-100 to-slate-200 border border-white/60 shadow text-slate-700 cursor-pointer hover:brightness-90 active:brightness-75 disabled:opacity-40 disabled:cursor-not-allowed"
           >
             <ChevronLeft className="h-5 w-5" /> Prev
           </button>
@@ -281,7 +281,7 @@ export default function CookModeClient({
           <button
             onClick={goToNext}
             disabled={!canGoNext}
-            className="h-12 w-1/2 rounded-full font-bold flex items-center justify-center gap-1.5 bg-linear-to-br from-green-500 to-lime-400 border border-green-500 shadow text-green-950 hover:brightness-90 active:brightness-75 disabled:opacity-40 disabled:cursor-not-allowed"
+            className="h-12 w-1/2 rounded-full font-bold flex items-center justify-center gap-1.5 bg-linear-to-br from-green-500 to-lime-400 border border-green-500 shadow text-green-950 cursor-pointer hover:brightness-90 active:brightness-75 disabled:opacity-40 disabled:cursor-not-allowed"
           >
             Next <ChevronRight className="h-5 w-5" />
           </button>
