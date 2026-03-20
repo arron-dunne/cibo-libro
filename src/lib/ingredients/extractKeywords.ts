@@ -71,6 +71,14 @@ const UNITS = [
   "block",
   "blocks",
 
+  // Food forms / preparations (not food nouns — strip these)
+  "extract",
+  "powder",
+  "paste",
+  "flakes",
+  "concentrate",
+  "spray",
+
   // Misc / colloquial
   "dash",
   "pinch",
@@ -224,10 +232,9 @@ export function extractIngredientKeyword(line: string | null): string | null {
   // remove extra spaces
   clean = clean.replace(/\s+/g, " ").trim();
 
-  // take last or main noun word
-  const words = clean.split(" ");
+  // take the last word — the noun — since units/descriptors appear before the food name
+  const words = clean.split(" ").filter(Boolean);
   if (!words.length) return null;
 
-  // prioritize the last 1–2 words (since units/descriptors are usually before the food)
-  return words.slice(-2).join(" ");
+  return words[words.length - 1];
 }
