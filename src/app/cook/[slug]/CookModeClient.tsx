@@ -253,9 +253,9 @@ export default function CookModeClient({
 
             {/* Step panel */}
             <div className="h-max mx-2 sm:mx-0 sm:w-[62%] rounded-4xl border border-white/60 bg-white shadow-xl text-gray-900 overflow-hidden">
-              <div className="px-8 pt-8 pb-5">
+              <div className="px-5 pt-5 pb-4 sm:px-8 sm:pt-8 sm:pb-5">
                 <div className="flex items-end justify-center gap-2">
-                  <h3 className="text-2xl font-semibold text-black">
+                  <h3 className="text-lg sm:text-2xl font-semibold text-black">
                     Step {currentStep}
                   </h3>
                   <span className="text-sm font-medium text-gray-400 mb-0.5">
@@ -271,7 +271,7 @@ export default function CookModeClient({
                   />
                 </div>
               </div>
-              <div className="px-8 pb-8">
+              <div className="px-5 pb-5 sm:px-8 sm:pb-8">
                 <StepText
                   text={steps[currentStep - 1]}
                   keywords={ingredientKeywords}
