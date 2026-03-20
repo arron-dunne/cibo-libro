@@ -268,8 +268,8 @@ export default function CookModeClient({
       </section>
 
       {/* Bottom navigation */}
-      <nav className="fixed inset-x-0 bottom-0 z-30 px-4 pb-4 max-w-7xl mx-auto">
-        <div className="rounded-full h-18 flex gap-2 items-center border border-white/60 bg-white/70 backdrop-blur-md px-2 shadow-lg">
+      <nav className="fixed inset-x-0 bottom-0 z-30 px-4 pb-4">
+        <div className="max-w-2xl mx-auto rounded-full h-18 flex gap-3 items-center border border-white/60 bg-white/70 backdrop-blur-md px-4 shadow-lg">
           <button
             onClick={goToPrevious}
             disabled={!canGoPrevious}
@@ -281,7 +281,7 @@ export default function CookModeClient({
           <button
             onClick={goToNext}
             disabled={!canGoNext}
-            className="h-12 w-1/2 rounded-full font-bold flex items-center justify-center gap-1.5 bg-linear-to-br from-orange-500 to-rose-500 border border-white/40 shadow text-white hover:brightness-90 active:brightness-75 disabled:opacity-40 disabled:cursor-not-allowed"
+            className="h-12 w-1/2 rounded-full font-bold flex items-center justify-center gap-1.5 bg-linear-to-br from-green-500 to-lime-400 border border-green-500 shadow text-green-950 hover:brightness-90 active:brightness-75 disabled:opacity-40 disabled:cursor-not-allowed"
           >
             Next <ChevronRight className="h-5 w-5" />
           </button>
