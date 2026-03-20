@@ -101,42 +101,76 @@ export default function CookModeClient({
   const canGoNext = currentStep !== "finish";
 
   return (
-    <main className="min-h-dvh mx-auto max-w-7xl px-4 py-8 text-white flex flex-col">
+    <main className="min-h-dvh mx-auto max-w-7xl px-4 py-4 sm:py-8 text-white flex flex-col">
       {/* Header */}
-      <header className="sticky top-4 z-10 flex items-center justify-between gap-3">
-        <Link
-          href={`/view/${slug}`}
-          aria-label="Back to recipe"
-          className="shrink-0 w-max flex items-center gap-3 text-xl font-semibold text-slate-900 cursor-pointer hover:brightness-90 active:brightness-75"
-        >
-          <div className="p-2 rounded-full border border-white/80 bg-linear-to-br from-slate-200 to-slate-300 shadow-lg">
-            <ArrowLeft size={20} />
+      <header className="flex flex-col gap-3 mb-4">
+        {/* Desktop header */}
+        <div className="hidden sm:flex items-center justify-between gap-3">
+          <Link
+            href={`/view/${slug}`}
+            aria-label="Back to recipe"
+            className="shrink-0 w-max flex items-center gap-3 text-xl font-semibold text-slate-900 cursor-pointer hover:brightness-90 active:brightness-75"
+          >
+            <div className="p-2 rounded-full border border-white/80 bg-linear-to-br from-slate-200 to-slate-300 shadow-lg">
+              <ArrowLeft size={20} />
+            </div>
+            Back
+          </Link>
+          <h1
+            className="text-5xl font-black text-white truncate"
+            style={{ WebkitTextStroke: "6px black", paintOrder: "stroke fill" }}
+          >
+            {title}
+          </h1>
+          <div className="flex gap-2.5 shrink-0 items-center rounded-full bg-white/60 border border-white/80 text-black shadow px-4 py-2">
+            {wakeLockActive ? (
+              <span className="relative flex h-2.5 w-2.5">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
+                <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500" />
+              </span>
+            ) : (
+              <span className="inline-flex rounded-full h-2.5 w-2.5 bg-zinc-300" />
+            )}
+            <span className="text-base font-semibold">Screen Awake</span>
           </div>
-          Back
-        </Link>
+        </div>
 
-        <h1
-          className="text-5xl font-black text-white truncate"
-          style={{ WebkitTextStroke: "6px black", paintOrder: "stroke fill" }}
-        >
-          {title}
-        </h1>
-
-        <div className="hidden sm:flex gap-2.5 shrink-0 items-center rounded-full bg-white/60 border border-white/80 text-black shadow px-4 py-2">
-          {wakeLockActive ? (
-            <span className="relative flex h-2.5 w-2.5">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
-              <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500" />
-            </span>
-          ) : (
-            <span className="inline-flex rounded-full h-2.5 w-2.5 bg-zinc-300" />
-          )}
-          <span className="text-base font-semibold">Screen Awake</span>
+        {/* Mobile header */}
+        <div className="sm:hidden">
+          <div className="flex items-center justify-between gap-3">
+            <Link
+              href={`/view/${slug}`}
+              aria-label="Back to recipe"
+              className="shrink-0 w-max flex items-center gap-2 text-base font-semibold text-slate-900 cursor-pointer hover:brightness-90 active:brightness-75"
+            >
+              <div className="p-2 rounded-full border border-white/80 bg-linear-to-br from-slate-200 to-slate-300 shadow-lg">
+                <ArrowLeft size={18} />
+              </div>
+              Back
+            </Link>
+            <div className="flex gap-2 shrink-0 items-center rounded-full bg-white/60 border border-white/80 text-black shadow px-3 py-1.5">
+              {wakeLockActive ? (
+                <span className="relative flex h-2.5 w-2.5">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
+                  <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500" />
+                </span>
+              ) : (
+                <span className="inline-flex rounded-full h-2.5 w-2.5 bg-zinc-300" />
+              )}
+              <span className="text-sm font-semibold">Screen Awake</span>
+            </div>
+          </div>
+          <h1
+            className="mt-4 text-4xl font-black text-white text-center"
+            style={{ WebkitTextStroke: "4px black", paintOrder: "stroke fill" }}
+          >
+            {title}
+          </h1>
         </div>
       </header>
 
       {/* Main content area */}
-      <section className="w-full max-w-5xl mx-auto flex-1 pt-8 pb-20">
+      <section className="w-full max-w-5xl mx-auto flex-1 sm:pt-8 pb-20">
         {/* Prepare Ingredients step */}
         {currentStep === "ings" && (
           <div className="w-full max-w-2xl mx-auto rounded-4xl border border-white/60 bg-white shadow-xl text-gray-900 overflow-hidden">
@@ -164,9 +198,7 @@ export default function CookModeClient({
                       )}
                       <span
                         className={`text-base leading-6 ${
-                          checked[i]
-                            ? "text-gray-400"
-                            : "text-gray-800"
+                          checked[i] ? "text-gray-400" : "text-gray-800"
                         }`}
                       >
                         {line}
@@ -252,7 +284,7 @@ export default function CookModeClient({
             </div>
 
             {/* Step panel */}
-            <div className="h-max mx-2 sm:mx-0 sm:w-[62%] rounded-4xl border border-white/60 bg-white shadow-xl text-gray-900 overflow-hidden">
+            <div className="h-max sm:w-[66%] rounded-4xl border border-white/60 bg-white shadow-xl text-gray-900 overflow-hidden">
               <div className="px-5 pt-5 pb-4 sm:px-8 sm:pt-8 sm:pb-5">
                 <div className="flex items-end justify-center gap-2">
                   <h3 className="text-lg sm:text-2xl font-semibold text-black">
