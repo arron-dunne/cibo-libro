@@ -11,8 +11,9 @@ import {
   CheckCircle2,
   ChevronLeft,
   ChevronRight,
-  BadgeCheck,
   ChevronDown,
+  CookingPot,
+  Pencil,
 } from "lucide-react";
 
 interface CookModeClientProps {
@@ -282,23 +283,33 @@ export default function CookModeClient({
 
         {/* Finish panel */}
         {currentStep === "finish" && (
-          <div className="max-w-2xl mx-auto rounded-4xl border border-white/60 bg-white shadow-xl text-gray-900 text-center p-10">
-            <div className="inline-flex items-center justify-center h-16 w-16 rounded-full bg-linear-to-br from-emerald-400 to-emerald-600 shadow-lg mx-auto">
-              <BadgeCheck className="h-8 w-8 text-white" />
+          <div className="max-w-2xl mx-auto rounded-4xl border border-white/60 bg-white shadow-xl text-gray-900 text-center px-10 pt-10 pb-8">
+            <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-linear-to-br from-orange-100 to-rose-100 text-rose-500">
+              <CookingPot size={28} />
             </div>
-            <h2 className="mt-4 text-3xl font-extrabold text-gray-900">
-              Bon appétit!
+            <h2 className="mt-4 text-3xl font-bold text-gray-900">
+              Enjoy your meal!
             </h2>
             <p className="mt-2 text-gray-500">
-              You&apos;ve completed all the steps. Enjoy your meal.
+              All steps done — now comes the best part.
             </p>
-            <Link
-              href={`/view/${slug}`}
-              className="mt-6 inline-flex items-center justify-center gap-2 rounded-full bg-linear-to-br from-orange-500 to-rose-500 text-white border border-white/40 shadow px-6 py-3 font-bold hover:brightness-90 active:brightness-75"
-            >
-              <ArrowLeft className="h-4 w-4" />
-              Back to recipe
-            </Link>
+
+            <div className="mt-6 flex flex-col gap-3 sm:flex-row">
+              <Link
+                href="/all"
+                className="w-full inline-flex items-center justify-center gap-2 rounded-full bg-linear-to-r from-orange-500 to-rose-500 px-4 py-3 text-base font-semibold text-white shadow-lg hover:brightness-95 active:brightness-75"
+              >
+                <ArrowLeft className="h-4 w-4" />
+                Back to cookbook
+              </Link>
+              <Link
+                href={`/edit/${slug}`}
+                className="w-full inline-flex items-center justify-center gap-2 rounded-full border border-gray-200 px-4 py-3 text-base font-semibold text-gray-700 hover:bg-gray-50 active:bg-gray-100"
+              >
+                <Pencil className="h-4 w-4" />
+                Edit this recipe
+              </Link>
+            </div>
           </div>
         )}
       </section>
