@@ -136,7 +136,7 @@ export default function CookModeClient({
       </header>
 
       {/* Main content area */}
-      <section className="w-full max-w-5xl mx-auto flex-1 pt-8">
+      <section className="w-full max-w-5xl mx-auto flex-1 pt-8 pb-20">
         {/* Prepare Ingredients step */}
         {currentStep === "ings" && (
           <div className="w-full max-w-2xl mx-auto rounded-4xl border border-white/60 bg-white shadow-xl text-gray-900 overflow-hidden">
@@ -297,14 +297,14 @@ export default function CookModeClient({
             <div className="mt-6 flex flex-col gap-3 sm:flex-row">
               <Link
                 href="/all"
-                className="w-full inline-flex items-center justify-center gap-2 rounded-full bg-linear-to-r from-orange-500 to-rose-500 px-4 py-3 text-base font-semibold text-white shadow-lg hover:brightness-95 active:brightness-75"
+                className="w-full inline-flex items-center justify-center gap-2 rounded-full bg-linear-to-r from-orange-500 to-rose-500 px-4 py-3 text-base font-semibold text-white hover:brightness-95 active:brightness-75"
               >
                 <ArrowLeft className="h-4 w-4" />
                 Back to cookbook
               </Link>
               <Link
                 href={`/edit/${slug}`}
-                className="w-full inline-flex items-center justify-center gap-2 rounded-full border border-gray-200 px-4 py-3 text-base font-semibold text-gray-700 hover:bg-gray-50 active:bg-gray-100"
+                className="w-full inline-flex items-center justify-center gap-2 rounded-full bg-linear-to-br from-slate-100 to-slate-200 border border-slate-300 px-4 py-3 text-base font-semibold text-slate-800 hover:brightness-90 active:brightness-75"
               >
                 <Pencil className="h-4 w-4" />
                 Edit this recipe
