@@ -116,15 +116,16 @@ export default function LandingPage() {
   return (
     <div className="min-h-screen flex flex-col">
       {/* ── Navbar ── */}
-      <nav className="sticky top-0 z-10 pt-6 pb-2">
+      <nav className="sticky top-0 z-10 pt-6 pb-4">
         <div className="mx-auto max-w-7xl px-6 flex justify-between items-center">
-          <Link href="/landing" aria-label="Cibo Libro home">
+          <Link href="/landing" aria-label="Cibo Libro home" className="relative">
+            <div className="absolute inset-0 -m-3 rounded-2xl backdrop-blur-md" style={{ maskImage: "radial-gradient(ellipse at center, black 40%, transparent 100%)", WebkitMaskImage: "radial-gradient(ellipse at center, black 40%, transparent 100%)" }} />
             <Image
               src="/logo.png"
               alt="Cibo Libro"
               width={150}
               height={36}
-              className="h-12 w-auto"
+              className="relative h-12 w-auto"
               priority
             />
           </Link>
@@ -135,12 +136,14 @@ export default function LandingPage() {
             >
               Login
             </Link>
-            <Link
-              href="/register"
-              className="flex items-center justify-center rounded-full bg-white text-orange-600 px-5 py-2 font-semibold shadow hover:brightness-95 transition"
-            >
-              Sign Up Free
-            </Link>
+            <div className="rounded-full bg-white/60 backdrop-blur border border-white/70 shadow-lg px-1.5 py-1">
+              <Link
+                href="/register"
+                className="flex items-center justify-center rounded-full bg-linear-to-br from-green-500 to-lime-400 border border-green-500 text-green-950 px-4 py-1.5 font-bold shadow-lg hover:brightness-90 active:brightness-75 transition"
+              >
+                Sign Up Free
+              </Link>
+            </div>
           </div>
         </div>
       </nav>
@@ -167,25 +170,27 @@ export default function LandingPage() {
 
             {/* CTAs */}
             <div className="flex flex-wrap gap-3 justify-center md:justify-start">
-              <Link
-                href="/register"
-                className="inline-flex items-center gap-2 rounded-full bg-white text-orange-600 px-8 py-3.5 text-lg font-bold shadow-lg hover:brightness-95 active:brightness-90 transition"
-              >
-                Get Started Free
-              </Link>
+              <div className="rounded-full bg-white/60 backdrop-blur border border-white/70 shadow-lg px-2 py-2">
+                <Link
+                  href="/register"
+                  className="inline-flex items-center gap-2 rounded-full bg-linear-to-br from-green-500 to-lime-400 border border-green-500 text-green-950 px-7 py-3 text-lg font-bold shadow-lg hover:brightness-90 hover:scale-105 active:scale-95 active:brightness-75 transition-all duration-150"
+                >
+                  Get Started Free →
+                </Link>
+              </div>
               <a
                 href="#features"
-                className="inline-flex items-center gap-2 rounded-full border border-white/50 bg-white/20 text-white px-8 py-3.5 text-lg font-semibold backdrop-blur-sm hover:bg-white/30 transition"
+                className="inline-flex items-center gap-2 rounded-full border border-white/60 bg-white/15 text-white px-8 py-3.5 text-lg font-semibold backdrop-blur-sm hover:bg-white/25 hover:scale-105 active:scale-95 transition-all duration-150"
               >
                 See the features
               </a>
             </div>
 
             {/* Trust strip */}
-            <div className="flex flex-wrap justify-center md:justify-start gap-x-6 gap-y-1 text-white/70 text-sm font-medium">
-              <span>✓ Free forever for essentials</span>
-              <span>✓ No adverts</span>
-              <span>✓ Import from 100+ recipe sites</span>
+            <div className="flex flex-wrap justify-center md:justify-start gap-x-5 gap-y-1.5 text-sm font-semibold">
+              <span className="flex items-center gap-1.5 text-white/80"><span className="text-emerald-300">✓</span> Free forever for essentials</span>
+              <span className="flex items-center gap-1.5 text-white/80"><span className="text-emerald-300">✓</span> No adverts</span>
+              <span className="flex items-center gap-1.5 text-white/80"><span className="text-emerald-300">✓</span> Import from 100+ recipe sites</span>
             </div>
           </div>
 
@@ -312,12 +317,14 @@ export default function LandingPage() {
             essentials — no credit card required.
           </p>
           <div className="mt-8 flex flex-wrap gap-3 justify-center">
-            <Link
-              href="/register"
-              className="inline-flex items-center gap-2 rounded-full bg-linear-to-br from-orange-500 to-rose-500 text-white px-10 py-4 text-lg font-bold shadow-lg border border-white/40 hover:brightness-90 active:brightness-75 transition"
-            >
-              Get Started Free
-            </Link>
+            <div className="rounded-full bg-white/60 backdrop-blur border border-white/70 shadow-lg px-2 py-2">
+              <Link
+                href="/register"
+                className="inline-flex items-center gap-2 rounded-full bg-linear-to-br from-green-500 to-lime-400 border border-green-500 text-green-950 px-9 py-3.5 text-lg font-bold shadow-lg hover:brightness-90 active:brightness-75 transition"
+              >
+                Get Started Free
+              </Link>
+            </div>
             <Link
               href="/login"
               className="inline-flex items-center gap-2 rounded-full bg-linear-to-br from-slate-200 to-slate-300 text-slate-900 px-10 py-4 text-lg font-bold shadow border border-white/70 hover:brightness-90 active:brightness-75 transition"
