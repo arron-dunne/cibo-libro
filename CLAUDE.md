@@ -190,26 +190,56 @@ On the `/all` endpoint users can view all their recipes stored in the database. 
 
 ## Testing
 
-Tests use Vitest with jsdom environment. Integration tests override to node environment.
+### Unit tests
+
+- Scope: pure functions, validation schemas, small utilities (slugging, tag parsing, filters).
+- Goal: verify individual functions do as planned, catch edge cases and error handling, run in CI before every pull request
+- Tooling: vitest
+- File location: `src/test/unit/`
+- Naming convention: `[filename].unit.test.js`
+- Examples: isSafeUrl, uniqueSlug, parseIsoDurationMinutes
+
+### Integration tests
+
+- Scope: processes with multiple functions that depend of each other
+- Goal: verify larger programs with many pieces work together, run in CI before every pull request
+- Tools: vitest
+- File location: `src/test/integration/`
+- Naming convention: `[filename].int.test.js`
+- Examples: parseJsonLd, saveLinkCard, importRecipe
+
+### End‑to‑end (E2E) tests
+
+- Scope: real browser with page rendering, simulating user interactions, connected to a test database
+- Goal: verify real user experience works through the browser
+- Tools: playwright
+- File location: `src/test/e2e/`
+- Naming convention: `[filename].e2e.test.js`
+- Examples: importing recipes, editing recipes, sorting and filtering recipes
+
+### Smoke tests
+
+- Scope: a smaller subset of E2E tests which test the core user paths
+- Goal: Run before every pull request. Catch any breaking changes quickly
+- Tools: playwright
+- File location: `src/test/e2e/smoke`
+- Naming convention: `[filename].smoke.test.js`
+- Examples: user login/logout, adding recipes
+
+Additional notes for Smoke and E2E tests:
+- `auth.setup.ts` runs before tests to save and persist a logged in session 
+- `helpers.ts` contains small helper functions for testing (for example uniqueEmail)
+- `playwright.config.ts` contains playwright config
+
+## Commands
 
 ```bash
-# Run specific test file
-npx vitest run src/test/unit/isSafeUrl.unit.test.ts
-
-# Run tests matching pattern
-npx vitest run -t "parseIsoDuration"
-
-# Watch mode
-npx vitest
-```
-
-## Path Aliases
-
-Use `@/` for imports from `src/`:
-
-```typescript
-import { prisma } from "@/lib/prisma";
-import { auth } from "@/lib/auth/auth";
+npm run test:unit              # Run all unit tests
+npm run test:int               # Run all integration tests
+npm run test:e2e               # Run all e2e tests
+npm run test:smoke             # Run smoke tests (subset of e2e tests)
+npx vitest run [file]          # Run a specific unit/integration test file
+npx playwright test [test]     # Run a specific e2e/smoke test file  
 ```
 
 ## Version Control
@@ -223,3 +253,5 @@ We use Git and a remote Github repo for version control. The important branches 
 Write short, concise commit messages. If there are a lot of changed in a single commit use a more generic message like "improving ui on recipe page".
 
 NEVER MENTION CLAUDE IN COMMIT MESSAGES
+
+**Path alias:** use `@/` for imports from `src/` (e.g. `import { prisma } from '@/lib/prisma'`)

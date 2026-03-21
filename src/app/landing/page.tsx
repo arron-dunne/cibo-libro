@@ -2,7 +2,6 @@ import { Fragment } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import {
-  BookOpen,
   ChefHat,
   CookingPot,
   Import,
@@ -201,15 +200,17 @@ export default function LandingPage() {
             </div>
           </div>
 
-          {/* Right: hero visual placeholder */}
-          <div className="flex-1 w-full max-w-sm md:max-w-none">
-            <div className="rounded-3xl border-2 border-dashed border-white/35 bg-white/10 backdrop-blur-sm aspect-[3/4] flex flex-col items-center justify-center gap-3">
-              <div className="w-16 h-16 rounded-2xl bg-white/20 border border-white/30 flex items-center justify-center">
-                <BookOpen size={28} className="text-white/60" />
-              </div>
-              <p className="text-sm font-medium text-white/50 tracking-wide">
-                [ App Screenshot / Hero Animation ]
-              </p>
+          {/* Right: hero image */}
+          <div className="flex-1 w-full max-w-lg md:max-w-none">
+            <div className="rounded-3xl overflow-hidden shadow-2xl border-4 border-white">
+              <Image
+                src="/hero.png"
+                alt="A table full of fresh ingredients ready to cook"
+                width={1264}
+                height={843}
+                className="w-full h-auto object-cover"
+                priority
+              />
             </div>
           </div>
 
