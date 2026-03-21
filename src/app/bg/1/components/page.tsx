@@ -8,7 +8,7 @@ function PrimaryButton() {
 
 function SecondaryButton() {
   return (
-    <div className="px-5 py-3 rounded-full bg-linear-to-r from-slate-200 to-slate-300 border border-slate-400/50 font-bold text-slate-900">
+    <div className="px-5 py-3 rounded-full bg-white border border-orange-300 font-bold text-transparent bg-clip-text bg-linear-to-r from-orange-500 to-rose-500">
       Secondary Button
     </div>
   );
@@ -16,7 +16,7 @@ function SecondaryButton() {
 
 function TertiaryButton() {
   return (
-    <div className="px-5 py-3 rounded-full bg-linear-to-r bg-white/50 border border-orange-600/50 font-bold text-orange-600">
+    <div className="px-5 py-3 rounded-full font-bold text-orange-500 hover:text-rose-500">
       Tertiary Button
     </div>
   );
