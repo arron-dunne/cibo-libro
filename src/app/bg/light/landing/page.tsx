@@ -25,7 +25,7 @@ export default function LandingPage() {
         <div className="mb-5 px-4 py-1.5 rounded-full border border-orange-200 bg-orange-50 text-orange-500 text-sm font-semibold">
           Now in early access
         </div>
-        <h1 className={`${fraunces.className} text-7xl font-semibold text-zinc-900 max-w-3xl leading-tight`}>
+        <h1 className={`${fraunces.className} text-7xl font-bold text-rose-800 max-w-3xl leading-tight`}>
           Your cookbook for the modern kitchen
         </h1>
         <p className="mt-6 text-xl text-zinc-500 max-w-xl leading-relaxed">
