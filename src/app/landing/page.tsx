@@ -2,7 +2,6 @@ import { Fragment } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import {
-  ChefHat,
   CookingPot,
   Import,
   PlusCircle,
@@ -125,7 +124,7 @@ export default function LandingPage() {
               alt="Cibo Libro"
               width={150}
               height={36}
-              className="h-9 w-auto drop-shadow-[0_2px_8px_rgba(0,0,0,0.25)]"
+              className="h-12 w-auto"
               priority
             />
           </Link>
@@ -148,26 +147,16 @@ export default function LandingPage() {
 
       {/* ── Hero ── */}
       <section className="mx-auto max-w-7xl w-full px-6 pt-10 pb-12 md:pt-16 md:pb-20">
-        <div className="flex flex-col md:flex-row items-center gap-10 md:gap-14">
+        <div className="flex flex-col md:flex-row items-center gap-10 md:gap-2">
 
           {/* Left: text content */}
-          <div className="flex-1 flex flex-col items-center md:items-start text-center md:text-left gap-5">
-            {/* Badge */}
-            <span className="inline-flex items-center gap-2 rounded-full bg-white/20 border border-white/40 px-4 py-1.5 text-sm font-semibold text-white backdrop-blur-sm">
-              <ChefHat size={14} />
-              The digital cookbook for food lovers
-            </span>
-
+          <div className="flex-1 flex flex-col items-center md:items-start text-center md:text-left gap-4">
             {/* Headline */}
             <h1
-              className="text-5xl md:text-6xl lg:text-7xl font-black text-white leading-tight tracking-tight"
-              style={{ WebkitTextStroke: "4px black", paintOrder: "stroke fill" }}
+              className="text-5xl md:text-6xl font-black text-white leading-tight"
+              style={{ WebkitTextStroke: "6px black", paintOrder: "stroke fill" }}
             >
-              Your recipes.
-              <br />
-              Always within
-              <br />
-              reach.
+              The cookbook for the modern kitchen.
             </h1>
 
             {/* Sub-copy */}
@@ -201,8 +190,8 @@ export default function LandingPage() {
           </div>
 
           {/* Right: hero image */}
-          <div className="flex-1 w-full max-w-lg md:max-w-none">
-            <div className="rounded-3xl overflow-hidden shadow-2xl border-4 border-white">
+          <div className="flex-1 w-full max-w-md md:max-w-lg">
+            <div className="rounded-4xl overflow-hidden shadow-2xl border-2 border-white/70">
               <Image
                 src="/hero.png"
                 alt="A table full of fresh ingredients ready to cook"
