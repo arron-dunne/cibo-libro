@@ -1,4 +1,3 @@
-// app/layout.tsx
 import "@/styles/globals.css";
 import type { Metadata } from "next";
 
@@ -12,7 +11,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   return (
     <html lang="en">
       <body>
-        { children}
+        {children}
       </body>
     </html>
   );

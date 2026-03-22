@@ -1,3 +1,4 @@
+import Image from 'next/image'
 import { Fraunces, Nunito } from 'next/font/google'
 
 const fraunces = Fraunces({ subsets: ['latin'] })
@@ -9,7 +10,7 @@ export default function LandingPage() {
 
       {/* Nav */}
       <nav className="flex items-center justify-between px-12 py-6">
-        <span className={`${fraunces.className} text-2xl font-semibold text-orange-500`}>Cibo Libro</span>
+        <Image src="/logo.png" alt="Cibo Libro" width={140} height={40} className="object-contain" />
         <div className="flex items-center gap-8 text-sm font-semibold text-zinc-500">
           <a href="#">Features</a>
           <a href="#">Pricing</a>
@@ -21,25 +22,35 @@ export default function LandingPage() {
       </nav>
 
       {/* Hero */}
-      <section className="flex flex-col items-center text-center px-6 pt-24 pb-20">
-        <div className="mb-5 px-4 py-1.5 rounded-full border border-orange-200 bg-orange-50 text-orange-500 text-sm font-semibold">
-          Now in early access
-        </div>
-        <h1 className={`${fraunces.className} text-7xl font-bold text-rose-800 max-w-3xl leading-tight`}>
-          Your cookbook for the modern kitchen
-        </h1>
-        <p className="mt-6 text-xl text-zinc-500 max-w-xl leading-relaxed">
-          Save, organise, and cook from all your recipes in one beautiful place. Import from any website in seconds.
-        </p>
-        <div className="mt-10 flex items-center gap-4">
-          <div className="px-7 py-3.5 rounded-full bg-linear-to-r from-orange-500 to-rose-500 text-white font-bold text-base">
-            Start for free
+      <section className="flex items-center gap-12 px-12 pt-16 pb-20 min-h-[calc(100vh-80px)]">
+        {/* Left: text */}
+        <div className="flex-1 flex flex-col items-start">
+          <div className="mb-5 px-4 py-1.5 rounded-full border border-orange-200 bg-orange-50 text-orange-500 text-sm font-semibold">
+            Now in early access
           </div>
-          <div className="px-7 py-3.5 rounded-full border border-orange-300 text-orange-500 font-bold text-base">
-            See how it works
+          <h1 className={`${fraunces.className} text-7xl font-bold text-rose-800 max-w-xl leading-tight`}>
+            Your cookbook for the modern kitchen
+          </h1>
+          <p className="mt-6 text-xl text-zinc-500 max-w-md leading-relaxed">
+            Save, organise, and cook from all your recipes in one beautiful place. Import from any website in seconds.
+          </p>
+          <div className="mt-10 flex items-center gap-4">
+            <div className="px-7 py-3.5 rounded-full bg-linear-to-r from-orange-500 to-rose-500 text-white font-bold text-base">
+              Start for free
+            </div>
+            <div className="px-7 py-3.5 rounded-full border border-orange-300 text-orange-500 font-bold text-base">
+              See how it works
+            </div>
+          </div>
+          <p className="mt-4 text-sm text-zinc-400">No credit card required</p>
+        </div>
+        {/* Right: hero image */}
+        <div className="flex-1 flex items-center justify-center">
+          <div className="relative rounded-4xl overflow-hidden shadow-2xl shadow-orange-200/60 border-4 border-orange-500/50">
+            <Image src="/newhero.png" alt="Cibo Libro app" width={600} height={600} className="object-cover w-full max-w-lg block" />
+            <div className="absolute inset-0 bg-linear-to-br from-orange-400/10 to-rose-400/10" />
           </div>
         </div>
-        <p className="mt-4 text-sm text-zinc-400">No credit card required</p>
       </section>
 
       {/* Features */}
