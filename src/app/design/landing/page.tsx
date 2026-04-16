@@ -1,8 +1,8 @@
 import { PrimaryButton, SecondaryButton } from '@/app/components/page';
-import { Fraunces, Nunito } from 'next/font/google'
+import { Libre_Baskerville, Nunito } from 'next/font/google'
 import Image from 'next/image';
 
-const fraunces = Fraunces({ subsets: ['latin'] })
+const lb = Libre_Baskerville({ subsets: ['latin'] })
 const nunito = Nunito({ subsets: ['latin'] })
 
 export default function LandingPage() {
@@ -20,7 +20,7 @@ export default function LandingPage() {
         </div>
         <div className="mt-20 w-full flex gap-12">
           <div>
-            <h1 className={`${fraunces.className} mt-20 text-6xl font-bold text-rose-800`}>Your cookbook for the modern kitchen</h1>
+            <h1 className={`${lb.className} mt-20 text-6xl font-bold text-rose-800`}>Your cookbook for the modern kitchen</h1>
             <p className='mt-8 text-lg text-gray-700'>Save, organise, and cook from all your recipes in one beautiful place. Import from any website in seconds.</p>
             <div className='mt-8 flex gap-4'>
               <PrimaryButton text='Start for free' />

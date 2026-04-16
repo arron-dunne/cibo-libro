@@ -1,6 +1,6 @@
 export function PrimaryButton({ text }: { text: string }) {
   return (
-    <div className="px-5 py-3 rounded-full bg-linear-to-r from-orange-500 to-rose-500 border border-white/70 font-bold text-white">
+    <div className="w-max px-5 py-3 rounded-full bg-linear-to-r from-orange-500 to-rose-500 border border-white/70 font-bold text-white">
       { text }
     </div>
   );
@@ -8,7 +8,7 @@ export function PrimaryButton({ text }: { text: string }) {
 
 export function SecondaryButton({ text }: { text: string }) {
   return (
-    <div className="px-5 py-3 rounded-full bg-white/50 border border-orange-300 font-bold text-orange-500">
+    <div className="w-max px-5 py-3 rounded-full bg-white/50 border border-orange-300 font-bold text-orange-500">
       { text }
     </div>
   );
@@ -16,7 +16,7 @@ export function SecondaryButton({ text }: { text: string }) {
 
 export function TertiaryButton({ text }: { text: string }) {
   return (
-    <div className="px-5 py-3 rounded-full font-bold text-orange-500 underline">
+    <div className="w-max px-5 py-3 rounded-full font-bold text-orange-500 underline">
       { text }
     </div>
   );

@@ -30,9 +30,9 @@ The abstract features are in bold with some examples of features and how we coul
 
 ### UI/UX
 
-The aesthetic is warm, rounded, and premium — food-forward without being cold or clinical.
+The aesthetic is playful, rounded, and premium with subtle colors in the background — food-forward without being cold or clinical.
 
-**Palette:** Orange-to-rose gradient as the primary brand colour (`from-orange-400 via-orange-500 to-rose-500`). White cards and surfaces sit on top of the gradient background. Zinc greys (`zinc-600`, `zinc-900`) for text. Rose accents for tags and interactive highlights.
+**Palette:** light pastel colors so attention isnt drawn away from the main components on the page. White cards and surfaces sit on top of the gradient background. Zinc greys (`zinc-600`, `zinc-900`) for text. Rose accents for tags and interactive highlights.
 
 **Background:** Fixed full-screen gradient with a soft blur orb (`bg-orange-200/35 blur-3xl`) for depth. Inspired by Apple liquid glass — layered, not flat.
 
@@ -99,26 +99,6 @@ The MVP is a work in progess and you are encouraged to discuss modifications, ad
 #### MVP Business Model
 
 The MVP does not have to be revenue-generating and is focussed more on user sign-up and retention.
-
-
-## Commands
-
-```bash
-npm run dev          # Start dev server
-npm run build        # Production build
-npm run lint         # ESLint
-npm run test:unit    # Vitest unit tests
-npm run test:int     # Vitest integration tests
-```
-
-**Database:**
-
-```bash
-npx prisma migrate dev     # Create/apply migrations (dev)
-npx prisma migrate deploy  # Apply migrations (prod)
-npx prisma generate        # Regenerate Prisma client
-npx prisma studio          # Database GUI
-```
 
 ## Architecture
 
