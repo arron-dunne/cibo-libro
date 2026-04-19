@@ -31,9 +31,26 @@ export default function LandingPage() {
           <Image src="/phone.png" alt="img" width={1000} height={1000} className='absolute -right-16 -bottom-40 w-125 shrink-0'/>
         </div>
       </div>
-      {/* features */}
-      <div className='w-full h-screen bg-red-100'>
-        Hello
+      {/* How it works */}
+      <div className='w-full min-h-screen bg-red-100 py-20 px-14'>
+        <h2 className={`${lb.className} text-4xl font-bold text-rose-800 text-center`}>How it works</h2>
+        <div className='mt-16 flex gap-8 justify-center'>
+          <div className='flex-1 max-w-sm bg-white rounded-3xl p-10 border border-rose-100 flex flex-col items-center'>
+            <Image src='/icons/salad.png' alt='Gather' width={200} height={200} className='w-40 h-40 object-contain' />
+            <h3 className='mt-6 text-2xl font-bold text-gray-900'>Gather</h3>
+            <p className='mt-6 text-gray-700 text-center'>Import recipes from anywhere and add your own to your personal cookbook. Never lose a recipe again.</p>
+          </div>
+          <div className='flex-1 max-w-sm bg-white rounded-3xl p-10 border border-rose-100 flex flex-col items-center'>
+            <Image src='/icons/cooking.png' alt='Cook' width={200} height={200} className='w-40 h-40 object-contain' />
+            <h3 className='mt-6 text-2xl font-bold text-gray-900'>Cook</h3>
+            <p className='mt-6 text-gray-700 text-center'>Search, sort, and filter your recipes to get cooking in no time.</p>
+          </div>
+          <div className='flex-1 max-w-sm bg-white rounded-3xl p-10 border border-rose-100 flex flex-col items-center'>
+            <Image src='/icons/food.png' alt='Enjoy' width={200} height={200} className='w-40 h-40 object-contain' />
+            <h3 className='mt-6 text-2xl font-bold text-gray-900'>Enjoy</h3>
+            <p className='mt-6 text-gray-700 text-center'>No ads, no paywalls, no clutter. Just your recipes, ready whenever you are.</p>
+          </div>
+        </div>
       </div>
     </div>
   );
