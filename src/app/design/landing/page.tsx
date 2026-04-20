@@ -1,9 +1,11 @@
 import { PrimaryButton, SecondaryButton } from '@/app/components/page';
-import { Libre_Baskerville, Nunito } from 'next/font/google'
+import { Libre_Baskerville, Nunito, Oregano, Kavoon } from 'next/font/google';
 import Image from 'next/image';
 
-const lb = Libre_Baskerville({ subsets: ['latin'] })
-const nunito = Nunito({ subsets: ['latin'] })
+const lb = Libre_Baskerville({ subsets: ['latin'] });
+const nunito = Nunito({ subsets: ['latin'] });
+const oregano = Oregano({ weight: '400' });
+const kavoon = Kavoon({ weight: '400' });
 
 export default function LandingPage() {
   return (
@@ -20,37 +22,137 @@ export default function LandingPage() {
         </div>
         <div className="mt-20 w-full flex gap-12">
           <div>
-            <h1 className={`${lb.className} mt-20 text-6xl font-bold text-rose-800`}>Your cookbook for the modern kitchen</h1>
-            <p className='mt-8 text-lg text-gray-700'>Save, organise, and cook from all your recipes in one beautiful place. Import from any website in seconds.</p>
-            <div className='mt-8 flex gap-4'>
-              <PrimaryButton text='Start for free' />
-              <SecondaryButton text='See how it works' />
+            <h1 className={`${kavoon.className} mt-20 text-6xl font-bold text-rose-800`}>
+              Your cookbook for the modern kitchen
+            </h1>
+            <p className="mt-8 text-lg text-gray-700">
+              Save, organise, and cook from all your recipes in one beautiful place. Import from any
+              website in seconds.
+            </p>
+            <div className="mt-8 flex gap-4">
+              <PrimaryButton text="Start for free" />
+              <SecondaryButton text="See how it works" />
             </div>
           </div>
-          <Image src="/newhero.png" alt="img" width={1000} height={1000} className='w-150 mr-20 shrink-0 rounded-[100] shadow-[0_10px_25px_rgba(255,105,0,0.25)]'/>
-          <Image src="/phone.png" alt="img" width={1000} height={1000} className='absolute -right-16 -bottom-40 w-125 shrink-0'/>
+          <Image
+            src="/newhero.png"
+            alt="img"
+            width={1000}
+            height={1000}
+            className="w-150 mr-20 shrink-0 rounded-[100] shadow-[0_10px_25px_rgba(255,105,0,0.25)]"
+          />
+          <Image
+            src="/phone.png"
+            alt="img"
+            width={1000}
+            height={1000}
+            className="absolute -right-16 -bottom-40 w-125 shrink-0"
+          />
         </div>
       </div>
       {/* How it works */}
-      <div className='w-full min-h-screen bg-red-100 py-20 px-14'>
-        <h2 className={`${lb.className} text-4xl font-bold text-rose-800 text-center`}>How it works</h2>
-        <div className='mt-16 flex gap-8 justify-center'>
-          <div className='flex-1 max-w-sm bg-white rounded-3xl p-10 border border-rose-100 flex flex-col items-center'>
-            <Image src='/icons/salad.png' alt='Gather' width={200} height={200} className='w-40 h-40 object-contain' />
-            <h3 className='mt-6 text-2xl font-bold text-gray-900'>Gather</h3>
-            <p className='mt-6 text-gray-700 text-center'>Import recipes from anywhere and add your own to your personal cookbook. Never lose a recipe again.</p>
+      <div className="w-full min-h-screen bg-red-100 py-20 px-14">
+        <h2 className={`${oregano.className} text-4xl font-bold text-rose-800 text-center`}>
+          What is CiboLibro?
+        </h2>
+        <div className="mt-16 flex gap-8 justify-center">
+          <div className="flex-1 max-w-sm bg-white rounded-3xl p-10 border border-rose-300 flex flex-col items-center">
+            <Image
+              src="/icons/salad.png"
+              alt="Gather"
+              width={200}
+              height={200}
+              className="w-24 h-24 object-contain"
+            />
+            <div className="mt-6 flex gap-4 items-center">
+              <div className="rounded-full w-8 h-8 bg-linear-to-br from-orange-500 to-rose-500 text-white font-bold flex justify-center items-center">
+                1
+              </div>
+              <h3 className="text-3xl font-bold text-gray-900">Gather</h3>
+            </div>
+            <p className="mt-6 text-gray-700 text-center">
+              <b>Import</b> recipes from anywhere in seconds and <b>add your own</b> to your
+              personal cookbook so you never lose a recipe again.
+            </p>
           </div>
-          <div className='flex-1 max-w-sm bg-white rounded-3xl p-10 border border-rose-100 flex flex-col items-center'>
-            <Image src='/icons/cooking.png' alt='Cook' width={200} height={200} className='w-40 h-40 object-contain' />
-            <h3 className='mt-6 text-2xl font-bold text-gray-900'>Cook</h3>
-            <p className='mt-6 text-gray-700 text-center'>Search, sort, and filter your recipes to get cooking in no time.</p>
+          <div className="flex-1 max-w-sm bg-white rounded-3xl p-10 border border-rose-300 flex flex-col items-center">
+            <Image
+              src="/icons/cooking.png"
+              alt="Cook"
+              width={200}
+              height={200}
+              className="w-24 h-24 object-contain"
+            />
+            <div className="mt-6 flex gap-4 items-center">
+              <div className="rounded-full w-8 h-8 bg-linear-to-br from-orange-500 to-rose-500 text-white font-bold flex justify-center items-center">
+                2
+              </div>
+              <h3 className="text-3xl font-bold text-gray-900">Cook</h3>
+            </div>
+            <p className="mt-6 text-gray-700 text-center">
+              <b>Search</b>, <b>sort</b>, and <b>filter</b> your recipes to get cooking in no time.
+              Use <b>Cook Mode</b> to follow recipes step-by-step at the stove.
+            </p>
           </div>
-          <div className='flex-1 max-w-sm bg-white rounded-3xl p-10 border border-rose-100 flex flex-col items-center'>
-            <Image src='/icons/food.png' alt='Enjoy' width={200} height={200} className='w-40 h-40 object-contain' />
-            <h3 className='mt-6 text-2xl font-bold text-gray-900'>Enjoy</h3>
-            <p className='mt-6 text-gray-700 text-center'>No ads, no paywalls, no clutter. Just your recipes, ready whenever you are.</p>
+          <div className="flex-1 max-w-sm bg-white rounded-3xl p-10 border border-rose-300 flex flex-col items-center">
+            <Image
+              src="/icons/food.png"
+              alt="Enjoy"
+              width={200}
+              height={200}
+              className="w-24 h-24 object-contain"
+            />
+            <div className="mt-6 flex gap-4 items-center">
+              <div className="rounded-full w-8 h-8 bg-linear-to-br from-orange-500 to-rose-500 text-white font-bold flex justify-center items-center">
+                3
+              </div>
+              <h3 className="text-3xl font-bold text-gray-900">Enjoy</h3>
+            </div>
+            <p className="mt-6 text-gray-700 text-center">
+              <b>No ads</b>, <b>no paywalls</b> and no clutter. Just your recipes, ready whenever you are.
+            </p>
           </div>
         </div>
+      </div>
+      {/* Features */}
+      <div className="w-full bg-[#FFEEE3] py-20 px-14 relative">
+        <h2 className={`${lb.className} text-4xl font-bold text-rose-800`}>
+          Loads more features are in the oven
+        </h2>
+        <p className="mt-6 text-lg text-gray-700">
+          Cibo Libro is just getting started. Join now to be an early adopter and request future
+          features.
+        </p>
+        <div className="mt-12 flex flex-col gap-4 max-w-3xl">
+          {[
+            'Shopping List',
+            'Meal planner',
+            'More ways to import',
+            'Cooking courses',
+            'Share your recipes with others',
+            'And many more...',
+          ].map((feature, i) => (
+            <div
+              key={feature}
+              className="bg-white rounded-2xl px-8 py-4 flex items-center gap-4 w-112"
+              style={{ marginLeft: `${i * 100}px` }}
+            >
+              <span className="w-3 h-3 rounded-full bg-orange-500 shrink-0" />
+              <span className="text-2xl text-gray-900">{feature}</span>
+            </div>
+          ))}
+        </div>
+        <div className="mt-8 flex justify-end items-center gap-3 text-lg">
+          <span className="text-gray-700">What would you love to see?</span>
+          <span className="text-orange-500 font-semibold">Request a feature</span>
+        </div>
+        <Image
+          src="/icons/dough.png"
+          alt="dough"
+          width={400}
+          height={400}
+          className="absolute right-20 top-1/2 -translate-y-1/2 w-40 h-40 object-contain pointer-events-none"
+        />
       </div>
     </div>
   );
