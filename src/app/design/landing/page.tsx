@@ -2,10 +2,7 @@ import { PrimaryButton, SecondaryButton } from '@/app/components/page';
 import { Libre_Baskerville, Nunito, Oregano, Kavoon } from 'next/font/google';
 import Image from 'next/image';
 
-const lb = Libre_Baskerville({ subsets: ['latin'] });
 const nunito = Nunito({ subsets: ['latin'] });
-const oregano = Oregano({ weight: '400' });
-const kavoon = Kavoon({ weight: '400' });
 
 export default function LandingPage() {
   return (
@@ -39,7 +36,7 @@ export default function LandingPage() {
             alt="img"
             width={1000}
             height={1000}
-            className="w-150 mr-20 shrink-0 rounded-[100] shadow-[0_10px_25px_rgba(255,105,0,0.25)]"
+            className="w-150 mr-20 shrink-0 rounded-[80] shadow-[0_10px_25px_rgba(255,105,0,0.25)]"
           />
         </div>
       </div>
@@ -108,7 +105,7 @@ export default function LandingPage() {
         </div>
       </div>
       {/* Features */}
-      <div className="w-full bg-[#FFEEE3] py-20 px-32 relative">
+      <div className="w-full bg-[#FFEEE3] py-20 px-40 relative">
         <h2 className={`${nunito.className} text-4xl font-bold text-rose-600`}>
           Loads more features are in the oven
         </h2>
@@ -116,7 +113,7 @@ export default function LandingPage() {
           Cibo Libro is just getting started. Join now to be an early adopter and request future
           features.
         </p>
-        <div className="mt-12 flex flex-col gap-4 max-w-3xl">
+        <div className="flex mt-12 flex-col gap-4">
           {[
             'Shopping List',
             'Meal planner',
@@ -127,15 +124,15 @@ export default function LandingPage() {
           ].map((feature, i) => (
             <div
               key={feature}
-              className="bg-white rounded-2xl px-8 py-4 flex items-center gap-4 w-md"
-              style={{ marginLeft: `${i * 100}px` }}
+              className="bg-white rounded-2xl px-8 py-4 flex items-center gap-4 w-md border border-orange-200"
+              style={{ marginLeft: `calc((100% - 28rem) / 5 * ${i})` }}
             >
-              <span className="w-3 h-3 rounded-full bg-orange-500 shrink-0" />
+              <span className="w-3 h-3 rounded-full bg-orange-500 underline shrink-0" />
               <span className="text-2xl text-gray-900">{feature}</span>
             </div>
           ))}
         </div>
-        <div className="mt-8 flex justify-end items-center gap-3 text-lg">
+        <div className="mt-4 pr-6 flex justify-end items-center gap-3 text-lg">
           <span className="text-gray-700">What would you love to see?</span>
           <span className="text-orange-500 font-semibold">Request a feature</span>
         </div>
@@ -144,12 +141,12 @@ export default function LandingPage() {
           alt="dough"
           width={400}
           height={400}
-          className="absolute right-20 top-1/2 -translate-y-1/2 w-40 h-40 object-contain pointer-events-none"
+          className="absolute right-32 top-2/5 -translate-y-1/2 w-56 h-56 object-contain pointer-events-none"
         />
       </div>
       {/* CTA / Register */}
       <div className="w-full bg-rose-50 py-24 px-14 flex flex-col items-center">
-        <h2 className={`${nunito.className} text-4xl font-bold text-rose-500 text-center`}>
+        <h2 className={`${nunito.className} text-4xl font-bold text-rose-600 text-center`}>
           Ready to get cooking?
         </h2>
         <p className="mt-4 text-gray-500 text-center max-w-sm">
