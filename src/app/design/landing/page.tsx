@@ -22,10 +22,10 @@ export default function LandingPage() {
         </div>
         <div className="mt-20 w-full flex gap-12">
           <div>
-            <h1 className={`${kavoon.className} mt-20 text-6xl font-bold text-rose-800`}>
+            <h1 className={`${nunito.className} mt-20 font-bold text-6xl text-rose-600`}>
               Your cookbook for the modern kitchen
             </h1>
-            <p className="mt-8 text-lg text-gray-700">
+            <p className="mt-8 text-lg text-gray-600">
               Save, organise, and cook from all your recipes in one beautiful place. Import from any
               website in seconds.
             </p>
@@ -41,18 +41,11 @@ export default function LandingPage() {
             height={1000}
             className="w-150 mr-20 shrink-0 rounded-[100] shadow-[0_10px_25px_rgba(255,105,0,0.25)]"
           />
-          <Image
-            src="/phone.png"
-            alt="img"
-            width={1000}
-            height={1000}
-            className="absolute -right-16 -bottom-40 w-125 shrink-0"
-          />
         </div>
       </div>
       {/* How it works */}
       <div className="w-full min-h-screen bg-red-100 py-20 px-14">
-        <h2 className={`${oregano.className} text-4xl font-bold text-rose-800 text-center`}>
+        <h2 className={`${nunito.className} text-4xl font-bold text-rose-600 text-center`}>
           What is CiboLibro?
         </h2>
         <div className="mt-16 flex gap-8 justify-center">
@@ -116,7 +109,7 @@ export default function LandingPage() {
       </div>
       {/* Features */}
       <div className="w-full bg-[#FFEEE3] py-20 px-14 relative">
-        <h2 className={`${lb.className} text-4xl font-bold text-rose-800`}>
+        <h2 className={`${nunito.className} text-4xl font-bold text-rose-600`}>
           Loads more features are in the oven
         </h2>
         <p className="mt-6 text-lg text-gray-700">
@@ -134,7 +127,7 @@ export default function LandingPage() {
           ].map((feature, i) => (
             <div
               key={feature}
-              className="bg-white rounded-2xl px-8 py-4 flex items-center gap-4 w-112"
+              className="bg-white rounded-2xl px-8 py-4 flex items-center gap-4 w-md"
               style={{ marginLeft: `${i * 100}px` }}
             >
               <span className="w-3 h-3 rounded-full bg-orange-500 shrink-0" />
