@@ -108,7 +108,7 @@ export default function LandingPage() {
         </div>
       </div>
       {/* Features */}
-      <div className="w-full bg-[#FFEEE3] py-20 px-14 relative">
+      <div className="w-full bg-[#FFEEE3] py-20 px-32 relative">
         <h2 className={`${nunito.className} text-4xl font-bold text-rose-600`}>
           Loads more features are in the oven
         </h2>
@@ -178,7 +178,7 @@ export default function LandingPage() {
               className="w-full bg-white rounded-2xl px-5 py-4 border border-rose-200"
             />
           </div>
-          <button className="w-full mt-2 bg-gradient-to-r from-orange-500 to-rose-500 text-white font-bold text-lg py-4 rounded-full hover:brightness-90 active:brightness-75 transition-all">
+          <button className="w-full mt-2 bg-linear-to-r from-orange-500 to-rose-500 text-white font-bold text-lg py-4 rounded-full hover:brightness-90 active:brightness-75 transition-all">
             Create account
           </button>
         </div>
