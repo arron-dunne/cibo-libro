@@ -147,6 +147,48 @@ export default function LandingPage() {
           className="absolute right-20 top-1/2 -translate-y-1/2 w-40 h-40 object-contain pointer-events-none"
         />
       </div>
+      {/* CTA / Register */}
+      <div className="w-full bg-rose-50 py-24 px-14 flex flex-col items-center">
+        <h2 className={`${nunito.className} text-4xl font-bold text-rose-500 text-center`}>
+          Ready to get cooking?
+        </h2>
+        <p className="mt-4 text-gray-500 text-center max-w-sm">
+          Save hundreds of recipes, completely free with no ads. Start your personal digital
+          cookbook now
+        </p>
+        <div className="mt-10 flex flex-col gap-6 w-full max-w-xs">
+          <div className="flex flex-col gap-2">
+            <label className="text-gray-900 text-lg">Email</label>
+            <input
+              type="email"
+              className="w-full bg-white rounded-2xl px-5 py-4 border border-rose-200"
+            />
+          </div>
+          <div className="flex flex-col gap-2">
+            <label className="text-gray-900 text-lg">Password</label>
+            <input
+              type="password"
+              className="w-full bg-white rounded-2xl px-5 py-4 border border-rose-200"
+            />
+          </div>
+          <div className="flex flex-col gap-2">
+            <label className="text-gray-900 text-lg">Confirm Password</label>
+            <input
+              type="password"
+              className="w-full bg-white rounded-2xl px-5 py-4 border border-rose-200"
+            />
+          </div>
+          <button className="w-full mt-2 bg-gradient-to-r from-orange-500 to-rose-500 text-white font-bold text-lg py-4 rounded-full hover:brightness-90 active:brightness-75 transition-all">
+            Create account
+          </button>
+        </div>
+        <div className="mt-10 flex items-center gap-3 text-base">
+          <span className="text-gray-500">Still not sure how it works?</span>
+          <span className="text-rose-500 font-semibold underline underline-offset-2 cursor-pointer">
+            Explore a demo cookbook to learn more
+          </span>
+        </div>
+      </div>
     </div>
   );
 }
