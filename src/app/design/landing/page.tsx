@@ -1,8 +1,9 @@
 import { PrimaryButton, SecondaryButton } from '@/app/components/page';
-import { Libre_Baskerville, Nunito, Oregano, Kavoon } from 'next/font/google';
+import { Libre_Baskerville, Nunito, Oregano, Kavoon, Sansita } from 'next/font/google';
 import Image from 'next/image';
 
 const nunito = Nunito({ subsets: ['latin'] });
+const san = Sansita({ weight: ["400", "700"]});
 
 export default function LandingPage() {
   return (
@@ -19,7 +20,7 @@ export default function LandingPage() {
         </div>
         <div className="mt-20 w-full flex gap-12">
           <div>
-            <h1 className={`${nunito.className} mt-20 font-bold text-6xl text-rose-600`}>
+            <h1 className={`${san.className} mt-20 font-bold text-6xl text-rose-600`}>
               Your cookbook for the modern kitchen
             </h1>
             <p className="mt-8 text-lg text-gray-600">
@@ -42,7 +43,7 @@ export default function LandingPage() {
       </div>
       {/* How it works */}
       <div className="w-full min-h-screen bg-red-100 py-20 px-14">
-        <h2 className={`${nunito.className} text-4xl font-bold text-rose-600 text-center`}>
+        <h2 className={`${san.className} text-4xl font-bold text-rose-600 text-center`}>
           What is CiboLibro?
         </h2>
         <div className="mt-16 flex gap-8 justify-center">
