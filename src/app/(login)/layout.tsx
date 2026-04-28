@@ -20,8 +20,8 @@ export default function LoginLayout({
           />
         </div>
 
-        {/* Floating panel */}
-        <section className="w-full max-w-md overflow-hidden rounded-3xl border border-white/70 bg-white/95 p-10 shadow-lg backdrop-blur">
+        {/* Form panel */}
+        <section className="w-full max-w-md">
           {children}
         </section>
       </div>

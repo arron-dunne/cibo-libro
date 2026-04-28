@@ -18,7 +18,7 @@ export default async function LoginPage({
     <>
       {/* Header */}
       <header className="text-center">
-        <h1 className="text-4xl font-bold">Welcome</h1>
+        <h1 className="text-5xl text-rose-600 font-bold">Welcome</h1>
         <p className="mt-1 text-gray-600">
           Sign in to your cookbook to save and cook recipes.
         </p>
