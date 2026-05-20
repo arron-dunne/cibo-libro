@@ -2,14 +2,12 @@ import "@/styles/globals.css";
 import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import type { Metadata } from "next";
-import { Nunito } from "next/font/google";
+import { nunito } from "./fonts";
 
 export const metadata: Metadata = {
   title: "Cibo Libro",
   description: "A digital cookbook.",
 };
-
-const nunito = Nunito({ subsets: ["latin"], variable: "--font-nunito" });
 
 export default async function RootLayout({
   children,
@@ -24,7 +22,7 @@ export default async function RootLayout({
 
         <div className="min-h-screen antialiased">
           {/* Background */}
-          <div className="fixed h-full w-full -z-10 overscroll-none inset-0 bg-[#FFEEE3]">
+          <div className="fixed h-full w-full -z-10 overscroll-none inset-0 bg-linear-to-br from-orange-100 to-rose-200">
           </div>
 
           {children}
