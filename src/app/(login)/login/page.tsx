@@ -3,7 +3,7 @@ import { SubmitButton } from "../components/SubmitButton";
 import { CircleAlert } from "lucide-react";
 import { sansita } from "@/app/fonts";
 import { PrimaryButton, TeriaryButton } from "@/app/components/buttons/Buttons";
-import { Header1 } from "@/app/components/text/Headers";
+import { Header, SubHeader } from "@/app/components/text/Headers";
 
 export default async function LoginPage({
   searchParams,
@@ -21,10 +21,8 @@ export default async function LoginPage({
     <>
       {/* Header */}
       <header className="text-center">
-        <Header1 className="mb-2">Welcome back</Header1>
-        <p className="text-lg text-slate-600 font-semibold">
-          Sign in to to get cooking again.
-        </p>
+        <Header className="mb-2">Welcome back</Header>
+        <SubHeader>Sign in to to get cooking again.</SubHeader>
       </header>
 
       {/* Status banners */}

@@ -13,7 +13,8 @@ import {
   RecipeCard,
   RecipeCardProps,
 } from "@/app/components/recipes/RecipeCard";
-import { Header1 } from "@/app/components/text/Headers";
+import { Header, SubHeader } from "@/app/components/text/Headers";
+import { SecondaryButton } from "@/app/components/buttons/Buttons";
 
 export default async function HomePage() {
   const session = await auth();
@@ -43,14 +44,11 @@ export default async function HomePage() {
   return (
     <>
       {/* Header */}
-      <Header1 className="ml-1 mb-2 mt-4" >What&apos;s cooking?</Header1>
+      <Header className="ml-1 mb-2 mt-8" >What&apos;s cooking?</Header>
+      <SubHeader>Browse your cookbook, add new recipes, or import them so you never forget the food you love to cook.</SubHeader>
+      
       {/* Main actions card */}
-      <section className="w-full mt-4 rounded-3xl border border-white/70 bg-white/95 p-6 shadow-lg backdrop-blur sm:p-8">
-        <p className="text-lg font-semibold">
-          Browse your cookbook, add new recipes, or import them so you never
-          forget the food you love to cook.
-        </p>
-
+      <section className="w-full mt-4">
         <div className="mt-8 flex flex-wrap gap-4">
           <ActionButton
             href="/all"
@@ -115,17 +113,11 @@ export default async function HomePage() {
       {/* Recently Added */}
       <section className="mt-10">
         <div className="flex items-center justify-between mb-4">
-          <h2
-            className="text-4xl font-extrabold text-white tracking-wide"
-            style={{ WebkitTextStroke: "4px black", paintOrder: "stroke fill" }}
-          >
-            Recently Added
-          </h2>
-          <Link
-            href="/all?sort=created"
-            className="inline-flex items-center gap-1 rounded-full bg-linear-to-br from-slate-200 to-slate-300 border border-white/40 px-4 py-2 text-sm font-semibold text-slate-700 shadow hover:brightness-90 active:brightness-75"
-          >
-            View More <ChevronRight size={14} />
+          <Header className="ml-2" textSize="text-4xl">Recently Added</Header>
+          <Link href="/all?sort=created">
+            <SecondaryButton>
+              View More <ChevronRight size={16} />
+            </SecondaryButton>
           </Link>
         </div>
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
