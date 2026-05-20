@@ -13,6 +13,7 @@ import {
   RecipeCard,
   RecipeCardProps,
 } from "@/app/components/recipes/RecipeCard";
+import { Header1 } from "@/app/components/text/Headers";
 
 export default async function HomePage() {
   const session = await auth();
@@ -42,12 +43,7 @@ export default async function HomePage() {
   return (
     <>
       {/* Header */}
-      <h1
-        className="mt-8 ml-4 text-5xl text-white font-black"
-        style={{ WebkitTextStroke: "5px black", paintOrder: "stroke fill" }}
-      >
-        What&apos;s cooking?
-      </h1>
+      <Header1 className="ml-1 mb-2 mt-4" >What&apos;s cooking?</Header1>
       {/* Main actions card */}
       <section className="w-full mt-4 rounded-3xl border border-white/70 bg-white/95 p-6 shadow-lg backdrop-blur sm:p-8">
         <p className="text-lg font-semibold">

@@ -1,6 +1,9 @@
 import { handleSignIn } from "./actions";
 import { SubmitButton } from "../components/SubmitButton";
 import { CircleAlert } from "lucide-react";
+import { sansita } from "@/app/fonts";
+import { PrimaryButton, TeriaryButton } from "@/app/components/buttons/Buttons";
+import { Header1 } from "@/app/components/text/Headers";
 
 export default async function LoginPage({
   searchParams,
@@ -18,9 +21,9 @@ export default async function LoginPage({
     <>
       {/* Header */}
       <header className="text-center">
-        <h1 className="text-5xl text-rose-600 font-bold">Welcome</h1>
-        <p className="mt-1 text-gray-600">
-          Sign in to your cookbook to save and cook recipes.
+        <Header1 className="mb-2">Welcome back</Header1>
+        <p className="text-lg text-slate-600 font-semibold">
+          Sign in to to get cooking again.
         </p>
       </header>
 
@@ -42,9 +45,9 @@ export default async function LoginPage({
       )}
 
       {/* Form */}
-      <form action={handleSignIn} className="mt-6 space-y-5">
+      <form action={handleSignIn} className="mt-6">
         <div>
-          <label htmlFor="email" className="text-sm font-semibold">
+          <label htmlFor="email" className="ml-2 font-semibold">
             Email
           </label>
           <input
@@ -53,7 +56,6 @@ export default async function LoginPage({
             type="email"
             required
             autoComplete="email"
-            placeholder="you@example.com"
             className={`mt-1 px-4 py-3 w-full rounded-2xl border bg-white
               outline-none focus:ring-2
               ${error === "invalid" ? "border-2 ring-blue-400 border-red-400" : "border-zinc-300 focus:ring-blue-500"}`}
@@ -66,8 +68,8 @@ export default async function LoginPage({
           )}
         </div>
 
-        <div>
-          <label htmlFor="password" className="text-sm font-semibold">
+        <div className="mt-6">
+          <label htmlFor="password" className="ml-2 font-semibold">
             Password
           </label>
           <input
@@ -76,35 +78,28 @@ export default async function LoginPage({
             type="password"
             required
             autoComplete="current-password"
-            placeholder="••••••••"
             className={`mt-1 px-4 py-3 w-full rounded-2xl border bg-white
               outline-none focus:ring-2
               ${error === "invalid" ? "border-2 ring-blue-400 border-red-400" : "border-zinc-300 focus:ring-blue-500"}`}
           />
         </div>
 
-        <div className="flex items-center justify-between text-gray-600">
-          <a
-            href="/forgot"
-            className=" hover:underline transition hover:text-gray-700"
-          >
-            Forgot password
-          </a>
-          <span className="text-gray-600">
-            Need help?{" "}
-            <a href="/support" className="text-orange-700 hover:underline">
-              Support
-            </a>
-          </span>
+        <div className="mt-8">
+          <SubmitButton text="Login"/>
         </div>
 
-        <SubmitButton text="Login" pendingText="Logging in" />
+        {/* <SubmitButton text="Login" pendingText="Logging in" /> */}
 
-        <div className="flex items-center justify-center gap-2 text-gray-600">
-          New here?
-          <a href="/register" className="font-medium text-orange-700 hover:underline">
-            Create an account
+        <div className="mt-6 flex px-2 items-center justify-between text-gray-600">
+          <a href="/forgot">
+            <TeriaryButton>Forgot password</TeriaryButton>
           </a>
+          <div className="flex gap-2 items-center">
+            <span className="text-slate-600 font-semibold">Need help?</span>
+            <a href="/support">
+              <TeriaryButton>Support</TeriaryButton>
+            </a>
+          </div>
         </div>
       </form>
     </>

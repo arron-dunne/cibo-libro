@@ -14,6 +14,7 @@ import { deleteRecipe } from "./actions";
 import { DeleteButton } from "./DeleteButton";
 import { FavouriteButton } from "./FavouriteButton";
 import { getHostname } from "@/lib/hostname";
+import { SecondaryButton, TeriaryButton } from "@/app/components/buttons/Buttons";
 
 export default async function ViewRecipePage({
   params,
@@ -64,20 +65,20 @@ export default async function ViewRecipePage({
       </Link>
 
       {/* Hero section */}
-      <section className="relative mt-4 overflow-hidden rounded-4xl border border-white/60 bg-white shadow-2xl flex flex-col md:flex-row">
+      <section className="relative mt-4 overflow-hidden rounded-4xl border border-white/60 bg-white flex flex-col md:flex-row">
+        
         {/* Source URL */}
         {recipe.sourceUrl && (
           <Link
             href={recipe.sourceUrl}
             target="_blank"
             aria-label="View original"
-            className="absolute top-4 right-4 px-3 py-2 flex gap-2 items-center
-          bg-linear-to-br from-slate-100 to-slate-200
-          rounded-full text-slate-800 border border-slate-300
-          cursor-pointer hover:brightness-90 active:brightness-75"
+            className="absolute top-4 right-6"
           >
-            <LinkIcon size={20} />
-            <p className="text-sm">{getHostname(recipe.sourceUrl)}</p>
+            <TeriaryButton>
+              <span className="text-sm">{getHostname(recipe.sourceUrl)}</span>
+              <LinkIcon size={20} />
+            </TeriaryButton>
           </Link>
         )}
 
@@ -95,12 +96,12 @@ export default async function ViewRecipePage({
         {/* Details */}
         <div className="w-full md:w-1/2 mt-4 md:mt-8 p-5 md:p-8 flex flex-col justify-between">
           <div>
-            <h1 className="text-2xl md:text-5xl font-extrabold leading-tight ">
+            <h1 className="text-2xl md:text-4xl font-extrabold leading-tight ">
               {recipe.title}
             </h1>
 
             {recipe.description ? (
-              <p className="mt-4 max-w-prose text-sm text-slate-600">
+              <p className="mt-4 max-w-prose text-md text-slate-600">
                 {recipe.description}
               </p>
             ) : (
@@ -138,17 +139,16 @@ export default async function ViewRecipePage({
 
           {/* Button bar  */}
           <div className="mt-6 flex gap-2">
-            <FavouriteButton slug={slug} initialIsFavourite={recipe.isFavourite} />
+            <FavouriteButton
+              slug={slug}
+              initialIsFavourite={recipe.isFavourite}
+            />
 
-            <Link
-              href={`/edit/${slug}`}
-              className="px-3 h-11 flex gap-2 items-center
-                bg-linear-to-br from-slate-100 to-slate-200
-                rounded-full text-slate-800 border border-slate-300
-                cursor-pointer hover:brightness-90 active:brightness-75"
-            >
-              <Pencil size={20} />
-              <span className="hidden lg:block">Edit</span>
+            <Link href={`/edit/${slug}`}>
+              <SecondaryButton>
+                <Pencil size={20} />
+                <span className="hidden lg:block">Edit</span>
+              </SecondaryButton>
             </Link>
 
             <DeleteButton slug={slug} action={deleteRecipe} />
@@ -182,13 +182,13 @@ export default async function ViewRecipePage({
 
 function IngredientsSection({ ingredients }: { ingredients: string[] }) {
   return (
-    <section className="h-max w-full md:w-1/3 lg:w-2/5 rounded-4xl border border-white/60 bg-white shadow-xl p-6">
-      <h2 className="mb-4 ml-2 text-2xl font-extrabold">Ingredients</h2>
+    <section className="h-max w-full md:w-1/3 lg:w-2/5 rounded-4xl bg-white p-8">
+      <h2 className="mb-4 text-2xl font-extrabold">Ingredients</h2>
       {ingredients.length ? (
-        <ul className="space-y-4">
+        <ul className="ml-2 space-y-4">
           {ingredients.map((ing, idx) => (
-            <li key={`ing-${idx}`} className="flex gap-2">
-              <div className="h-2 w-2 mt-2 shrink-0 rounded-full bg-orange-400" />
+            <li key={`ing-${idx}`} className="flex gap-4 text-md">
+              <div className="h-2 w-2 mt-2 shrink-0 rounded-full bg-linear-to-r from-orange-500 to-rose-500" />
               {ing}
             </li>
           ))}
@@ -202,13 +202,13 @@ function IngredientsSection({ ingredients }: { ingredients: string[] }) {
 
 function StepsSection({ steps }: { steps: string[] }) {
   return (
-    <section className="h-max w-full md:w-2/3 lg:w-3/5 rounded-4xl border border-white/60 bg-white shadow-xl p-6">
+    <section className="h-max w-full md:w-2/3 lg:w-3/5 rounded-4xl border border-white/60 bg-white p-6">
       <h2 className="mb-4 ml-2 text-2xl font-extrabold">Steps</h2>
       {steps.length ? (
-        <ol className="relative space-y-6 before:absolute before:left-2.5 before:top-1 before:h-[98%] before:w-1 before:rounded before:bg-linear-to-b before:from-orange-200 before:to-rose-200">
+        <ol className="relative space-y-6 ml-2 before:absolute before:left-2.5 before:top-1 before:h-[98%] before:w-1 before:rounded before:bg-linear-to-b before:from-orange-200 before:to-rose-200">
           {steps.map((s, i) => (
             <li key={i} className="flex gap-4">
-              <div className="h-6 w-6 z-10 mt-0.5 text-center shrink-0 rounded-full bg-orange-500 font-extrabold text-white shadow">
+              <div className="h-6 w-6 z-10 mt-0.5 text-center shrink-0 rounded-full bg-linear-to-r from-orange-500 to-rose-500 font-extrabold text-white shadow">
                 {i + 1}
               </div>
               <p className="text-base leading-relaxed">{s}</p>

@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { Heart } from "lucide-react";
 import { setRecipeFavourite } from "./actions";
+import { SecondaryButton } from "@/app/components/buttons/Buttons";
 
 export function FavouriteButton({
   slug,
@@ -20,17 +21,18 @@ export function FavouriteButton({
   };
 
   return (
-    <button
-      onClick={handleClick}
-      aria-label={isFavourite ? "Remove from favourites" : "Add to favourites"}
-      className="px-3 h-11 flex gap-2 items-center rounded-full border cursor-pointer hover:brightness-90 active:brightness-75 bg-linear-to-br from-slate-100 to-slate-200 text-slate-800 border-slate-300"
-    >
+    // <button
+    //   onClick={handleClick}
+    //   aria-label={isFavourite ? "Remove from favourites" : "Add to favourites"}
+    //   className="px-3 h-11 flex gap-2 items-center rounded-full border cursor-pointer hover:brightness-90 active:brightness-75 bg-linear-to-br from-slate-100 to-slate-200 text-slate-800 border-slate-300"
+    // >
+    <SecondaryButton onClick={handleClick}>
       <Heart
         size={20}
         className={isFavourite ? "text-rose-500" : ""}
         fill={isFavourite ? "currentColor" : "none"}
       />
       <span className="hidden lg:block">Favourite</span>
-    </button>
+    </SecondaryButton>
   );
 }
