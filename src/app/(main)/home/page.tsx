@@ -6,6 +6,7 @@ import {
   LucideProps,
   PlusCircle,
   Search,
+  Tag,
 } from "lucide-react";
 import Link from "next/link";
 import { prisma } from "@/lib/prisma";
@@ -14,7 +15,8 @@ import {
   RecipeCardProps,
 } from "@/app/components/recipes/RecipeCard";
 import { Header, SubHeader } from "@/app/components/text/Headers";
-import { SecondaryButton } from "@/app/components/buttons/Buttons";
+import { PrimaryButton, SecondaryButton } from "@/app/components/buttons/Buttons";
+import Image from "next/image";
 
 export default async function HomePage() {
   const session = await auth();
@@ -44,8 +46,10 @@ export default async function HomePage() {
   return (
     <>
       {/* Header */}
-      <Header className="ml-1 mb-2 mt-8" >What&apos;s cooking?</Header>
-      <SubHeader>Browse your cookbook, add new recipes, or import them so you never forget the food you love to cook.</SubHeader>
+      <div className="ml-2 mt-8 space-y-2">
+        <Header>What&apos;s cooking?</Header>
+        <SubHeader>Browse your cookbook, add new recipes, or import them so you never forget the food you love to cook.</SubHeader>
+      </div>
       
       {/* Main actions card */}
       <section className="w-full mt-4">
@@ -53,54 +57,59 @@ export default async function HomePage() {
           <ActionButton
             href="/all"
             Icon={CookingPot}
-            color="bg-linear-to-br from-blue-500 to-cyan-600"
+            color="bg-linear-to-br from-blue-300 to-blue-500"
             header="View My Cookbook"
           />
           <ActionButton
             href="/add"
             Icon={PlusCircle}
-            color="bg-linear-to-br from-red-500 to-pink-600"
+            color="bg-linear-to-br from-amber-400 to-orange-600"
             header="Create a New Recipe"
           />
           <ActionButton
             href="/import"
             Icon={Import}
-            color="bg-linear-to-br from-green-500 to-lime-600"
+            color="bg-linear-to-br from-lime-400 to-green-600"
             header="Import a Recipe"
           />
         </div>
       </section>
 
       {/* Quick Search Section */}
-      <section className="mt-14 rounded-3xl border border-white/70 bg-white/95 p-6 shadow-lg backdrop-blur-lg sm:p-8">
+      <section className="mt-14 rounded-3xl border border-white/50 bg-white p-6 sm:p-8">
         <Header textSize="text-3xl">What do you feel like today?</Header>
-        {/* <SubHeader className="mt-2">Search for a recipe title or select a tag from you cookbook to jump in.</SubHeader> */}
-
+        
         {/* Search Bar */}
-        <form action="/all" method="get" className="flex gap-2 my-6">
+        <SubHeader className="mt-6 ml-2 mb-4">
+          <Search size={24}/>
+          Search your cookbook
+        </SubHeader>
+        <form action="/all" method="get" className="h-12 flex gap-2">
           <input
             type="text"
             name="search"
-            placeholder="Search your cookbook for a recipe title..."
-            className="w-full max-w-lg rounded-full border border-slate-300 bg-white py-3 px-5 font-semibold"
+            placeholder="recipe title..."
+            required
+            className="w-full max-w-lg rounded-full border border-slate-300 bg-white px-5 font-semibold placeholder:text-slate-500"
           />
-          <button
-            type="submit"
-            className="rounded-full h-12 w-12 flex items-center justify-center bg-linear-to-br from-slate-100 to-slate-200 border border-slate-300 text-black hover:cursor-pointer hover:brightness-90 active:brightness-75"
-          >
-            <Search size={20} />
-          </button>
+          <PrimaryButton type="submit" height="h-full">
+            Search
+            <ChevronRight size={20}/>
+          </PrimaryButton>
         </form>
 
         {/* Tag Cloud */}
-        <SubHeader className="ml-2 mb-4">Select a tag from your cookbook.</SubHeader>
+        <SubHeader className="mt-6 ml-2 mb-4">
+          <Tag size={24}/>
+          Filter by tags
+        </SubHeader>
         {allTags.length > 0 && (
           <div className="flex flex-wrap gap-3">
             {allTags.map((tag, i) => (
               <Link
                 key={i}
                 href={`/all?tags=${encodeURIComponent(tag)}`}
-                className="inline-flex items-center rounded-full bg-linear-to-br from-orange-100 to-rose-100 text-rose-500 border border-rose-200 px-4 py-2 font-semibold text-nowrap shadow-sm hover:brightness-95 hover:shadow-md transition"
+                className="inline-flex items-center rounded-full bg-white text-rose-500 border border-rose-300 px-4 py-2 font-semibold text-nowrap shadow-sm shadow-rose-100 hover:bg-linear-to-br hover:from-orange-50 hover:to-rose-100 hover:shadow-md transition"
               >
                 {tag}
               </Link>
@@ -114,9 +123,9 @@ export default async function HomePage() {
         <div className="flex items-center justify-between mb-4">
           <Header className="ml-2" textSize="text-4xl">Recently Added</Header>
           <Link href="/all?sort=created">
-            <SecondaryButton>
+            <PrimaryButton>
               View More <ChevronRight size={16} />
-            </SecondaryButton>
+            </PrimaryButton>
           </Link>
         </div>
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
@@ -143,7 +152,7 @@ function ActionButton({
   return (
     <Link
       href={href}
-      className={`${color} flex items-center gap-3 rounded-full px-6 py-4 text-lg font-bold text-white shadow-md border border-white/80 cursor-pointer transition hover:scale-110 active:scale-90`}
+      className={`${color} flex items-center gap-3 rounded-full px-6 py-4 text-lg text-white font-bold shadow-md border border-white/60 cursor-pointer hover:brightness-95`}
     >
       <Icon size={24} />
       {header}
