@@ -1,22 +1,26 @@
+import { LucideIcon, LucideProps } from "lucide-react";
 import React from "react";
 
 type ButtonType = "button" | "submit";
 type Size = "md" | "lg";
 
 export function PrimaryButton({
+  className,
   children,
   type="button",
   width="w-max",
+  height="h-max",
   size="md",
-  disabled=false
+  disabled=false,
 }: {
+  className?: string;
   children: React.ReactNode;
   type?: ButtonType;
   width?: string;
+  height?: string;
   size?: Size;
   disabled?: Boolean;
 }) {
-  
   let sizeStyle: string;
   switch (size) {
     case "lg":
@@ -25,15 +29,17 @@ export function PrimaryButton({
 
     case "md":
     default:
-      sizeStyle = "px-3 py-2 text-md";
+      sizeStyle = "px-4 py-2 text-md";
       break;
   }
 
-  const disabledStyle = disabled ? "cursor-wait brightness-90": "cursor-pointer hover:brightness-90 active:brightness-75"
+  const disabledStyle = disabled
+    ? "cursor-wait brightness-90"
+    : "cursor-pointer hover:brightness-90 active:brightness-75";
 
   return (
     <button
-      className={`${width} h-max ${sizeStyle} ${disabledStyle} flex no-wrap justify-center items-center gap-2 rounded-full bg-linear-to-r from-orange-500 to-rose-500 text-white font-bold`}
+      className={`${className} ${width} ${height} ${sizeStyle} ${disabledStyle} flex no-wrap justify-center items-center gap-2 rounded-full bg-linear-to-r from-orange-500 to-rose-500 text-white font-bold`}
       type={type}
     >
       {children}
@@ -54,7 +60,7 @@ export function SecondaryButton({
 }) {
   return (
     <button
-      className={`${width} h-max flex no-wrap justify-center items-center gap-2 border border-orange-500 bg-orange-50/70 rounded-full px-3 py-2 text-orange-500 font-bold cursor-pointer hover:bg-orange-100 hover:border-orange-600 hover:text-orange-600`}
+      className={`${width} h-max flex gap-2 items-center rounded-full px-3 py-2 bg-white/50 backdrop-blur-lg border border-rose-500 text-rose-500 font-bold cursor-pointer hover:bg-rose-100 hover:text-rose-600 hover:border-rose-600`}
       type={type}
       onClick={onClick}
     >

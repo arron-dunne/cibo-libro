@@ -136,8 +136,8 @@ export function ClientRecipesGrid({
 
   return (
     <div className="w-full flex flex-col gap-4">
-      {/* Filter Bar (floating pills) */}
-      <div className="sticky top-20 z-5 flex items-center gap-3 md:gap-4">
+      {/* Filter Bar */}
+      <div className="flex items-center gap-3 md:gap-4">
         {/* Search bar */}
         <label className="relative flex-1">
           <input
