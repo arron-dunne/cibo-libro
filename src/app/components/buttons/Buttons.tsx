@@ -51,16 +51,30 @@ export function SecondaryButton({
   children,
   type = "button",
   width = "w-max",
+  size = "md",
   onClick,
 }: {
   children: React.ReactNode;
   type?: ButtonType;
   width?: string;
+  size?: Size;
   onClick?: () => void;
 }) {
+  let sizeStyle: string;
+  switch (size) {
+    case "lg":
+      sizeStyle = "px-4 py-3 text-xl";
+      break;
+
+    case "md":
+    default:
+      sizeStyle = "px-3 py-2 text-md";
+      break;
+  }
+
   return (
     <button
-      className={`${width} h-max flex gap-2 items-center rounded-full px-3 py-2 bg-white/50 backdrop-blur-lg border border-rose-500 text-rose-500 font-bold cursor-pointer hover:bg-rose-100 hover:text-rose-600 hover:border-rose-600`}
+      className={`${width} ${sizeStyle} h-max flex gap-2 items-center rounded-full bg-white/50 backdrop-blur-lg border border-rose-500 text-rose-500 font-bold cursor-pointer hover:brightness-95`}
       type={type}
       onClick={onClick}
     >
@@ -72,13 +86,16 @@ export function SecondaryButton({
 export function TeriaryButton({
   children,
   type = "button",
+  textSize="text-md",
 }: {
   children: React.ReactNode;
   type?: ButtonType;
+  textSize?: string;
 }) {
+
   return (
     <button
-      className="flex no-wrap justify-center items-center gap-2 text-orange-600 font-bold underline cursor-pointer hover:text-orange-700"
+      className={`${textSize} flex no-wrap justify-center items-center gap-2 text-orange-600 font-bold underline cursor-pointer hover:text-orange-700`}
       type={type}
     >
       {children}
