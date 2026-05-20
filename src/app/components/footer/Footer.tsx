@@ -3,18 +3,16 @@ import Link from "next/link";
 
 export function Footer() {
   return (
-    <footer className="mt-12 border-t border-white/30 bg-white/10 py-8 text-white backdrop-blur">
-      <div className="mx-auto w-[min(1150px,95%)] flex flex-wrap items-center justify-between gap-4">
-        <div className="flex items-center gap-3">
+    <footer className="mt-12 border-t border-white/80 bg-white/50 py-8 text-slate-600 backdrop-blur-xl px-8 flex gap-4 items-center justify-between">
+        <div className="flex-1">
           <Image
-            src="/logo.png"
-            alt="cibo libro"
-            width={140}
-            height={32}
-            className="h-8 w-auto drop-shadow-[0_2px_6px_rgba(0,0,0,0.18)]"
+            src="/icon.png"
+            alt="icon"
+            width={50}
+            height={50}
           />
         </div>
-        <nav className="flex flex-wrap gap-4 text-sm">
+        <nav className="flex flex-wrap gap-4 text-orange-700 font-semibold">
           {/* <Link className="hover:underline" href="/about">
             About
           </Link> */}
@@ -34,10 +32,9 @@ export function Footer() {
             Support
           </Link>
         </nav>
-        <div className="text-xs/6 opacity-90">
-          © {new Date().getFullYear()} cibo libro. All rights reserved.
+        <div className="text-sm flex-1 flex justify-end">
+          © 2026 cibo libro. All rights reserved.
         </div>
-      </div>
     </footer>
   );
 }
