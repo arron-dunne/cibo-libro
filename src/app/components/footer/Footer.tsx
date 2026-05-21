@@ -3,7 +3,7 @@ import Link from "next/link";
 
 export function Footer() {
   return (
-    <footer className="mt-12 border-t border-white/80 bg-white/50 py-8 text-slate-600 backdrop-blur-xl px-8 flex gap-4 items-center justify-between">
+    <footer className="mt-18 border-t border-white/80 bg-white/50 px-12 py-4 text-slate-600 backdrop-blur-xl flex gap-4 items-center justify-between">
         <div className="flex-1">
           <Image
             src="/icon.png"

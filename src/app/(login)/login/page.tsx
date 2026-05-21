@@ -1,8 +1,7 @@
+import { CircleAlert } from "lucide-react";
 import { handleSignIn } from "./actions";
 import { SubmitButton } from "../components/SubmitButton";
-import { CircleAlert } from "lucide-react";
-import { sansita } from "@/app/fonts";
-import { PrimaryButton, TeriaryButton } from "@/app/components/buttons/Buttons";
+import { TeriaryButton } from "@/app/components/buttons/Buttons";
 import { Header, SubHeader } from "@/app/components/text/Headers";
 
 export default async function LoginPage({
@@ -22,7 +21,9 @@ export default async function LoginPage({
       {/* Header */}
       <header className="text-center">
         <Header className="mb-2">Welcome back</Header>
-        <SubHeader>Sign in to to get cooking again.</SubHeader>
+        <SubHeader className="justify-center">
+          Sign in to to get cooking again.
+        </SubHeader>
       </header>
 
       {/* Status banners */}
@@ -83,10 +84,8 @@ export default async function LoginPage({
         </div>
 
         <div className="mt-8">
-          <SubmitButton text="Login"/>
+          <SubmitButton text="Login" />
         </div>
-
-        {/* <SubmitButton text="Login" pendingText="Logging in" /> */}
 
         <div className="mt-6 flex px-2 items-center justify-between text-gray-600">
           <a href="/forgot">

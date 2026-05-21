@@ -7,7 +7,7 @@ import { type NavLinkType } from "./DesktopNavLink";
 import { MobileNavLink } from "./MobileNavLink";
 import { logout } from "@/app/actions/logout";
 
-const navItems: NavLinkType[] = ["home", "all", "new", "import", "settings"];
+const navItems: NavLinkType[] = ["home", "all", "new", "import", "settings", "logout"];
 
 export function MobileMenu() {
   const [isOpen, setIsOpen] = useState(false);

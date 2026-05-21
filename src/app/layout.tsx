@@ -1,8 +1,11 @@
-import "@/styles/globals.css";
 import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import type { Metadata } from "next";
-import { nunito } from "./fonts";
+import { auth } from "@/lib/auth/auth";
+import "@/styles/globals.css";
+import { nunito } from "@/app/fonts";
+import { Footer } from "@/app/components/footer/Footer";
+import { Navbar } from "@/app/components/navbar/Navbar";
 
 export const metadata: Metadata = {
   title: "Cibo Libro",
@@ -14,18 +17,24 @@ export default async function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
+  const session = await auth();
+
   return (
     <html lang="en">
       <body className={nunito.className}>
         <Analytics />
         <SpeedInsights />
 
-        <div className="min-h-screen antialiased">
+        <div className="min-h-screen antialiased flex flex-col">
           {/* Background */}
           <div className="fixed h-full w-full -z-10 overscroll-none inset-0 bg-linear-to-br from-orange-100 to-rose-200">
           </div>
 
-          {children}
+          <Navbar session={session}/>
+          <div className="flex-1">
+            {children}
+          </div>
+          <Footer />
         </div>
       </body>
     </html>

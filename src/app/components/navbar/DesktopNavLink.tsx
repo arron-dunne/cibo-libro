@@ -10,7 +10,7 @@ import {
   Settings,
 } from "lucide-react";
 
-export type NavLinkType = "home" | "all" | "new" | "import" | "settings";
+export type NavLinkType = "home" | "all" | "new" | "import" | "settings" | "logout";
 
 export function DesktopNavLink({ type }: { type: NavLinkType }) {
   const { label, href, icon: Icon, highlight } = useInfo(type);
