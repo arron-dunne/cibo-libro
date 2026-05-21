@@ -6,7 +6,7 @@ import {
   LucideProps,
   PlusCircle,
   Search,
-  Tag,
+  Tag as TagIcon,
 } from "lucide-react";
 import Link from "next/link";
 import { prisma } from "@/lib/prisma";
@@ -17,6 +17,7 @@ import {
 import { Header, SubHeader } from "@/app/components/text/Headers";
 import { PrimaryButton, SecondaryButton } from "@/app/components/buttons/Buttons";
 import Image from "next/image";
+import { Tag } from "@/app/components/tags/Tags";
 
 export default async function HomePage() {
   const session = await auth();
@@ -100,7 +101,7 @@ export default async function HomePage() {
 
         {/* Tag Cloud */}
         <SubHeader className="mt-6 ml-2 mb-4">
-          <Tag size={24}/>
+          <TagIcon size={24}/>
           Filter by tags
         </SubHeader>
         {allTags.length > 0 && (
@@ -109,9 +110,10 @@ export default async function HomePage() {
               <Link
                 key={i}
                 href={`/all?tags=${encodeURIComponent(tag)}`}
-                className="inline-flex items-center rounded-full bg-white text-rose-500 border border-rose-300 px-4 py-2 font-semibold text-nowrap shadow-sm shadow-rose-100 hover:bg-linear-to-br hover:from-orange-50 hover:to-rose-100 hover:shadow-md transition"
               >
-                {tag}
+                <Tag interactive={true}>
+                  {tag}
+                </Tag>
               </Link>
             ))}
           </div>

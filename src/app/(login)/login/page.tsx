@@ -55,9 +55,9 @@ export default async function LoginPage({
             type="email"
             required
             autoComplete="email"
-            className={`mt-1 px-4 py-3 w-full rounded-2xl border bg-white
+            className={`mt-1 px-4 py-3 w-full rounded-full border bg-white
               outline-none focus:ring-2
-              ${error === "invalid" ? "border-2 ring-blue-400 border-red-400" : "border-zinc-300 focus:ring-blue-500"}`}
+              ${error === "invalid" ? "border-2 ring-blue-400 border-red-400" : "border-slate-300 focus:ring-blue-500"}`}
           />
           {error === "invalid" && (
             <p className="mt-2 flex items-center gap-2 text-sm font-semibold text-red-600">
@@ -77,9 +77,9 @@ export default async function LoginPage({
             type="password"
             required
             autoComplete="current-password"
-            className={`mt-1 px-4 py-3 w-full rounded-2xl border bg-white
+            className={`mt-1 px-4 py-3 w-full rounded-full border bg-white
               outline-none focus:ring-2
-              ${error === "invalid" ? "border-2 ring-blue-400 border-red-400" : "border-zinc-300 focus:ring-blue-500"}`}
+              ${error === "invalid" ? "border-2 ring-blue-400 border-red-400" : "border-slate-300 focus:ring-blue-500"}`}
           />
         </div>
 
