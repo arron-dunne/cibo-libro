@@ -21,11 +21,6 @@ export function FavouriteButton({
   };
 
   return (
-    // <button
-    //   onClick={handleClick}
-    //   aria-label={isFavourite ? "Remove from favourites" : "Add to favourites"}
-    //   className="px-3 h-11 flex gap-2 items-center rounded-full border cursor-pointer hover:brightness-90 active:brightness-75 bg-linear-to-br from-slate-100 to-slate-200 text-slate-800 border-slate-300"
-    // >
     <SecondaryButton onClick={handleClick}>
       <Heart
         size={20}
