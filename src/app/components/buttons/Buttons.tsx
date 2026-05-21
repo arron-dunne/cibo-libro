@@ -2,7 +2,7 @@ import { LucideIcon, LucideProps } from "lucide-react";
 import React from "react";
 
 type ButtonType = "button" | "submit";
-type Size = "md" | "lg";
+type Size = "md" | "lg" | "xl";
 
 export function PrimaryButton({
   className,
@@ -23,6 +23,10 @@ export function PrimaryButton({
 }) {
   let sizeStyle: string;
   switch (size) {
+    case "xl":
+      sizeStyle = "px-9 py-5 text-2xl";
+      break;
+
     case "lg":
       sizeStyle = "px-4 py-3 text-xl";
       break;
