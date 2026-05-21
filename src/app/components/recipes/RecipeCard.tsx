@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { RecipeImage } from "./RecipeImage";
 import { Heart, LinkIcon } from "lucide-react";
+import { Tag } from "../tags/Tags";
 
 export type RecipeCardProps = {
   title: string; // required
@@ -23,7 +24,7 @@ export function RecipeCard({ recipe }: { recipe: RecipeCardProps }) {
   const href = `/view/${recipe.slug}`;
 
   return (
-    <article className="relative w-full aspect-square lg:aspect-[0.7] flex flex-col overflow-hidden rounded-2xl border border-white/60 bg-white shadow transition hover:scale-105 cursor-pointer">
+    <article className="relative w-full aspect-square lg:aspect-[0.7] flex flex-col overflow-hidden rounded-2xl border border-white/60 bg-white shadow-lg shadow-rose-300/50 transition hover:scale-105 cursor-pointer">
       {/* Make whole card link */}
       <Link
         href={href}
@@ -67,14 +68,11 @@ export function RecipeCard({ recipe }: { recipe: RecipeCardProps }) {
             )}
           </div>
           <div className="flex items-center justify-between gap-2 text-sm text-zinc-600">
-            <div className="flex items-center gap-2 flex-1 min-w-0 overflow-hidden">
+            <div className="flex items-center gap-2 flex-1 min-w-0 overflow-scroll">
               {(recipe.tags ?? []).map((tag) => (
-                <span
-                  key={tag}
-                  className="rounded-full bg-linear-to-br from-orange-100 to-rose-100 text-rose-500 border border-rose-200 px-3 py-1 font-medium text-nowrap"
-                >
+                <Tag key={tag}>
                   {tag}
-                </span>
+                </Tag>
               ))}
             </div>
             {recipe.isFavourite && (

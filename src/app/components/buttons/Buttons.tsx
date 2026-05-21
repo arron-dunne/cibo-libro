@@ -12,6 +12,7 @@ export function PrimaryButton({
   height="h-max",
   size="md",
   disabled=false,
+  onClick,
 }: {
   className?: string;
   children: React.ReactNode;
@@ -20,6 +21,7 @@ export function PrimaryButton({
   height?: string;
   size?: Size;
   disabled?: Boolean;
+  onClick?: (e: React.MouseEvent<HTMLButtonElement>) => void;
 }) {
   let sizeStyle: string;
   switch (size) {
@@ -45,6 +47,7 @@ export function PrimaryButton({
     <button
       className={`${className} ${width} ${height} ${sizeStyle} ${disabledStyle} flex no-wrap justify-center items-center gap-2 rounded-full bg-linear-to-r from-orange-500 to-rose-500 text-white font-bold`}
       type={type}
+      onClick={onClick}
     >
       {children}
     </button>
@@ -55,14 +58,16 @@ export function SecondaryButton({
   children,
   type = "button",
   width = "w-max",
+  height = "h-max",
   size = "md",
   onClick,
 }: {
   children: React.ReactNode;
   type?: ButtonType;
   width?: string;
+  height?: string;
   size?: Size;
-  onClick?: () => void;
+  onClick?: (e: React.MouseEvent<HTMLButtonElement>) => void;
 }) {
   let sizeStyle: string;
   switch (size) {
@@ -78,7 +83,7 @@ export function SecondaryButton({
 
   return (
     <button
-      className={`${width} ${sizeStyle} h-max flex gap-2 items-center rounded-full bg-white/50 backdrop-blur-lg border border-rose-500 text-rose-500 font-bold cursor-pointer hover:brightness-95`}
+      className={`${width} ${height} ${sizeStyle} h-max flex gap-2 items-center rounded-full bg-white/50 backdrop-blur-lg border border-rose-500 text-rose-500 font-bold cursor-pointer hover:brightness-95`}
       type={type}
       onClick={onClick}
     >

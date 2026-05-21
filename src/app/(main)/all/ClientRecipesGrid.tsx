@@ -14,6 +14,7 @@ import {
 } from "lucide-react";
 import { SORT_OPTIONS, SortOptionKey } from "./options";
 import { RecipeCardRecipe } from "./page";
+import { PrimaryButton, SecondaryButton } from "@/app/components/buttons/Buttons";
 
 type ClientRecipesGridProps = {
   recipes: RecipeCardRecipe[];
@@ -137,29 +138,29 @@ export function ClientRecipesGrid({
   return (
     <div className="w-full flex flex-col gap-4">
       {/* Filter Bar */}
-      <div className="flex items-center gap-3 md:gap-4">
+      <div className="h-11 sm:h-12 flex items-center gap-2 md:gap-4">
         {/* Search bar */}
-        <label className="relative flex-1">
+        <label className="relative h-full flex-1">
           <input
             ref={searchRef}
             placeholder="Search recipes…"
-            className="w-full h-11 md:h-12 rounded-full border border-white/70 bg-white backdrop-blur-md pl-10 pr-4 text-sm shadow-lg"
+            className="w-full h-full rounded-full bg-white pl-12 pr-4 border border-slate-300"
             aria-label="Search recipes"
             onChange={(e) => setSearch(e.target.value)}
           />
           <Search
-            size={18}
-            className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-orange-600/80"
+            size={20}
+            className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-slate-500"
           />
         </label>
 
         {/* Sort */}
-        <div ref={sortRef} className="relative">
-          <button
-            type="button"
-            className="sm:w-22 md:w-32 h-11 md:h-12 inline-flex items-center gap-1 rounded-full border border-white/70 px-4 text-sm font-semibold text-slate-700 bg-linear-to-r from-slate-200 to-slate-300 shadow-lg cursor-pointer transition hover:brightness-90 active:brightness-75"
-            aria-haspopup="menu"
-            aria-expanded={sortMenu}
+        <div ref={sortRef} className="h-full relative">
+          <PrimaryButton
+            // aria-haspopup="menu"
+            // aria-expanded={sortMenu}
+            width="sm:w-22 md:w-32"
+            height="h-full"
             onClick={(e) => {
               e.stopPropagation();
               setSortMenu((s) => !s);
@@ -168,8 +169,8 @@ export function ClientRecipesGrid({
           >
             <ArrowUpDown className="block sm:hidden" size={18} />
             <span className="hidden sm:block grow">Sort</span>
-            <ChevronDown size={16} className="text-zinc-500" />
-          </button>
+            <ChevronDown size={22} />
+          </PrimaryButton>
 
           {sortMenu && (
             <div
@@ -192,12 +193,12 @@ export function ClientRecipesGrid({
         </div>
 
         {/* Filter */}
-        <div ref={filterRef} className="relative">
-          <button
-            type="button"
-            className="sm:w-22 md:w-32 h-11 md:h-12 inline-flex items-center gap-1 rounded-full border border-white/70 px-4 text-sm font-semibold text-slate-700 bg-linear-to-r from-slate-200 to-slate-300 shadow-lg cursor-pointer transition hover:brightness-90 active:brightness-75"
-            aria-haspopup="menu"
-            aria-expanded={filterMenu}
+        <div ref={filterRef} className="h-full relative">
+          <PrimaryButton
+            // aria-haspopup="menu"
+            // aria-expanded={filterMenu}
+            width="sm:w-22 md:w-32"
+            height="h-full"
             onClick={(e) => {
               e.stopPropagation();
               setFilterMenu((s) => !s);
@@ -206,8 +207,8 @@ export function ClientRecipesGrid({
           >
             <Funnel className="block sm:hidden" size={18} />
             <span className="hidden sm:block grow">Filter</span>
-            <ChevronDown size={16} className="text-zinc-500" />
-          </button>
+            <ChevronDown size={22} />
+          </PrimaryButton>
 
           {filterMenu && (
             <div
