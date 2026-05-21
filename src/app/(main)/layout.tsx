@@ -1,22 +1,7 @@
-import { auth } from "@/lib/auth/auth";
-import { Footer } from "@/app/components/footer/Footer";
-import { Navbar } from "@/app/components/navbar/Navbar";
-
-export default async function Layout({
+export default function MainLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  // needed for logout and navbar email
-  const session = await auth();
-
-  return (
-    <div className="min-h-screen flex flex-col">
-      <Navbar session={session ?? null}/>
-      <main className="z-0 mx-auto w-full max-w-7xl px-8 py-4 flex-1">
-        {children}
-      </main>
-      <Footer />
-    </div>
-  );
+  return <div className="mt-12 px-8 sm:px-12 max-w-7xl mx-auto">{children}</div>;
 }
