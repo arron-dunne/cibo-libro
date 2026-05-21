@@ -14,7 +14,13 @@ import { deleteRecipe } from "./actions";
 import { DeleteButton } from "./DeleteButton";
 import { FavouriteButton } from "./FavouriteButton";
 import { getHostname } from "@/lib/hostname";
-import { SecondaryButton, TeriaryButton } from "@/app/components/buttons/Buttons";
+import {
+  PrimaryButton,
+  SecondaryButton,
+  TeriaryButton,
+} from "@/app/components/buttons/Buttons";
+import { Header, SubHeader } from "@/app/components/text/Headers";
+import { Tag } from "@/app/components/tags/Tags";
 
 export default async function ViewRecipePage({
   params,
@@ -53,37 +59,38 @@ export default async function ViewRecipePage({
 
   return (
     <>
-      {/* Back button */}
-      <Link
-        href="/all"
-        className="w-max flex items-center gap-3 text-lg font-semibold text-slate-900 cursor-pointer hover:brightness-90 active:brightness-75"
-      >
-        <div className="p-1.5 rounded-full border border-white/80 bg-linear-to-br from-slate-200 to-slate-300 shadow-lg">
-          <ArrowLeft size={20} />
-        </div>
-        All Recipes
-      </Link>
+      <div className="flex justify-between items-center">
+        {/* Back button */}
+        <Link
+          href="/all"
+          className="w-max flex items-center gap-3 text-lg font-semibold text-slate-900 cursor-pointer hover:brightness-90 active:brightness-75"
+        >
+          <TeriaryButton>
+            <ArrowLeft size={20} />
+            Back
+          </TeriaryButton>
+        </Link>
 
-      {/* Hero section */}
-      <section className="relative mt-4 overflow-hidden rounded-4xl border border-white/60 bg-white flex flex-col md:flex-row">
-        
         {/* Source URL */}
         {recipe.sourceUrl && (
           <Link
             href={recipe.sourceUrl}
             target="_blank"
             aria-label="View original"
-            className="absolute top-4 right-6"
           >
             <TeriaryButton>
-              <span className="text-sm">{getHostname(recipe.sourceUrl)}</span>
+              View orignal
               <LinkIcon size={20} />
             </TeriaryButton>
           </Link>
         )}
+      </div>
+
+      {/* Hero section */}
+      <section className="md:min-h-100 mt-4 flex flex-col md:flex-row gap-8">
 
         {/* Image */}
-        <div className="w-full md:w-1/2 max-h-100 md:max-h-none overflow-hidden md:relative">
+        <div className="md:relative w-full md:w-1/2 max-h-100 md:max-h-none overflow-hidden rounded-4xl border border-white/80">
           <div className="md:absolute md:inset-0">
             <RecipeImage
               imageKey={recipe.imageKey ?? undefined}
@@ -94,32 +101,21 @@ export default async function ViewRecipePage({
         </div>
 
         {/* Details */}
-        <div className="w-full md:w-1/2 mt-4 md:mt-8 p-5 md:p-8 flex flex-col justify-between">
+        <div className="w-full min-h-100 h-full md:w-1/2 mt-4 md:mt-12 flex flex-col justify-between">
           <div>
-            <h1 className="text-2xl md:text-4xl font-extrabold leading-tight ">
-              {recipe.title}
-            </h1>
+            <Header>{recipe.title}</Header>
 
-            {recipe.description ? (
-              <p className="mt-4 max-w-prose text-md text-slate-600">
-                {recipe.description}
-              </p>
-            ) : (
-              <p className="mt-4 max-w-prose text-sm italic text-slate-400">
-                No description provided.
-              </p>
-            )}
+            <SubHeader className="mt-4">
+              {recipe.description
+                ? recipe.description
+                : "No description provided"}
+            </SubHeader>
 
             {recipe.tags.length ? (
               <div className="mt-4 flex items-center flex-wrap gap-2">
-                <TagIcon size={16} />
+                <TagIcon className="text-rose-600" size={20} />
                 {recipe.tags.map((tag) => (
-                  <span
-                    key={tag}
-                    className="inline-flex items-center rounded-full bg-linear-to-br from-orange-100 to-rose-100 text-rose-500 border border-rose-200 px-3 py-1 font-medium text-nowrap"
-                  >
-                    {tag}
-                  </span>
+                  <Tag key={tag}>{tag}</Tag>
                 ))}
               </div>
             ) : (
@@ -138,7 +134,7 @@ export default async function ViewRecipePage({
           </div>
 
           {/* Button bar  */}
-          <div className="mt-6 flex gap-2">
+          <div className="flex gap-2">
             <FavouriteButton
               slug={slug}
               initialIsFavourite={recipe.isFavourite}
@@ -154,15 +150,11 @@ export default async function ViewRecipePage({
             <DeleteButton slug={slug} action={deleteRecipe} />
 
             {recipe.type !== "EXTERNAL_LINK" && (
-              <Link
-                href={`/cook/${slug}`}
-                className="px-3 h-11 flex gap-3 items-center ml-auto flex-nowrap
-                bg-linear-to-br from-orange-500 to-rose-500
-                rounded-full text-white font-bold border
-                cursor-pointer hover:brightness-90 active:brightness-75"
-              >
-                <ChefHat size={20} className="-rotate-12 shrink-0" />
-                <span className="text-nowrap">Start Cooking</span>
+              <Link href={`/cook/${slug}`} className="w-full flex justify-end">
+                <PrimaryButton>
+                  <ChefHat size={20} className="-rotate-12 shrink-0" />
+                  <span className="text-nowrap">Start Cooking</span>
+                </PrimaryButton>
               </Link>
             )}
           </div>
@@ -224,7 +216,7 @@ function StepsSection({ steps }: { steps: string[] }) {
 
 function StatChip({ label, value }: { label: string; value: string }) {
   return (
-    <div className="grow max-w-36 min-w-26 flex justify-between items-center gap-2 rounded-full border border-gray-200 px-3 py-1.5 text-sm font-semibold">
+    <div className="grow max-w-36 min-w-26 flex justify-between items-center gap-2 rounded-full border border-white px-3 py-1.5 text-sm font-semibold">
       <span className="text-gray-500">{label}</span>
       <span className="text-gray-800">{value}</span>
     </div>

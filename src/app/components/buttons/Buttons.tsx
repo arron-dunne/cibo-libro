@@ -83,7 +83,7 @@ export function SecondaryButton({
 
   return (
     <button
-      className={`${width} ${height} ${sizeStyle} h-max flex gap-2 items-center rounded-full bg-white/50 backdrop-blur-lg border border-rose-500 text-rose-500 font-bold cursor-pointer hover:brightness-95`}
+      className={`${width} ${height} ${sizeStyle} h-max flex gap-2 items-center rounded-full bg-white/70 backdrop-blur-lg border border-rose-500 text-rose-500 font-bold cursor-pointer hover:brightness-95`}
       type={type}
       onClick={onClick}
     >
