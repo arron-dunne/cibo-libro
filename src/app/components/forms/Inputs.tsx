@@ -15,7 +15,7 @@ interface TextAreaProps extends TextareaHTMLAttributes<HTMLTextAreaElement> {
 export function Input({ name, label, invalid=false, ...props }: InputProps) {
   return (
     <div className="w-full">
-      {label && <label htmlFor={name} className="w-full font-semibold">{label}</label> }
+      {label && <label htmlFor={name} className="ml-2 w-full font-semibold">{label}</label> }
       <input
         name={name}
         id={name}
