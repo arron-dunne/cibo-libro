@@ -14,6 +14,7 @@ export function PrimaryButton({
   width = "w-max",
   height = "h-max",
   disabled = false,
+  className,
   children,
   ...props
 }: ButtonProps) {
@@ -39,7 +40,7 @@ export function PrimaryButton({
 
   return (
     <button
-      className={`${width} ${height} ${sizeStyle} ${disabledStyle} flex no-wrap justify-center items-center gap-2 rounded-full bg-linear-to-r from-orange-500 to-rose-500 text-white font-bold`}
+      className={`${className} ${width} ${height} ${sizeStyle} ${disabledStyle} flex no-wrap justify-center items-center gap-2 rounded-full bg-linear-to-r from-orange-500 to-rose-500 text-white font-bold`}
       {...props}
     >
       {children}

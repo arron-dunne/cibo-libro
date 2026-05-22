@@ -6,12 +6,14 @@ import { useState, useRef, useEffect } from "react";
 import { compressImageFile } from "@/lib/images/compress";
 import { MAX_SIZE_BYTES } from "@/lib/images/constants";
 import { RecipeFormRecipe } from "@/types/recipe";
-import { X, ChefHat, Tag as TagIcon, CircleAlert, ImagePlus } from "lucide-react";
+import { X, Tag as TagIcon, CircleAlert, ImagePlus, Loader2 } from "lucide-react";
 import { FormSubmitButton } from "@/app/components/forms/FormSubmitButton";
 import { Header, SubHeader } from "../text/Headers";
 import { Input, TextArea } from "../forms/Inputs";
-import { PrimaryButton, SecondaryButton } from "../buttons/Buttons";
+import { PrimaryButton, SecondaryButton, TeriaryButton } from "../buttons/Buttons";
 import { Tag } from "../tags/Tags";
+import Link from "next/link";
+import { useFormStatus } from "react-dom";
 
 // ────────────────────────────────────────────────────────────────────────────
 // Types
@@ -54,8 +56,9 @@ export default function RecipeForm({ mode, recipe, action }: RecipeFormProps) {
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const [uploading, setUploading] = useState(false);
   const [uploadError, setUploadError] = useState<string | null>(null);
-  const [imageNotice, setImageNotice] = useState<string | null>(null);
   const [deleting, setDeleting] = useState(false);
+
+  const { pending } = useFormStatus();
 
   // Handle form submission
   const handleSubmit = async (e: React.SubmitEvent) => {
@@ -187,24 +190,20 @@ export default function RecipeForm({ mode, recipe, action }: RecipeFormProps) {
 
   const onPick = async (e: React.ChangeEvent<HTMLInputElement>) => {
     setUploadError(null);
-    setImageNotice(null);
 
     const raw = e.target.files?.[0];
     if (!raw) return;
 
-    // 1) Instant preview swap (optimistic)
     const localUrl = URL.createObjectURL(raw);
-    setImagePreview(localUrl);
 
-    // 2) If there was a previous image, remove it silently
+    // If there was a previous image, remove it silently
     const previousKey = imageKey;
     if (previousKey) {
-      // Fire-and-forget delete (cleanup handled by background job if it fails)
       deleteImageSilent(previousKey);
       setImageKey(null);
+      setImagePreview(null);
     }
 
-    // 3) Upload new image
     setUploading(true);
     try {
       const compressed = await compressImageFile(raw, {
@@ -246,6 +245,7 @@ export default function RecipeForm({ mode, recipe, action }: RecipeFormProps) {
       }
 
       setImageKey(key);
+      setImagePreview(localUrl);
 
       const fileName =
         (raw.name.replace(/\.\w+$/, "") || "image") +
@@ -275,32 +275,22 @@ export default function RecipeForm({ mode, recipe, action }: RecipeFormProps) {
 
   async function deleteImage() {
     if (!imageKey) return;
-    // optimistic UI: hide immediately
-    const prevPreview = imagePreview;
-    const prevImageKey = imageKey;
+    const keyToDelete = imageKey;
 
     setDeleting(true);
-    setImagePreview(null);
-    setImageKey(null);
-    setImageNotice("Deleting…");
-
     try {
       const res = await fetch("/api/images/delete", {
         method: "POST",
         headers: { "content-type": "application/json" },
-        body: JSON.stringify({ key: prevImageKey }),
+        body: JSON.stringify({ key: keyToDelete }),
       });
       if (!res.ok) throw new Error(String(res.status));
 
       if (fileInputRef.current) fileInputRef.current.value = "";
-      setImageNotice("Image removed");
-      setTimeout(() => setImageNotice(null), 1500);
+      setImageKey(null);
+      setImagePreview(null);
     } catch {
-      // revert on failure
-      setImageKey(prevImageKey);
-      setImagePreview(prevPreview);
-      setImageNotice("Failed to remove image");
-      setTimeout(() => setImageNotice(null), 2000);
+      // silently fail — image stays visible, user can retry
     } finally {
       setDeleting(false);
     }
@@ -495,83 +485,81 @@ export default function RecipeForm({ mode, recipe, action }: RecipeFormProps) {
           </div>
 
           <div className="w-full">
-            <label
-              className={`group block rounded-2xl border-3 border-dashed border-rose-500 cursor-pointer hover:brightness-125 hover:bg-white/30
-                ${uploading ? "opacity-60 cursor-not-allowed" : ""}`}
-            >
-              <input
-                ref={fileInputRef}
-                type="file"
-                accept="image/jpeg,image/png,image/webp"
-                onChange={onPick}
-                className="hidden"
-                disabled={uploading}
-              />
-              <div className="flex flex-col items-center justify-center gap-3 py-10 px-6 text-center">
-                <div className="rounded-full bg-linear-to-br from-orange-500 to-rose-500 p-6 border border-white/80">
-                  <ImagePlus size={32} className="text-white" />
-                </div>
-                <div className="space-y-1">
-                  <p className="text-slate-800">
-                    Drop your photo here or{" "}
-                    <span className="font-extrabold bg-linear-to-r from-orange-500 to-rose-500 bg-clip-text text-transparent">
-                      click to browse
-                    </span>
-                  </p>
-                  <p className="text-sm text-slate-600">JPEG, PNG or WebP · max 20 MB</p>
-                </div>
-              </div>
-            </label>
-
-            {/* Upload status + inline delete (under the file input) */}
-            <div className="mt-2 flex flex-wrap items-center gap-3 text-sm">
-              {(uploading || deleting) && (
-                <span className="flex items-center gap-2 text-zinc-600">
-                  <span className="animate-spin h-4 w-4 border-2 border-orange-500 border-t-transparent rounded-full"></span>
-                  {uploading ? "Uploading…" : "Deleting…"}
-                </span>
-              )}
-
-              {!uploading && !deleting && imageKey && !uploadError && (
-                <div className="flex items-center gap-3">
-                  <span className="text-emerald-600">
-                    Uploaded successfully
-                  </span>
-                  <button
-                    type="button"
-                    disabled={uploading || deleting}
-                    onClick={async () => {
-                      // This path is an explicit *delete*; shows "Deleting…"
-                      await deleteImage();
-                    }}
-                    className="rounded-md border border-zinc-300 bg-white px-2 py-1 text-xs hover:bg-zinc-50 disabled:opacity-50"
-                    >
-                    Remove
-                  </button>
-                </div>
-              )}
-
-              {uploadError && (
-                <span className="text-red-600">
-                  Upload failed: {uploadError}
-                </span>
-              )}
-              {imageNotice && (
-                <span className="text-zinc-700">{imageNotice}</span>
-              )}
-            </div>
-
-            {/* Preview image */}
-            {imagePreview && (
-              <div className="mt-3 relative aspect-video w-full overflow-hidden rounded-lg border">
-                <Image
-                  src={imagePreview}
-                  alt="Cover image preview"
-                  fill
-                  sizes="100vw"
-                  className={`object-cover ${uploadError ? "opacity-70 grayscale" : ""}`}
+            {imagePreview ? (
+              /* Success state: preview + remove button */
+              <div className="space-y-4">
+                <div className="relative aspect-video w-full overflow-hidden rounded-2xl border border-white/80">
+                  <Image
+                    src={imagePreview}
+                    alt="Cover image preview"
+                    fill
+                    sizes="100vw"
+                    className="object-cover"
                   />
+                </div>
+                <SecondaryButton
+                  type="button"
+                  onClick={deleteImage}
+                  disabled={deleting}
+                >
+                  {deleting ? (
+                    <>
+                      <span>Removing…</span>
+                      <Loader2 size={20} className="animate-spin"/>
+                    </>
+                  ) : "Remove photo"}
+                </SecondaryButton>
               </div>
+            ) : (
+              /* Upload zone: idle, uploading, or error */
+              <label
+                className={`m-2 group block rounded-2xl border-3 border-dashed border-rose-500 transition-colors
+                  ${uploading ? "cursor-not-allowed opacity-80" : "cursor-pointer hover:brightness-125 hover:bg-white/30"}`}
+              >
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept="image/*"
+                  onChange={onPick}
+                  className="hidden"
+                  disabled={uploading}
+                />
+                <div className="flex flex-col items-center justify-center gap-3 py-10 px-6 text-center">
+                  {uploading ? (
+                    <>
+                      <Loader2 size={42} className="text-rose-500 animate-spin"/>
+                      <p className="text-slate-800">Uploading image…</p>
+                    </>
+                  ) : uploadError ? (
+                    <>
+                      <CircleAlert size={38} className="text-rose-500" />
+                      
+                      <div className="space-y-1">
+                        <p className="text-rose-600 font-semibold">{uploadError}</p>
+                        <div className="text-sm text-slate-800 flex gap-1">
+                          <span>If this problem persists, please try again later or</span>
+                          <Link href="/support/issues">
+                            <TeriaryButton className="z-10">contact support</TeriaryButton>
+                          </Link>
+                          </div>
+                      </div>
+                    </>
+                  ) : (
+                    <>
+                      <ImagePlus size={38} className="text-rose-500" />
+                      <div className="space-y-1">
+                        <p className="text-slate-800">
+                          Drop your photo here or{" "}
+                          <span className="font-extrabold bg-linear-to-r from-orange-500 to-rose-500 bg-clip-text text-transparent">
+                            click to browse
+                          </span>
+                        </p>
+                        <p className="text-sm text-slate-600">Max 20 MB</p>
+                      </div>
+                    </>
+                  )}
+                </div>
+              </label>
             )}
           </div>
         </section>
@@ -585,13 +573,12 @@ export default function RecipeForm({ mode, recipe, action }: RecipeFormProps) {
             </div>
           </div>
         )}
-        <FormSubmitButton
-          pendingLabel="Saving..."
-          isPending={saving}
-          disabled={uploading || deleting}
-          >
-          Save
-        </FormSubmitButton>
+        
+        <div className="pt-8 max-w-md mx-auto">
+          <PrimaryButton className="shadow-xl shadow-rose-300/50" size="lg" width="w-full" type="submit">
+            {pending ? <>Saving...<Loader2 size={28} className="ml-2 animate-spin"/></> : <>Save Recipe</> }
+          </PrimaryButton>
+        </div>
       </form>
     </div>
   );
