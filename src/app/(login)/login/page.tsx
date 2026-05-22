@@ -3,6 +3,7 @@ import { handleSignIn } from "./actions";
 import { SubmitButton } from "../components/SubmitButton";
 import { TeriaryButton } from "@/app/components/buttons/Buttons";
 import { Header, SubHeader } from "@/app/components/text/Headers";
+import { Input } from "@/app/components/forms/Inputs";
 
 export default async function LoginPage({
   searchParams,
@@ -42,44 +43,34 @@ export default async function LoginPage({
           Your session has expired. Please login again.
         </div>
       )}
+      {error === "invalid" && (
+        <p className="mt-2 flex items-center gap-2 text-sm font-semibold text-red-600">
+          <CircleAlert height={18} />
+          Invalid email or password
+        </p>
+      )}
 
       {/* Form */}
       <form action={handleSignIn} className="mt-6">
-        <div>
-          <label htmlFor="email" className="ml-2 font-semibold">
-            Email
-          </label>
-          <input
-            name="email"
-            id="email"
-            type="email"
-            required
-            autoComplete="email"
-            className={`mt-1 px-4 py-3 w-full rounded-full border bg-white
-              outline-none focus:ring-2
-              ${error === "invalid" ? "border-2 ring-blue-400 border-red-400" : "border-slate-300 focus:ring-blue-500"}`}
-          />
-          {error === "invalid" && (
-            <p className="mt-2 flex items-center gap-2 text-sm font-semibold text-red-600">
-              <CircleAlert height={18} />
-              Invalid email or password
-            </p>
-          )}
-        </div>
+        <Input
+          label="Email"
+          invalid={error === "invalid"}
+          name="email"
+          id="email"
+          type="email"
+          required
+          autoComplete="email"
+        />
 
         <div className="mt-6">
-          <label htmlFor="password" className="ml-2 font-semibold">
-            Password
-          </label>
-          <input
+          <Input
+            invalid={error === "invalid"}
+            label="Password"
             name="password"
             id="password"
             type="password"
             required
             autoComplete="current-password"
-            className={`mt-1 px-4 py-3 w-full rounded-full border bg-white
-              outline-none focus:ring-2
-              ${error === "invalid" ? "border-2 ring-blue-400 border-red-400" : "border-slate-300 focus:ring-blue-500"}`}
           />
         </div>
 
