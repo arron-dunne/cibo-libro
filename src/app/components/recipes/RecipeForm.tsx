@@ -6,7 +6,7 @@ import { useState, useRef, useEffect } from "react";
 import { compressImageFile } from "@/lib/images/compress";
 import { MAX_SIZE_BYTES } from "@/lib/images/constants";
 import { RecipeFormRecipe } from "@/types/recipe";
-import { X, ChefHat, Tag as TagIcon, CircleAlert } from "lucide-react";
+import { X, ChefHat, Tag as TagIcon, CircleAlert, ImagePlus } from "lucide-react";
 import { FormSubmitButton } from "@/app/components/forms/FormSubmitButton";
 import { Header, SubHeader } from "../text/Headers";
 import { Input, TextArea } from "../forms/Inputs";
@@ -490,19 +490,38 @@ export default function RecipeForm({ mode, recipe, action }: RecipeFormProps) {
           <div className="ml-2 space-y-2">
             <Header textSize="text-4xl">Picture</Header>
             <SubHeader>
-              Choose a cover image (max 20MB)
+              Choose a cover image to show with your recipe
             </SubHeader>
           </div>
 
-          <div>
-            <input
-              ref={fileInputRef}
-              type="file"
-              accept="image/jpeg,image/png,image/webp"
-              onChange={onPick}
-              className="block w-full rounded-2xl border border-rose-500 cursor-pointer"
-              disabled={uploading}
+          <div className="w-full">
+            <label
+              className={`group block rounded-2xl border-3 border-dashed border-rose-500 cursor-pointer hover:brightness-125 hover:bg-white/30
+                ${uploading ? "opacity-60 cursor-not-allowed" : ""}`}
+            >
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept="image/jpeg,image/png,image/webp"
+                onChange={onPick}
+                className="hidden"
+                disabled={uploading}
               />
+              <div className="flex flex-col items-center justify-center gap-3 py-10 px-6 text-center">
+                <div className="rounded-full bg-linear-to-br from-orange-500 to-rose-500 p-6 border border-white/80">
+                  <ImagePlus size={32} className="text-white" />
+                </div>
+                <div className="space-y-1">
+                  <p className="text-slate-800">
+                    Drop your photo here or{" "}
+                    <span className="font-extrabold bg-linear-to-r from-orange-500 to-rose-500 bg-clip-text text-transparent">
+                      click to browse
+                    </span>
+                  </p>
+                  <p className="text-sm text-slate-600">JPEG, PNG or WebP · max 20 MB</p>
+                </div>
+              </div>
+            </label>
 
             {/* Upload status + inline delete (under the file input) */}
             <div className="mt-2 flex flex-wrap items-center gap-3 text-sm">
