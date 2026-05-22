@@ -8,6 +8,10 @@ import { MAX_SIZE_BYTES } from "@/lib/images/constants";
 import { RecipeFormRecipe } from "@/types/recipe";
 import { X, ChefHat, Tag as TagIcon, CircleAlert } from "lucide-react";
 import { FormSubmitButton } from "@/app/components/forms/FormSubmitButton";
+import { Header, SubHeader } from "../text/Headers";
+import { Input, TextArea } from "../forms/Inputs";
+import { PrimaryButton, SecondaryButton } from "../buttons/Buttons";
+import { Tag } from "../tags/Tags";
 
 // ────────────────────────────────────────────────────────────────────────────
 // Types
@@ -250,7 +254,6 @@ export default function RecipeForm({ mode, recipe, action }: RecipeFormProps) {
         type: compressed.type,
       });
       setFileInput(compressedFile);
-
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : "Upload failed";
       setUploadError(message);
@@ -319,92 +322,79 @@ export default function RecipeForm({ mode, recipe, action }: RecipeFormProps) {
   // Render
   // ──────────────────────────────────────────────────────────────────────────
   return (
-    <div className="max-w-3xl w-full mx-auto mt-8">
-      <form className="flex flex-col gap-10" onSubmit={handleSubmit}>
+    <div className="max-w-3xl w-full mx-auto mt-12">
+      <form className="space-y-16" onSubmit={handleSubmit}>
         {/* Summary Panel */}
-        <Panel
-          header={ mode === "new" ? "Create a New Recipe" : "Edit Your Recipe" }
-          subheader="Fill in the details and save it to your cookbook."
-          first
-          icon={
-            <ChefHat aria-hidden="true" className="w-8 h-8 sm:w-10 sm:h-10" />
-          }
-        >
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-            <div className="sm:col-span-2">
-              <Label htmlFor="title">Title</Label>
-              <input
-                id="title"
-                name="title"
-                type="text"
-                className="w-full px-3 py-2.5 rounded-2xl border border-zinc-300 bg-white"
-                placeholder="e.g. Spaghetti Bolognese"
-                required
-                defaultValue={recipe?.title ?? ""}
-              />
-            </div>
-
-            <div className="sm:col-span-2">
-              <Label htmlFor="description">Description</Label>
-              <textarea
-                id="description"
-                name="description"
-                rows={3}
-                className="w-full px-3 py-2.5 rounded-2xl border border-zinc-300 bg-white"
-                defaultValue={recipe?.description ?? ""}
-              />
-            </div>
-
-            <div>
-              <Label>Prep time (min)</Label>
-              <input
-                name="prepMins"
-                type="number"
-                inputMode="numeric"
-                className="w-full px-3 py-2.5 rounded-2xl border border-zinc-300 bg-white"
-                defaultValue={recipe?.prepMins?.toString() ?? ""}
-              />
-            </div>
-            <div>
-              <Label>Cook time (min)</Label>
-              <input
-                name="cookMins"
-                type="number"
-                inputMode="numeric"
-                className="w-full px-3 py-2.5 rounded-2xl border border-zinc-300 bg-white"
-                defaultValue={recipe?.cookMins?.toString() ?? ""}
-              />
-            </div>
-            <div>
-              <Label>Servings</Label>
-              <input
-                name="servings"
-                type="number"
-                inputMode="numeric"
-                className="w-full px-3 py-2.5 rounded-2xl border border-zinc-300 bg-white"
-                defaultValue={recipe?.servings?.toString() ?? ""}
-              />
-            </div>
-
-            <div className="sm:col-span-2">
-              <Label>Tags</Label>
-              <TagsEditor value={tags} onChange={setTags} />
-            </div>
+        <section className="space-y-6">
+          <div className="space-y-2">
+            <Header textSize="text-5xl">Create a new recipe</Header>
+            <SubHeader>
+              Fill in the details and save it to your cookbook.
+            </SubHeader>
           </div>
-        </Panel>
+
+          <Input
+            label="Title"
+            name="title"
+            type="text"
+            placeholder="e.g. Spaghetti Bolognese"
+            required
+            defaultValue={recipe?.title ?? ""}
+          />
+
+          <TextArea
+            label="Description"
+            name="description"
+            rows={3}
+            defaultValue={recipe?.description ?? ""}
+          />
+
+          <div className="flex flex-col md:flex-row gap-4">
+            <Input
+              label="Prep time (mins)"
+              name="prepMins"
+              type="number"
+              inputMode="numeric"
+              defaultValue={recipe?.prepMins?.toString() ?? ""}
+            />
+            <Input
+              label="Cook time (mins)"
+              name="cookMins"
+              type="number"
+              inputMode="numeric"
+              defaultValue={recipe?.cookMins?.toString() ?? ""}
+            />
+          </div>
+
+          <div className="w-full md:w-1/2">
+            <Input
+              label="Servings"
+              name="servings"
+              type="number"
+              inputMode="numeric"
+              defaultValue={recipe?.servings?.toString() ?? ""}
+            />
+          </div>
+
+          <TagsEditor value={tags} onChange={setTags} />
+        </section>
 
         {/* Ingredients */}
-        <Panel
-          header="Ingredients"
-          subheader="List what you'll need. Press Enter to add more."
-        >
-          <div className="flex flex-col gap-3">
+        <section className="space-y-6">
+          <div className="ml-2 space-y-2">
+            <Header textSize="text-4xl">Ingredients</Header>
+            <SubHeader>
+              List what you'll need. Press Enter to add more.
+            </SubHeader>
+          </div>
+          <div className="flex flex-col gap-4">
             {ingredients.map((val, i) => (
-              <div key={`ing-${i}`} className="flex items-center gap-4">
-                <input
+              <div key={`ing-${i}`} className="flex items-center gap-2">
+                <Input
+                  name={`ing-${i}`}
                   type="text"
                   aria-label={`Ingredient ${i + 1}`}
-                  className="ingredient-input w-full px-3 py-2.5 rounded-2xl border border-zinc-300 bg-white"
+                  className="ingredient-input"
                   placeholder={i === 0 ? "e.g. 250g dried pasta" : ""}
                   value={val}
                   onChange={(e) =>
@@ -419,45 +409,40 @@ export default function RecipeForm({ mode, recipe, action }: RecipeFormProps) {
                     "input.ingredient-input",
                   )}
                 />
-
-                <button
+                <SecondaryButton
+                  width="w-10"
+                  height="h-10"
                   type="button"
-                  className="shrink-0 w-10 h-10 flex items-center justify-center
-              bg-linear-to-br from-slate-100 to-slate-200
-              rounded-full text-slate-800 border border-slate-300
-              cursor-pointer hover:brightness-90 active:brightness-75"
                   onClick={() => removeRow(setIngredients, i)}
                   disabled={ingredients.length === 1}
                   aria-label="Remove ingredient"
                 >
-                  <X size={16} />
-                </button>
+                  <X size={20} />
+                </SecondaryButton>
               </div>
             ))}
-            <div>
-              <button
-                type="button"
-                className="mt-2 px-4 h-11 flex gap-2 items-center bg-linear-to-br from-slate-100 to-slate-200 rounded-full text-slate-800 border border-slate-300 cursor-pointer hover:brightness-90 active:brightness-75"
-                onClick={() => addRow(setIngredients)}
-              >
-                Add Ingredient
-              </button>
-            </div>
           </div>
-        </Panel>
+          <PrimaryButton type="button" onClick={() => addRow(setIngredients)}>
+            Add Ingredient
+          </PrimaryButton>
+        </section>
 
         {/* Steps */}
-        <Panel
-          header="Steps"
-          subheader="Walk through how to make it, one step at a time."
-        >
-          <div className="flex flex-col gap-3">
+        <section className="space-y-6">
+          <div className="ml-2 space-y-2">
+            <Header textSize="text-4xl">Steps</Header>
+            <SubHeader>
+              Walk through how to make it, one step at a time.
+            </SubHeader>
+          </div>
+          <div className="flex flex-col gap-4">
             {steps.map((val, i) => (
               <div key={`step-${i}`} className="flex items-start gap-4">
-                <textarea
+                <TextArea
+                  name={`step-${i}`}
                   rows={2}
                   aria-label={`Step ${i + 1}`}
-                  className="step-input w-full px-3 py-2.5 rounded-2xl border border-zinc-300 bg-white"
+                  className="step-input"
                   placeholder={
                     i === 0 ? "e.g. Preheat oven to 180°C (fan)." : ""
                   }
@@ -468,35 +453,27 @@ export default function RecipeForm({ mode, recipe, action }: RecipeFormProps) {
                     )
                   }
                 />
-
-                <button
+                <SecondaryButton
+                  width="w-10"
+                  height="h-10"
                   type="button"
-                  className="shrink-0 w-10 h-10 flex items-center justify-center
-              bg-linear-to-br from-slate-100 to-slate-200
-              rounded-full text-slate-800 border border-slate-300
-              cursor-pointer hover:brightness-90 active:brightness-75"
                   onClick={() => removeRow(setSteps, i)}
                   disabled={steps.length === 1}
                   aria-label="Remove step"
                 >
-                  <X size={16} />
-                </button>
+                  <X size={20} />
+                </SecondaryButton>
               </div>
             ))}
-            <div>
-              <button
-                type="button"
-                className="mt-2 px-4 h-11 flex gap-2 items-center bg-linear-to-br from-slate-100 to-slate-200 rounded-full text-slate-800 border border-slate-300 cursor-pointer hover:brightness-90 active:brightness-75"
-                onClick={() => addRow(setSteps)}
-              >
-                Add Step
-              </button>
-            </div>
           </div>
-        </Panel>
+
+          <PrimaryButton type="button" onClick={() => addRow(setSteps)}>
+            Add Step
+          </PrimaryButton>
+        </section>
 
         {/* Notes */}
-        <Panel
+        {/* <Panel
           header="Notes"
           subheader="Preparation notes, variations, serving ideas, or any other personal touches."
         >
@@ -506,22 +483,26 @@ export default function RecipeForm({ mode, recipe, action }: RecipeFormProps) {
             className="w-full px-3 py-2.5 rounded-2xl border border-zinc-300 bg-white"
             defaultValue={recipe?.note ?? ""}
           />
-        </Panel>
+        </Panel> */}
 
         {/* Cover Image */}
-        <Panel
-          header="Picture"
-          subheader="Choose a cover picture (JPEG, PNG, WebP)"
-        >
+        <section className="space-y-6">
+          <div className="ml-2 space-y-2">
+            <Header textSize="text-4xl">Picture</Header>
+            <SubHeader>
+              Choose a cover image (max 20MB)
+            </SubHeader>
+          </div>
+
           <div>
             <input
               ref={fileInputRef}
               type="file"
               accept="image/jpeg,image/png,image/webp"
               onChange={onPick}
-              className="block w-full rounded-2xl border border-slate-300 bg-linear-to-br from-slate-100 to-slate-200 px-3 py-2.5 hover:brightness-90 active:brightness-75 cursor-pointer"
+              className="block w-full rounded-2xl border border-rose-500 cursor-pointer"
               disabled={uploading}
-            />
+              />
 
             {/* Upload status + inline delete (under the file input) */}
             <div className="mt-2 flex flex-wrap items-center gap-3 text-sm">
@@ -545,7 +526,7 @@ export default function RecipeForm({ mode, recipe, action }: RecipeFormProps) {
                       await deleteImage();
                     }}
                     className="rounded-md border border-zinc-300 bg-white px-2 py-1 text-xs hover:bg-zinc-50 disabled:opacity-50"
-                  >
+                    >
                     Remove
                   </button>
                 </div>
@@ -570,11 +551,11 @@ export default function RecipeForm({ mode, recipe, action }: RecipeFormProps) {
                   fill
                   sizes="100vw"
                   className={`object-cover ${uploadError ? "opacity-70 grayscale" : ""}`}
-                />
+                  />
               </div>
             )}
           </div>
-        </Panel>
+        </section>
 
         {/* Save button */}
         {saveError && (
@@ -589,7 +570,7 @@ export default function RecipeForm({ mode, recipe, action }: RecipeFormProps) {
           pendingLabel="Saving..."
           isPending={saving}
           disabled={uploading || deleting}
-        >
+          >
           Save
         </FormSubmitButton>
       </form>
@@ -616,32 +597,9 @@ function Panel({
   children: React.ReactNode;
 }) {
   return (
-    <section className="rounded-3xl border border-white/70 bg-white/95 p-8 shadow-lg backdrop-blur">
-      {first ? (
-        <div className="mb-6 flex flex-col sm:flex-row items-center sm:items-start gap-3 sm:gap-6 md:mb-8">
-          {icon && (
-            <div className="hidden sm:flex w-20 h-18 items-center justify-center rounded-3xl bg-linear-to-br from-orange-100 to-rose-100 text-rose-500 border border-rose-200">
-              {icon}
-            </div>
-          )}
-          <div className="text-center sm:text-start">
-            <h1 className="text-3xl font-bold leading-tight text-gray-900 md:text-4xl">
-              {header}
-            </h1>
-            {subheader && (
-              <p className="text-gray-700">{subheader}</p>
-            )}
-          </div>
-        </div>
-      ) : (
-        <>
-          <h3 className="text-2xl font-bold">{header}</h3>
-          {subheader && (
-            <p className="mt-1 text-sm text-zinc-600">{subheader}</p>
-          )}
-        </>
-      )}
-
+    <section>
+      <Header textSize={first ? "text-5xl" : "text-3xl"}>{header}</Header>
+      <SubHeader>{subheader}</SubHeader>
       <div className={first ? "" : "mt-4"}>{children}</div>
     </section>
   );
@@ -663,9 +621,11 @@ function TagsEditor({
   };
   const remove = (t: string) => onChange(value.filter((x) => x !== t));
   return (
-    <div className="flex flex-col gap-4">
-      <div className="flex items-center gap-2">
-        <input
+    <div className="w-full">
+      <div className="w-full flex items-end gap-2">
+        <Input
+          label="Tags (press enter to add)"
+          name="tags"
           type="text"
           value={draft}
           onChange={(e) => setDraft(e.target.value)}
@@ -677,40 +637,30 @@ function TagsEditor({
             if (e.key === "Backspace" && draft === "" && value.length)
               remove(value[value.length - 1]);
           }}
-          placeholder="e.g. Dinner, Healthy..."
-          className="w-full rounded-2xl border border-zinc-300 bg-white/95 px-3 py-2.5"
+          placeholder="Dinner, Healthy, Party ..."
           aria-label="Add tag"
         />
-        <button
-          type="button"
-          onClick={add}
-          className="shrink-0 px-3 py-2 flex items-center gap-2
-              bg-linear-to-br from-slate-100 to-slate-200
-              rounded-full text-sm text-slate-800 border border-slate-300
-              cursor-pointer hover:brightness-90 active:brightness-75"
-        >
-          <TagIcon size={16} />
+
+        <PrimaryButton height="h-12" onClick={add}>
           Add
-        </button>
+          <TagIcon size={16} />
+        </PrimaryButton>
       </div>
 
       {value.length >= 1 && (
-        <div className="w-full h-max mb-1 flex flex-wrap gap-2">
+        <div className="w-full h-max mt-6 flex flex-wrap gap-2">
           {value.map((t) => (
-            <div
+            <button
               key={t}
-              className="group flex items-center gap-1 rounded-full bg-linear-to-br from-orange-100 to-rose-100 text-rose-500 border border-rose-200 px-3 py-1 font-medium text-nowrap"
+              type="button"
+              onClick={() => remove(t)}
+              aria-label={`Remove tag ${t}`}
             >
-              <span className="ml-1">{t}</span>
-              <button
-                type="button"
-                onClick={() => remove(t)}
-                aria-label={`Remove tag ${t}`}
-                className="rounded-full p-0.5 cursor-pointer"
-              >
-                <X size={14} className="text-orange-600" />
-              </button>
-            </div>
+              <Tag interactive>
+                <span>{t}</span>
+                <X size={16} className="ml-2" />
+              </Tag>
+            </button>
           ))}
         </div>
       )}

@@ -1,28 +1,22 @@
-import { LucideIcon, LucideProps } from "lucide-react";
-import React from "react";
+import React, { ButtonHTMLAttributes } from "react";
 
-type ButtonType = "button" | "submit";
 type Size = "md" | "lg" | "xl";
 
-export function PrimaryButton({
-  className,
-  children,
-  type="button",
-  width="w-max",
-  height="h-max",
-  size="md",
-  disabled=false,
-  onClick,
-}: {
-  className?: string;
-  children: React.ReactNode;
-  type?: ButtonType;
+interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
+  size?: Size;
   width?: string;
   height?: string;
-  size?: Size;
-  disabled?: Boolean;
-  onClick?: (e: React.MouseEvent<HTMLButtonElement>) => void;
-}) {
+  invalid?: boolean;
+}
+
+export function PrimaryButton({
+  size = "md",
+  width = "w-max",
+  height = "h-max",
+  disabled = false,
+  children,
+  ...props
+}: ButtonProps) {
   let sizeStyle: string;
   switch (size) {
     case "xl":
@@ -45,9 +39,8 @@ export function PrimaryButton({
 
   return (
     <button
-      className={`${className} ${width} ${height} ${sizeStyle} ${disabledStyle} flex no-wrap justify-center items-center gap-2 rounded-full bg-linear-to-r from-orange-500 to-rose-500 text-white font-bold`}
-      type={type}
-      onClick={onClick}
+      className={`${width} ${height} ${sizeStyle} ${disabledStyle} flex no-wrap justify-center items-center gap-2 rounded-full bg-linear-to-r from-orange-500 to-rose-500 text-white font-bold`}
+      {...props}
     >
       {children}
     </button>
@@ -55,20 +48,13 @@ export function PrimaryButton({
 }
 
 export function SecondaryButton({
+  size="md",
+  width="w-max",
+  height="h-max",
   children,
-  type = "button",
-  width = "w-max",
-  height = "h-max",
-  size = "md",
-  onClick,
-}: {
-  children: React.ReactNode;
-  type?: ButtonType;
-  width?: string;
-  height?: string;
-  size?: Size;
-  onClick?: (e: React.MouseEvent<HTMLButtonElement>) => void;
-}) {
+  disabled,
+  ...props
+}: ButtonProps) {
   let sizeStyle: string;
   switch (size) {
     case "lg":
@@ -84,8 +70,7 @@ export function SecondaryButton({
   return (
     <button
       className={`${width} ${height} ${sizeStyle} h-max flex gap-2 items-center rounded-full bg-white/70 backdrop-blur-lg border border-rose-500 text-rose-500 font-bold cursor-pointer hover:brightness-95`}
-      type={type}
-      onClick={onClick}
+      {...props}
     >
       {children}
     </button>
@@ -94,18 +79,10 @@ export function SecondaryButton({
 
 export function TeriaryButton({
   children,
-  type = "button",
-  textSize="text-md",
-}: {
-  children: React.ReactNode;
-  type?: ButtonType;
-  textSize?: string;
-}) {
-
+}: ButtonProps) {
   return (
     <button
-      className={`${textSize} flex no-wrap justify-center items-center gap-2 text-orange-600 font-bold underline cursor-pointer hover:text-orange-700`}
-      type={type}
+      className={`flex no-wrap justify-center items-center gap-2 text-orange-600 font-bold underline cursor-pointer hover:text-orange-700`}
     >
       {children}
     </button>
