@@ -2,22 +2,16 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { auth } from "@/lib/auth/auth";
 import { prisma } from "@/lib/prisma";
-import {
-  ChefHat,
-  ArrowLeft,
-  TagIcon,
-} from "lucide-react";
+import { ChefHat, ArrowLeft, TagIcon } from "lucide-react";
 import { RecipeImage } from "@/app/components/recipes/RecipeImage";
 import { deleteRecipe } from "./actions";
 import { getHostname } from "@/lib/hostname";
-import {
-  PrimaryButton,
-  TeriaryButton,
-} from "@/app/components/buttons/Buttons";
+import { PrimaryButton, TeriaryButton } from "@/app/components/buttons/Buttons";
 import { Header, SubHeader } from "@/app/components/text/Headers";
 import { Tag } from "@/app/components/tags/Tags";
 import Image from "next/image";
-import { RecipeActionsMenu } from "./RecipeActionsMenu";
+import { ButtonBar } from "./ButtonBar";
+import { RecipeType } from "@/types/recipe";
 
 export default async function ViewRecipePage({
   params,
@@ -56,35 +50,15 @@ export default async function ViewRecipePage({
 
   return (
     <>
-      <div className="mt-8 flex justify-between items-center">
-        {/* Back button */}
-        <Link
-          href="/all"
-          className="w-max flex items-center gap-3 text-lg font-semibold text-slate-900 cursor-pointer hover:brightness-90 active:brightness-75"
-        >
-          <TeriaryButton>
-            <ArrowLeft size={20} />
-            <span className="hidden sm:block">Back</span>
-          </TeriaryButton>
-        </Link>
-
-        {/* Button bar */}
-        <RecipeActionsMenu
-          slug={slug}
-          isFavourite={recipe.isFavourite}
-          sourceUrl={recipe.sourceUrl}
-          deleteAction={deleteRecipe}
-        />
-
-        {recipe.type !== "EXTERNAL_LINK" && (
-          <Link href={`/cook/${slug}`}>
-            <PrimaryButton>
-              <ChefHat size={20} className="-rotate-12 shrink-0" />
-              <span className="text-nowrap">Start Cooking</span>
-            </PrimaryButton>
-          </Link>
-        )}
-      </div>
+      <ButtonBar
+        slug={slug}
+        isFavorite={recipe.isFavourite}
+        recipeType={recipe.type as RecipeType}
+        deleteAction={deleteRecipe}
+        sourceUrl={recipe.sourceUrl || null}
+      />
+      {/* <div className="mt-8 flex justify-between items-center">
+      </div> */}
 
       {/* Hero section */}
       <section className="mt-4 flex flex-col md:flex-row gap-8">

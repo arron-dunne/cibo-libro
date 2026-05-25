@@ -45,7 +45,7 @@ export function Navbar({ session }: { session?: Session | null }) {
       {session?.user ? (
         <>
           {/* Navigation */}
-          <div className="hidden gap-6 md:flex">
+          <div className="flex gap-6">
             <DesktopNavLink type="home" />
             <DesktopNavLink type="all" />
             <DesktopNavLink type="new" />
@@ -54,17 +54,17 @@ export function Navbar({ session }: { session?: Session | null }) {
           </div>
 
           <div className="flex grow justify-end items-center text-sm">
-            <div className="block md:hidden">
+            {/* <div className="block md:hidden">
               <MobileMenu />
-            </div>
+            </div> */}
 
             {/* Logout */}
-            <span className="hidden lg:inline mr-0 lg:mr-4 text-gray-700">
+            {/* <span className="hidden lg:inline mr-0 lg:mr-4 text-gray-700">
               {session.user.email}
             </span>
             <div className="hidden md:block">
               <LogoutButton action={logout} />
-            </div>
+            </div> */}
           </div>
         </>
       ) : pathname === "/register" ? (

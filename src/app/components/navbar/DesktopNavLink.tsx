@@ -18,15 +18,16 @@ export function DesktopNavLink({ type }: { type: NavLinkType }) {
   return (
     <Link
       href={href}
-      className={`flex items-center gap-1 font-medium rounded-full transition 
+      className={`flex flex-col sm:flex-row items-center justify-center gap-0 sm:gap-1 font-medium rounded-full transition 
       ${
         highlight
           ? "bg-linear-to-r from-orange-500 to-rose-500 text-white px-4 py-2 font-bold shadow"
           : "text-orange-700 hover:brightness-200"
       }`}
     >
-      {highlight && <Icon size={18} />}
-      {label}
+      <Icon size={18} className="block sm:hidden"/>
+      {highlight && <Icon className="hidden sm:block" size={18} />}
+      <span className="text-xs sm:text-base">{label}</span>
     </Link>
   );
 }

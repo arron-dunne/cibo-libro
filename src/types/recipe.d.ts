@@ -1,5 +1,8 @@
 import type { RecipeStatus, RecipeType } from "@/prisma/generated/enums";
 
+// TODO: is correct way to type?
+export type RecipeType = "EXTERNAL_FULL" | "EXTERNAL_LINK" | "OWNED";
+
 declare global {
   interface Recipe {
     id?: string;
