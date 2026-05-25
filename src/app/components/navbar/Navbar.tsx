@@ -20,7 +20,7 @@ export function Navbar({ session }: { session?: Session | null }) {
     const onScroll = () => {
       if (window.scrollY > 16) setScrolled(true);
       else if (window.scrollY < 6) setScrolled(false);
-    }
+    };
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
@@ -54,13 +54,17 @@ export function Navbar({ session }: { session?: Session | null }) {
           </div>
 
           <div className="flex grow justify-end items-center text-sm">
-            <MobileMenu />
+            <div className="block md:hidden">
+              <MobileMenu />
+            </div>
 
             {/* Logout */}
             <span className="hidden lg:inline mr-0 lg:mr-4 text-gray-700">
               {session.user.email}
             </span>
-            <LogoutButton action={logout} />
+            <div className="hidden md:block">
+              <LogoutButton action={logout} />
+            </div>
           </div>
         </>
       ) : pathname === "/register" ? (

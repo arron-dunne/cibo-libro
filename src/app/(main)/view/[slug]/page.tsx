@@ -3,25 +3,21 @@ import { notFound } from "next/navigation";
 import { auth } from "@/lib/auth/auth";
 import { prisma } from "@/lib/prisma";
 import {
-  Pencil,
   ChefHat,
   ArrowLeft,
-  Link as LinkIcon,
   TagIcon,
 } from "lucide-react";
 import { RecipeImage } from "@/app/components/recipes/RecipeImage";
 import { deleteRecipe } from "./actions";
-import { DeleteButton } from "./DeleteButton";
-import { FavouriteButton } from "./FavouriteButton";
 import { getHostname } from "@/lib/hostname";
 import {
   PrimaryButton,
-  SecondaryButton,
   TeriaryButton,
 } from "@/app/components/buttons/Buttons";
 import { Header, SubHeader } from "@/app/components/text/Headers";
 import { Tag } from "@/app/components/tags/Tags";
 import Image from "next/image";
+import { RecipeActionsMenu } from "./RecipeActionsMenu";
 
 export default async function ViewRecipePage({
   params,
@@ -68,40 +64,17 @@ export default async function ViewRecipePage({
         >
           <TeriaryButton>
             <ArrowLeft size={20} />
-            Back
+            <span className="hidden sm:block">Back</span>
           </TeriaryButton>
         </Link>
 
-        {/* Button bar  */}
-        <div className="flex gap-8">
-          <FavouriteButton
-            slug={slug}
-            initialIsFavourite={recipe.isFavourite}
-          />
-
-          <Link href={`/edit/${slug}`}>
-            <TeriaryButton>
-              <Pencil size={20} />
-              <span className="hidden lg:block">Edit</span>
-            </TeriaryButton>
-          </Link>
-
-          <DeleteButton slug={slug} action={deleteRecipe} />
-
-          {/* Source URL */}
-          {recipe.sourceUrl && (
-            <Link
-            href={recipe.sourceUrl}
-            target="_blank"
-            aria-label="View original"
-            >
-              <TeriaryButton>
-                <LinkIcon size={20} />
-                <span className="hidden lg:block">Source</span>
-              </TeriaryButton>
-            </Link>
-          )}
-        </div>
+        {/* Button bar */}
+        <RecipeActionsMenu
+          slug={slug}
+          isFavourite={recipe.isFavourite}
+          sourceUrl={recipe.sourceUrl}
+          deleteAction={deleteRecipe}
+        />
 
         {recipe.type !== "EXTERNAL_LINK" && (
           <Link href={`/cook/${slug}`}>

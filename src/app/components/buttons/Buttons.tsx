@@ -1,6 +1,6 @@
 import React, { ButtonHTMLAttributes } from "react";
 
-type Size = "md" | "lg" | "xl";
+type Size = "md" | "lg" | "xl" | "custom";
 
 interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   size?: Size;
@@ -29,8 +29,12 @@ export function PrimaryButton({
       break;
 
     case "md":
-    default:
       sizeStyle = "px-4 py-2 text-md";
+      break;
+
+    case "custom":
+    default:
+      sizeStyle = "";
       break;
   }
 
@@ -49,9 +53,9 @@ export function PrimaryButton({
 }
 
 export function SecondaryButton({
-  size="md",
-  width="w-max",
-  height="h-max",
+  size = "md",
+  width = "w-max",
+  height = "h-max",
   children,
   disabled,
   ...props
@@ -63,8 +67,12 @@ export function SecondaryButton({
       break;
 
     case "md":
-    default:
       sizeStyle = "px-3 py-2 text-md";
+      break;
+
+    case "custom":
+    default:
+      sizeStyle = "";
       break;
   }
 
@@ -78,12 +86,11 @@ export function SecondaryButton({
   );
 }
 
-export function TeriaryButton({
-  children,
-}: ButtonProps) {
+export function TeriaryButton({ children, ...props }: ButtonProps) {
   return (
     <button
       className={`flex no-wrap justify-center items-center gap-2 text-orange-600 font-bold underline cursor-pointer hover:text-orange-700`}
+      {...props}
     >
       {children}
     </button>
