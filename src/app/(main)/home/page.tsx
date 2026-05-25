@@ -47,7 +47,7 @@ export default async function HomePage() {
   return (
     <>
       {/* Header */}
-      <div className="ml-2 mt-8 space-y-2">
+      <div className="mt-12 ml-2 space-y-2">
         <Header>What&apos;s cooking?</Header>
         <SubHeader>Browse your cookbook, add new recipes, or import them so you never forget the food you love to cook.</SubHeader>
       </div>

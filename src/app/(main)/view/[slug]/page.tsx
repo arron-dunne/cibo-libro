@@ -21,6 +21,7 @@ import {
 } from "@/app/components/buttons/Buttons";
 import { Header, SubHeader } from "@/app/components/text/Headers";
 import { Tag } from "@/app/components/tags/Tags";
+import Image from "next/image";
 
 export default async function ViewRecipePage({
   params,
@@ -59,7 +60,7 @@ export default async function ViewRecipePage({
 
   return (
     <>
-      <div className="flex justify-between items-center">
+      <div className="mt-8 flex justify-between items-center">
         {/* Back button */}
         <Link
           href="/all"
@@ -71,92 +72,132 @@ export default async function ViewRecipePage({
           </TeriaryButton>
         </Link>
 
-        {/* Source URL */}
-        {recipe.sourceUrl && (
-          <Link
+        {/* Button bar  */}
+        <div className="flex gap-8">
+          <FavouriteButton
+            slug={slug}
+            initialIsFavourite={recipe.isFavourite}
+          />
+
+          <Link href={`/edit/${slug}`}>
+            <TeriaryButton>
+              <Pencil size={20} />
+              <span className="hidden lg:block">Edit</span>
+            </TeriaryButton>
+          </Link>
+
+          <DeleteButton slug={slug} action={deleteRecipe} />
+
+          {/* Source URL */}
+          {recipe.sourceUrl && (
+            <Link
             href={recipe.sourceUrl}
             target="_blank"
             aria-label="View original"
-          >
-            <TeriaryButton>
-              View orignal
-              <LinkIcon size={20} />
-            </TeriaryButton>
+            >
+              <TeriaryButton>
+                <LinkIcon size={20} />
+                <span className="hidden lg:block">Source</span>
+              </TeriaryButton>
+            </Link>
+          )}
+        </div>
+
+        {recipe.type !== "EXTERNAL_LINK" && (
+          <Link href={`/cook/${slug}`}>
+            <PrimaryButton>
+              <ChefHat size={20} className="-rotate-12 shrink-0" />
+              <span className="text-nowrap">Start Cooking</span>
+            </PrimaryButton>
           </Link>
         )}
       </div>
 
       {/* Hero section */}
-      <section className="md:min-h-100 mt-4 flex flex-col md:flex-row gap-8">
-
+      <section className="mt-4 flex flex-col md:flex-row gap-8">
         {/* Image */}
-        <div className="md:relative w-full md:w-1/2 max-h-100 md:max-h-none overflow-hidden rounded-4xl border border-white/80">
-          <div className="md:absolute md:inset-0">
-            <RecipeImage
-              imageKey={recipe.imageKey ?? undefined}
-              externalUrl={recipe.imageExternalUrl ?? undefined}
-              alt={recipe.title || "Recipe image"}
-            />
-          </div>
-        </div>
-
-        {/* Details */}
-        <div className="w-full min-h-100 h-full md:w-1/2 mt-4 md:mt-12 flex flex-col justify-between">
-          <div>
-            <Header>{recipe.title}</Header>
-
-            <SubHeader className="mt-4">
-              {recipe.description
-                ? recipe.description
-                : "No description provided"}
-            </SubHeader>
-
-            {recipe.tags.length ? (
-              <div className="mt-4 flex items-center flex-wrap gap-2">
-                <TagIcon className="text-rose-600" size={20} />
-                {recipe.tags.map((tag) => (
-                  <Tag key={tag}>{tag}</Tag>
-                ))}
-              </div>
-            ) : (
-              <div className="mt-3 flex gap-2">
-                <span className="h-6 w-20 rounded-full bg-slate-100" />
-                <span className="h-6 w-14 rounded-full bg-slate-100" />
-              </div>
-            )}
-
-            <div className="mt-6 flex flex-wrap gap-2">
-              <StatChip label="Prep" value={`${prep}m`} />
-              <StatChip label="Cook" value={`${cook}m`} />
-              <StatChip label="Total" value={`${total}m`} />
-              <StatChip label="Serves" value={String(recipe.servings ?? 1)} />
+        {(recipe.imageKey || recipe.imageExternalUrl) && (
+          <div className="md:relative w-full md:w-1/2 h-100 overflow-hidden rounded-4xl border border-white/80">
+            <div className="md:absolute md:inset-0">
+              <RecipeImage
+                imageKey={recipe.imageKey ?? undefined}
+                externalUrl={recipe.imageExternalUrl ?? undefined}
+                alt={recipe.title || "Recipe image"}
+              />
             </div>
           </div>
+        )}
 
-          {/* Button bar  */}
-          <div className="flex gap-2">
-            <FavouriteButton
-              slug={slug}
-              initialIsFavourite={recipe.isFavourite}
-            />
+        {/* Details */}
+        <div className="w-full h-full md:w-1/2 mt-4 md:mt-12 flex flex-col justify-between">
+          <Header>{recipe.title}</Header>
 
-            <Link href={`/edit/${slug}`}>
-              <SecondaryButton>
-                <Pencil size={20} />
-                <span className="hidden lg:block">Edit</span>
-              </SecondaryButton>
-            </Link>
+          <SubHeader className="mt-4">
+            {recipe.description
+              ? recipe.description
+              : "No description provided"}
+          </SubHeader>
 
-            <DeleteButton slug={slug} action={deleteRecipe} />
+          {recipe.tags.length > 0 && (
+            <div className="mt-4 flex items-center flex-wrap gap-2">
+              <TagIcon className="text-rose-600" size={20} />
+              {recipe.tags.map((tag) => (
+                <Tag key={tag}>{tag}</Tag>
+              ))}
+            </div>
+          )}
 
-            {recipe.type !== "EXTERNAL_LINK" && (
-              <Link href={`/cook/${slug}`} className="w-full flex justify-end">
-                <PrimaryButton>
-                  <ChefHat size={20} className="-rotate-12 shrink-0" />
-                  <span className="text-nowrap">Start Cooking</span>
-                </PrimaryButton>
-              </Link>
-            )}
+          {/* Timing */}
+          <div className="mt-6 flex gap-16">
+            <div className="flex items-center gap-2">
+              <Image
+                className="size-8"
+                src="/icons/cutting-board-bw.png"
+                width={512}
+                height={512}
+                alt="cutting board"
+              />
+              <p className="shrink-0">Prep:</p>
+              <p className="ml-4 text-lg font-bold">{prep}m</p>
+            </div>
+
+            {/* <span className="hidden sm:block my-auto w-2 h-2 rounded-full bg-linear-to-r from-orange-500 to-rose-500"></span> */}
+
+            <div className="flex items-center gap-2">
+              <Image
+                className="size-8"
+                src="/icons/cooking-bw.png"
+                width={512}
+                height={512}
+                alt="cooking"
+              />
+              <p className="shrink-0">Cook:</p>
+              <p className="ml-4 text-lg font-bold">{cook}m</p>
+            </div>
+
+            {/* <div className="flex items-center gap-2">
+                <Image className="size-8" src="/icons/stopwatch.png" width={512} height={512} alt="stopwatch"/>
+                <p>Total</p>
+                <p className="ml-4 text-xl">{total}m</p>
+              </div> */}
+            {/* <span className="my-auto w-2 h-2 rounded-full bg-linear-to-r from-orange-500 to-rose-500"></span> */}
+          </div>
+
+          {/* Servings */}
+          <div className="mt-6">
+            <div className="flex items-center gap-2">
+              <Image
+                className="size-8"
+                src="/icons/serving-dish-bw.png"
+                width={512}
+                height={512}
+                alt="serving dish"
+              />
+              <p>Serves:</p>
+              <p className="ml-4 text-lg font-bold">
+                {String(recipe.servings ?? 1)}
+              </p>
+            </div>
           </div>
         </div>
       </section>
@@ -186,7 +227,7 @@ function IngredientsSection({ ingredients }: { ingredients: string[] }) {
           ))}
         </ul>
       ) : (
-        <p className="text-sm text-slate-800">No ingredients.</p>
+        <p className="text-slate-800">No ingredients yet.</p>
       )}
     </section>
   );
@@ -194,8 +235,8 @@ function IngredientsSection({ ingredients }: { ingredients: string[] }) {
 
 function StepsSection({ steps }: { steps: string[] }) {
   return (
-    <section className="h-max w-full md:w-2/3 lg:w-3/5 rounded-4xl border border-white/60 bg-white p-6">
-      <h2 className="mb-4 ml-2 text-2xl font-extrabold">Steps</h2>
+    <section className="h-max w-full md:w-2/3 lg:w-3/5 rounded-4xl bg-white p-8">
+      <h2 className="mb-4 text-2xl font-extrabold">Steps</h2>
       {steps.length ? (
         <ol className="relative space-y-6 ml-2 before:absolute before:left-2.5 before:top-1 before:h-[98%] before:w-1 before:rounded before:bg-linear-to-b before:from-orange-200 before:to-rose-200">
           {steps.map((s, i) => (
@@ -208,17 +249,8 @@ function StepsSection({ steps }: { steps: string[] }) {
           ))}
         </ol>
       ) : (
-        <p className="text-sm text-slate-600">No steps yet.</p>
+        <p className="text-slate-800">No steps yet.</p>
       )}
     </section>
-  );
-}
-
-function StatChip({ label, value }: { label: string; value: string }) {
-  return (
-    <div className="grow max-w-36 min-w-26 flex justify-between items-center gap-2 rounded-full border border-white px-3 py-1.5 text-sm font-semibold">
-      <span className="text-gray-500">{label}</span>
-      <span className="text-gray-800">{value}</span>
-    </div>
   );
 }
