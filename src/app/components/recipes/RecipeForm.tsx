@@ -6,14 +6,23 @@ import { useState, useRef, useEffect } from "react";
 import { compressImageFile } from "@/lib/images/compress";
 import { MAX_SIZE_BYTES } from "@/lib/images/constants";
 import { RecipeFormRecipe } from "@/types/recipe";
-import { X, Tag as TagIcon, CircleAlert, ImagePlus, Loader2 } from "lucide-react";
+import {
+  X,
+  Tag as TagIcon,
+  CircleAlert,
+  ImagePlus,
+  Loader2,
+} from "lucide-react";
 import { FormSubmitButton } from "@/app/components/forms/FormSubmitButton";
 import { Header, SubHeader } from "../text/Headers";
 import { Input, TextArea } from "../forms/Inputs";
-import { PrimaryButton, SecondaryButton, TeriaryButton } from "../buttons/Buttons";
+import {
+  PrimaryButton,
+  SecondaryButton,
+  TeriaryButton,
+} from "../buttons/Buttons";
 import { Tag } from "../tags/Tags";
 import Link from "next/link";
-import { useFormStatus } from "react-dom";
 
 // ────────────────────────────────────────────────────────────────────────────
 // Types
@@ -57,8 +66,6 @@ export default function RecipeForm({ mode, recipe, action }: RecipeFormProps) {
   const [uploading, setUploading] = useState(false);
   const [uploadError, setUploadError] = useState<string | null>(null);
   const [deleting, setDeleting] = useState(false);
-
-  const { pending } = useFormStatus();
 
   // Handle form submission
   const handleSubmit = async (e: React.SubmitEvent) => {
@@ -312,14 +319,18 @@ export default function RecipeForm({ mode, recipe, action }: RecipeFormProps) {
   // Render
   // ──────────────────────────────────────────────────────────────────────────
   return (
-    <div className="max-w-3xl w-full mx-auto mt-12">
+    <div className="mt-12 max-w-3xl w-full mx-auto">
       <form className="space-y-16" onSubmit={handleSubmit}>
         {/* Summary Panel */}
         <section className="space-y-6">
           <div className="space-y-2">
-            <Header textSize="text-5xl">Create a new recipe</Header>
+            <Header textSize="text-5xl">
+              {recipe ? "Edit recipe" : "Create a new recipe"}
+            </Header>
             <SubHeader>
-              Fill in the details and save it to your cookbook.
+              {recipe
+                ? "Update details and save changes."
+                : "Fill in the details and save it to your cookbook."}
             </SubHeader>
           </div>
 
@@ -479,9 +490,7 @@ export default function RecipeForm({ mode, recipe, action }: RecipeFormProps) {
         <section className="space-y-6">
           <div className="ml-2 space-y-2">
             <Header textSize="text-4xl">Picture</Header>
-            <SubHeader>
-              Choose a cover image to show with your recipe
-            </SubHeader>
+            <SubHeader>Choose a cover image to show with your recipe</SubHeader>
           </div>
 
           <div className="w-full">
@@ -505,9 +514,11 @@ export default function RecipeForm({ mode, recipe, action }: RecipeFormProps) {
                   {deleting ? (
                     <>
                       <span>Removing…</span>
-                      <Loader2 size={20} className="animate-spin"/>
+                      <Loader2 size={20} className="animate-spin" />
                     </>
-                  ) : "Remove photo"}
+                  ) : (
+                    "Remove photo"
+                  )}
                 </SecondaryButton>
               </div>
             ) : (
@@ -527,21 +538,30 @@ export default function RecipeForm({ mode, recipe, action }: RecipeFormProps) {
                 <div className="flex flex-col items-center justify-center gap-3 py-10 px-6 text-center">
                   {uploading ? (
                     <>
-                      <Loader2 size={42} className="text-rose-500 animate-spin"/>
+                      <Loader2
+                        size={42}
+                        className="text-rose-500 animate-spin"
+                      />
                       <p className="text-slate-800">Uploading image…</p>
                     </>
                   ) : uploadError ? (
                     <>
                       <CircleAlert size={38} className="text-rose-500" />
-                      
+
                       <div className="space-y-1">
-                        <p className="text-rose-600 font-semibold">{uploadError}</p>
+                        <p className="text-rose-600 font-semibold">
+                          {uploadError}
+                        </p>
                         <div className="text-sm text-slate-800 flex gap-1">
-                          <span>If this problem persists, please try again later or</span>
+                          <span>
+                            If this problem persists, please try again later or
+                          </span>
                           <Link href="/support/issues">
-                            <TeriaryButton className="z-10">contact support</TeriaryButton>
+                            <TeriaryButton className="z-10">
+                              contact support
+                            </TeriaryButton>
                           </Link>
-                          </div>
+                        </div>
                       </div>
                     </>
                   ) : (
@@ -573,10 +593,22 @@ export default function RecipeForm({ mode, recipe, action }: RecipeFormProps) {
             </div>
           </div>
         )}
-        
+
         <div className="pt-8 max-w-md mx-auto">
-          <PrimaryButton className="shadow-xl shadow-rose-300/50" size="lg" width="w-full" type="submit">
-            {pending ? <>Saving...<Loader2 size={28} className="ml-2 animate-spin"/></> : <>Save Recipe</> }
+          <PrimaryButton
+            className="shadow-xl shadow-rose-300/50"
+            size="lg"
+            width="w-full"
+            type="submit"
+          >
+            {saving ? (
+              <>
+                Saving...
+                <Loader2 size={28} className="ml-2 animate-spin" />
+              </>
+            ) : (
+              <>Save Recipe</>
+            )}
           </PrimaryButton>
         </div>
       </form>
