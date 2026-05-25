@@ -6,8 +6,16 @@ import { LogOut, Menu, X } from "lucide-react";
 import { type NavLinkType } from "./DesktopNavLink";
 import { MobileNavLink } from "./MobileNavLink";
 import { logout } from "@/app/actions/logout";
+import { PrimaryButton } from "../buttons/Buttons";
 
-const navItems: NavLinkType[] = ["home", "all", "new", "import", "settings", "logout"];
+const navItems: NavLinkType[] = [
+  "home",
+  "all",
+  "new",
+  "import",
+  "settings",
+  "logout",
+];
 
 export function MobileMenu() {
   const [isOpen, setIsOpen] = useState(false);
@@ -15,15 +23,17 @@ export function MobileMenu() {
 
   return (
     <>
-      <button
+      <PrimaryButton
         type="button"
         aria-label="Open navigation menu"
         onClick={() => setIsOpen(!isOpen)}
-        className="flex h-10 w-10 justify-center items-center cursor-pointer gap-1 rounded-full border border-white/70 bg-linear-to-r from-orange-500 to-rose-500 text-white font-bold sm:w-max sm:px-4 sm:py-2 shadow hover:brightness-90 active:brightness-75 md:hidden"
+        size="custom"
+        height="h-10"
+        width="w-10"
+        className="text-base"
       >
         <Menu size={20} />
-        <span className="hidden sm:block lg:hidden">Menu</span>
-      </button>
+      </PrimaryButton>
 
       {isOpen && (
         <>
