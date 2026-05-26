@@ -52,7 +52,7 @@ export function DeleteButton({ slug, action }: DeleteButtonProps) {
         <input type="hidden" readOnly name="slug" value={slug} />
         <TertiaryButton type="button" onClick={openModal}>
           <Trash2 size={20} />
-          <span className="hidden lg:block">Delete</span>
+          Delete
         </TertiaryButton>
       </form>
 
