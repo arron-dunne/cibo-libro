@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { Trash2 } from "lucide-react";
-import { SecondaryButton, TeriaryButton } from "@/app/components/buttons/Buttons";
+import { SecondaryButton, TertiaryButton } from "@/app/components/buttons/Buttons";
 
 type DeleteButtonProps = {
   slug: string;
@@ -50,10 +50,10 @@ export function DeleteButton({ slug, action }: DeleteButtonProps) {
       {/* Button */}
       <form ref={formRef} action={action}>
         <input type="hidden" readOnly name="slug" value={slug} />
-        <TeriaryButton type="button" onClick={openModal}>
+        <TertiaryButton type="button" onClick={openModal}>
           <Trash2 size={20} />
           <span className="hidden lg:block">Delete</span>
-        </TeriaryButton>
+        </TertiaryButton>
       </form>
 
       {/* Dialog */}

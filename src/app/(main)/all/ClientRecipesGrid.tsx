@@ -157,8 +157,8 @@ export function ClientRecipesGrid({
         {/* Sort */}
         <div ref={sortRef} className="h-full relative">
           <PrimaryButton
-            // aria-haspopup="menu"
-            // aria-expanded={sortMenu}
+            aria-haspopup="menu"
+            aria-expanded={sortMenu}
             width="sm:w-22 md:w-32"
             height="h-full"
             onClick={(e) => {
@@ -169,7 +169,7 @@ export function ClientRecipesGrid({
           >
             <ArrowUpDown className="block sm:hidden" size={18} />
             <span className="hidden sm:block grow">Sort</span>
-            <ChevronDown size={22} />
+            <ChevronDown className="hidden sm:block" size={22} />
           </PrimaryButton>
 
           {sortMenu && (
@@ -207,7 +207,7 @@ export function ClientRecipesGrid({
           >
             <Funnel className="block sm:hidden" size={18} />
             <span className="hidden sm:block grow">Filter</span>
-            <ChevronDown size={22} />
+            <ChevronDown className="hidden sm:block" size={22} />
           </PrimaryButton>
 
           {filterMenu && (

@@ -19,7 +19,7 @@ import { Input, TextArea } from "../forms/Inputs";
 import {
   PrimaryButton,
   SecondaryButton,
-  TeriaryButton,
+  TertiaryButton,
 } from "../buttons/Buttons";
 import { Tag } from "../tags/Tags";
 import Link from "next/link";
@@ -557,9 +557,9 @@ export default function RecipeForm({ mode, recipe, action }: RecipeFormProps) {
                             If this problem persists, please try again later or
                           </span>
                           <Link href="/support/issues">
-                            <TeriaryButton className="z-10">
+                            <TertiaryButton className="z-10">
                               contact support
-                            </TeriaryButton>
+                            </TertiaryButton>
                           </Link>
                         </div>
                       </div>

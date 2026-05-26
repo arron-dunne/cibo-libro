@@ -3,16 +3,17 @@ import Link from "next/link";
 
 export function Footer() {
   return (
-    <footer className="mt-18 border-t border-white/80 bg-white/50 px-12 py-4 text-slate-600 backdrop-blur-xl flex gap-4 items-center justify-between">
+    <footer className="mt-12 sm:mt-18 border-t border-white/80 bg-white/50 px-12 py-4 text-slate-600 backdrop-blur-xl flex flex-col sm:flex-row gap-4 items-center justify-between">
         <div className="flex-1">
           <Image
             src="/icon.png"
             alt="icon"
             width={50}
             height={50}
+            className="hidden sm:block"
           />
         </div>
-        <nav className="flex flex-wrap gap-4 text-orange-700 font-semibold">
+        <nav className="flex justify-center flex-wrap gap-4 text-orange-700 font-semibold">
           {/* <Link className="hover:underline" href="/about">
             About
           </Link> */}

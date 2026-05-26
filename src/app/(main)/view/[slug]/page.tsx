@@ -6,7 +6,7 @@ import { ChefHat, ArrowLeft, TagIcon } from "lucide-react";
 import { RecipeImage } from "@/app/components/recipes/RecipeImage";
 import { deleteRecipe } from "./actions";
 import { getHostname } from "@/lib/hostname";
-import { PrimaryButton, TeriaryButton } from "@/app/components/buttons/Buttons";
+import { PrimaryButton, TertiaryButton } from "@/app/components/buttons/Buttons";
 import { Header, SubHeader } from "@/app/components/text/Headers";
 import { Tag } from "@/app/components/tags/Tags";
 import Image from "next/image";
@@ -168,7 +168,7 @@ function IngredientsSection({ ingredients }: { ingredients: string[] }) {
         <ul className="ml-2 space-y-4">
           {ingredients.map((ing, idx) => (
             <li key={`ing-${idx}`} className="flex gap-4 text-md">
-              <div className="h-2 w-2 mt-2 shrink-0 rounded-full bg-linear-to-r from-orange-500 to-rose-500" />
+              <div className="z-10 h-2 w-2 mt-2 shrink-0 rounded-full bg-linear-to-r from-orange-500 to-rose-500" />
               {ing}
             </li>
           ))}
@@ -185,10 +185,10 @@ function StepsSection({ steps }: { steps: string[] }) {
     <section className="h-max w-full md:w-2/3 lg:w-3/5 rounded-4xl bg-white p-8">
       <h2 className="mb-4 text-2xl font-extrabold">Steps</h2>
       {steps.length ? (
-        <ol className="relative space-y-6 ml-2 before:absolute before:left-2.5 before:top-1 before:h-[98%] before:w-1 before:rounded before:bg-linear-to-b before:from-orange-200 before:to-rose-200">
+        <ol className="relative space-y-6 ml-2 before:absolute before:left-2.5 before:top-1 before:h-[98%] before:w-1 before:z-10 before:rounded before:bg-linear-to-b before:from-orange-200 before:to-rose-200">
           {steps.map((s, i) => (
             <li key={i} className="flex gap-4">
-              <div className="h-6 w-6 z-10 mt-0.5 text-center shrink-0 rounded-full bg-linear-to-r from-orange-500 to-rose-500 font-extrabold text-white shadow">
+              <div className="z-20 h-6 w-6 mt-0.5 text-center shrink-0 rounded-full bg-linear-to-r from-orange-500 to-rose-500 font-extrabold text-white shadow">
                 {i + 1}
               </div>
               <p className="text-base leading-relaxed">{s}</p>

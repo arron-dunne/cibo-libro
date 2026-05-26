@@ -86,10 +86,10 @@ export function SecondaryButton({
   );
 }
 
-export function TeriaryButton({ children, ...props }: ButtonProps) {
+export function TertiaryButton({ children, className="", ...props }: ButtonProps) {
   return (
     <button
-      className={`flex no-wrap justify-center items-center gap-2 text-orange-600 font-bold underline cursor-pointer hover:text-orange-700`}
+      className={`${className} flex no-wrap justify-center items-center gap-2 text-orange-600 font-bold underline cursor-pointer border border-transparent active:border-orange-500`}
       {...props}
     >
       {children}

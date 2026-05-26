@@ -2,7 +2,7 @@ import { handleRegister } from "./actions";
 import { SubmitButton } from "../components/SubmitButton";
 import { CircleAlert } from "lucide-react";
 import { Header, SubHeader } from "@/app/components/text/Headers";
-import { TeriaryButton } from "@/app/components/buttons/Buttons";
+import { TertiaryButton } from "@/app/components/buttons/Buttons";
 
 export default async function RegisterPage({
   searchParams,
@@ -92,7 +92,7 @@ export default async function RegisterPage({
           <div className="flex gap-2 items-center">
             <span className="text-slate-600 font-semibold">Need help?</span>
             <a href="/support">
-              <TeriaryButton>Support</TeriaryButton>
+              <TertiaryButton>Support</TertiaryButton>
             </a>
           </div>
         </div>
