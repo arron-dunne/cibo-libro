@@ -27,7 +27,7 @@ export function FavouriteButton({
         className={isFavourite ? "text-rose-500" : ""}
         fill={isFavourite ? "currentColor" : "none"}
       />
-      <span className="hidden lg:block">Favourite</span>
+      Favourite
     </TertiaryButton>
   );
 }

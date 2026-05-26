@@ -1,6 +1,10 @@
 "use client";
 
-import { PrimaryButton, SecondaryButton, TertiaryButton } from "@/app/components/buttons/Buttons";
+import {
+  PrimaryButton,
+  SecondaryButton,
+  TertiaryButton,
+} from "@/app/components/buttons/Buttons";
 import {
   ArrowLeft,
   ChefHat,
@@ -19,6 +23,14 @@ interface ButtonBarProps {
   slug: string;
   isFavorite: boolean;
   recipeType: RecipeType;
+  deleteAction: any; //TODO : properly type
+  sourceUrl?: string | null;
+}
+
+interface MoreOptionPopupProps {
+  slug: string;
+  isFavorite: boolean;
+  setOpen: React.Dispatch<React.SetStateAction<boolean>>;
   deleteAction: any; //TODO : properly type
   sourceUrl?: string | null;
 }
@@ -51,58 +63,43 @@ export function ButtonBar({
           href="/all"
           className="w-max flex items-center gap-3 text-lg font-semibold text-slate-900 cursor-pointer hover:brightness-90 active:brightness-75"
         >
-          <TertiaryButton>
+          <SecondaryButton size="custom" width="w-10" height="h-10">
             <ArrowLeft size={20} />
             <span className="hidden sm:block">Back</span>
-          </TertiaryButton>
+          </SecondaryButton>
         </Link>
 
-        <div className="flex gap-2 items-center">
-          {recipeType !== "EXTERNAL_LINK" && (
-            <Link href={`/cook/${slug}`}>
-              <PrimaryButton>
-                <ChefHat size={20} className="-rotate-12 shrink-0" />
-                <span className="text-nowrap">Start Cooking</span>
-              </PrimaryButton>
-            </Link>
-          )}
+        {/* <div className="flex gap-2 items-center"> */}
+        {recipeType !== "EXTERNAL_LINK" && (
+          <Link href={`/cook/${slug}`}>
+            <PrimaryButton>
+              <ChefHat size={20} className="-rotate-12 shrink-0" />
+              <span className="text-nowrap">Start Cooking</span>
+            </PrimaryButton>
+          </Link>
+        )}
 
-          <div className="relative" ref={menuRef}>
-            <SecondaryButton
-              onClick={() => setOpen((v) => !v)}
-              aria-label="More options"
-              size="custom"
-              width="w-10"
-              height="h-10"
-            >
-              <EllipsisVertical size={20} />
-            </SecondaryButton>
-            {open && (
-              <div className="absolute right-0 top-full mt-2 z-50 min-w-45 rounded-2xl bg-white shadow-xl border border-slate-100 p-3 flex flex-col gap-3">
-                <FavouriteButton slug={slug} initialIsFavourite={isFavorite} />
-                <Link href={`/edit/${slug}`} onClick={() => setOpen(false)}>
-                  <TertiaryButton>
-                    <Pencil size={20} />
-                    <span>Edit</span>
-                  </TertiaryButton>
-                </Link>
-                <DeleteButton slug={slug} action={deleteAction} />
-                {sourceUrl && (
-                  <Link
-                    href={sourceUrl}
-                    target="_blank"
-                    onClick={() => setOpen(false)}
-                  >
-                    <TertiaryButton>
-                      <LinkIcon size={20} />
-                      <span>Source</span>
-                    </TertiaryButton>
-                  </Link>
-                )}
-              </div>
-            )}
-          </div>
+        <div className="relative" ref={menuRef}>
+          <SecondaryButton
+            onClick={() => setOpen((v) => !v)}
+            aria-label="More options"
+            size="custom"
+            width="w-10"
+            height="h-10"
+          >
+            <EllipsisVertical size={20} />
+          </SecondaryButton>
+          {open && (
+            <MoreOptionsPopup
+              slug={slug}
+              isFavorite={isFavorite}
+              setOpen={setOpen}
+              deleteAction={deleteAction}
+              sourceUrl={sourceUrl || null}
+            />
+          )}
         </div>
+        {/* </div> */}
       </div>
 
       {/* Deskop bar */}
@@ -145,5 +142,37 @@ export function ButtonBar({
         )}
       </div>
     </>
+  );
+}
+
+function MoreOptionsPopup({
+  slug,
+  isFavorite,
+  setOpen,
+  deleteAction,
+  sourceUrl,
+}: MoreOptionPopupProps) {
+  return (
+    <div className="absolute right-0 top-full mt-2 z-50 min-w-45 rounded-2xl bg-white shadow-xl border border-slate-100 p-4 flex flex-col items-start gap-4">
+      <FavouriteButton slug={slug} initialIsFavourite={isFavorite} />
+      
+      <Link href={`/edit/${slug}`} onClick={() => setOpen(false)}>
+        <TertiaryButton>
+          <Pencil size={20} />
+          <span>Edit</span>
+        </TertiaryButton>
+      </Link>
+      
+      <DeleteButton slug={slug} action={deleteAction} />
+      
+      {sourceUrl && (
+        <Link href={sourceUrl} target="_blank" onClick={() => setOpen(false)}>
+          <TertiaryButton>
+            <LinkIcon size={20} />
+            <span>Source</span>
+          </TertiaryButton>
+        </Link>
+      )}
+    </div>
   );
 }
