@@ -77,7 +77,7 @@ export default async function RecipesPage({
 
   return (
     <>
-    <div className="mt-12 ml-4 space-y-4 mb-8">
+    <div className="mt-8 sm:mt-12 ml-2 sm:ml-4 space-y-4 mb-6 sm:mb-8">
       <Header>
         Your Cookbook
       </Header>

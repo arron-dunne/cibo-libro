@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useInfo, type NavLinkType } from "./DesktopNavLink";
+import { PrimaryButton } from "../buttons/Buttons";
 
 export function MobileNavLink({ type }: { type: NavLinkType }) {
   const { label, href, icon: Icon, highlight } = useInfo(type);

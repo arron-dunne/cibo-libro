@@ -1,6 +1,6 @@
 "use client";
 
-import { PrimaryButton, SecondaryButton, TeriaryButton } from "@/app/components/buttons/Buttons";
+import { PrimaryButton, SecondaryButton, TertiaryButton } from "@/app/components/buttons/Buttons";
 import {
   ArrowLeft,
   ChefHat,
@@ -51,10 +51,10 @@ export function ButtonBar({
           href="/all"
           className="w-max flex items-center gap-3 text-lg font-semibold text-slate-900 cursor-pointer hover:brightness-90 active:brightness-75"
         >
-          <TeriaryButton>
+          <TertiaryButton>
             <ArrowLeft size={20} />
             <span className="hidden sm:block">Back</span>
-          </TeriaryButton>
+          </TertiaryButton>
         </Link>
 
         <div className="flex gap-2 items-center">
@@ -81,10 +81,10 @@ export function ButtonBar({
               <div className="absolute right-0 top-full mt-2 z-50 min-w-45 rounded-2xl bg-white shadow-xl border border-slate-100 p-3 flex flex-col gap-3">
                 <FavouriteButton slug={slug} initialIsFavourite={isFavorite} />
                 <Link href={`/edit/${slug}`} onClick={() => setOpen(false)}>
-                  <TeriaryButton>
+                  <TertiaryButton>
                     <Pencil size={20} />
                     <span>Edit</span>
-                  </TeriaryButton>
+                  </TertiaryButton>
                 </Link>
                 <DeleteButton slug={slug} action={deleteAction} />
                 {sourceUrl && (
@@ -93,10 +93,10 @@ export function ButtonBar({
                     target="_blank"
                     onClick={() => setOpen(false)}
                   >
-                    <TeriaryButton>
+                    <TertiaryButton>
                       <LinkIcon size={20} />
                       <span>Source</span>
-                    </TeriaryButton>
+                    </TertiaryButton>
                   </Link>
                 )}
               </div>
@@ -111,27 +111,27 @@ export function ButtonBar({
           href="/all"
           className="w-max flex items-center gap-3 text-lg font-semibold text-slate-900 cursor-pointer hover:brightness-90 active:brightness-75"
         >
-          <TeriaryButton>
+          <TertiaryButton>
             <ArrowLeft size={20} />
             <span className="hidden sm:block">Back</span>
-          </TeriaryButton>
+          </TertiaryButton>
         </Link>
 
         <div className="hidden md:flex gap-8">
           <FavouriteButton slug={slug} initialIsFavourite={isFavorite} />
           <Link href={`/edit/${slug}`}>
-            <TeriaryButton>
+            <TertiaryButton>
               <Pencil size={20} />
               <span className="hidden lg:block">Edit</span>
-            </TeriaryButton>
+            </TertiaryButton>
           </Link>
           <DeleteButton slug={slug} action={deleteAction} />
           {sourceUrl && (
             <Link href={sourceUrl} target="_blank" aria-label="View original">
-              <TeriaryButton>
+              <TertiaryButton>
                 <LinkIcon size={20} />
                 <span className="hidden lg:block">Original</span>
-              </TeriaryButton>
+              </TertiaryButton>
             </Link>
           )}
         </div>

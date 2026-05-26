@@ -123,10 +123,10 @@ export default async function HomePage() {
       {/* Recently Added */}
       <section className="mt-10">
         <div className="flex items-center justify-between mb-4">
-          <Header className="ml-2" textSize="text-4xl">Recently Added</Header>
+          <Header className="ml-2" textSize="text-3xl sm:text-4xl">Recently Added</Header>
           <Link href="/all?sort=created">
             <PrimaryButton>
-              View More <ChevronRight size={16} />
+              More <ChevronRight size={16} />
             </PrimaryButton>
           </Link>
         </div>
@@ -154,7 +154,7 @@ function ActionButton({
   return (
     <Link
       href={href}
-      className={`${color} flex items-center gap-3 rounded-full px-6 py-4 text-lg text-white font-bold shadow-md border border-white/60 cursor-pointer hover:brightness-95`}
+      className={`${color} flex items-center gap-3 rounded-full px-6 py-4 text-lg text-white font-bold shadow-md border border-white/60 cursor-pointer hover:brightness-95 active:brightness-75`}
     >
       <Icon size={24} />
       {header}

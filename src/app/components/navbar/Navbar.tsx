@@ -36,7 +36,7 @@ export function Navbar({ session }: { session?: Session | null }) {
           alt="cibo libro"
           width={150}
           height={36}
-          className={`${scrolled ? "h-10" : "h-10 sm:h-12"} w-auto`}
+          className={`${scrolled ? "h-9 sm:h-10" : "h-10 sm:h-12"} w-auto`}
           priority
         />
       </Link>
@@ -45,7 +45,7 @@ export function Navbar({ session }: { session?: Session | null }) {
       {session?.user ? (
         <>
           {/* Navigation */}
-          <div className="flex gap-6">
+          <div className="hidden sm:flex gap-6">
             <DesktopNavLink type="home" />
             <DesktopNavLink type="all" />
             <DesktopNavLink type="new" />
@@ -54,9 +54,9 @@ export function Navbar({ session }: { session?: Session | null }) {
           </div>
 
           <div className="flex grow justify-end items-center text-sm">
-            {/* <div className="block md:hidden">
+            <div className="block md:hidden">
               <MobileMenu />
-            </div> */}
+            </div>
 
             {/* Logout */}
             {/* <span className="hidden lg:inline mr-0 lg:mr-4 text-gray-700">

@@ -2,7 +2,7 @@ import Image from "next/image";
 import {
   PrimaryButton,
   SecondaryButton,
-  TeriaryButton,
+  TertiaryButton,
 } from "@/app/components/buttons/Buttons";
 import { Header, SubHeader } from "@/app/components/text/Headers";
 import { Calendar, Camera, ChevronRight, GraduationCap, ShoppingBasket, UsersRound } from "lucide-react";
@@ -194,9 +194,9 @@ export default function LandingPage() {
               What would you love to see?
             </SubHeader>
             <Link href="/request">
-              <TeriaryButton>
+              <TertiaryButton>
                 Request a feature
-              </TeriaryButton>
+              </TertiaryButton>
             </Link>
           </div>
         </div>
@@ -231,9 +231,9 @@ export default function LandingPage() {
         </Link>
         <div className="mt-16 flex items-center gap-3 text-base">
           <span className="text-slate-500">Still not sure how it works?</span>
-          <TeriaryButton>
+          <TertiaryButton>
             Explore a demo cookbook to learn more
-          </TeriaryButton>
+          </TertiaryButton>
         </div>
       </section>
 
