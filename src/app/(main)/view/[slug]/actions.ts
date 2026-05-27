@@ -28,23 +28,16 @@ const DeleteRecipeSchema = z.object({
   slug: z.string(),
 });
 
-export async function deleteRecipe(formData: FormData): Promise<void> {
+export async function deleteRecipe(slug: string): Promise<void> {
   // Check valid user
   const session = await auth();
   if (!session?.user) {
     throw Error("Unauthorized");
   }
 
-  const raw = { slug: String(formData.get("slug") || "") };
-
-  // Parse formData
-  const parsed = DeleteRecipeSchema.safeParse(raw);
-
-  if (!parsed.success) throw Error("Invalid");
-
   // Check user owns recipe
   const recipe = await prisma.recipe.findFirst({
-    where: { slug: parsed.data.slug },
+    where: { slug: slug },
     select: {
       id: true,
       ownerId: true,

@@ -2,8 +2,13 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import { createPortal, useFormStatus } from "react-dom";
-import { Trash2 } from "lucide-react";
-import { TertiaryButton } from "@/app/components/buttons/Buttons";
+import { Loader2, Trash2 } from "lucide-react";
+import {
+  PrimaryButton,
+  SecondaryButton,
+  TertiaryButton,
+} from "@/app/components/buttons/Buttons";
+import { deleteRecipe } from "./actions";
 
 type DeleteButtonProps = {
   slug: string;
@@ -17,7 +22,9 @@ export function DeleteButton({
   variant = "inline",
 }: DeleteButtonProps) {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const { pending: isSubmitting } = useFormStatus();
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  console.log(isSubmitting);
 
   // needed to avoid hydration mismatch
   const [hasMounted, setHasMounted] = useState<boolean>(false);
@@ -42,11 +49,16 @@ export function DeleteButton({
     return () => window.removeEventListener("keydown", onKeyDown);
   }, [isModalOpen, closeModal]);
 
+  async function handleClick() {
+    setIsSubmitting(true);
+    await deleteRecipe(slug);
+    setIsSubmitting(false);
+  }
 
   return (
     <>
       {/* Button */}
-      <form action={action} className="w-full">
+      <form className="w-full">
         <input type="hidden" readOnly name="slug" value={slug} />
 
         {variant === "inline" ? (
@@ -56,6 +68,7 @@ export function DeleteButton({
           </TertiaryButton>
         ) : (
           <button
+            type="button"
             onClick={openModal}
             className="w-full h-10 p-2 bg-white rounded-xl text-orange-600 cursor-pointer font-semibold flex items-center gap-2 hover:brightness-95"
           >
@@ -70,11 +83,12 @@ export function DeleteButton({
         typeof window !== "undefined" &&
         createPortal(
           <div
+            onMouseDown={(e) => e.stopPropagation()}
             className={`fixed inset-0 z-100 flex items-center justify-center bg-black/50 backdrop-blur-sm px-4 transition duration-200 ${isModalOpen ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"}`}
             aria-hidden={!isModalOpen}
           >
             <div
-              className="w-full max-w-sm rounded-3xl bg-white p-6 text-center shadow-xl sm:p-7"
+              className="w-full max-w-sm rounded-3xl bg-white p-6 text-center shadow-xl sm:p-7 z-110"
               role="dialog"
               aria-modal="true"
               aria-labelledby="delete-recipe"
@@ -82,30 +96,37 @@ export function DeleteButton({
               <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-linear-to-br from-orange-100 to-rose-100 text-rose-500">
                 <Trash2 size={28} />
               </div>
-              <h2 className="mt-4 text-xl font-semibold text-gray-900">
+              <h2 className="mt-4 text-xl font-semibold text-slate-800">
                 Are you sure you want to delete this recipe?
               </h2>
-              <p className="mt-2 text-sm text-gray-500">
-                This action can&apos;t be undone.
-              </p>
+              <p className="mt-2 text-slate-800">This action can't be undone</p>
 
               <div className="mt-6 flex flex-col gap-3 sm:flex-row">
-                <button
+                <PrimaryButton
                   type="button"
-                  onClick={() => action}
-                  className="w-full rounded-full bg-linear-to-r from-orange-500 to-rose-500 px-5 py-3 text-base font-semibold text-white shadow-lg transition cursor-pointer hover:brightness-95 active:brightness-75 disabled:cursor-not-allowed disabled:opacity-50 sm:px-4 sm:py-2 sm:text-sm"
+                  onClick={handleClick}
                   disabled={isSubmitting}
+                  width="w-full"
+                  size="lg"
                 >
-                  {isSubmitting ? "Deleting..." : "Delete"}
-                </button>
-                <button
+                  {isSubmitting ? (
+                    <>
+                      Deleting...
+                      <Loader2 size={26} className="animate-spin"/>
+                    </>
+                  ) : (
+                    "Delete"
+                  )}
+                </PrimaryButton>
+                <SecondaryButton
                   type="button"
                   onClick={closeModal}
-                  className="w-full rounded-full border border-gray-200 px-5 py-3 text-base font-semibold text-gray-700 transition hover:bg-gray-50 active:bg-gray-100 cursor-pointer disabled:opacity-50 sm:px-4 sm:py-2 sm:text-sm"
+                  width="w-full"
+                  size="lg"
                   disabled={isSubmitting}
                 >
                   Cancel
-                </button>
+                </SecondaryButton>
               </div>
             </div>
           </div>,

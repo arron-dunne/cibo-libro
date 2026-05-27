@@ -57,7 +57,7 @@ export function SecondaryButton({
   width = "w-max",
   height = "h-max",
   children,
-  disabled,
+  disabled = false,
   ...props
 }: ButtonProps) {
   let sizeStyle: string;
@@ -76,9 +76,13 @@ export function SecondaryButton({
       break;
   }
 
+    const disabledStyle = disabled
+    ? "cursor-wait brightness-90"
+    : "cursor-pointer hover:brightness-90 active:brightness-75";
+
   return (
     <button
-      className={`${width} ${height} ${sizeStyle} flex gap-2 justify-center items-center rounded-full bg-white/70 backdrop-blur-lg border border-rose-500/70 text-rose-500 font-bold cursor-pointer hover:brightness-95`}
+      className={`${width} ${height} ${sizeStyle} ${disabledStyle} flex gap-2 justify-center items-center rounded-full bg-white/70 backdrop-blur-lg border border-rose-500/70 text-rose-500 font-bold`}
       {...props}
     >
       {children}
