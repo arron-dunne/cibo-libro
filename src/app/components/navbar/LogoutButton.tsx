@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { LogOut } from "lucide-react";
-import { SecondaryButton } from "../buttons/Buttons";
+import { SecondaryButton, TertiaryButton } from "../buttons/Buttons";
 
 type LogoutButtonProps = {
   action: () => Promise<void>;
@@ -48,10 +48,10 @@ export function LogoutButton({ action }: LogoutButtonProps) {
     <>
       {/* Button */}
       <form ref={formRef} action={action}>
-        <SecondaryButton onClick={openDialog}>
+        <TertiaryButton onClick={openDialog}>
           <LogOut size={20}/>
           Logout
-        </SecondaryButton>
+        </TertiaryButton>
       </form>
 
       {/* Dialog */}

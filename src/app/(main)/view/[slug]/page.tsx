@@ -105,7 +105,7 @@ export default async function ViewRecipePage({
                 alt="cutting board"
               />
               <p className="shrink-0">Prep:</p>
-              <p className="ml-4 text-lg font-bold">{prep}m</p>
+              <p className="ml-4 text-xl text-rose-600">{prep} mins</p>
             </div>
 
             {/* <span className="hidden sm:block my-auto w-2 h-2 rounded-full bg-linear-to-r from-orange-500 to-rose-500"></span> */}
@@ -119,7 +119,7 @@ export default async function ViewRecipePage({
                 alt="cooking"
               />
               <p className="shrink-0">Cook:</p>
-              <p className="ml-4 text-lg font-bold">{cook}m</p>
+              <p className="ml-4 text-xl text-rose-600">{cook} mins</p>
             </div>
 
             {/* <div className="flex items-center gap-2">

@@ -78,7 +78,7 @@ export function SecondaryButton({
 
   return (
     <button
-      className={`${width} ${height} ${sizeStyle} flex gap-2 justify-center items-center rounded-full bg-white/70 backdrop-blur-lg border border-rose-500 text-rose-500 font-bold cursor-pointer hover:brightness-95`}
+      className={`${width} ${height} ${sizeStyle} flex gap-2 justify-center items-center rounded-full bg-white/70 backdrop-blur-lg border border-rose-500/70 text-rose-500 font-bold cursor-pointer hover:brightness-95`}
       {...props}
     >
       {children}

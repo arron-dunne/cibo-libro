@@ -14,7 +14,7 @@ import {
   Pencil,
 } from "lucide-react";
 import Link from "next/link";
-import { FavouriteButton } from "./FavouriteButton";
+import { DropdownFavouriteButton, FavouriteButton } from "./FavouriteButton";
 import { DeleteButton } from "./DeleteButton";
 import { RecipeType } from "@/types/recipe";
 import { useEffect, useRef, useState } from "react";
@@ -90,7 +90,7 @@ export function ButtonBar({
             <EllipsisVertical size={20} />
           </SecondaryButton>
           {open && (
-            <MoreOptionsPopup
+            <MobileDropdown
               slug={slug}
               isFavorite={isFavorite}
               setOpen={setOpen}
@@ -132,6 +132,8 @@ export function ButtonBar({
             </Link>
           )}
         </div>
+
+        {/* Cook mode */}
         {recipeType !== "EXTERNAL_LINK" && (
           <Link href={`/cook/${slug}`}>
             <PrimaryButton>
@@ -145,7 +147,7 @@ export function ButtonBar({
   );
 }
 
-function MoreOptionsPopup({
+function MobileDropdown({
   slug,
   isFavorite,
   setOpen,
@@ -153,18 +155,16 @@ function MoreOptionsPopup({
   sourceUrl,
 }: MoreOptionPopupProps) {
   return (
-    <div className="absolute right-0 top-full mt-2 z-50 min-w-45 rounded-2xl bg-white shadow-xl border border-slate-100 p-4 flex flex-col items-start gap-4">
-      <FavouriteButton slug={slug} initialIsFavourite={isFavorite} />
-      
-      <Link href={`/edit/${slug}`} onClick={() => setOpen(false)}>
-        <TertiaryButton>
-          <Pencil size={20} />
-          <span>Edit</span>
-        </TertiaryButton>
+    <div className="absolute right-0 top-full mt-2 z-50 min-w-45 rounded-2xl bg-white shadow-xl border border-slate-100 p-2 flex flex-col items-start gap-4">
+      <DropdownFavouriteButton slug={slug} initialIsFavourite={isFavorite} />
+
+      <Link href={`/edit/${slug}`} onClick={() => setOpen(false)} className="w-full h-10 p-2 bg-white rounded-xl text-orange-600 font-semibold flex items-center gap-2 hover:brightness-95">
+        <Pencil size={20} />
+        <span>Edit</span>
       </Link>
-      
+
       <DeleteButton slug={slug} action={deleteAction} />
-      
+
       {sourceUrl && (
         <Link href={sourceUrl} target="_blank" onClick={() => setOpen(false)}>
           <TertiaryButton>
