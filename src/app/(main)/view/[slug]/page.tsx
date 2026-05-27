@@ -2,11 +2,14 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { auth } from "@/lib/auth/auth";
 import { prisma } from "@/lib/prisma";
-import { ChefHat, ArrowLeft, TagIcon } from "lucide-react";
+import { ChefHat, ArrowLeft, TagIcon, Timer, Utensils } from "lucide-react";
 import { RecipeImage } from "@/app/components/recipes/RecipeImage";
 import { deleteRecipe } from "./actions";
 import { getHostname } from "@/lib/hostname";
-import { PrimaryButton, TertiaryButton } from "@/app/components/buttons/Buttons";
+import {
+  PrimaryButton,
+  TertiaryButton,
+} from "@/app/components/buttons/Buttons";
 import { Header, SubHeader } from "@/app/components/text/Headers";
 import { Tag } from "@/app/components/tags/Tags";
 import Image from "next/image";
@@ -76,18 +79,14 @@ export default async function ViewRecipePage({
         )}
 
         {/* Details */}
-        <div className="w-full h-full md:w-1/2 mt-4 md:mt-12 flex flex-col justify-between">
+        <div className="w-full h-full md:w-1/2 ml-2 md:ml-0 mt-4 md:mt-12 flex flex-col justify-between">
           <Header>{recipe.title}</Header>
 
-          <SubHeader className="mt-4">
-            {recipe.description
-              ? recipe.description
-              : "No description provided"}
-          </SubHeader>
+          <SubHeader className="mt-4">{recipe.description || ""}</SubHeader>
 
           {recipe.tags.length > 0 && (
-            <div className="mt-4 flex items-center flex-wrap gap-2">
-              <TagIcon className="text-rose-600" size={20} />
+            <div className="ml-2 mt-6 flex items-center flex-wrap gap-2">
+              <TagIcon className="text-slate-800" size={20} />
               {recipe.tags.map((tag) => (
                 <Tag key={tag}>{tag}</Tag>
               ))}
@@ -95,31 +94,33 @@ export default async function ViewRecipePage({
           )}
 
           {/* Timing */}
-          <div className="mt-6 flex gap-16">
+          <div className="ml-2 mt-6 text-slate-800 flex items-center gap-4">
+            <Timer size={22} />
+
             <div className="flex items-center gap-2">
-              <Image
+              {/* <Image
                 className="size-8"
                 src="/icons/cutting-board-bw.png"
                 width={512}
                 height={512}
                 alt="cutting board"
-              />
+              /> */}
               <p className="shrink-0">Prep:</p>
-              <p className="ml-4 text-xl text-rose-600">{prep} mins</p>
+              <p className="ml-4 text-lg font-bold">{prep} mins</p>
             </div>
 
-            {/* <span className="hidden sm:block my-auto w-2 h-2 rounded-full bg-linear-to-r from-orange-500 to-rose-500"></span> */}
+            <span className="my-auto mx-2 w-2 h-2 rounded-full bg-linear-to-r from-orange-500 to-rose-500"></span>
 
-            <div className="flex items-center gap-2">
-              <Image
+            <div className="flex text-slate-800 items-center gap-2">
+              {/* <Image
                 className="size-8"
                 src="/icons/cooking-bw.png"
                 width={512}
                 height={512}
                 alt="cooking"
-              />
+              /> */}
               <p className="shrink-0">Cook:</p>
-              <p className="ml-4 text-xl text-rose-600">{cook} mins</p>
+              <p className="ml-4 text-lg font-bold">{cook} mins</p>
             </div>
 
             {/* <div className="flex items-center gap-2">
@@ -131,15 +132,16 @@ export default async function ViewRecipePage({
           </div>
 
           {/* Servings */}
-          <div className="mt-6">
-            <div className="flex items-center gap-2">
-              <Image
+          <div className="ml-2 mt-6">
+            <div className="flex items-center text-slate-800 gap-4">
+              <Utensils size={20} />
+              {/* <Image
                 className="size-8"
                 src="/icons/serving-dish-bw.png"
                 width={512}
                 height={512}
                 alt="serving dish"
-              />
+              /> */}
               <p>Serves:</p>
               <p className="ml-4 text-lg font-bold">
                 {String(recipe.servings ?? 1)}
