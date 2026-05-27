@@ -45,20 +45,20 @@ export default function ImportPage() {
         <InfoCard
           Icon={MousePointerClick}
           title="Import in one click"
-          desc="Paste a recipe link and we’ll save the it straight to your cookbook"
+          desc="Paste a recipe link and we’ll save the it straight to your cookbook."
           iconStyle="bg-linear-to-br from-blue-300 to-cyan-300 text-blue-900"
         />
         <InfoCard
           Icon={Handshake}
           title="We respect other sites"
-          desc="If a site won’t share, we’ll save a handy link card instead so you can easily remember"
+          desc="If a site won’t share, we’ll save a handy link card instead so you can easily remember."
           iconStyle="bg-linear-to-br from-green-300 to-lime-300 text-green-900"
         />
         <InfoCard
           Icon={UserPen}
           title="Personalise it your way"
           desc="Add your personal tags, notes and rating to any recipe"
-          iconStyle="bg-linear-to-br from-purple-300 to-fuchsia-300 text-purple-900"
+          iconStyle="bg-linear-to-br from-purple-300 to-fuchsia-300 text-purple-900."
         />
       </div>
     </div>

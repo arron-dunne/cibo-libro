@@ -54,6 +54,7 @@ function SubmitButton() {
   return (
     <PrimaryButton
       type="submit"
+      width="h-full"
       height="h-full"
       size="lg"
       disabled={pending}
