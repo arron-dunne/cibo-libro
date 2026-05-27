@@ -3,6 +3,7 @@
 import { useFormStatus } from "react-dom";
 import { ArrowRight, ClipboardPaste, Loader2 } from "lucide-react";
 import { useRef } from "react";
+import { PrimaryButton } from "@/app/components/buttons/Buttons";
 
 export function UrlInput() {
   const inputRef = useRef<HTMLInputElement | null>(null);
@@ -11,7 +12,7 @@ export function UrlInput() {
     <div className="w-full flex flex-col md:flex-row gap-6 md:gap-4 items-center">
       <div
         className="w-full flex gap-4 items-center justify-between px-5 py-3 rounded-full overflow-hidden
-            border border-gray-200 bg-white text-lg text-gray-900 placeholder:text-gray-400
+            border border-slate-300 bg-white text-lg text-slate-800 placeholder:text-slate-500
             focus-within:outline-2 focus-within:outline-blue-500 focus-within:outline-solid"
       >
         <button
@@ -35,7 +36,7 @@ export function UrlInput() {
           required
           inputMode="url"
           aria-label="Recipe URL"
-          placeholder="https://example.com/best-lasagne-ever"
+          placeholder="https://example.com/spaghetti-bolognese"
           pattern="https?://.+"
           autoFocus
           maxLength={2000}
@@ -51,8 +52,10 @@ function SubmitButton() {
   const { pending } = useFormStatus();
 
   return (
-    <button
+    <PrimaryButton
       type="submit"
+      height="h-full"
+      size="lg"
       disabled={pending}
       aria-busy={pending}
       aria-live="polite"
@@ -66,14 +69,14 @@ function SubmitButton() {
       {pending ? (
         <>
           Importing
-          <Loader2 size={20} className="animate-spin" />
+          <Loader2 size={26} className="animate-spin" />
         </>
       ) : (
         <>
           Import
-          <ArrowRight size={20} aria-hidden="true" />
+          <ArrowRight size={26} aria-hidden="true" />
         </>
       )}
-    </button>
+    </PrimaryButton>
   );
 }

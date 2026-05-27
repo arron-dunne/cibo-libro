@@ -15,12 +15,12 @@ interface TextAreaProps extends TextareaHTMLAttributes<HTMLTextAreaElement> {
 export function Input({ name, label, invalid=false, ...props }: InputProps) {
   return (
     <div className="w-full">
-      {label && <label htmlFor={name} className="ml-2 w-full font-semibold">{label}</label> }
+      {label && <label htmlFor={name} className="ml-2 mb-1 w-full font-semibold">{label}</label> }
       <input
         name={name}
         id={name}
         {...props}
-        className={`mt-1 px-4 h-12 w-full rounded-full border bg-white
+        className={`px-4 h-12 w-full rounded-full border bg-white
               outline-none focus:ring-2
               ${invalid ? "border-2 ring-blue-400 border-red-400" : "border-slate-300 focus:ring-blue-500"}`}
       />

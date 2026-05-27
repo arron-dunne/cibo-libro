@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 import {
   CirclePlus,
   CookingPot,
+  Download,
   HomeIcon,
   Import,
   Settings,
@@ -54,7 +55,7 @@ export function useInfo(type: NavLinkType) {
       return {
         label: "Import",
         href: "/import",
-        icon: Import,
+        icon: Download,
         highlight: RegExp("/import*").test(pathname),
       };
     case "settings":
