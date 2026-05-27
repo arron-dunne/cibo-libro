@@ -48,7 +48,7 @@ export function DropdownFavouriteButton({
   };
 
   return (
-    <button onClick={handleClick} className="w-full h-10 p-2 bg-white rounded-xl text-orange-600 font-semibold flex items-center gap-2 hover:brightness-95">
+    <button onClick={handleClick} className="w-full h-10 p-2 bg-white rounded-xl text-orange-600 font-semibold cursor-pointer flex items-center gap-2 hover:brightness-95">
       <Heart
         size={20}
         className={isFavourite ? "text-rose-500" : ""}

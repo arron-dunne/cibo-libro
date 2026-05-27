@@ -1,19 +1,23 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
-import { createPortal } from "react-dom";
+import { createPortal, useFormStatus } from "react-dom";
 import { Trash2 } from "lucide-react";
-import { SecondaryButton, TertiaryButton } from "@/app/components/buttons/Buttons";
+import { TertiaryButton } from "@/app/components/buttons/Buttons";
 
 type DeleteButtonProps = {
   slug: string;
   action: (formData: FormData) => Promise<void>;
+  variant?: "inline" | "dropdown";
 };
 
-export function DeleteButton({ slug, action }: DeleteButtonProps) {
+export function DeleteButton({
+  slug,
+  action,
+  variant = "inline",
+}: DeleteButtonProps) {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const formRef = useRef<HTMLFormElement>(null);
+  const { pending: isSubmitting } = useFormStatus();
 
   // needed to avoid hydration mismatch
   const [hasMounted, setHasMounted] = useState<boolean>(false);
@@ -38,22 +42,27 @@ export function DeleteButton({ slug, action }: DeleteButtonProps) {
     return () => window.removeEventListener("keydown", onKeyDown);
   }, [isModalOpen, closeModal]);
 
-  const confirmDelete = () => {
-    if (isSubmitting) return;
-    setIsSubmitting(true);
-    setIsModalOpen(false);
-    formRef.current?.requestSubmit();
-  };
 
   return (
     <>
       {/* Button */}
-      <form ref={formRef} action={action}>
+      <form action={action} className="w-full">
         <input type="hidden" readOnly name="slug" value={slug} />
-        <TertiaryButton type="button" onClick={openModal}>
-          <Trash2 size={20} />
-          Delete
-        </TertiaryButton>
+
+        {variant === "inline" ? (
+          <TertiaryButton type="button" onClick={openModal}>
+            <Trash2 size={20} />
+            Delete
+          </TertiaryButton>
+        ) : (
+          <button
+            onClick={openModal}
+            className="w-full h-10 p-2 bg-white rounded-xl text-orange-600 cursor-pointer font-semibold flex items-center gap-2 hover:brightness-95"
+          >
+            <Trash2 size={20} />
+            Delete
+          </button>
+        )}
       </form>
 
       {/* Dialog */}
@@ -61,7 +70,7 @@ export function DeleteButton({ slug, action }: DeleteButtonProps) {
         typeof window !== "undefined" &&
         createPortal(
           <div
-            className={`fixed inset-0 z-20 flex items-center justify-center bg-black/50 backdrop-blur-sm px-4 transition duration-200 ${isModalOpen ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"}`}
+            className={`fixed inset-0 z-100 flex items-center justify-center bg-black/50 backdrop-blur-sm px-4 transition duration-200 ${isModalOpen ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"}`}
             aria-hidden={!isModalOpen}
           >
             <div
@@ -83,7 +92,7 @@ export function DeleteButton({ slug, action }: DeleteButtonProps) {
               <div className="mt-6 flex flex-col gap-3 sm:flex-row">
                 <button
                   type="button"
-                  onClick={confirmDelete}
+                  onClick={() => action}
                   className="w-full rounded-full bg-linear-to-r from-orange-500 to-rose-500 px-5 py-3 text-base font-semibold text-white shadow-lg transition cursor-pointer hover:brightness-95 active:brightness-75 disabled:cursor-not-allowed disabled:opacity-50 sm:px-4 sm:py-2 sm:text-sm"
                   disabled={isSubmitting}
                 >
