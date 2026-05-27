@@ -155,15 +155,15 @@ function MobileDropdown({
   sourceUrl,
 }: MoreOptionPopupProps) {
   return (
-    <div className="absolute right-0 top-full mt-2 z-50 min-w-45 rounded-2xl bg-white shadow-xl border border-slate-100 p-2 flex flex-col items-start gap-4">
+    <div className="absolute right-0 top-full mt-2 z-50 min-w-45 rounded-2xl bg-white shadow-xl border border-slate-100 p-2 flex flex-col items-start gap-0">
       <DropdownFavouriteButton slug={slug} initialIsFavourite={isFavorite} />
 
-      <Link href={`/edit/${slug}`} onClick={() => setOpen(false)} className="w-full h-10 p-2 bg-white rounded-xl text-orange-600 font-semibold flex items-center gap-2 hover:brightness-95">
+      <Link href={`/edit/${slug}`} onClick={() => setOpen(false)} className="w-full h-10 p-2 bg-white rounded-xl text-orange-600 cursor-pointer font-semibold flex items-center gap-2 hover:brightness-95">
         <Pencil size={20} />
         <span>Edit</span>
       </Link>
 
-      <DeleteButton slug={slug} action={deleteAction} />
+      <DeleteButton slug={slug} action={deleteAction} variant="dropdown" />
 
       {sourceUrl && (
         <Link href={sourceUrl} target="_blank" onClick={() => setOpen(false)}>
