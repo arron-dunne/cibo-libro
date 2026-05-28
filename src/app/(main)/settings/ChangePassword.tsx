@@ -10,7 +10,7 @@ import {
 import { Modal } from "@/app/components/modals/Modal";
 import { Input } from "@/app/components/forms/Inputs";
 
-export default function ChangePasswordModal() {
+export default function ChangePassword() {
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const closeModal = () => setIsModalOpen(false);
 
