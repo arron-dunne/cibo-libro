@@ -17,8 +17,8 @@ export function Footer() {
           {/* <Link className="hover:underline" href="/about">
             About
           </Link> */}
-          <Link className="hover:underline" href="/donate">
-            Donate
+          <Link className="hover:underline" href="/about">
+            About
           </Link>
           <Link className="hover:underline" href="/support/terms">
             Terms of Use
