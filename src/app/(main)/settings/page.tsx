@@ -1,7 +1,7 @@
 import { redirect } from "next/navigation";
 import { auth } from "@/lib/auth/auth";
 import { ArrowUpFromLine, CircleUserRound } from "lucide-react";
-import ChangePasswordModal from "./ChangePasswordModal";
+import ChangePassword from "./ChangePassword";
 import ExportRecipesModal from "./ExportRecipesModal";
 import { signOutAllDevices } from "./actions";
 import { Header } from "@/app/components/text/Headers";
@@ -37,21 +37,21 @@ export default async function SettingsPage() {
           <p className="text-lg text-slate-800">{email}</p>
         </div>
 
-        <div className="flex flex-col gap-4">
+        <div className="flex flex-col gap-6">
 
           <form action={logout}> 
             <LogoutButton/>
           </form>
 
-          <ChangePasswordModal />
+          <ChangePassword />
 
           <form action={signOutAllDevices}>
-            <button
+            <SecondaryButton
               type="submit"
-              className="w-full rounded-full bg-linear-to-br from-slate-100 to-slate-200 border border-slate-300 px-4 py-3 font-semibold text-slate-800 cursor-pointer hover:brightness-90 active:brightness-75"
+              width="w-full"
             >
               Sign out of all devices
-            </button>
+            </SecondaryButton>
           </form>
 
           {/* <button
