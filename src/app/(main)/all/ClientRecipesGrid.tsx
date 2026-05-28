@@ -14,7 +14,10 @@ import {
 } from "lucide-react";
 import { SORT_OPTIONS, SortOptionKey } from "./options";
 import { RecipeCardRecipe } from "./page";
-import { PrimaryButton, SecondaryButton } from "@/app/components/buttons/Buttons";
+import {
+  PrimaryButton,
+  SecondaryButton,
+} from "@/app/components/buttons/Buttons";
 
 type ClientRecipesGridProps = {
   recipes: RecipeCardRecipe[];
@@ -175,15 +178,18 @@ export function ClientRecipesGrid({
           {sortMenu && (
             <div
               key="sort-dd"
-              className="absolute right-0 z-6 w-48 rounded-2xl border border-zinc-200 bg-white shadow-xl overflow-hidden"
+              className="absolute right-0 top-full mt-2 z-10 w-48 rounded-2xl border border-slate-100 bg-white p-2 shadow-xl overflow-hidden"
               role="menu"
             >
               {SORT_OPTIONS.map((opt) => (
                 <button
                   key={opt.key}
-                  className="w-full text-left px-4 py-2 text-sm text-zinc-700 hover:bg-orange-50"
+                  className="w-full h-10 p-2 bg-white text-start rounded-xl text-slate-800 cursor-pointer hover:brightness-95 active:brightness:90"
                   role="menuitem"
-                  onClick={() => setSort(opt.key)}
+                  onClick={() => {
+                    setSortMenu(false);
+                    setSort(opt.key);
+                  }}
                 >
                   {opt.label}
                 </button>
@@ -213,61 +219,48 @@ export function ClientRecipesGrid({
           {filterMenu && (
             <div
               key="filter-dd"
-              className="absolute right-0 z-6 w-64 rounded-2xl border border-zinc-200 bg-white shadow-xl p-3"
+              className="absolute right-0 top-full max-h-96 mt-2 z-10 w-48 rounded-2xl border border-slate-100 bg-white p-4 shadow-xl overflow-scroll"
               role="menu"
             >
-              <p className="text-xs font-semibold text-zinc-500 mb-2">
-                Filter by
-              </p>
-
-              {/* Favorites filter */}
-              <div className="mb-3">
-                <p className="text-xs font-semibold text-zinc-500 mb-1">
-                  Other
-                </p>
-                <label className="flex items-center gap-2 text-sm text-zinc-800">
-                  <input
-                    type="checkbox"
-                    className="accent-orange-500"
-                    checked={favoritesOnly}
-                    onChange={(e) => setFavoritesOnly(e.target.checked)}
-                  />
-                  Favourites only
-                </label>
-              </div>
-
-              {/* Tag filters */}
-              <div className="mb-3">
-                <p className="text-xs font-semibold text-zinc-500 mb-1">Tags</p>
-                <div className="grid grid-cols-2 gap-1.5 text-sm text-zinc-800">
-                  {allTags.map((t) => (
-                    <label key={t} className="flex items-center gap-2">
-                      <input
-                        type="checkbox"
-                        className="accent-orange-500"
-                        checked={selectedTags.includes(t)}
-                        onChange={(e) => toggleTag(t, e.target.checked)}
-                      />
-                      {t}
-                    </label>
-                  ))}
-                </div>
-              </div>
-
-              {/* Divider */}
-              <div className="border-t border-zinc-200 my-2" />
-
               {/* Clear All button */}
-              <button
-                type="button"
+              <SecondaryButton
+                width="w-full"
                 onClick={() => {
                   setSelectedTags([]);
                   setFavoritesOnly(false);
                 }}
-                className="w-full rounded-full bg-orange-600 text-white text-sm font-semibold py-1.5 shadow hover:bg-orange-700 transition"
               >
                 Clear All
-              </button>
+              </SecondaryButton>
+              {/* <p className="text-sm font-semibold text-zinc-500 mb-2">
+                Filters
+              </p> */}
+
+              {/* Favorites filter */}
+              <label className="ml-2 mt-4 flex items-center gap-2 text-base text-zinc-800">
+                <input
+                  type="checkbox"
+                  checked={favoritesOnly}
+                  onChange={(e) => setFavoritesOnly(e.target.checked)}
+                />
+                Favourites only
+              </label>
+
+              {/* Tag filters */}
+              <p className="mt-3 text-sm font-semibold text-slate-500">Tags</p>
+              <div className="mt-2 px-2 flex flex-col gap-1">
+                {allTags.map((t) => (
+                  <label key={t} className="flex items-center gap-2">
+                    <input
+                      type="checkbox"
+                      // className="accent-orange-500"
+                      checked={selectedTags.includes(t)}
+                      onChange={(e) => toggleTag(t, e.target.checked)}
+                    />
+                    {t}
+                  </label>
+                ))}
+              </div>
             </div>
           )}
         </div>
