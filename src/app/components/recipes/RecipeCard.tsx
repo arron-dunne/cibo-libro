@@ -24,24 +24,16 @@ export function RecipeCard({ recipe }: { recipe: RecipeCardProps }) {
   const href = `/view/${recipe.slug}`;
 
   return (
-    <article className="relative w-full aspect-square lg:aspect-[0.7] flex flex-col overflow-hidden rounded-2xl border border-white/60 bg-white shadow-lg shadow-rose-300/50 transition hover:scale-105 cursor-pointer">
+    <article className="relative w-full aspect-[0.7] flex flex-col overflow-hidden rounded-2xl border border-white/60 bg-white shadow-lg shadow-rose-300/50 transition hover:scale-105 cursor-pointer">
       {/* Make whole card link */}
       <Link
         href={href}
         aria-label={`Open ${recipe.title}`}
         className="w-full h-full"
       >
-        {/* External recipe indicator */}
-        {recipe.sourceUrl && (
-          <div className="absolute top-3 right-3 p-1.5 flex items-center
-          bg-linear-to-br from-slate-200 to-slate-300 shadow
-          rounded-full text-slate-700 border border-white/80">
-            <LinkIcon size={14} />
-          </div>
-        )}
 
         {/* Picture */}
-        <div className="w-full h-3/5 overflow-hidden bg-zinc-100">
+        <div className="w-full h-1/2 sm:h-3/5 overflow-hidden bg-zinc-100">
           <RecipeImage
             imageKey={recipe.imageKey ?? null}
             externalUrl={recipe.imageExternalUrl ?? null}
@@ -50,19 +42,13 @@ export function RecipeCard({ recipe }: { recipe: RecipeCardProps }) {
         </div>
 
         {/* Content */}
-        <div className="px-4 py-3 h-2/5 flex flex-col justify-between">
+        <div className="px-4 py-3 h-1/2 md:h-2/5 flex flex-col justify-between">
           <div>
-            {recipe.title === "" ? (
-              <h2 className="line-clamp-1 text-xl font-bold italic text-zinc-400">
-                Untitled
-              </h2>
-            ) : (
-              <h2 className="line-clamp-1 text-xl font-bold text-zinc-900">
-                {recipe.title}
-              </h2>
-            )}
+            <h2 className="line-clamp-2 sm:line-clamp-1 text-base md:text-xl font-bold text-zinc-900">
+              {recipe.title}
+            </h2>
             {recipe.description && (
-              <p className="mt-1 line-clamp-2 text-sm text-zinc-600">
+              <p className="hidden sm:block mt-1 line-clamp-2 text-sm text-zinc-600">
                 {recipe.description}
               </p>
             )}
@@ -70,7 +56,7 @@ export function RecipeCard({ recipe }: { recipe: RecipeCardProps }) {
           <div className="flex items-center justify-between gap-2 text-sm text-zinc-600">
             <div className="flex items-center gap-2 flex-1 min-w-0 overflow-scroll">
               {(recipe.tags ?? []).map((tag) => (
-                <Tag key={tag}>
+                <Tag key={tag} padding="py-1 px-2 md:px-4 md:py-2">
                   {tag}
                 </Tag>
               ))}
