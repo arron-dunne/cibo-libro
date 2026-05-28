@@ -165,7 +165,7 @@ export default async function ViewRecipePage({
 function IngredientsSection({ ingredients }: { ingredients: string[] }) {
   return (
     <section className="h-max w-full md:w-1/3 lg:w-2/5 rounded-4xl bg-white p-8">
-      <h2 className="mb-4 text-2xl font-extrabold">Ingredients</h2>
+      <h2 className="mb-4 text-2xl font-extrabold text-slate-800">Ingredients</h2>
       {ingredients.length ? (
         <ul className="ml-2 space-y-4">
           {ingredients.map((ing, idx) => (

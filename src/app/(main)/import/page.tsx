@@ -51,13 +51,13 @@ export default function ImportPage() {
         <InfoCard
           Icon={Handshake}
           title="We respect other sites"
-          desc="If a site won’t share, we’ll save a handy link card instead so you can easily remember."
+          desc="If a site won’t share, we’ll save a handy link card instead."
           iconStyle="bg-linear-to-br from-green-300 to-lime-300 text-green-900"
         />
         <InfoCard
           Icon={UserPen}
           title="Personalise it your way"
-          desc="Add your personal tags, notes and rating to any recipe"
+          desc="Add your personal tags any recipe"
           iconStyle="bg-linear-to-br from-purple-300 to-fuchsia-300 text-purple-900."
         />
       </div>
@@ -80,13 +80,13 @@ function InfoCard({
   return (
     <div className="w-full p-4 rounded-3xl bg-white flex gap-4">
       <div
-        className={`w-20 h-18 shrink-0 flex justify-center items-center rounded-3xl md:rounded-2xl ${iconStyle}`}
+        className={`w-16 md:w-20 h-14 md:h-18 shrink-0 flex justify-center items-center rounded-2xl md:rounded-2xl ${iconStyle}`}
       >
-        <Icon className="w-10 h-10" />
+        <Icon className="w-8 h-8 md:w-10 md:h-10" />
       </div>
       <div>
-        <h4 className="text-xl font-semibold text-slate-800">{title}</h4>
-        <p className="text-slate-800">{desc}</p>
+        <h4 className="text-xl font-bold text-slate-800">{title}</h4>
+        <p className="mt-1 text-slate-800">{desc}</p>
       </div>
     </div>
   );
