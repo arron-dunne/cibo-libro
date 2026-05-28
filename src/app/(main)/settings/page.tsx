@@ -2,15 +2,14 @@ import { redirect } from "next/navigation";
 import { auth } from "@/lib/auth/auth";
 import { ArrowUpFromLine, CircleUserRound } from "lucide-react";
 import ChangePassword from "./ChangePassword";
-import ExportRecipesModal from "./ExportRecipesModal";
 import { signOutAllDevices } from "./actions";
 import { Header } from "@/app/components/text/Headers";
 import { SecondaryButton } from "@/app/components/buttons/Buttons";
 import { logout } from "@/app/actions/logout";
 import LogoutButton from "./LogoutButton";
+import { ExportRecipes } from "./ExportRecipes";
 
 export default async function SettingsPage() {
-  
   const session = await auth();
   if (!session?.user) {
     redirect("/login");
@@ -25,10 +24,7 @@ export default async function SettingsPage() {
       {/* Account Details */}
       <section className="rounded-3xl bg-white p-8">
         <h2 className="text-2xl font-semibold text-slate-800 mb-6 flex items-center gap-4">
-          <CircleUserRound
-            size={28}
-            className="shrink-0 text-rose-500"
-          />
+          <CircleUserRound size={28} className="shrink-0 text-rose-500" />
           Account Details
         </h2>
 
@@ -38,18 +34,14 @@ export default async function SettingsPage() {
         </div>
 
         <div className="flex flex-col gap-6">
-
-          <form action={logout}> 
-            <LogoutButton/>
+          <form action={logout}>
+            <LogoutButton />
           </form>
 
           <ChangePassword />
 
           <form action={signOutAllDevices}>
-            <SecondaryButton
-              type="submit"
-              width="w-full"
-            >
+            <SecondaryButton type="submit" width="w-full">
               Sign out of all devices
             </SecondaryButton>
           </form>
@@ -63,22 +55,8 @@ export default async function SettingsPage() {
       </section>
 
       {/* Export Recipes */}
-      <section className="rounded-3xl border border-white/70 bg-white/95 p-8 shadow-lg backdrop-blur">
-        <h2 className="text-2xl font-semibold text-black mb-4 flex items-center gap-4">
-          <ArrowUpFromLine
-            size={28}
-            className="hidden sm:block shrink-0 text-orange-500"
-          />
-          Export Recipes
-        </h2>
-        <p className="text-sm sm:text-base text-slate-700 leading-relaxed">
-          Download all your recipes as a file you can keep, share, or import
-          elsewhere.
-        </p>
-        <div className="mt-6">
-          <ExportRecipesModal />
-        </div>
-      </section>
+      <ExportRecipes />
+      
     </div>
   );
 }
