@@ -66,9 +66,9 @@ export function RecipeImage({
   return (
     <div className="w-full h-full flex flex-col items-center justify-center bg-linear-to-br from-white to-rose-50">
       <div className="text-orange-400">
-        <ImageIcon size={48} />
+        <ImageIcon className="size-8 sm:size-12" />
       </div>
-      <p className="mt-2 text-sm font-medium text-slate-600">
+      <p className="mt-2 text-xs sm:text-sm font-medium text-slate-600">
         No image available
       </p>
     </div>
