@@ -31,9 +31,13 @@ export function RecipeCard({ recipe }: { recipe: RecipeCardProps }) {
         aria-label={`Open ${recipe.title}`}
         className="w-full h-full"
       >
-
+        {recipe.isFavourite && (
+          <div className="absolute top-4 left-4 rounded-full shrink-0 p-1.5 bg-white/70 border border-white/80">
+            <Heart className="size-4 sm:size-6 lg:size-8 fill-rose-500 text-rose-600" />
+          </div>
+        )}
         {/* Picture */}
-        <div className="w-full h-1/2 sm:h-3/5 overflow-hidden bg-zinc-100">
+        <div className="w-full h-1/2 md:h-3/5 overflow-hidden bg-zinc-100">
           <RecipeImage
             imageKey={recipe.imageKey ?? null}
             externalUrl={recipe.imageExternalUrl ?? null}
@@ -44,13 +48,15 @@ export function RecipeCard({ recipe }: { recipe: RecipeCardProps }) {
         {/* Content */}
         <div className="px-4 py-3 h-1/2 md:h-2/5 flex flex-col justify-between">
           <div>
-            <h2 className="line-clamp-2 sm:line-clamp-1 text-base md:text-xl font-bold text-zinc-900">
+            <h2 className="line-clamp-3 md:line-clamp-1 text-base md:text-xl font-bold text-zinc-900">
               {recipe.title}
             </h2>
             {recipe.description && (
-              <p className="hidden sm:block mt-1 line-clamp-2 text-sm text-zinc-600">
-                {recipe.description}
-              </p>
+              <div className="hidden md:block">
+                <p className=" mt-1 line-clamp-2 overflow-hidden text-sm text-zinc-600">
+                  {recipe.description}
+                </p>
+              </div>
             )}
           </div>
           <div className="flex items-center justify-between gap-2 text-sm text-zinc-600">
@@ -61,12 +67,6 @@ export function RecipeCard({ recipe }: { recipe: RecipeCardProps }) {
                 </Tag>
               ))}
             </div>
-            {recipe.isFavourite && (
-              <Heart
-                size={24}
-                className="shrink-0 fill-rose-500 text-rose-500"
-              />
-            )}
           </div>
         </div>
       </Link>
