@@ -47,7 +47,7 @@ export default function ContactPage() {
       </p>
 
       {/* Form */}
-      <form action={formAction} className="mt-12 space-y-12">
+      <form action={formAction} className="mt-12 space-y-16">
         {/* Subject */}
         <div className="space-y-4">
           <div className="ml-2 flex gap-4 items-center">
