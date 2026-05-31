@@ -150,23 +150,23 @@ export default function FeedbackPage() {
           />
         </div>
 
-        {/* Submit Button */}
-        <PrimaryButton
-          type="submit"
-          className="mx-auto"
-          size="lg"
-          width="w-60"
-          disabled={isPending}
-        >
-          {isPending ? (
-            <Loader2 size={28} className="animate-spin" />
-          ) : (
-            <>
-              Submit Feedback
-              <Send size={26} />
-            </>
-          )}
-        </PrimaryButton>
+          {/* Submit Button */}
+          <PrimaryButton
+            type="submit"
+            className="mx-auto"
+            size="lg"
+            width="w-60"
+            disabled={isPending}
+          >
+            {isPending ? (
+              <Loader2 size={28} className="animate-spin" />
+            ) : (
+              <>
+                Submit Feedback
+                <Send size={26} />
+              </>
+            )}
+          </PrimaryButton>
       </form>
     </div>
   );
