@@ -19,6 +19,7 @@ import { submitFeedback } from "./actions";
 import { Header } from "@/app/components/text/Headers";
 import { TextArea } from "@/app/components/forms/Inputs";
 import { PrimaryButton } from "@/app/components/buttons/Buttons";
+import { ErrorBanner, SuccessBanner } from "../../components/Banners";
 
 export default function FeedbackPage() {
   const [rating, setRating] = useState<number | null>(null);
@@ -41,21 +42,11 @@ export default function FeedbackPage() {
     <div>
       {/* Feedback Panel */}
       {state.status === "success" && (
-        <div className="mb-8 flex gap-4 items-center rounded-2xl bg-green-100/70 border border-green-600/70 p-8 text-green-800">
-          <CheckCircle size={28} className="hidden sm:block shrink-0" />
-          <p className="font-semibold">
-            Your feedback was submitted. Thank you.
-          </p>
-        </div>
+        <SuccessBanner text="Your feedback was submitted. Thank you." />
       )}
 
       {state.status === "error" && (
-        <div className="mb-8 flex gap-4 items-center rounded-2xl bg-red-100/70 border border-red-600/70 p-8 text-red-800">
-          <CircleX size={28} className="hidden sm:block shrink-0" />
-          <p className="font-semibold">
-            Something went wrong. Please try again or come back later.
-          </p>
-        </div>
+        <ErrorBanner text="Something went wrong. Please try again or come back later." />
       )}
 
       {/* Header */}
@@ -69,7 +60,7 @@ export default function FeedbackPage() {
       <form action={formAction} className="mt-12 space-y-16">
         {/* Rating Card */}
         <div className="space-y-4">
-          <div className="flex gap-4 items-center">
+          <div className="ml-2 flex gap-4 items-center">
             <Star
               size={28}
               className="hidden sm:block shrink-0 text-orange-600"
@@ -103,7 +94,7 @@ export default function FeedbackPage() {
 
         {/* Feature Request */}
         <div className="space-y-4">
-          <div className="flex gap-4 items-center">
+          <div className="ml-2 flex gap-4 items-center">
             <MessageCircleQuestionMark
               size={28}
               className="hidden sm:block shrink-0 text-orange-500"
@@ -123,7 +114,7 @@ export default function FeedbackPage() {
 
         {/* Frustrations */}
         <div className="space-y-4">
-          <div className="flex gap-4 items-center">
+          <div className="ml-2 flex gap-4 items-center">
             <Bug
               size={28}
               className="hidden sm:block shrink-0 text-orange-500"
@@ -142,7 +133,7 @@ export default function FeedbackPage() {
 
         {/* Anything else */}
         <div className="space-y-4">
-          <div className="flex gap-4 items-center">
+          <div className="ml-2 flex gap-4 items-center">
             <Heart
               size={28}
               className="hidden sm:block shrink-0 text-orange-500"

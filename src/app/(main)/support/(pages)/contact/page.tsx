@@ -3,17 +3,23 @@
 import {
   CheckCircle,
   CircleX,
+  Loader2,
   Mail,
   MessageSquare,
   Send,
   Tag,
 } from "lucide-react";
-import { FormSubmitButton } from "@/app/components/forms/FormSubmitButton";
 import { useActionState, useEffect } from "react";
 import { submitContact } from "./actions";
+import { ErrorBanner, SuccessBanner } from "../../components/Banners";
+import { Header } from "@/app/components/text/Headers";
+import { Input, TextArea } from "@/app/components/forms/Inputs";
+import { PrimaryButton } from "@/app/components/buttons/Buttons";
 
 export default function ContactPage() {
-  const [state, formAction] = useActionState(submitContact, { status: null });
+  const [state, formAction, isPending] = useActionState(submitContact, {
+    status: null,
+  });
 
   useEffect(() => {
     if (state.status) {
@@ -24,91 +30,90 @@ export default function ContactPage() {
   return (
     <div>
       {state.status === "success" && (
-        <div className="mb-8 rounded-3xl bg-green-200/90 border border-green-500/50 p-8 text-green-900 shadow">
-          <h2 className="text-xl sm:text-2xl font-semibold mb-1 flex items-center gap-4">
-            <CheckCircle size={28} className="hidden sm:block shrink-0" />
-            Message sent
-          </h2>
-          <p className="sm:ml-11 text-sm sm:text-base">
-            Thanks for getting in touch — we&apos;ll get back to you as soon as we can.
-          </p>
-        </div>
+        <SuccessBanner text="Message sent. Thanks for getting in touch." />
       )}
 
       {state.status === "error" && (
-        <div className="mb-8 rounded-3xl bg-red-200/90 border border-red-500/50 p-8 text-red-800 shadow">
-          <h2 className="text-xl sm:text-2xl font-semibold mb-1 flex items-center gap-4">
-            <CircleX size={28} className="hidden sm:block shrink-0" />
-            Something went wrong
-          </h2>
-          <p className="sm:ml-11 text-sm sm:text-base">Please try again or come back later</p>
-        </div>
+        <ErrorBanner text="Please try again or come back later" />
       )}
 
       {/* Header */}
-      <section className="rounded-3xl border border-white/70 bg-white/95 p-8 shadow-lg backdrop-blur">
-        <h1 className="text-3xl sm:text-4xl font-extrabold text-black">
-          Get in touch
-        </h1>
-        <p className="mt-3 text-sm sm:text-base text-slate-700 leading-relaxed">
-          Have a question, a suggestion, or just want to say hello? Fill in the
-          form below and we&apos;ll get back to you.
-        </p>
-      </section>
+      <Header>
+        Send us a message
+      </Header>
+      <p className="mt-4">
+        Have a question, a suggestion, or want to get in touch? Fill in the form
+        below and we&apos;ll get back to you as soon as we can.
+      </p>
 
       {/* Form */}
-      <form action={formAction} className="mt-10 space-y-10">
+      <form action={formAction} className="mt-12 space-y-12">
         {/* Subject */}
-        <section className="rounded-3xl border border-white/70 bg-white/95 p-8 shadow-lg backdrop-blur">
-          <h2 className="text-2xl font-semibold text-black mb-4 flex items-center gap-4">
-            <Tag size={28} className="hidden sm:block shrink-0 text-orange-500" />
-            What&apos;s this about?
-          </h2>
-          <input
+        <div className="space-y-4">
+          <div className="ml-2 flex gap-4 items-center">
+            <Tag
+              size={28}
+              className="hidden sm:block shrink-0 text-orange-500"
+            />
+            <h3 className="text-2xl font-semibold">Subject</h3>
+          </div>
+          <Input
             type="text"
             name="subject"
             required
-            placeholder="e.g. Question about creating recipes"
-            className="w-full rounded-2xl border border-zinc-300 bg-white px-4 py-3 text-slate-800 placeholder:text-slate-400"
+            placeholder="What's this about?"
           />
-        </section>
+        </div>
 
         {/* Email */}
-        <section className="rounded-3xl border border-white/70 bg-white/95 p-8 shadow-lg backdrop-blur">
-          <h2 className="text-2xl font-semibold text-black mb-4 flex items-center gap-4">
-            <Mail size={28} className="hidden sm:block shrink-0 text-orange-500" />
-            Your email address
-          </h2>
-          <input
-            type="email"
-            name="email"
-            placeholder="you@example.com"
-            className="w-full rounded-2xl border border-zinc-300 bg-white px-4 py-3 text-slate-800 placeholder:text-slate-400"
-          />
-          <p className="mt-2 ml-2 text-sm text-slate-500">
-            Optional — only needed if you&apos;d like a reply.
+        <div>
+          <div className="ml-2 mb-4 flex gap-4 items-center">
+            <Mail
+              size={28}
+              className="hidden sm:block shrink-0 text-orange-500"
+            />
+            <h3 className="text-2xl font-semibold">Your email address</h3>
+          </div>
+          <Input type="email" name="email" placeholder="you@example.com" />
+          <p className="mt-1 ml-4 text-base">
+            Only needed if you&apos;d like a reply.
           </p>
-        </section>
+        </div>
 
         {/* Message */}
-        <section className="rounded-3xl border border-white/70 bg-white/95 p-8 shadow-lg backdrop-blur">
-          <h2 className="text-2xl font-semibold text-black mb-4 flex items-center gap-4">
-            <MessageSquare size={28} className="hidden sm:block shrink-0 text-orange-500" />
-            Your message
-          </h2>
-          <textarea
+        <div className="space-y-4">
+          <div className="ml-2 flex gap-4 items-center">
+            <MessageSquare
+              size={28}
+              className="hidden sm:block shrink-0 text-orange-500"
+            />
+            <h3 className="text-2xl font-semibold">Message</h3>
+          </div>
+          <TextArea
             name="message"
             required
             placeholder="Tell us what's on your mind…"
             rows={6}
-            className="w-full rounded-2xl border border-zinc-300 bg-white p-4 text-slate-800 placeholder:text-slate-400"
           />
-        </section>
+        </div>
 
-        {/* Submit */}
-        <FormSubmitButton pendingLabel="Sending...">
-          Send Message <Send size={22} />
-        </FormSubmitButton>
+                {/* Submit Button */}
+        <PrimaryButton
+          type="submit"
+          className="mx-auto"
+          size="lg"
+          width="w-60"
+          disabled={isPending}
+        >
+          {isPending ? (
+            <Loader2 size={28} className="animate-spin" />
+          ) : (
+            <>
+              Send Message
+              <Send size={26} />
+            </>
+          )}
+        </PrimaryButton>
       </form>
     </div>
   );
