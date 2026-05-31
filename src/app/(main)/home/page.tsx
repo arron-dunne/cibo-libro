@@ -125,7 +125,7 @@ export default async function HomePage() {
         <div className="flex items-center justify-between mb-4">
           <Header className="ml-2" textSize="text-3xl sm:text-4xl">Recently Added</Header>
           <Link href="/all?sort=created">
-            <PrimaryButton>
+            <PrimaryButton type="button">
               More <ChevronRight size={16} />
             </PrimaryButton>
           </Link>

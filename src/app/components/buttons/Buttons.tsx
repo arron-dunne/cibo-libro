@@ -3,6 +3,7 @@ import React, { ButtonHTMLAttributes } from "react";
 type Size = "md" | "lg" | "xl" | "custom";
 
 interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
+  type: "submit" | "button" // required to prevent incorrect default assignment
   size?: Size;
   width?: string;
   height?: string;
@@ -10,6 +11,7 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 }
 
 export function PrimaryButton({
+  type,
   size = "md",
   width = "w-max",
   height = "h-max",
@@ -25,7 +27,7 @@ export function PrimaryButton({
       break;
 
     case "lg":
-      sizeStyle = "px-4 py-3 text-xl";
+      sizeStyle = "px-5 py-3 text-xl";
       break;
 
     case "md":

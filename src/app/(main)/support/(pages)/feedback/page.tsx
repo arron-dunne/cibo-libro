@@ -11,11 +11,14 @@ import {
   CircleX,
   Send,
   Home,
+  Loader2,
 } from "lucide-react";
-import { FormSubmitButton } from "@/app/components/forms/FormSubmitButton";
 
 import { useState, useActionState, useEffect } from "react";
 import { submitFeedback } from "./actions";
+import { Header } from "@/app/components/text/Headers";
+import { TextArea } from "@/app/components/forms/Inputs";
+import { PrimaryButton } from "@/app/components/buttons/Buttons";
 
 export default function FeedbackPage() {
   const [rating, setRating] = useState<number | null>(null);
@@ -38,47 +41,43 @@ export default function FeedbackPage() {
     <div>
       {/* Feedback Panel */}
       {state.status === "success" && (
-        <div className="mb-8 rounded-3xl bg-green-200/90 border border-green-500/50 p-8 text-green-900 shadow">
-          <h2 className="text-xl sm:text-2xl font-semibold mb-1 flex items-center gap-4">
-            <CheckCircle size={28} className="hidden sm:block shrink-0" />
-            Your feedback was submitted
-          </h2>
-          <p className="sm:ml-11 text-sm sm:text-base">
-            Thank you for taking the time to make Cibo Libro a better place
+        <div className="mb-8 flex gap-4 items-center rounded-2xl bg-green-100/70 border border-green-600/70 p-8 text-green-800">
+          <CheckCircle size={28} className="hidden sm:block shrink-0" />
+          <p className="font-semibold">
+            Your feedback was submitted. Thank you.
           </p>
         </div>
       )}
 
       {state.status === "error" && (
-        <div className="mb-8 rounded-3xl bg-red-200/90 border border-red-500/50 p-8 text-red-800 shadow">
-          <h2 className="text-xl sm:text-2xl font-semibold mb-1 flex items-center gap-4">
-            <CircleX size={28} className="hidden sm:block shrink-0" />
-            Something went wrong
-          </h2>
-          <p className="sm:ml-11 text-sm sm:text-base">Please try again or come back later</p>
+        <div className="mb-8 flex gap-4 items-center rounded-2xl bg-red-100/70 border border-red-600/70 p-8 text-red-800">
+          <CircleX size={28} className="hidden sm:block shrink-0" />
+          <p className="font-semibold">
+            Something went wrong. Please try again or come back later.
+          </p>
         </div>
       )}
 
-      {/* Header Card */}
-      <section className="rounded-3xl border border-white/70 bg-white/95 p-8 shadow-lg backdrop-blur">
-        <h1 className="text-3xl sm:text-4xl font-extrabold text-black">
-          We’d love your feedback
-        </h1>
-        <p className="mt-3 text-sm sm:text-base text-slate-700 leading-relaxed">
-          Help us improve CiboLibro by sharing your thoughts, frustrations, and
-          ideas. Your feedback directly shapes the future of the app.
-        </p>
-      </section>
+      {/* Header */}
+      <Header>Leave your feedback</Header>
+      <p className="mt-4">
+        Help us improve Cibo Libro by sharing your thoughts, frustrations, and
+        ideas. Your feedback directly shapes the future of the app.
+      </p>
 
       {/* Feedback Form */}
-      <form action={formAction} className="mt-10 space-y-10">
+      <form action={formAction} className="mt-12 space-y-16">
         {/* Rating Card */}
-        <section className="rounded-3xl border border-white/70 bg-white/95 p-8 shadow-lg backdrop-blur">
-          <h2 className="text-2xl font-semibold text-black mb-4 flex items-center gap-4">
-            <Star size={28} className="hidden sm:block shrink-0 text-orange-500" />
-            Overall, how are you enjoying CiboLibro?
-          </h2>
-
+        <div className="space-y-4">
+          <div className="flex gap-4 items-center">
+            <Star
+              size={28}
+              className="hidden sm:block shrink-0 text-orange-600"
+            />
+            <h3 className="text-2xl font-semibold">
+              Overall, how would you rate Cibo Libro?
+            </h3>
+          </div>
           <div className="flex gap-4 mt-6">
             {[1, 2, 3, 4, 5].map((n) => (
               <button
@@ -87,74 +86,96 @@ export default function FeedbackPage() {
                 disabled={isPending}
                 onClick={() => setRating(n)}
                 className={`h-12 w-12 flex items-center justify-center rounded-full border transition text-lg font-medium cursor-pointer
-                  ${
-                    rating === n
-                      ? "bg-linear-to-br from-orange-500 to-rose-500 text-white font-semibold border-orange-600 scale-105"
-                      : "bg-white text-slate-700 border-zinc-300 hover:brightness-95 active:brightness-75"
-                  }
-                  ${isPending ? "opacity-50 cursor-not-allowed" : ""}
-                `}
+              ${
+                rating === n
+                  ? "bg-linear-to-br from-orange-500 to-rose-500 text-white font-semibold border-orange-600 scale-105"
+                  : "bg-white text-black border-white/60 hover:brightness-95 active:brightness-75"
+              }
+              ${isPending ? "opacity-50 cursor-not-allowed" : ""}
+              `}
               >
                 {n}
               </button>
             ))}
+            <input type="hidden" name="rating" value={rating ?? ""} />
           </div>
-
-          <input type="hidden" name="rating" value={rating ?? ""} />
-        </section>
+        </div>
 
         {/* Feature Request */}
-        <section className="rounded-3xl border border-white/70 bg-white/95 p-8 shadow-lg backdrop-blur">
-          <h2 className="text-2xl font-semibold text-black mb-4 flex items-center gap-4">
-            <MessageCircleQuestionMark size={28} className="hidden sm:block shrink-0 text-orange-500" />
-            What feature would you love to see next?
-          </h2>
+        <div className="space-y-4">
+          <div className="flex gap-4 items-center">
+            <MessageCircleQuestionMark
+              size={28}
+              className="hidden sm:block shrink-0 text-orange-500"
+            />
+            <h3 className="text-2xl font-semibold">
+              What feature would you love to see next?
+            </h3>
+          </div>
 
-          <textarea
+          <TextArea
             name="featureRequest"
             placeholder="Tell us your idea…"
             disabled={isPending}
             rows={4}
-            className="w-full rounded-2xl border border-zinc-300 bg-white p-4 text-slate-800 placeholder:text-slate-400 disabled:opacity-50"
           />
-        </section>
+        </div>
 
-        {/* UI Pain Points */}
-        <section className="rounded-3xl border border-white/70 bg-white/95 p-8 shadow-lg backdrop-blur">
-          <h2 className="text-2xl font-semibold text-black flex gap-4 items-center mb-4">
-            <Bug size={28} className="hidden sm:block shrink-0 text-orange-500" />
-            What feels confusing or frustrating?
-          </h2>
-
-          <textarea
+        {/* Frustrations */}
+        <div className="space-y-4">
+          <div className="flex gap-4 items-center">
+            <Bug
+              size={28}
+              className="hidden sm:block shrink-0 text-orange-500"
+            />
+            <h3 className="text-2xl font-semibold">
+              What feels confusing or frustrating?
+            </h3>
+          </div>
+          <TextArea
             name="uiPainPoints"
             placeholder="What slowed you down, or didn’t work as expected?"
             disabled={isPending}
             rows={4}
-            className="w-full rounded-2xl border border-zinc-300 bg-white p-4 text-slate-800 placeholder:text-slate-400 disabled:opacity-50"
           />
-        </section>
+        </div>
 
-        {/* Additional Thoughts */}
-        <section className="rounded-3xl border border-white/70 bg-white/95 p-8 shadow-lg backdrop-blur">
-          <h2 className="text-2xl font-semibold text-black mb-4 flex items-center gap-4">
-            <Heart size={28} className="hidden sm:block shrink-0 text-orange-500" />
-            Anything else you&apos;d like to share?
-          </h2>
-
-          <textarea
+        {/* Anything else */}
+        <div className="space-y-4">
+          <div className="flex gap-4 items-center">
+            <Heart
+              size={28}
+              className="hidden sm:block shrink-0 text-orange-500"
+            />
+            <h3 className="text-2xl font-semibold">
+              Anything else you&apos;d like to share?
+            </h3>
+          </div>
+          <TextArea
             name="additionalFeedback"
-            placeholder="Anything at all — we're listening."
+            placeholder="Any other thoughts?"
             disabled={isPending}
             rows={4}
-            className="w-full rounded-2xl border border-zinc-300 bg-white p-4 text-slate-800 placeholder:text-slate-400 disabled:opacity-50"
           />
-        </section>
+        </div>
 
         {/* Submit Button */}
-        <FormSubmitButton pendingLabel="Submitting...">
-          Submit Feedback <Send size={22} />
-        </FormSubmitButton>
+        <PrimaryButton
+          type="submit"
+          className="mx-auto"
+          size="lg"
+          width="w-60"
+          disabled={isPending}
+        >
+          {isPending ? (
+            <Loader2 size={28} className="animate-spin" />
+          ) : (
+            <>
+              Submit Feedback
+              <Send size={26} />
+            </>
+          )}
+        </PrimaryButton>
       </form>
     </div>
   );

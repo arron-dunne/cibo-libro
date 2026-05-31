@@ -9,7 +9,8 @@ import { LogoutButton } from "./LogoutButton";
 import { logout } from "@/app/actions/logout";
 import { Session } from "next-auth";
 import { useEffect, useState } from "react";
-import { SecondaryButton } from "../buttons/Buttons";
+import { PrimaryButton, SecondaryButton } from "../buttons/Buttons";
+import { Home } from "lucide-react";
 
 export function Navbar({ session }: { session?: Session | null }) {
   const pathname = usePathname();
@@ -43,44 +44,57 @@ export function Navbar({ session }: { session?: Session | null }) {
 
       {/* Logged in navbar */}
       {session?.user ? (
-        <>
-          {/* Navigation */}
-          <div className="hidden md:flex gap-6">
-            <DesktopNavLink type="home" />
-            <DesktopNavLink type="all" />
-            <DesktopNavLink type="new" />
-            <DesktopNavLink type="import" />
-            <DesktopNavLink type="settings" />
-          </div>
-          
-          {/* Logout */}
+        /^\/support\//.test(pathname) ? (
           <div className="hidden lg:flex grow justify-end items-center text-sm">
-            <span className="text-slate-800">
-              {session.user.email}
-            </span>
+            {/* Home button */}
+            <span className="text-slate-800">{session.user.email}</span>
             <div className="ml-4">
-              <LogoutButton action={logout} />
+              <Link href="/home">
+              <PrimaryButton type="button">
+                <Home size={20}/>
+                Home
+                </PrimaryButton>
+              </Link>
             </div>
           </div>
+        ) : (
+          <>
+            {/* Navigation */}
+            <div className="hidden md:flex gap-6">
+              <DesktopNavLink type="home" />
+              <DesktopNavLink type="all" />
+              <DesktopNavLink type="new" />
+              <DesktopNavLink type="import" />
+              <DesktopNavLink type="settings" />
+            </div>
 
-          <div className="block md:hidden">
-            <MobileMenu />
-          </div>
-        </>
+            {/* Logout */}
+            <div className="hidden lg:flex grow justify-end items-center text-sm">
+              <span className="text-slate-800">{session.user.email}</span>
+              <div className="ml-4">
+                <LogoutButton action={logout} />
+              </div>
+            </div>
+
+            <div className="block md:hidden">
+              <MobileMenu />
+            </div>
+          </>
+        )
       ) : pathname === "/register" ? (
         <>
           <span className="font-semibold text-slate-600">
             Already have an account?
           </span>
           <Link href="/login">
-            <SecondaryButton>Login</SecondaryButton>
+            <SecondaryButton type="button">Login</SecondaryButton>
           </Link>
         </>
       ) : pathname === "/login" ? (
         <div className="flex gap-2 sm:gap-4 items-center">
           <span className="font-semibold text-slate-600">New here?</span>
           <Link href="/register">
-            <SecondaryButton>Create Account</SecondaryButton>
+            <SecondaryButton type="button">Create Account</SecondaryButton>
           </Link>
         </div>
       ) : (
