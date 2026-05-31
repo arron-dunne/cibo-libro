@@ -8,7 +8,7 @@ export default function SupportPageLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className="max-w-3xl w-full mx-auto mt-12">
+    <div className="max-w-2xl w-full mx-auto mt-12">
       {children}
     </div>
   );
