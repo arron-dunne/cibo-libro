@@ -1,15 +1,6 @@
 "use client";
 
-import {
-  Bug,
-  AlertTriangle,
-  Layers,
-  CircleX,
-  CheckCircle,
-  Send,
-  Loader2,
-} from "lucide-react";
-// import { FormSubmitButton } from "@/app/components/forms/FormSubmitButton";
+import { Bug, AlertTriangle, Layers, Send, Loader2 } from "lucide-react";
 import { useActionState, useEffect, useState } from "react";
 import { submitIssue } from "./actions";
 import { ErrorBanner, SuccessBanner } from "../../components/Banners";

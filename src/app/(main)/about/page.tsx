@@ -47,7 +47,7 @@ export default function AboutPage() {
         target="_blank"
         className="flex mt-8"
       >
-        <PrimaryButton width="w-full" size="lg">
+        <PrimaryButton type="button" width="w-full" size="lg">
           Leave a Tip
         </PrimaryButton>
       </Link>

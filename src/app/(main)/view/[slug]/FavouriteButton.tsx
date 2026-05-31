@@ -21,7 +21,7 @@ export function FavouriteButton({
   };
 
   return (
-    <TertiaryButton onClick={handleClick}>
+    <TertiaryButton type="button" onClick={handleClick}>
       <Heart
         size={20}
         className={isFavourite ? "text-rose-500" : ""}

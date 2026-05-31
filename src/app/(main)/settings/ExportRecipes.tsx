@@ -74,7 +74,7 @@ export function ExportRecipes() {
       </div>
 
       <div className="mt-6">
-        <PrimaryButton width="w-full" onClick={handleExport}>
+        <PrimaryButton type="button" width="w-full" onClick={handleExport}>
           {isExporting ? (
             <Loader2 size={24} className="animate-spin" />
           ) : (

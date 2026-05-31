@@ -160,6 +160,7 @@ export function ClientRecipesGrid({
         {/* Sort */}
         <div ref={sortRef} className="h-full relative">
           <PrimaryButton
+            type="button"
             aria-haspopup="menu"
             aria-expanded={sortMenu}
             width="sm:w-22 md:w-32"
@@ -201,6 +202,7 @@ export function ClientRecipesGrid({
         {/* Filter */}
         <div ref={filterRef} className="h-full relative">
           <PrimaryButton
+            type="button"
             // aria-haspopup="menu"
             // aria-expanded={filterMenu}
             width="sm:w-22 md:w-32"
@@ -224,6 +226,7 @@ export function ClientRecipesGrid({
             >
               {/* Clear All button */}
               <SecondaryButton
+                type="button"
                 width="w-full"
                 onClick={() => {
                   setSelectedTags([]);
