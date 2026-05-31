@@ -92,7 +92,7 @@ export default async function RegisterPage({
           <div className="flex gap-2 items-center">
             <span className="text-slate-600 font-semibold">Need help?</span>
             <a href="/support">
-              <TertiaryButton>Support</TertiaryButton>
+              <TertiaryButton type="button">Support</TertiaryButton>
             </a>
           </div>
         </div>

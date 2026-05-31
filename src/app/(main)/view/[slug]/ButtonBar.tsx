@@ -63,7 +63,7 @@ export function ButtonBar({
           href="/all"
           className="w-max flex items-center gap-3 text-lg font-semibold text-slate-900 cursor-pointer hover:brightness-90 active:brightness-75"
         >
-          <SecondaryButton size="custom" width="w-10" height="h-10">
+          <SecondaryButton type="button" size="custom" width="w-10" height="h-10">
             <ArrowLeft size={20} />
             <span className="hidden sm:block">Back</span>
           </SecondaryButton>
@@ -72,7 +72,7 @@ export function ButtonBar({
         {/* <div className="flex gap-2 items-center"> */}
         {recipeType !== "EXTERNAL_LINK" && (
           <Link href={`/cook/${slug}`}>
-            <PrimaryButton>
+            <PrimaryButton type="button">
               <ChefHat size={20} className="-rotate-12 shrink-0" />
               <span className="text-nowrap">Start Cooking</span>
             </PrimaryButton>
@@ -80,7 +80,7 @@ export function ButtonBar({
         )}
 
         <div className="relative" ref={menuRef}>
-          <SecondaryButton
+          <SecondaryButton type="button"
             onClick={() => setOpen((v) => !v)}
             aria-label="More options"
             size="custom"
@@ -108,7 +108,7 @@ export function ButtonBar({
           href="/all"
           className="w-max flex items-center gap-3 text-lg font-semibold text-slate-900 cursor-pointer hover:brightness-90 active:brightness-75"
         >
-          <TertiaryButton>
+          <TertiaryButton type="button">
             <ArrowLeft size={20} />
             <span className="hidden sm:block">Back</span>
           </TertiaryButton>
@@ -117,7 +117,7 @@ export function ButtonBar({
         <div className="hidden md:flex gap-8">
           <FavouriteButton slug={slug} initialIsFavourite={isFavorite} />
           <Link href={`/edit/${slug}`}>
-            <TertiaryButton>
+            <TertiaryButton type="button">
               <Pencil size={20} />
               <span className="hidden lg:block">Edit</span>
             </TertiaryButton>
@@ -125,7 +125,7 @@ export function ButtonBar({
           <DeleteButton slug={slug} action={deleteAction} />
           {sourceUrl && (
             <Link href={sourceUrl} target="_blank" aria-label="View original">
-              <TertiaryButton>
+              <TertiaryButton type="button">
                 <LinkIcon size={20} />
                 <span className="hidden lg:block">Original</span>
               </TertiaryButton>
@@ -136,7 +136,7 @@ export function ButtonBar({
         {/* Cook mode */}
         {recipeType !== "EXTERNAL_LINK" && (
           <Link href={`/cook/${slug}`}>
-            <PrimaryButton>
+            <PrimaryButton type="button">
               <ChefHat size={20} className="-rotate-12 shrink-0" />
               <span className="text-nowrap">Start Cooking</span>
             </PrimaryButton>
@@ -174,7 +174,7 @@ function MobileDropdown({
 
       {sourceUrl && (
         <Link href={sourceUrl} target="_blank" onClick={() => setOpen(false)}>
-          <TertiaryButton>
+          <TertiaryButton type="button">
             <LinkIcon size={20} />
             <span>Source</span>
           </TertiaryButton>

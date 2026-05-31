@@ -48,7 +48,7 @@ export function LogoutButton({ action }: LogoutButtonProps) {
     <>
       {/* Button */}
       <form ref={formRef} action={action}>
-        <TertiaryButton onClick={openDialog}>
+        <TertiaryButton type="button" onClick={openDialog}>
           <LogOut size={20}/>
           Logout
         </TertiaryButton>

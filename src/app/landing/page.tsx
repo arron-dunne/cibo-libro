@@ -25,10 +25,10 @@ export default function LandingPage() {
             />
           <div className="flex gap-4 h-max">
             <Link href="/login">
-              <SecondaryButton>Login</SecondaryButton>
+              <SecondaryButton type="button">Login</SecondaryButton>
             </Link>
             <Link href="/register">
-              <PrimaryButton>Get Started</PrimaryButton>
+              <PrimaryButton type="button">Get Started</PrimaryButton>
             </Link>
           </div>
         </div>
@@ -45,10 +45,10 @@ export default function LandingPage() {
             </SubHeader>
             <div className="flex gap-4">
               <Link href="/register">
-                <PrimaryButton size="lg">Start for free</PrimaryButton>
+                <PrimaryButton type="button" size="lg">Start for free</PrimaryButton>
               </Link>
               <Link href="#how-it-works">
-                <SecondaryButton size="lg">See how it works</SecondaryButton>
+                <SecondaryButton type="button" size="lg">See how it works</SecondaryButton>
               </Link>
             </div>
           </div>
@@ -194,7 +194,7 @@ export default function LandingPage() {
               What would you love to see?
             </SubHeader>
             <Link href="/request">
-              <TertiaryButton>
+              <TertiaryButton type="button">
                 Request a feature
               </TertiaryButton>
             </Link>
@@ -224,14 +224,14 @@ export default function LandingPage() {
           personal digital cookbook now for free.
         </SubHeader>
         <Link href="register">
-          <PrimaryButton size="xl">
+          <PrimaryButton type="button" size="xl">
             Open you personal cookbook
             <ChevronRight size={30}/>
           </PrimaryButton>
         </Link>
         <div className="mt-16 flex items-center gap-3 text-base">
           <span className="text-slate-500">Still not sure how it works?</span>
-          <TertiaryButton>
+          <TertiaryButton type="button">
             Explore a demo cookbook to learn more
           </TertiaryButton>
         </div>

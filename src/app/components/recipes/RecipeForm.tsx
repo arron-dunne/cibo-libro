@@ -13,14 +13,13 @@ import {
   ImagePlus,
   Loader2,
 } from "lucide-react";
-import { FormSubmitButton } from "@/app/components/forms/FormSubmitButton";
-import { Header, SubHeader } from "../text/Headers";
-import { Input, TextArea } from "../forms/Inputs";
+import { Header, SubHeader } from "@/app/components/text/Headers";
+import { Input, TextArea } from "@/app/components/forms/Inputs";
 import {
   PrimaryButton,
   SecondaryButton,
   TertiaryButton,
-} from "../buttons/Buttons";
+} from "@/app/components/buttons/Buttons";
 import { Tag } from "../tags/Tags";
 import Link from "next/link";
 
@@ -557,7 +556,7 @@ export default function RecipeForm({ mode, recipe, action }: RecipeFormProps) {
                             If this problem persists, please try again later or
                           </span>
                           <Link href="/support/issues">
-                            <TertiaryButton className="z-10">
+                            <TertiaryButton type="button" className="z-10">
                               contact support
                             </TertiaryButton>
                           </Link>
@@ -679,7 +678,7 @@ function TagsEditor({
           aria-label="Add tag"
         />
 
-        <PrimaryButton height="h-12" onClick={add}>
+        <PrimaryButton type="button" height="h-12" onClick={add}>
           Add
           <TagIcon size={16} />
         </PrimaryButton>
