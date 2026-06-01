@@ -62,11 +62,13 @@ export function DeleteButton({
         <input type="hidden" readOnly name="slug" value={slug} />
 
         {variant === "inline" ? (
-          <TertiaryButton type="button" onClick={openModal}>
+          // Desktop Navbar
+          <SecondaryButton type="button" onClick={openModal}>
             <Trash2 size={20} />
             Delete
-          </TertiaryButton>
+          </SecondaryButton>
         ) : (
+          // Mobile dropdown
           <button
             type="button"
             onClick={openModal}

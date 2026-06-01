@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { Heart } from "lucide-react";
 import { setRecipeFavourite } from "./actions";
-import { TertiaryButton } from "@/app/components/buttons/Buttons";
+import { SecondaryButton, TertiaryButton } from "@/app/components/buttons/Buttons";
 
 export function FavouriteButton({
   slug,
@@ -21,14 +21,14 @@ export function FavouriteButton({
   };
 
   return (
-    <TertiaryButton type="button" onClick={handleClick}>
+    <SecondaryButton type="button" onClick={handleClick}>
       <Heart
         size={20}
         className={isFavourite ? "text-rose-500" : ""}
         fill={isFavourite ? "currentColor" : "none"}
       />
       Favourite
-    </TertiaryButton>
+    </SecondaryButton>
   );
 }
 
