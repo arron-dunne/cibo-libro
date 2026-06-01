@@ -43,6 +43,14 @@ interface RecipeFormRecipe {
   imageKey?: string | null;
 }
 
+// Recipe used by RecipeLinkForm (EXTERNAL_LINK cards — title, description, tags only)
+export interface RecipeLinkFormRecipe {
+  id: string | null;
+  title?: string | null;
+  description?: string | null;
+  tags: string[];
+}
+
 // Response object returned by server actions handling recipe form submissions
 interface RecipeFormActionResponse {
   success: boolean;
