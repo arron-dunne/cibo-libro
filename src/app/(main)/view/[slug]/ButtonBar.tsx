@@ -63,14 +63,24 @@ export function ButtonBar({
           href="/all"
           className="w-max flex items-center gap-3 text-lg font-semibold text-slate-900 cursor-pointer hover:brightness-90 active:brightness-75"
         >
-          <SecondaryButton type="button" size="custom" width="w-10" height="h-10">
+          <SecondaryButton
+            type="button"
+            size="custom"
+            width="w-10"
+            height="h-10"
+          >
             <ArrowLeft size={20} />
-            <span className="hidden sm:block">Back</span>
           </SecondaryButton>
         </Link>
 
-        {/* <div className="flex gap-2 items-center"> */}
-        {recipeType !== "EXTERNAL_LINK" && (
+        {recipeType === "EXTERNAL_LINK" ? (
+          <Link href={sourceUrl || ""} target="_blank">
+            <PrimaryButton type="button">
+              <LinkIcon size={20} />
+              View Original
+            </PrimaryButton>
+          </Link>
+        ) : (
           <Link href={`/cook/${slug}`}>
             <PrimaryButton type="button">
               <ChefHat size={20} className="-rotate-12 shrink-0" />
@@ -80,7 +90,8 @@ export function ButtonBar({
         )}
 
         <div className="relative" ref={menuRef}>
-          <SecondaryButton type="button"
+          <SecondaryButton
+            type="button"
             onClick={() => setOpen((v) => !v)}
             aria-label="More options"
             size="custom"
@@ -108,33 +119,42 @@ export function ButtonBar({
           href="/all"
           className="w-max flex items-center gap-3 text-lg font-semibold text-slate-900 cursor-pointer hover:brightness-90 active:brightness-75"
         >
-          <TertiaryButton type="button">
+          <SecondaryButton type="button">
             <ArrowLeft size={20} />
             <span className="hidden sm:block">Back</span>
-          </TertiaryButton>
+          </SecondaryButton>
         </Link>
 
-        <div className="hidden md:flex gap-8">
+        <div className="flex gap-2">
           <FavouriteButton slug={slug} initialIsFavourite={isFavorite} />
           <Link href={`/edit/${slug}`}>
-            <TertiaryButton type="button">
+            <SecondaryButton type="button">
               <Pencil size={20} />
-              <span className="hidden lg:block">Edit</span>
-            </TertiaryButton>
+              <span>Edit</span>
+            </SecondaryButton>
           </Link>
           <DeleteButton slug={slug} action={deleteAction} />
-          {sourceUrl && (
+          {sourceUrl && recipeType !== "EXTERNAL_LINK" && (
             <Link href={sourceUrl} target="_blank" aria-label="View original">
-              <TertiaryButton type="button">
+              <SecondaryButton type="button">
                 <LinkIcon size={20} />
-                <span className="hidden lg:block">Original</span>
-              </TertiaryButton>
+                <span>Original</span>
+              </SecondaryButton>
             </Link>
           )}
         </div>
 
-        {/* Cook mode */}
-        {recipeType !== "EXTERNAL_LINK" && (
+        {/* Primary action button */}
+        {recipeType === "EXTERNAL_LINK" ? (
+          // View Original
+          <Link href={sourceUrl || ""} target="_blank" rel="noreferrer">
+            <PrimaryButton type="button">
+              <LinkIcon size={20} className="shrink-0" />
+              <span className="text-nowrap">View Original</span>
+            </PrimaryButton>
+          </Link>
+        ) : (
+          // Cook mode
           <Link href={`/cook/${slug}`}>
             <PrimaryButton type="button">
               <ChefHat size={20} className="-rotate-12 shrink-0" />
@@ -173,11 +193,15 @@ function MobileDropdown({
       <DeleteButton slug={slug} action={deleteAction} variant="dropdown" />
 
       {sourceUrl && (
-        <Link href={sourceUrl} target="_blank" onClick={() => setOpen(false)}>
-          <TertiaryButton type="button">
-            <LinkIcon size={20} />
-            <span>Source</span>
-          </TertiaryButton>
+        <Link
+          href={sourceUrl}
+          target="_blank"
+          rel="noreferrer"
+          onClick={() => setOpen(false)}
+          className="w-full h-10 p-2 bg-white rounded-xl text-orange-600 cursor-pointer font-semibold flex items-center gap-2 hover:brightness-95"
+        >
+          <LinkIcon size={20} />
+          <span>Original</span>
         </Link>
       )}
     </div>

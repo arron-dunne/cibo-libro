@@ -2,7 +2,14 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { auth } from "@/lib/auth/auth";
 import { prisma } from "@/lib/prisma";
-import { ChefHat, ArrowLeft, TagIcon, Timer, Utensils } from "lucide-react";
+import {
+  ChefHat,
+  ArrowLeft,
+  TagIcon,
+  Timer,
+  Utensils,
+  Info,
+} from "lucide-react";
 import { RecipeImage } from "@/app/components/recipes/RecipeImage";
 import { deleteRecipe } from "./actions";
 import { getHostname } from "@/lib/hostname";
@@ -64,7 +71,7 @@ export default async function ViewRecipePage({
       </div> */}
 
       {/* Hero section */}
-      <section className="mt-4 flex flex-col md:flex-row gap-8">
+      <section className="mt-4 flex flex-col md:flex-row gap-4 md:gap-8">
         {/* Image */}
         {(recipe.imageKey || recipe.imageExternalUrl) && (
           <div className="md:relative w-full md:w-1/2 h-100 overflow-hidden rounded-4xl border border-white/80">
@@ -79,7 +86,7 @@ export default async function ViewRecipePage({
         )}
 
         {/* Details */}
-        <div className="w-full h-full md:w-1/2 ml-2 md:ml-0 mt-4 md:mt-12 flex flex-col justify-between">
+        <div className="w-full h-full md:w-1/2 pl-2 md:ml-0 mt-0 md:mt-12 flex flex-col justify-between">
           <Header>{recipe.title}</Header>
 
           <SubHeader className="mt-4">{recipe.description || ""}</SubHeader>
@@ -94,65 +101,59 @@ export default async function ViewRecipePage({
           )}
 
           {/* Timing */}
-          <div className="ml-2 mt-6 text-slate-800 flex items-center gap-4">
-            <Timer size={22} />
+          {recipe.type !== "EXTERNAL_LINK" && (
+            <>
+              <div className="ml-2 mt-6 text-slate-800 flex items-center gap-4">
+                <Timer size={22} />
 
-            <div className="flex items-center gap-2">
-              {/* <Image
-                className="size-8"
-                src="/icons/cutting-board-bw.png"
-                width={512}
-                height={512}
-                alt="cutting board"
-              /> */}
-              <p className="shrink-0">Prep:</p>
-              <p className="ml-4 text-lg font-bold">{prep} mins</p>
-            </div>
+                <div className="flex flex-col md:flex-row gap-2 md:gap-4">
+                  <div className="flex items-center gap-4">
+                    <p className="shrink-0">Prep:</p>
+                    <p className="text-lg font-bold">{prep} mins</p>
+                  </div>
 
-            <span className="my-auto mx-2 w-2 h-2 rounded-full bg-linear-to-r from-orange-500 to-rose-500"></span>
+                  <span className="hidden md:block my-auto w-2 h-2 mx-2 rounded-full bg-linear-to-r from-orange-500 to-rose-500"></span>
 
-            <div className="flex text-slate-800 items-center gap-2">
-              {/* <Image
-                className="size-8"
-                src="/icons/cooking-bw.png"
-                width={512}
-                height={512}
-                alt="cooking"
-              /> */}
-              <p className="shrink-0">Cook:</p>
-              <p className="ml-4 text-lg font-bold">{cook} mins</p>
-            </div>
+                  <div className="flex items-center gap-4">
+                    <p className="shrink-0">Cook:</p>
+                    <p className="text-lg font-bold">{cook} mins</p>
+                  </div>
+                </div>
 
-            {/* <div className="flex items-center gap-2">
+                {/* <div className="flex items-center gap-2">
                 <Image className="size-8" src="/icons/stopwatch.png" width={512} height={512} alt="stopwatch"/>
                 <p>Total</p>
                 <p className="ml-4 text-xl">{total}m</p>
               </div> */}
-            {/* <span className="my-auto w-2 h-2 rounded-full bg-linear-to-r from-orange-500 to-rose-500"></span> */}
-          </div>
+                {/* <span className="my-auto w-2 h-2 rounded-full bg-linear-to-r from-orange-500 to-rose-500"></span> */}
+              </div>
 
-          {/* Servings */}
-          <div className="ml-2 mt-6">
-            <div className="flex items-center text-slate-800 gap-4">
-              <Utensils size={20} />
-              {/* <Image
+              {/* Servings */}
+              <div className="ml-2 mt-6">
+                <div className="flex items-center text-slate-800 gap-4">
+                  <Utensils size={20} />
+                  {/* <Image
                 className="size-8"
                 src="/icons/serving-dish-bw.png"
                 width={512}
                 height={512}
                 alt="serving dish"
               /> */}
-              <p>Serves:</p>
-              <p className="ml-4 text-lg font-bold">
-                {String(recipe.servings ?? 1)}
-              </p>
-            </div>
-          </div>
+                  <p>Serves:</p>
+                  <p className="ml-4 text-lg font-bold">
+                    {String(recipe.servings ?? 1)}
+                  </p>
+                </div>
+              </div>
+            </>
+          )}
         </div>
       </section>
 
       {/* Steps and Ingredients */}
-      {recipe.type !== "EXTERNAL_LINK" && (
+      {recipe.type === "EXTERNAL_LINK" ? (
+        <LinkCardInfoSection />
+      ) : (
         <section className="mt-8 flex flex-col md:flex-row gap-8">
           <IngredientsSection ingredients={recipe.ingredients} />
           <StepsSection steps={recipe.steps} />
@@ -165,7 +166,9 @@ export default async function ViewRecipePage({
 function IngredientsSection({ ingredients }: { ingredients: string[] }) {
   return (
     <section className="h-max w-full md:w-1/3 lg:w-2/5 rounded-4xl bg-white p-8">
-      <h2 className="mb-4 text-2xl font-extrabold text-slate-800">Ingredients</h2>
+      <h2 className="mb-4 text-2xl font-extrabold text-slate-800">
+        Ingredients
+      </h2>
       {ingredients.length ? (
         <ul className="ml-2 space-y-4">
           {ingredients.map((ing, idx) => (
@@ -201,5 +204,15 @@ function StepsSection({ steps }: { steps: string[] }) {
         <p className="text-slate-800">No steps yet.</p>
       )}
     </section>
+  );
+}
+
+function LinkCardInfoSection() {
+  return (
+    <div className="mt-8 w-full rounded-2xl px-4 md:px-8 py-4 text-base md:text-lg text-slate-800 font-semibold bg-white flex gap-3 items-center">
+      <Info size={28} className="text-orange-600 shrink-0" />
+      We couldn't import the full recipe so we saved this handy link card back
+      to the original.
+    </div>
   );
 }
