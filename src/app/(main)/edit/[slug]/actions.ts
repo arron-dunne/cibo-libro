@@ -4,7 +4,11 @@ import { z } from "zod";
 import { prisma } from "@/lib/prisma";
 import { auth } from "@/lib/auth/auth";
 import { uniqueRecipeSlug } from "@/lib/uniqueSlug";
-import { RecipeFormActionResponse, RecipeFormRecipe } from "@/types/recipe";
+import {
+  RecipeFormActionResponse,
+  RecipeFormRecipe,
+  RecipeLinkFormRecipe,
+} from "@/types/recipe";
 
 // Validation
 const UpdateRecipeSchema = z.object({
@@ -38,6 +42,13 @@ const UpdateRecipeSchema = z.object({
   note: z.string().trim().min(0).max(10000).nullable().optional(),
   imageKey: z.string().min(3).max(512).nullable().optional(),
 });
+
+// Stub — implementation comes in the next phase
+export async function updateRecipeLink(
+  _recipe: RecipeLinkFormRecipe,
+): Promise<RecipeFormActionResponse> {
+  return { success: false, error: "Not implemented" };
+}
 
 // Server Action
 export async function updateRecipe(
