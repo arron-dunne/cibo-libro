@@ -42,7 +42,7 @@ export function useInfo(type: NavLinkType) {
         label: "Recipes",
         href: "/all",
         icon: CookingPot,
-        highlight: pathname === "/all" || RegExp("/view/").test(pathname),
+        highlight: pathname === "/all" || RegExp("/view/").test(pathname) || RegExp("/edit/").test(pathname),
       };
     case "new":
       return {
