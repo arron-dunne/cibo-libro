@@ -27,7 +27,7 @@ export default async function RootLayout({
 
         <div className="min-h-screen antialiased flex flex-col">
           {/* Background */}
-          <div className="fixed h-full w-full -z-10 overscroll-none inset-0 bg-linear-to-br from-orange-100 to-rose-200">
+          <div className="fixed h-full w-full -z-100 overscroll-none inset-0 bg-linear-to-br from-orange-100 to-rose-200">
           </div>
 
           <Navbar session={session}/>
