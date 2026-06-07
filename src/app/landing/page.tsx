@@ -6,44 +6,22 @@ import {
 } from "@/app/components/buttons/Buttons";
 import { Header, SubHeader } from "@/app/components/text/Headers";
 import { Calendar, Camera, ChevronRight, GraduationCap, ShoppingBasket, UsersRound } from "lucide-react";
-import { Footer } from "../components/footer/Footer";
 import Link from "next/link";
 
 export default function LandingPage() {
   return (
-    <div>
-      <div className="relative w-full h-screen pt-8 px-14">
-        {/* Top Bar */}
-        <div className="w-full flex justify-between items-center">
-          <Image
-            src="/logo.png"
-            alt="cibo libro"
-            width={150}
-            height={36}
-            className="h-12 w-auto"
-            priority
-            />
-          <div className="flex gap-4 h-max">
-            <Link href="/login">
-              <SecondaryButton type="button">Login</SecondaryButton>
-            </Link>
-            <Link href="/register">
-              <PrimaryButton type="button">Get Started</PrimaryButton>
-            </Link>
-          </div>
-        </div>
-
+    <div className="px-10 sm:px-14">
         {/* Hero */}
-        <section id="hero" className="mt-20 w-full flex gap-12">
-          <div className="my-auto space-y-8">
-            <Header textSize="text-6xl">
+        <section id="hero" className="relative w-full h-max md:h-[calc(100vh-80px)] pt-12 md:pt-16 flex flex-col md:flex-row gap-12">
+          <div className="p-0 md:pl-4 md:pt-12 lg:pt-20 xl:pt-28 flex flex-col gap-6 md:gap-8 justify-center md:justify-start text-center md:text-start">
+            <Header textSize="text-5xl sm:text-6xl">
               Your cookbook for the modern kitchen
             </Header>
             <SubHeader>
               Save, organise, and cook from all your recipes in one beautiful
               place. Import from any website in seconds.
             </SubHeader>
-            <div className="flex gap-4">
+            <div className="w-full flex justify-center md:justify-start gap-4 flex-wrap">
               <Link href="/register">
                 <PrimaryButton type="button" size="lg">Start for free</PrimaryButton>
               </Link>
@@ -52,28 +30,29 @@ export default function LandingPage() {
               </Link>
             </div>
           </div>
-          <Image
-            src="/newhero.png"
-            alt="img"
-            width={1000}
-            height={1000}
-            className="w-150 mr-20 shrink-0 rounded-[80] shadow-[0_10px_25px_rgba(255,105,0,0.25)]"
-          />
+          <div className="w-full md:w-1/2 shrink-0 pt-0 md:pt-12 xl:pt-0">
+            <Image
+              src="/newhero.png"
+              alt="img"
+              width={1000}
+              height={1000}
+              className="rounded-[75] shadow-[0_10px_25px_rgba(255,105,0,0.25)]"
+            />
+          </div>
         </section>
-      </div>
 
       {/* How it works */}
-      <section id="how-it-works" className="w-full border-t border-rose-500 min-h-screen py-20 px-20">
-        <div className="flex flex-col items-center gap-4">
+      <section id="how-it-works" className="w-full border-t border-rose-500 min-h-screen py-16">
+        <div className="flex flex-col text-center items-center gap-4">
           <Header>What is CiboLibro?</Header>
-          <SubHeader className="max-w-3xl text-center">
+          <SubHeader className="max-w-3xl">
             Your personal digital cookbook where you can store all of your
             recipes and easily search and filter through them so you skip the
             headaches and get straight to cooking.
           </SubHeader>
         </div>
-        <div className="mt-16 flex gap-8 justify-center">
-          <div className="flex-1 max-w-sm bg-white rounded-3xl p-10 shadow-2xl shadow-red-500/30 flex flex-col items-center">
+        <div className="mt-12 md:mt-16 flex flex-col md:flex-row gap-12 md:gap-8 justify-center">
+          <div className="flex-1 mx-auto max-w-sm bg-white/90 rounded-3xl p-10 shadow-2xl shadow-red-500/30 flex flex-col items-center">
             <Image
               src="/icons/salad.png"
               alt="Gather"
@@ -87,14 +66,14 @@ export default function LandingPage() {
               </div>
               <h3 className="text-3xl font-bold text-gray-900">Gather</h3>
             </div>
-            <p className="mt-6 text-slate-500 text-center">
+            <p className="mt-6 text-slate-800 text-center">
               <b className="text-orange-600 font-extrabold">Import</b> recipes
               from hundreds of websites and{" "}
               <b className="text-orange-600 font-extrabold">add your own</b>{" "}
               with custom tags and notes.
             </p>
           </div>
-          <div className="flex-1 max-w-sm bg-white shadow-2xl shadow-red-500/30 rounded-3xl p-10  flex flex-col items-center">
+          <div className="flex-1 mx-auto max-w-sm bg-white/90 shadow-2xl shadow-red-500/30 rounded-3xl p-10  flex flex-col items-center">
             <Image
               src="/icons/cooking.png"
               alt="Cook"
@@ -108,7 +87,7 @@ export default function LandingPage() {
               </div>
               <h3 className="text-3xl font-bold text-gray-900">Cook</h3>
             </div>
-            <p className="mt-6 text-slate-500 text-center">
+            <p className="mt-6 text-slate-800 text-center">
               <b className="text-orange-600 font-extrabold">Search sort</b>, and{" "}
               <b className="text-orange-600 font-extrabold">filter</b> your
               recipes to get cooking in no time. Use{" "}
@@ -116,7 +95,7 @@ export default function LandingPage() {
               follow your recipes step by step.
             </p>
           </div>
-          <div className="flex-1 max-w-sm bg-white rounded-3xl shadow-2xl shadow-red-500/30 p-10 flex flex-col items-center">
+          <div className="flex-1 mx-auto max-w-sm bg-white/90 rounded-3xl shadow-2xl shadow-red-500/30 p-10 flex flex-col items-center">
             <Image
               src="/icons/food.png"
               alt="Enjoy"
@@ -130,7 +109,7 @@ export default function LandingPage() {
               </div>
               <h3 className="text-3xl font-bold text-gray-900">Enjoy</h3>
             </div>
-            <p className="mt-6 text-slate-500 text-center">
+            <p className="mt-6 text-slate-800 text-center">
               <b className="text-orange-600 font-extrabold">
                 No ads, no paywalls
               </b>{" "}
@@ -141,7 +120,7 @@ export default function LandingPage() {
       </section>
 
       {/* Features */}
-      <section id="features" className="w-full py-20 px-40 relative border-t border-rose-500">
+      <section id="features" className="max-w-4xl mx-auto w-full py-20 relative border-t border-rose-500 text-center md:text-start">
         <Header>Loads more features are in the oven</Header>
         <SubHeader className="mt-4">
           Cibo Libro is just getting started. Join now to receive future early
@@ -167,33 +146,33 @@ export default function LandingPage() {
 
             },
             {
-              text: "Share your recipes with others",
+              text: "Share your recipes",
               Icon: UsersRound
             },
             {
-              text: "And many more...",
+              text: "And more...",
             },
           ].map((feature, i) => (
             <div
               key={feature.text}
-              className="bg-white rounded-2xl px-4 py-4 flex items-center gap-6 w-md"
-              style={{ marginLeft: `calc((100% - 28rem) / 5 * ${i})` }}
+              className="bg-white/90 rounded-2xl px-4 py-4 flex items-center gap-4 w-full max-w-md"
+              style={{ marginLeft: `max(0px, calc((100% - 28rem) / 5 * ${i}))` }}
             >
               {feature.Icon && (
                 <div className="rounded-xl px-2 py-2 bg-linear-to-br from-orange-500 to-rose-500 text-white">
                   <feature.Icon />
                 </div>
               )}
-              <span className="text-xl bg-linear-to-r from-orange-500 to-rose-500 bg-clip-text text-transparent font-extrabold tracking-wide">{feature.text}</span>
+              <span className="text-xl text-slate-800 font-bold">{feature.text}</span>
             </div>
           ))}
         </div>
-        <div className="mt-2 w-full flex justify-end">
-          <div className="w-md px-2 flex gap-2 justify-between text-lg">
+        <div className="mt-8 sm:mt-2 w-full flex justify-end">
+          <div className="w-md px-2 flex flex-col sm:flex-row gap-0 md:gap-2 items-center justify-between text-lg">
             <SubHeader>
               What would you love to see?
             </SubHeader>
-            <Link href="/request">
+            <Link href="/support/feedback">
               <TertiaryButton type="button">
                 Request a feature
               </TertiaryButton>
@@ -205,19 +184,19 @@ export default function LandingPage() {
           alt="dough"
           width={400}
           height={400}
-          className="absolute right-50 top-62 w-48 h-48 object-contain pointer-events-none"
+          className="hidden md:block md:absolute -z-10 right-0 top-70 md:top-62 w-48 h-48 object-contain pointer-events-none"
         />
         <Image
           src="/icons/stove.png"
           alt="dough"
           width={400}
           height={400}
-          className="absolute left-45 bottom-30 w-48 h-48 object-contain pointer-events-none"
+          className="hidden md:block md:absolute -z-10 left-0 bottom-30 w-48 h-48 object-contain pointer-events-none"
         />
       </section>
 
-      {/* CTA / Register */}
-      <section id="cta" className="w-full border-t border-rose-500 py-24 px-14 flex flex-col items-center">
+      {/* CTA */}
+      <section id="cta" className="w-full border-t border-rose-500 py-24 px-14 flex flex-col items-center text-center md:text-start">
         <Header>Ready to get cooking?</Header>
         <SubHeader className="mt-6 mb-12 max-w-3xl text-center">
           Save and import hundreds of recipes, access them instantly, from anywhere, with no ads. Create your
@@ -229,15 +208,13 @@ export default function LandingPage() {
             <ChevronRight size={30}/>
           </PrimaryButton>
         </Link>
-        <div className="mt-16 flex items-center gap-3 text-base">
-          <span className="text-slate-500">Still not sure how it works?</span>
+        <div className="mt-16 flex flex-col md:flex-row gap-0 md:gap-3 items-center text-base">
+          <SubHeader>Still not sure how it works?</SubHeader>
           <TertiaryButton type="button">
             Explore a demo cookbook to learn more
           </TertiaryButton>
         </div>
       </section>
-
-      <Footer />
     </div>
   );
 }

@@ -42,17 +42,33 @@ export function Navbar({ session }: { session?: Session | null }) {
         />
       </Link>
 
-      {/* Logged in navbar */}
-      {session?.user ? (
+      {/* Show different navbar depending on page and session */}
+      {pathname === "/landing" ? (
+        <>
+          <Link href="/login">
+            <PrimaryButton type="button" className="block md:hidden shrink-0">
+              Get Cooking
+            </PrimaryButton>
+          </Link>
+          <div className="hidden md:flex gap-4 h-max">
+            <Link href="/login">
+              <SecondaryButton type="button">Login</SecondaryButton>
+            </Link>
+            <Link href="/register">
+              <PrimaryButton type="button">Get Started</PrimaryButton>
+            </Link>
+          </div>
+        </>
+      ) : session?.user ? (
         /^\/support\//.test(pathname) ? (
           <div className="hidden lg:flex grow justify-end items-center text-sm">
             {/* Home button */}
             <span className="text-slate-800">{session.user.email}</span>
             <div className="ml-4">
               <Link href="/home">
-              <PrimaryButton type="button">
-                <Home size={20}/>
-                Home
+                <PrimaryButton type="button">
+                  <Home size={20} />
+                  Home
                 </PrimaryButton>
               </Link>
             </div>

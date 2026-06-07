@@ -2,7 +2,7 @@ import React from "react";
 import { sansita } from "@/app/fonts";
 
 export function Header({
-  className,
+  className = "",
   textSize="text-5xl",
   children,
 }: {
