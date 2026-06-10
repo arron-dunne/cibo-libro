@@ -8,7 +8,7 @@ import {
 
 function SkeletonCard() {
   return (
-    <article className="relative w-full aspect-[0.7] flex flex-col overflow-hidden rounded-2xl border border-white/60 bg-white shadow-lg shadow-rose-300/50">
+    <article className="relative w-full aspect-[0.7] flex flex-col overflow-hidden rounded-2xl border border-white/60 bg-white ">
       <div className="bg-[var(--skeleton)] animate-pulse w-full h-1/2 md:h-3/5" />
       <div className="px-4 py-3 h-1/2 md:h-2/5 flex flex-col justify-between">
         <div>
