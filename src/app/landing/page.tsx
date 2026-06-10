@@ -17,21 +17,27 @@ import Link from "next/link";
 
 export default function LandingPage() {
   return (
-    <div className="px-10 sm:px-14 space-y-24">
-      {/* Hero */}
+    <div className="px-10 sm:px-14 space-y-16 lg:space-y-24">
+      
       <section
         id="hero"
-        className="w-full h-max md:h-[calc(100vh-80px)] pt-12 lg:pt-16 flex flex-col justify-between"
+        className="w-full h-max lg:h-[calc(100vh-80px)] pt-12 lg:pt-16 flex flex-col justify-between"
       >
         <div className="flex flex-col lg:flex-row gap-12">
-          <div className="p-0 md:pl-4 lg:pt-16 xl:pt-20 flex flex-col gap-6 justify-center lg:justify-start text-center lg:text-start">
+          <div className="p-0 md:pl-4 lg:pt-16 xl:pt-20 flex flex-col gap-4 sm:gap-6 justify-center lg:justify-start text-center lg:text-start">
+            
+            {/* Header */}
             <Header textSize="text-5xl sm:text-6xl" className="leading-tight">
               All your recipes,<br/>none of the mess.
             </Header>
-            <SubHeader className="mx-auto max-w-xl leading-relaxed">
+
+            {/* Subheader */}
+            <SubHeader textSize="text-base sm:text-lg" className="mx-auto max-w-xl leading-relaxed">
               Save recipes from across the web and add you own in your new digital cookbook.
               Skip the clutter and get straight to cooking.
             </SubHeader>
+
+            {/* Buttons */}
             <div className="w-full flex justify-center lg:justify-start gap-4 flex-wrap">
               <Link href="/register">
                 <PrimaryButton type="button" size="lg">
@@ -45,17 +51,18 @@ export default function LandingPage() {
               </Link>
             </div>
           </div>
-          <div className="relative w-full lg:w-1/2 shrink-0 pt-0 lg:pt-12 xl:pt-0">
+
+          {/* Hero image */}
+          <div className="relative mx-auto w-full lg:w-1/2 max-w-xl lg:max-w-none shrink-0 pt-0 lg:pt-12 xl:pt-0">
             <Image
                 src="/landing-main.png"
                 alt="main"
                 width={6239}
                 height={5017}
-              // className="rounded-[75] shadow-[0_10px_25px_rgba(255,105,0,0.25)]"
             />
           </div>
         </div>
-        <Divider />
+        <Divider className="mt-16 lg:mt-0"/>
       </section>
 
       {/* How it works */}
@@ -249,6 +256,6 @@ export default function LandingPage() {
   );
 }
 
-function Divider() {
-  return <div className="w-full h-0.5 bg-linear-to-r from-orange-500 to-rose-500"/>
+function Divider({ className = "" }: { className?: string }) {
+  return <div className={`${className} w-full h-0.5 bg-linear-to-r from-orange-500 to-rose-500`}/>
 }
