@@ -36,19 +36,27 @@ export default function LandingPage() {
               textSize="text-base sm:text-lg"
               className="mx-auto max-w-xl leading-relaxed"
             >
-              Save recipes from across the web and add you own in your new
-              digital cookbook. Skip the clutter and get straight to cooking.
+              Import recipes from anywhere, create your own, find everything
+              instantly, and cook without distractions.
             </SubHeader>
 
             {/* Buttons */}
             <div className="w-full flex justify-center lg:justify-start gap-4 flex-wrap">
               <Link href="/register">
-                <PrimaryButton type="button" size="md" className="sm:px-5 sm:py-3 sm:text-xl">
+                <PrimaryButton
+                  type="button"
+                  size="md"
+                  className="sm:px-5 sm:py-3 sm:text-xl"
+                >
                   Start for free
                 </PrimaryButton>
               </Link>
               <Link href="#how-it-works">
-                <SecondaryButton type="button" size="md" className="sm:px-5 sm:py-3 sm:text-xl">
+                <SecondaryButton
+                  type="button"
+                  size="md"
+                  className="sm:px-5 sm:py-3 sm:text-xl"
+                >
                   See how it works
                 </SecondaryButton>
               </Link>
@@ -71,14 +79,15 @@ export default function LandingPage() {
       {/* How it works */}
       <section id="how-it-works" className="w-full">
         <div className="flex flex-col text-center items-center gap-4">
-          <Header textSize="text-4xl sm:text-5xl">What is Cibo Libro?</Header>
-          <SubHeader  textSize="text-base sm:text-lg"className="px-4 max-w-3xl">
-            Cibo Libro is your personal digital cookbook where you can easily
-            save your recipes from anywhere, access them in seconds, and enjoy
-            them without the clutter.
+          <Header textSize="text-4xl sm:text-5xl" className="leading-tight">
+            Find on the web,
+            <br className="lg:hidden" /> serve on the table.
+          </Header>
+          <SubHeader textSize="text-base sm:text-lg" className="px-4 max-w-3xl">
+            Here's how it works...
           </SubHeader>
         </div>
-        <div className="mt-12 md:mt-16 flex flex-col lg:flex-row gap-12 lg:gap-8 justify-center">
+        <div className="mt-12 md:mt-16 flex flex-col lg:flex-row gap-12 lg:gap-8 justify-center [&_b]:text-orange-600 [&_b]:font-extrabold">
           <div className="flex-1 mx-auto max-w-sm bg-white/90 rounded-3xl p-10  flex flex-col items-center">
             <Image
               src="/icons/salad.png"
@@ -95,10 +104,8 @@ export default function LandingPage() {
               <h3 className="text-3xl font-bold text-gray-900">Gather</h3>
             </div>
             <p className="mt-6 text-slate-900 font-medium text-center">
-              <b className="text-orange-600 font-extrabold">Import</b> recipes
-              from hundreds of websites and{" "}
-              <b className="text-orange-600 font-extrabold">add your own</b>{" "}
-              with custom tags and notes.
+              <b>Import</b> recipes from hundreds of websites and{" "}
+              <b>add your own</b> with custom tags and notes.
             </p>
           </div>
           <div className="flex-1 mx-auto max-w-sm bg-white/90  rounded-3xl p-10  flex flex-col items-center">
@@ -116,11 +123,8 @@ export default function LandingPage() {
               <h3 className="text-3xl font-bold text-gray-900">Cook</h3>
             </div>
             <p className="mt-6 text-slate-900 font-medium text-center">
-              <b className="text-orange-600 font-extrabold">Search sort</b>, and{" "}
-              <b className="text-orange-600 font-extrabold">filter</b> your
-              recipes to get cooking in no time. Use{" "}
-              <b className="text-orange-600 font-extrabold">cook mode</b> to
-              follow your recipes step by step.
+              <b>Find</b> any recipe in seconds, then let <b>cook mode</b> guide
+              you through step by step.
             </p>
           </div>
           <div className="flex-1 mx-auto max-w-sm bg-white/90 rounded-3xl p-10 flex flex-col items-center">
@@ -138,10 +142,8 @@ export default function LandingPage() {
               <h3 className="text-3xl font-bold text-gray-900">Enjoy</h3>
             </div>
             <p className="mt-6 text-slate-900 font-medium text-center">
-              <b className="text-orange-600 font-extrabold">
-                No ads, no paywalls
-              </b>{" "}
-              and no clutter. Just your recipes, ready whenever you are.
+              Every recipe at your fingertips, completely <b>free</b> and{" "}
+              <b>with no ads</b>.
             </p>
           </div>
         </div>
@@ -154,11 +156,12 @@ export default function LandingPage() {
         id="features"
         className="max-w-4xl mx-auto w-full relative text-center md:text-start"
       >
-        <Header textSize="text-4xl sm:text-5xl">Loads more features are in the oven.</Header>
-        <SubHeader textSize="px-4 text-base sm:text-lg" className="mt-4">
-          Cibo Libro is just getting started. Join now to receive future early
-          adopter benefits and help cook up the best all-in-one kitchen
-          assistant.
+        <Header textSize="text-4xl sm:text-5xl">
+          We're cooking up something good.
+        </Header>
+        <SubHeader textSize="text-base sm:text-lg" className="mt-4">
+          Cibo Libro is just getting started. Early adopters are first in line
+          for everything we're building.
         </SubHeader>
         <div className="flex mt-12 flex-col gap-4">
           {[
@@ -236,14 +239,13 @@ export default function LandingPage() {
         className="w-full flex flex-col items-center text-center md:text-start"
       >
         <Header textSize="text-4xl sm:text-5xl">Ready to get cooking?</Header>
-        <SubHeader textSize="text-base sm:text-lg" className="px-4 mt-6 mb-8 sm:mb-12 max-w-3xl text-center">
-          Save and import hundreds of recipes, access them instantly, from
-          anywhere, with no ads. Create your personal digital cookbook now for
-          free.
-        </SubHeader>
-        <Link href="register">
-          <PrimaryButton type="button" size="lg" className="sm:px-9 sm:py-5 sm:text-2xl">
-            Open your new cookbook
+        <Link className="mt-10" href="register">
+          <PrimaryButton
+            type="button"
+            size="lg"
+            className="sm:px-9 sm:py-5 sm:text-2xl"
+          >
+            Create your free cookbook
             <ChevronRight size={30} />
           </PrimaryButton>
         </Link>
