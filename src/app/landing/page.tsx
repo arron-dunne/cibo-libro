@@ -18,23 +18,26 @@ import Link from "next/link";
 export default function LandingPage() {
   return (
     <div className="px-10 sm:px-14 space-y-16 lg:space-y-24">
-      
       <section
         id="hero"
         className="w-full h-max lg:h-[calc(100vh-80px)] pt-12 lg:pt-16 flex flex-col justify-between"
       >
         <div className="flex flex-col lg:flex-row gap-12">
           <div className="p-0 md:pl-4 lg:pt-16 xl:pt-20 flex flex-col gap-4 sm:gap-6 justify-center lg:justify-start text-center lg:text-start">
-            
             {/* Header */}
             <Header textSize="text-5xl sm:text-6xl" className="leading-tight">
-              All your recipes,<br/>none of the mess.
+              All your recipes,
+              <br />
+              none of the mess.
             </Header>
 
             {/* Subheader */}
-            <SubHeader textSize="text-base sm:text-lg" className="mx-auto max-w-xl leading-relaxed">
-              Save recipes from across the web and add you own in your new digital cookbook.
-              Skip the clutter and get straight to cooking.
+            <SubHeader
+              textSize="text-base sm:text-lg"
+              className="mx-auto max-w-xl leading-relaxed"
+            >
+              Save recipes from across the web and add you own in your new
+              digital cookbook. Skip the clutter and get straight to cooking.
             </SubHeader>
 
             {/* Buttons */}
@@ -55,31 +58,28 @@ export default function LandingPage() {
           {/* Hero image */}
           <div className="relative mx-auto w-full lg:w-1/2 max-w-xl lg:max-w-none shrink-0 pt-0 lg:pt-12 xl:pt-0">
             <Image
-                src="/landing-main.png"
-                alt="main"
-                width={6239}
-                height={5017}
+              src="/landing-main.png"
+              alt="main"
+              width={6239}
+              height={5017}
             />
           </div>
         </div>
-        <Divider className="mt-16 lg:mt-0"/>
+        <Divider className="mt-16 lg:mt-0" />
       </section>
 
       {/* How it works */}
-      <section
-        id="how-it-works"
-        className="w-full"
-      >
+      <section id="how-it-works" className="w-full">
         <div className="flex flex-col text-center items-center gap-4">
-          <Header>What is CiboLibro?</Header>
-          <SubHeader className="max-w-3xl">
-            Your personal digital cookbook where you can store all of your
-            recipes and easily search and filter through them so you skip the
-            headaches and get straight to cooking.
+          <Header textSize="text-4xl sm:text-5xl">What is Cibo Libro?</Header>
+          <SubHeader  textSize="text-base sm:text-lg"className="max-w-3xl">
+            Cibo Libro is your personal digital cookbook where you can easily
+            save your recipes from anywhere, access them in seconds, and enjoy
+            them without the clutter.
           </SubHeader>
         </div>
-        <div className="mt-12 md:mt-16 flex flex-col md:flex-row gap-12 md:gap-8 justify-center">
-          <div className="flex-1 mx-auto max-w-sm bg-white/90 rounded-3xl p-10 shadow-2xl shadow-red-500/30 flex flex-col items-center">
+        <div className="mt-12 md:mt-16 flex flex-col lg:flex-row gap-12 lg:gap-8 justify-center">
+          <div className="flex-1 mx-auto max-w-sm bg-white/90 rounded-3xl p-10  flex flex-col items-center">
             <Image
               src="/icons/salad.png"
               alt="Gather"
@@ -87,20 +87,21 @@ export default function LandingPage() {
               height={200}
               className="w-24 h-24 object-contain"
             />
+
             <div className="mt-6 flex gap-4 items-center">
               <div className="rounded-full w-8 h-8 bg-linear-to-br from-orange-500 to-rose-500 text-white font-bold flex justify-center items-center">
                 1
               </div>
               <h3 className="text-3xl font-bold text-gray-900">Gather</h3>
             </div>
-            <p className="mt-6 text-slate-800 text-center">
+            <p className="mt-6 text-slate-900 font-medium text-center">
               <b className="text-orange-600 font-extrabold">Import</b> recipes
               from hundreds of websites and{" "}
               <b className="text-orange-600 font-extrabold">add your own</b>{" "}
               with custom tags and notes.
             </p>
           </div>
-          <div className="flex-1 mx-auto max-w-sm bg-white/90 shadow-2xl shadow-red-500/30 rounded-3xl p-10  flex flex-col items-center">
+          <div className="flex-1 mx-auto max-w-sm bg-white/90  rounded-3xl p-10  flex flex-col items-center">
             <Image
               src="/icons/cooking.png"
               alt="Cook"
@@ -114,7 +115,7 @@ export default function LandingPage() {
               </div>
               <h3 className="text-3xl font-bold text-gray-900">Cook</h3>
             </div>
-            <p className="mt-6 text-slate-800 text-center">
+            <p className="mt-6 text-slate-900 font-medium text-center">
               <b className="text-orange-600 font-extrabold">Search sort</b>, and{" "}
               <b className="text-orange-600 font-extrabold">filter</b> your
               recipes to get cooking in no time. Use{" "}
@@ -122,7 +123,7 @@ export default function LandingPage() {
               follow your recipes step by step.
             </p>
           </div>
-          <div className="flex-1 mx-auto max-w-sm bg-white/90 rounded-3xl shadow-2xl shadow-red-500/30 p-10 flex flex-col items-center">
+          <div className="flex-1 mx-auto max-w-sm bg-white/90 rounded-3xl p-10 flex flex-col items-center">
             <Image
               src="/icons/food.png"
               alt="Enjoy"
@@ -136,7 +137,7 @@ export default function LandingPage() {
               </div>
               <h3 className="text-3xl font-bold text-gray-900">Enjoy</h3>
             </div>
-            <p className="mt-6 text-slate-800 text-center">
+            <p className="mt-6 text-slate-900 font-medium text-center">
               <b className="text-orange-600 font-extrabold">
                 No ads, no paywalls
               </b>{" "}
@@ -153,10 +154,11 @@ export default function LandingPage() {
         id="features"
         className="max-w-4xl mx-auto w-full relative text-center md:text-start"
       >
-        <Header>Loads more features are in the oven</Header>
-        <SubHeader className="mt-4">
+        <Header textSize="text-4xl sm:text-5xl">Loads more features are in the oven.</Header>
+        <SubHeader textSize="text-base sm:text-lg" className="mt-4">
           Cibo Libro is just getting started. Join now to receive future early
-          adopter benefits and help cook up the best cooking assistant.
+          adopter benefits and help cook up the best all-in-one kitchen
+          assistant.
         </SubHeader>
         <div className="flex mt-12 flex-col gap-4">
           {[
@@ -215,14 +217,14 @@ export default function LandingPage() {
           alt="dough"
           width={400}
           height={400}
-          className="hidden md:block md:absolute -z-10 right-0 top-70 md:top-62 w-48 h-48 object-contain pointer-events-none"
+          className="hidden lg:block lg:absolute -z-10 right-0 top-48 w-48 h-48 object-contain pointer-events-none"
         />
         <Image
           src="/icons/stove.png"
           alt="dough"
           width={400}
           height={400}
-          className="hidden md:block md:absolute -z-10 left-0 bottom-30 w-48 h-48 object-contain pointer-events-none"
+          className="hidden lg:block lg:absolute -z-10 left-0 bottom-8 w-48 h-48 object-contain pointer-events-none"
         />
       </section>
 
@@ -231,10 +233,10 @@ export default function LandingPage() {
       {/* CTA */}
       <section
         id="cta"
-        className="w-full px-14 flex flex-col items-center text-center md:text-start"
+        className="w-full flex flex-col items-center text-center md:text-start"
       >
-        <Header>Ready to get cooking?</Header>
-        <SubHeader className="mt-6 mb-12 max-w-3xl text-center">
+        <Header textSize="text-4xl sm:text-5xl">Ready to get cooking?</Header>
+        <SubHeader textSize="text-base sm:text-lg" className="mt-6 mb-12 max-w-3xl text-center">
           Save and import hundreds of recipes, access them instantly, from
           anywhere, with no ads. Create your personal digital cookbook now for
           free.
@@ -257,5 +259,9 @@ export default function LandingPage() {
 }
 
 function Divider({ className = "" }: { className?: string }) {
-  return <div className={`${className} w-full h-0.5 bg-linear-to-r from-orange-500 to-rose-500`}/>
+  return (
+    <div
+      className={`${className} w-full h-0.5 bg-linear-to-r from-orange-500 to-rose-500`}
+    />
+  );
 }

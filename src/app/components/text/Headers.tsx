@@ -29,7 +29,7 @@ export function SubHeader({
   children: React.ReactNode
 }) {
   return (
-    <h6 className={`${className} ${textSize} text-black flex gap-2 items-center`}>
+    <h6 className={`${className} ${textSize} text-black font-medium flex gap-2 items-center`}>
       {children}
     </h6>
   )
