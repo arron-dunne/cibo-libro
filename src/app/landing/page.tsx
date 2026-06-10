@@ -220,14 +220,14 @@ export default function LandingPage() {
           alt="dough"
           width={400}
           height={400}
-          className="hidden lg:block lg:absolute -z-10 right-0 top-48 w-48 h-48 object-contain pointer-events-none"
+          className="hidden lg:block lg:absolute -z-10 right-0 top-38 w-48 h-48 object-contain pointer-events-none"
         />
         <Image
           src="/icons/stove.png"
           alt="dough"
           width={400}
           height={400}
-          className="hidden lg:block lg:absolute -z-10 left-0 bottom-8 w-48 h-48 object-contain pointer-events-none"
+          className="hidden lg:block lg:absolute -z-10 left-0 bottom-8 w-44 h-44 object-contain pointer-events-none"
         />
       </section>
 
@@ -239,7 +239,7 @@ export default function LandingPage() {
         className="w-full flex flex-col items-center text-center md:text-start"
       >
         <Header textSize="text-4xl sm:text-5xl">Ready to get cooking?</Header>
-        <Link className="mt-10" href="register">
+        <Link className="mt-10 mb-12" href="register">
           <PrimaryButton
             type="button"
             size="lg"
