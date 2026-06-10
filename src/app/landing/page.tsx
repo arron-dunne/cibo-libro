@@ -47,31 +47,12 @@ export default function LandingPage() {
           </div>
           <div className="relative w-full lg:w-1/2 shrink-0 pt-0 lg:pt-12 xl:pt-0">
             <Image
-              src="/tmp4.png"
-              alt="img"
-              width={1000}
-              height={1000}
+                src="/landing-main.png"
+                alt="main"
+                width={6239}
+                height={5017}
               // className="rounded-[75] shadow-[0_10px_25px_rgba(255,105,0,0.25)]"
-              />
-            <div className="absolute bottom-5 -right-1 lg:-bottom-20 lg:right-10 rotate-0 lg:rotate-5 lg:h-100 w-50" >
-              <Image
-                src="/phone2.png"
-                alt="phone"
-                width={1000}
-                height={1000}
-                className="w-full h-full"
-              />
-              <div className="absolute top-2.5 left-2.5 h-95 w-45 rounded-2xl overflow-hidden">
-                <Image
-                  src="/ss2.png"
-                  alt="phone"
-                  width={832}
-                  height={4198}
-                  className="w-45 animate-phone-scroll"
-                />
-              </div>
-              
-            </div>
+            />
           </div>
         </div>
         <Divider />
