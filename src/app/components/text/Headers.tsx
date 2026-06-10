@@ -20,14 +20,14 @@ export function Header({
 }
 
 export function SubHeader({
-  className,
+  className = "",
   children,
 }: {
   className?: string;
   children: React.ReactNode
 }) {
   return (
-    <h6 className={`${className || ""} text-lg text-slate-800 flex gap-2 items-center`}>
+    <h6 className={`${className} text-lg text-black flex gap-2 items-center`}>
       {children}
     </h6>
   )

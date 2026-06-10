@@ -25,10 +25,10 @@ export default function LandingPage() {
       >
         <div className="flex flex-col lg:flex-row gap-12">
           <div className="p-0 md:pl-4 lg:pt-16 xl:pt-20 flex flex-col gap-6 justify-center lg:justify-start text-center lg:text-start">
-            <Header textSize="text-5xl sm:text-6xl">
+            <Header textSize="text-5xl sm:text-6xl" className="leading-tight">
               All your recipes,<br/>none of the mess.
             </Header>
-            <SubHeader className="mx-auto max-w-xl">
+            <SubHeader className="mx-auto max-w-xl leading-relaxed">
               Save recipes from across the web and add you own in your new digital cookbook.
               Skip the clutter and get straight to cooking.
             </SubHeader>
