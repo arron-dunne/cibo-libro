@@ -74,7 +74,7 @@ export default async function ViewRecipePage({
       <section className="mt-4 flex flex-col md:flex-row gap-4 md:gap-8">
         {/* Image */}
         {(recipe.imageKey || recipe.imageExternalUrl) && (
-          <div className="md:relative w-full md:w-1/2 h-100 overflow-hidden rounded-4xl border border-white/80">
+          <div className="md:relative w-full md:w-1/2 max-h-92 overflow-hidden rounded-4xl border border-white/80">
             <div className="md:absolute md:inset-0">
               <RecipeImage
                 imageKey={recipe.imageKey ?? undefined}
@@ -106,7 +106,7 @@ export default async function ViewRecipePage({
               <div className="ml-2 mt-6 text-slate-800 flex items-center gap-4">
                 <Timer size={22} />
 
-                <div className="flex flex-col md:flex-row gap-2 md:gap-4">
+                <div className="flex flex-col sm:flex-row gap-2 md:gap-4">
                   <div className="flex items-center gap-4">
                     <p className="shrink-0">Prep:</p>
                     <p className="text-lg font-bold">{prep} mins</p>

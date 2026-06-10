@@ -5,44 +5,83 @@ import {
   TertiaryButton,
 } from "@/app/components/buttons/Buttons";
 import { Header, SubHeader } from "@/app/components/text/Headers";
-import { Calendar, Camera, ChevronRight, GraduationCap, ShoppingBasket, UsersRound } from "lucide-react";
+import {
+  Calendar,
+  Camera,
+  ChevronRight,
+  GraduationCap,
+  ShoppingBasket,
+  UsersRound,
+} from "lucide-react";
 import Link from "next/link";
 
 export default function LandingPage() {
   return (
-    <div className="px-10 sm:px-14">
-        {/* Hero */}
-        <section id="hero" className="relative w-full h-max md:h-[calc(100vh-80px)] pt-12 md:pt-16 flex flex-col md:flex-row gap-12">
-          <div className="p-0 md:pl-4 md:pt-12 lg:pt-20 xl:pt-28 flex flex-col gap-6 md:gap-8 justify-center md:justify-start text-center md:text-start">
+    <div className="px-10 sm:px-14 space-y-24">
+      {/* Hero */}
+      <section
+        id="hero"
+        className="w-full h-max md:h-[calc(100vh-80px)] pt-12 lg:pt-16 flex flex-col justify-between"
+      >
+        <div className="flex flex-col lg:flex-row gap-12">
+          <div className="p-0 md:pl-4 lg:pt-16 xl:pt-20 flex flex-col gap-6 justify-center lg:justify-start text-center lg:text-start">
             <Header textSize="text-5xl sm:text-6xl">
-              Your cookbook for the modern kitchen
+              All your recipes,<br/>none of the mess.
             </Header>
-            <SubHeader>
-              Save, organise, and cook from all your recipes in one beautiful
-              place. Import from any website in seconds.
+            <SubHeader className="mx-auto max-w-xl">
+              Save recipes from across the web and add you own in your new digital cookbook.
+              Skip the clutter and get straight to cooking.
             </SubHeader>
-            <div className="w-full flex justify-center md:justify-start gap-4 flex-wrap">
+            <div className="w-full flex justify-center lg:justify-start gap-4 flex-wrap">
               <Link href="/register">
-                <PrimaryButton type="button" size="lg">Start for free</PrimaryButton>
+                <PrimaryButton type="button" size="lg">
+                  Start for free
+                </PrimaryButton>
               </Link>
               <Link href="#how-it-works">
-                <SecondaryButton type="button" size="lg">See how it works</SecondaryButton>
+                <SecondaryButton type="button" size="lg">
+                  See how it works
+                </SecondaryButton>
               </Link>
             </div>
           </div>
-          <div className="w-full md:w-1/2 shrink-0 pt-0 md:pt-12 xl:pt-0">
+          <div className="relative w-full lg:w-1/2 shrink-0 pt-0 lg:pt-12 xl:pt-0">
             <Image
-              src="/newhero.png"
+              src="/tmp4.png"
               alt="img"
               width={1000}
               height={1000}
-              className="rounded-[75] shadow-[0_10px_25px_rgba(255,105,0,0.25)]"
-            />
+              // className="rounded-[75] shadow-[0_10px_25px_rgba(255,105,0,0.25)]"
+              />
+            <div className="absolute bottom-5 -right-1 lg:-bottom-20 lg:right-10 rotate-0 lg:rotate-5 lg:h-100 w-50" >
+              <Image
+                src="/phone2.png"
+                alt="phone"
+                width={1000}
+                height={1000}
+                className="w-full h-full"
+              />
+              <div className="absolute top-2.5 left-2.5 h-95 w-45 rounded-2xl overflow-hidden">
+                <Image
+                  src="/ss2.png"
+                  alt="phone"
+                  width={832}
+                  height={4198}
+                  className="w-45 animate-phone-scroll"
+                />
+              </div>
+              
+            </div>
           </div>
-        </section>
+        </div>
+        <Divider />
+      </section>
 
       {/* How it works */}
-      <section id="how-it-works" className="w-full border-t border-rose-500 min-h-screen py-16">
+      <section
+        id="how-it-works"
+        className="w-full"
+      >
         <div className="flex flex-col text-center items-center gap-4">
           <Header>What is CiboLibro?</Header>
           <SubHeader className="max-w-3xl">
@@ -119,8 +158,13 @@ export default function LandingPage() {
         </div>
       </section>
 
+      <Divider />
+
       {/* Features */}
-      <section id="features" className="max-w-4xl mx-auto w-full py-20 relative border-t border-rose-500 text-center md:text-start">
+      <section
+        id="features"
+        className="max-w-4xl mx-auto w-full relative text-center md:text-start"
+      >
         <Header>Loads more features are in the oven</Header>
         <SubHeader className="mt-4">
           Cibo Libro is just getting started. Join now to receive future early
@@ -134,20 +178,19 @@ export default function LandingPage() {
             },
             {
               text: "Meal planner",
-              Icon: Calendar
+              Icon: Calendar,
             },
             {
               text: "More ways to import",
-              Icon: Camera
+              Icon: Camera,
             },
             {
               text: "Cooking courses",
-              Icon: GraduationCap
-
+              Icon: GraduationCap,
             },
             {
               text: "Share your recipes",
-              Icon: UsersRound
+              Icon: UsersRound,
             },
             {
               text: "And more...",
@@ -156,26 +199,26 @@ export default function LandingPage() {
             <div
               key={feature.text}
               className="bg-white/90 rounded-2xl px-4 py-4 flex items-center gap-4 w-full max-w-md"
-              style={{ marginLeft: `max(0px, calc((100% - 28rem) / 5 * ${i}))` }}
+              style={{
+                marginLeft: `max(0px, calc((100% - 28rem) / 5 * ${i}))`,
+              }}
             >
               {feature.Icon && (
                 <div className="rounded-xl px-2 py-2 bg-linear-to-br from-orange-500 to-rose-500 text-white">
                   <feature.Icon />
                 </div>
               )}
-              <span className="text-xl text-slate-800 font-bold">{feature.text}</span>
+              <span className="text-xl text-slate-800 font-bold">
+                {feature.text}
+              </span>
             </div>
           ))}
         </div>
         <div className="mt-8 sm:mt-2 w-full flex justify-end">
           <div className="w-md px-2 flex flex-col sm:flex-row gap-0 md:gap-2 items-center justify-between text-lg">
-            <SubHeader>
-              What would you love to see?
-            </SubHeader>
+            <SubHeader>What would you love to see?</SubHeader>
             <Link href="/support/feedback">
-              <TertiaryButton type="button">
-                Request a feature
-              </TertiaryButton>
+              <TertiaryButton type="button">Request a feature</TertiaryButton>
             </Link>
           </div>
         </div>
@@ -195,26 +238,36 @@ export default function LandingPage() {
         />
       </section>
 
+      <Divider />
+
       {/* CTA */}
-      <section id="cta" className="w-full border-t border-rose-500 py-24 px-14 flex flex-col items-center text-center md:text-start">
+      <section
+        id="cta"
+        className="w-full px-14 flex flex-col items-center text-center md:text-start"
+      >
         <Header>Ready to get cooking?</Header>
         <SubHeader className="mt-6 mb-12 max-w-3xl text-center">
-          Save and import hundreds of recipes, access them instantly, from anywhere, with no ads. Create your
-          personal digital cookbook now for free.
+          Save and import hundreds of recipes, access them instantly, from
+          anywhere, with no ads. Create your personal digital cookbook now for
+          free.
         </SubHeader>
         <Link href="register">
           <PrimaryButton type="button" size="xl">
-            Open you personal cookbook
-            <ChevronRight size={30}/>
+            Open your new cookbook
+            <ChevronRight size={30} />
           </PrimaryButton>
         </Link>
-        <div className="mt-16 flex flex-col md:flex-row gap-0 md:gap-3 items-center text-base">
+        {/* <div className="mt-16 flex flex-col md:flex-row gap-0 md:gap-3 items-center text-base">
           <SubHeader>Still not sure how it works?</SubHeader>
           <TertiaryButton type="button">
             Explore a demo cookbook to learn more
           </TertiaryButton>
-        </div>
+        </div> */}
       </section>
     </div>
   );
+}
+
+function Divider() {
+  return <div className="w-full h-0.5 bg-linear-to-r from-orange-500 to-rose-500"/>
 }

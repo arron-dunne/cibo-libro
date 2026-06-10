@@ -10,7 +10,7 @@ import { logout } from "@/app/actions/logout";
 import { Session } from "next-auth";
 import { useEffect, useState } from "react";
 import { PrimaryButton, SecondaryButton } from "../buttons/Buttons";
-import { Home } from "lucide-react";
+import { ChefHat, Home } from "lucide-react";
 
 export function Navbar({ session }: { session?: Session | null }) {
   const pathname = usePathname();
@@ -35,9 +35,10 @@ export function Navbar({ session }: { session?: Session | null }) {
         <Image
           src="/logo.png"
           alt="cibo libro"
-          width={150}
-          height={36}
-          className={`${scrolled ? "h-9 sm:h-10" : "h-10 sm:h-12"} w-auto`}
+          width={580}
+          height={127}
+          className={`${scrolled ? "max-w-40 sm:max-w-46" : "max-w-46 sm:max-w-54"} w-full h-auto`}
+          // className={`${scrolled ? "h-9 sm:h-10" : "h-10 sm:h-12"} w-auto`}
           priority
         />
       </Link>
@@ -47,7 +48,11 @@ export function Navbar({ session }: { session?: Session | null }) {
         <>
           <Link href="/login">
             <PrimaryButton type="button" className="block md:hidden shrink-0">
-              Get Cooking
+              <ChefHat size={20} className="-rotate-12" />
+              <span>
+                <span>Start</span>
+                <span className="hidden sm:inline">&nbsp;Cooking</span>
+              </span>
             </PrimaryButton>
           </Link>
           <div className="hidden md:flex gap-4 h-max">
