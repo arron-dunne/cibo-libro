@@ -1,6 +1,10 @@
 @import "tailwindcss";
 @plugin "@tailwindcss/typography";
 
+:root {
+  --skeleton: var(--color-neutral-100)
+}
+
 @keyframes phone-scroll {
   0%, 8% {
     transform: translateY(0);
