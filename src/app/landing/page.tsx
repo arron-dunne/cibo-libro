@@ -43,12 +43,12 @@ export default function LandingPage() {
             {/* Buttons */}
             <div className="w-full flex justify-center lg:justify-start gap-4 flex-wrap">
               <Link href="/register">
-                <PrimaryButton type="button" size="lg">
+                <PrimaryButton type="button" size="md" className="sm:px-5 sm:py-3 sm:text-xl">
                   Start for free
                 </PrimaryButton>
               </Link>
               <Link href="#how-it-works">
-                <SecondaryButton type="button" size="lg">
+                <SecondaryButton type="button" size="md" className="sm:px-5 sm:py-3 sm:text-xl">
                   See how it works
                 </SecondaryButton>
               </Link>
@@ -72,7 +72,7 @@ export default function LandingPage() {
       <section id="how-it-works" className="w-full">
         <div className="flex flex-col text-center items-center gap-4">
           <Header textSize="text-4xl sm:text-5xl">What is Cibo Libro?</Header>
-          <SubHeader  textSize="text-base sm:text-lg"className="max-w-3xl">
+          <SubHeader  textSize="text-base sm:text-lg"className="px-4 max-w-3xl">
             Cibo Libro is your personal digital cookbook where you can easily
             save your recipes from anywhere, access them in seconds, and enjoy
             them without the clutter.
@@ -155,7 +155,7 @@ export default function LandingPage() {
         className="max-w-4xl mx-auto w-full relative text-center md:text-start"
       >
         <Header textSize="text-4xl sm:text-5xl">Loads more features are in the oven.</Header>
-        <SubHeader textSize="text-base sm:text-lg" className="mt-4">
+        <SubHeader textSize="px-4 text-base sm:text-lg" className="mt-4">
           Cibo Libro is just getting started. Join now to receive future early
           adopter benefits and help cook up the best all-in-one kitchen
           assistant.
@@ -236,13 +236,13 @@ export default function LandingPage() {
         className="w-full flex flex-col items-center text-center md:text-start"
       >
         <Header textSize="text-4xl sm:text-5xl">Ready to get cooking?</Header>
-        <SubHeader textSize="text-base sm:text-lg" className="mt-6 mb-12 max-w-3xl text-center">
+        <SubHeader textSize="text-base sm:text-lg" className="px-4 mt-6 mb-8 sm:mb-12 max-w-3xl text-center">
           Save and import hundreds of recipes, access them instantly, from
           anywhere, with no ads. Create your personal digital cookbook now for
           free.
         </SubHeader>
         <Link href="register">
-          <PrimaryButton type="button" size="xl">
+          <PrimaryButton type="button" size="lg" className="sm:px-9 sm:py-5 sm:text-2xl">
             Open your new cookbook
             <ChevronRight size={30} />
           </PrimaryButton>
