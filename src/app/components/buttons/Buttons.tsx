@@ -46,7 +46,7 @@ export function PrimaryButton({
 
   return (
     <button
-      className={`${className} ${width} ${height} ${sizeStyle} ${disabledStyle} flex no-wrap justify-center items-center gap-2 rounded-full bg-linear-to-r from-orange-500 to-rose-500 text-white font-bold`}
+      className={`${width} ${height} ${sizeStyle} ${disabledStyle} flex no-wrap justify-center items-center gap-2 rounded-full bg-linear-to-r from-orange-500 to-rose-500 text-white font-bold ${className}`}
       {...props}
     >
       {children}
@@ -58,6 +58,7 @@ export function SecondaryButton({
   size = "md",
   width = "w-max",
   height = "h-max",
+  className = "",
   children,
   disabled = false,
   ...props
@@ -84,7 +85,7 @@ export function SecondaryButton({
 
   return (
     <button
-      className={`${width} ${height} ${sizeStyle} ${disabledStyle} flex gap-2 justify-center items-center rounded-full bg-white/70 backdrop-blur-lg border border-rose-500/70 text-rose-500 font-bold`}
+      className={`${width} ${height} ${sizeStyle} ${disabledStyle} flex gap-2 justify-center items-center rounded-full bg-white/70 backdrop-blur-lg border border-rose-500/70 text-rose-500 font-bold ${className}`}
       {...props}
     >
       {children}
@@ -95,7 +96,7 @@ export function SecondaryButton({
 export function TertiaryButton({ children, className="", ...props }: ButtonProps) {
   return (
     <button
-      className={`${className} flex no-wrap justify-center items-center gap-2 text-orange-600 font-bold underline cursor-pointer border border-transparent active:border-orange-500`}
+      className={`flex no-wrap justify-center items-center gap-2 text-orange-600 font-bold underline cursor-pointer border border-transparent active:border-orange-500 ${className}`}
       {...props}
     >
       {children}
