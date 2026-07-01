@@ -53,8 +53,8 @@ function Popup({
             <Image
               src="/logo.png"
               alt="cibo libro"
-              width={150}
-              height={36}
+              width={563}
+              height={102}
               className="h-8 w-auto"
               priority
             />

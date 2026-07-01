@@ -35,9 +35,9 @@ export function Navbar({ session }: { session?: Session | null }) {
         <Image
           src="/logo.png"
           alt="cibo libro"
-          width={580}
-          height={127}
-          className={`${scrolled ? "max-w-40 sm:max-w-46" : "max-w-46 sm:max-w-54"} w-full h-auto`}
+          width={563}
+          height={102}
+          className={`${scrolled ? "max-w-48 sm:max-w-52" : "max-w-52 sm:max-w-56"} w-full h-auto`}
           // className={`${scrolled ? "h-9 sm:h-10" : "h-10 sm:h-12"} w-auto`}
           priority
         />
