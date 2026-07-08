@@ -13,7 +13,7 @@ test("bootstrap auth and save storage", async ({ page, context, baseURL }) => {
   await page.getByRole("button", { name: "Sign up" }).click();
 
   // Redirected to /login with success banner
-  await expect(page).toHaveURL(/\/login/);
+  await expect(page).toHaveURL(/\/login.*/);
   await expect(
     page.getByText("Account created. You can login now."),
   ).toBeVisible();
