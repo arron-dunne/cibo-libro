@@ -1,3 +1,6 @@
+import Link from "next/link";
+import { redirect } from "next/navigation";
+import { prisma } from "@/lib/prisma";
 import { auth } from "@/lib/auth/auth";
 import {
   ChevronRight,
@@ -8,8 +11,6 @@ import {
   Search,
   Tag as TagIcon,
 } from "lucide-react";
-import Link from "next/link";
-import { prisma } from "@/lib/prisma";
 import {
   RecipeCard,
   RecipeCardProps,
@@ -21,8 +22,12 @@ import { Tag } from "@/app/components/tags/Tags";
 export default async function HomePage() {
   const session = await auth();
 
+  if(!session) {
+    redirect("/login");
+  }
+
   const recentRecipes = await prisma?.recipe.findMany({
-    where: { ownerId: session?.user.id },
+    where: { ownerId: session.user.id },
     orderBy: { createdAt: "desc" },
     take: 4,
     select: {
@@ -37,10 +42,14 @@ export default async function HomePage() {
 
   const allTags = (
     await prisma.$queryRaw<{ tag: string }[]>`
-    SELECT tag FROM "Recipe", unnest(tags) AS tag
-    WHERE "ownerId" = ${session?.user.id}
-    GROUP BY tag ORDER BY COUNT(*) DESC LIMIT 10
-  `
+      SELECT tag
+      FROM "Recipe"
+      CROSS JOIN LATERAL unnest("tags") AS tag
+      WHERE "ownerId" = ${session.user.id}
+      GROUP BY tag
+      ORDER BY COUNT(*) DESC
+      LIMIT 10
+    `
   ).map((r) => r.tag);
 
   return (
@@ -88,7 +97,7 @@ export default async function HomePage() {
           <input
             type="text"
             name="search"
-            placeholder="recipe title..."
+            placeholder="e.g. Spaghetti Bolognese"
             required
             className="w-full max-w-lg rounded-full border border-slate-300 bg-white px-5 font-semibold placeholder:text-slate-500"
           />
