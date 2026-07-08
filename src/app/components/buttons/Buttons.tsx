@@ -80,7 +80,7 @@ export function SecondaryButton({
   }
 
     const disabledStyle = disabled
-    ? "cursor-wait brightness-90"
+    ? "cursor-not-allowed brightness-90"
     : "cursor-pointer hover:brightness-90 active:brightness-75";
 
   return (

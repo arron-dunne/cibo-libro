@@ -74,14 +74,12 @@ export default async function ViewRecipePage({
       <section className="mt-4 flex flex-col md:flex-row gap-4 md:gap-8">
         {/* Image */}
         {(recipe.imageKey || recipe.imageExternalUrl) && (
-          <div className="md:relative w-full md:w-1/2 max-h-92 overflow-hidden rounded-4xl border border-white/80">
-            <div className="md:absolute md:inset-0">
-              <RecipeImage
-                imageKey={recipe.imageKey ?? undefined}
-                externalUrl={recipe.imageExternalUrl ?? undefined}
-                alt={recipe.title || "Recipe image"}
-              />
-            </div>
+          <div className="relative w-full md:w-1/2 min-h-none md:min-h-92 overflow-hidden rounded-4xl border border-white/80">
+            <RecipeImage
+              imageKey={recipe.imageKey ?? undefined}
+              externalUrl={recipe.imageExternalUrl ?? undefined}
+              alt={recipe.title || "Recipe image"}
+            />
           </div>
         )}
 

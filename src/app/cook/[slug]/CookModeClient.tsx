@@ -15,6 +15,12 @@ import {
   CookingPot,
   Pencil,
 } from "lucide-react";
+import {
+  SecondaryButton,
+  TertiaryButton,
+} from "@/app/components/buttons/Buttons";
+import { sansita } from "@/app/fonts";
+import { Header } from "@/app/components/text/Headers";
 
 interface CookModeClientProps {
   slug: string;
@@ -23,7 +29,7 @@ interface CookModeClientProps {
   steps: string[];
 }
 
-type StepType = "ings" | "finish" | number;
+type StepType = "prepare" | "finish" | number;
 
 export default function CookModeClient({
   slug,
@@ -31,12 +37,17 @@ export default function CookModeClient({
   ingredients,
   steps,
 }: CookModeClientProps) {
-  const [currentStep, setCurrentStep] = useState<StepType>("ings");
+  const [currentStep, setCurrentStep] = useState<StepType>("prepare");
   const [checked, setChecked] = useState<Record<number, boolean>>({});
   const [ingredientsOpen, setIngredientsOpen] = useState(false);
   const [highlightEnabled, setHighlightEnabled] = useState(true);
   const [wakeLockActive, setWakeLockActive] = useState(false);
   const wakeLockRef = useRef<WakeLockSentinel | null>(null);
+
+  let progress: number;
+  if (currentStep === "prepare") progress = 0;
+  else if (currentStep === "finish") progress = 1;
+  else progress = currentStep / (steps.length + 1);
 
   useEffect(() => {
     if (!("wakeLock" in navigator)) return;
@@ -82,7 +93,7 @@ export default function CookModeClient({
   );
 
   function goToNext() {
-    if (currentStep === "ings") {
+    if (currentStep === "prepare") {
       setCurrentStep(steps.length > 0 ? 1 : "finish");
     } else if (typeof currentStep === "number") {
       setCurrentStep(currentStep < steps.length ? currentStep + 1 : "finish");
@@ -91,37 +102,28 @@ export default function CookModeClient({
 
   function goToPrevious() {
     if (currentStep === "finish") {
-      setCurrentStep(steps.length > 0 ? steps.length : "ings");
+      setCurrentStep(steps.length > 0 ? steps.length : "prepare");
     } else if (typeof currentStep === "number") {
-      setCurrentStep(currentStep > 1 ? currentStep - 1 : "ings");
+      setCurrentStep(currentStep > 1 ? currentStep - 1 : "prepare");
     }
   }
 
-  const canGoPrevious = currentStep !== "ings";
+  const canGoPrevious = currentStep !== "prepare";
   const canGoNext = currentStep !== "finish";
 
   return (
-    <main className="min-h-dvh mx-auto max-w-7xl px-4 py-4 sm:py-8 text-white flex flex-col">
+    <main className="h-dvh overflow-hidden mx-auto max-w-7xl px-4 py-4 sm:py-8 text-white flex flex-col gap-8 justify-between">
       {/* Header */}
-      <header className="flex flex-col gap-3 mb-4">
+      <header className="flex flex-col gap-3">
         {/* Desktop header */}
         <div className="hidden sm:flex items-center justify-between gap-3">
-          <Link
-            href={`/view/${slug}`}
-            aria-label="Back to recipe"
-            className="shrink-0 w-max flex items-center gap-3 text-xl font-semibold text-slate-900 cursor-pointer hover:brightness-90 active:brightness-75"
-          >
-            <div className="p-2 rounded-full border border-white/80 bg-linear-to-br from-slate-200 to-slate-300 shadow-lg">
+          <Link href={`/view/${slug}`} aria-label="Back to recipe">
+            <TertiaryButton type="button">
               <ArrowLeft size={20} />
-            </div>
-            Back
+              Back
+            </TertiaryButton>
           </Link>
-          <h1
-            className="text-5xl font-black text-white truncate"
-            style={{ WebkitTextStroke: "6px black", paintOrder: "stroke fill" }}
-          >
-            {title}
-          </h1>
+          <Header className="truncate">{title}</Header>
           <div className="flex gap-2.5 shrink-0 items-center rounded-full bg-white/60 border border-white/80 text-black shadow px-4 py-2">
             {wakeLockActive ? (
               <span className="relative flex h-2.5 w-2.5">
@@ -170,16 +172,12 @@ export default function CookModeClient({
       </header>
 
       {/* Main content area */}
-      <section className="w-full max-w-5xl mx-auto flex-1 sm:pt-8 pb-20">
+      <section className="w-full max-w-5xl mx-auto overflow-scroll flex-1">
         {/* Prepare Ingredients step */}
-        {currentStep === "ings" && (
-          <div className="w-full max-w-2xl mx-auto rounded-4xl border border-white/60 bg-white shadow-xl text-gray-900 overflow-hidden">
-            <h2 className="pt-6 pb-4 text-2xl font-bold text-black text-center">
-              Prepare Ingredients
-            </h2>
-
+        {currentStep === "prepare" && (
+          <div className="w-full max-w-2xl mx-auto">
             {ingredients.length ? (
-              <ul className="px-4 pb-4 space-y-0.5">
+              <ul className="space-y-1">
                 {ingredients.map((line, i) => (
                   <li key={i}>
                     <label className="flex items-center gap-3 px-3 py-2.5 cursor-pointer rounded-2xl hover:bg-orange-50 transition-colors">
@@ -198,7 +196,7 @@ export default function CookModeClient({
                       )}
                       <span
                         className={`text-base leading-6 ${
-                          checked[i] ? "text-gray-400" : "text-gray-800"
+                          checked[i] ? "text-gray-400" : "text-black"
                         }`}
                       >
                         {line}
@@ -217,9 +215,9 @@ export default function CookModeClient({
 
         {/* Step view — sidebar + step panel */}
         {typeof currentStep === "number" && (
-          <div className="flex flex-col sm:flex-row gap-4">
+          <div className="h-full flex items-center">
             {/* Mobile ingredients dropdown */}
-            <div className="sm:hidden">
+            {/* <div className="sm:hidden">
               <button
                 onClick={() => setIngredientsOpen((o) => !o)}
                 className="relative z-10 w-full flex items-center justify-between px-6 py-3 rounded-full border border-white/70 font-semibold text-slate-700 bg-linear-to-r from-slate-200 to-slate-300 cursor-pointer transition hover:brightness-90 active:brightness-75"
@@ -250,10 +248,10 @@ export default function CookModeClient({
                   />
                 </div>
               )}
-            </div>
+            </div> */}
 
             {/* Desktop ingredients sidebar */}
-            <div className="hidden sm:block h-max sm:w-[33%] rounded-4xl border border-white/60 bg-white shadow-xl text-gray-900 overflow-hidden">
+            {/* <div className="hidden sm:block h-max sm:w-[33%] rounded-4xl border border-white/60 bg-white shadow-xl text-gray-900 overflow-hidden">
               <h3 className="px-6 pt-8 pb-5 text-2xl font-semibold text-black text-center">
                 Ingredients
               </h3>
@@ -281,35 +279,13 @@ export default function CookModeClient({
                   No ingredients found.
                 </p>
               )}
-            </div>
+            </div> */}
 
             {/* Step panel */}
-            <div className="h-max sm:w-[66%] rounded-4xl border border-white/60 bg-white shadow-xl text-gray-900 overflow-hidden">
-              <div className="px-5 pt-5 pb-4 sm:px-8 sm:pt-8 sm:pb-5">
-                <div className="flex items-end justify-center gap-2">
-                  <h3 className="text-lg sm:text-2xl font-semibold text-black">
-                    Step {currentStep}
-                  </h3>
-                  <span className="text-sm font-medium text-gray-400 mb-0.5">
-                    of {steps.length}
-                  </span>
-                </div>
-                <div className="mt-4 h-1.5 w-full rounded-full bg-gray-100 overflow-hidden">
-                  <div
-                    className="h-1.5 rounded-full bg-linear-to-r from-orange-500 to-rose-500"
-                    style={{
-                      width: `${(currentStep / steps.length) * 100}%`,
-                    }}
-                  />
-                </div>
-              </div>
-              <div className="px-5 pb-5 sm:px-8 sm:pb-8">
-                <StepText
-                  text={steps[currentStep - 1]}
-                  keywords={ingredientKeywords}
-                />
-              </div>
-            </div>
+            <StepText
+              text={steps[currentStep - 1]}
+              keywords={ingredientKeywords}
+            />
           </div>
         )}
 
@@ -347,23 +323,50 @@ export default function CookModeClient({
       </section>
 
       {/* Bottom navigation */}
-      <nav className="fixed inset-x-0 bottom-0 z-30 px-4 pb-4">
-        <div className="max-w-2xl mx-auto rounded-full h-18 flex gap-3 items-center border border-white/60 bg-white/70 backdrop-blur-md px-4 shadow-lg">
-          <button
+      <nav className="pb-8 h-18 z-10">
+        <div className="mb-4 h-1.5 w-full max-w-lg mx-auto rounded-full bg-white overflow-hidden">
+          <div
+            className="h-1.5 rounded-full bg-linear-to-r from-orange-500 to-rose-500"
+            style={{
+              width: `${progress * 100}%`,
+            }}
+          />
+        </div>
+        <div className="w-72 mx-auto flex gap-4 items-center justify-between">
+          <SecondaryButton
+            type="button"
             onClick={goToPrevious}
             disabled={!canGoPrevious}
-            className="h-12 w-1/2 rounded-full font-bold flex items-center justify-center gap-1.5 bg-linear-to-br from-slate-100 to-slate-200 border border-white/60 shadow text-slate-700 cursor-pointer hover:brightness-90 active:brightness-75 disabled:opacity-40 disabled:cursor-not-allowed"
+            size="custom"
+            height="h-12"
+            width="w-12"
           >
-            <ChevronLeft className="h-5 w-5" /> Prev
-          </button>
-
-          <button
+            <ChevronLeft size={20} />
+          </SecondaryButton>
+          <div className="text-lg sm:text-2xl font-semibold text-black">
+            {currentStep === "prepare" ? (
+              <>Ingredients</>
+            ) : currentStep === "finish" ? (
+              <>Finished</>
+            ) : (
+              <div className="flex items-end justify-center gap-2">
+                <span>Step {currentStep}</span>
+                <span className="text-base font-medium mb-0.5">
+                  of {steps.length}
+                </span>
+              </div>
+            )}
+          </div>
+          <SecondaryButton
+            type="button"
             onClick={goToNext}
             disabled={!canGoNext}
-            className="h-12 w-1/2 rounded-full font-bold flex items-center justify-center gap-1.5 bg-linear-to-br from-green-500 to-lime-400 border border-green-500 shadow text-green-950 cursor-pointer hover:brightness-90 active:brightness-75 disabled:opacity-40 disabled:cursor-not-allowed"
+            size="custom"
+            height="h-12"
+            width="w-12"
           >
-            Next <ChevronRight className="h-5 w-5" />
-          </button>
+            <ChevronRight className="h-5 w-5" />
+          </SecondaryButton>
         </div>
       </nav>
     </main>
