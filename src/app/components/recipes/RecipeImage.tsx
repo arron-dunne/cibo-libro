@@ -30,7 +30,7 @@ export function RecipeImage({
   // Show skeleton while trying to sign an R2 image
   // const showSkeleton = !!imageKey && (loading || (!url && !error));
 
-  // If we have a signed R2 URL, use Next/Image (optimized for your host or unoptimized)
+  // If we have a signed R2 URL, use Next/Image
   if (signedUrl) {
     return (
       <div className="relative w-full h-full">

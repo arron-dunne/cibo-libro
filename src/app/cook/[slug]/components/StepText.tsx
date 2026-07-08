@@ -10,7 +10,7 @@ export function StepText({ text, keywords }: StepTextProps) {
   const parts = text.split(regex);
 
   return (
-    <p className="my-2 md:my-4 text-2xl/9 md:text-3xl/12 tracking-normal text-black">
+    <p className="text-center text-2xl/9 md:text-3xl/12 tracking-normal text-black">
       {parts.map((part, i) => {
         const isMatch = keywords.some(
           (kw) => kw.toLowerCase() === part.toLowerCase(),
