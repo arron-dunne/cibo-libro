@@ -1,16 +1,11 @@
 "use client";
 
-import Link from "next/link";
 import {
   Star,
   Heart,
   Bug,
   MessageCircleQuestionMark,
-  CheckCircle,
-  ChevronLeft,
-  CircleX,
   Send,
-  Home,
   Loader2,
 } from "lucide-react";
 

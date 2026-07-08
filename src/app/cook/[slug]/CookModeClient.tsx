@@ -4,14 +4,12 @@ import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import { extractIngredientKeyword } from "@/lib/ingredients/extractKeywords";
 import { StepText } from "./components/StepText";
-import { HighlightToggle } from "./components/HighlightToggle";
 import {
   ArrowLeft,
   Circle,
   CheckCircle2,
   ChevronLeft,
   ChevronRight,
-  ChevronDown,
   CookingPot,
   Pencil,
 } from "lucide-react";
@@ -19,7 +17,6 @@ import {
   SecondaryButton,
   TertiaryButton,
 } from "@/app/components/buttons/Buttons";
-import { sansita } from "@/app/fonts";
 import { Header } from "@/app/components/text/Headers";
 
 interface CookModeClientProps {
@@ -39,8 +36,8 @@ export default function CookModeClient({
 }: CookModeClientProps) {
   const [currentStep, setCurrentStep] = useState<StepType>("prepare");
   const [checked, setChecked] = useState<Record<number, boolean>>({});
-  const [ingredientsOpen, setIngredientsOpen] = useState(false);
-  const [highlightEnabled, setHighlightEnabled] = useState(true);
+  // const [ingredientsOpen, setIngredientsOpen] = useState(false);
+  // const [highlightEnabled, setHighlightEnabled] = useState(true);
   const [wakeLockActive, setWakeLockActive] = useState(false);
   const wakeLockRef = useRef<WakeLockSentinel | null>(null);
 
@@ -81,16 +78,16 @@ export default function CookModeClient({
     .map(extractIngredientKeyword)
     .filter(Boolean) as string[];
 
-  const currentStepText =
-    typeof currentStep === "number" ? steps[currentStep - 1] : null;
+  // const currentStepText =
+  //   typeof currentStep === "number" ? steps[currentStep - 1] : null;
 
-  const activeIngredients = new Set(
-    ingredients.flatMap((ing, i) => {
-      const kw = extractIngredientKeyword(ing);
-      if (!kw || !currentStepText) return [];
-      return new RegExp(kw, "i").test(currentStepText) ? [i] : [];
-    }),
-  );
+  // const activeIngredients = new Set(
+  //   ingredients.flatMap((ing, i) => {
+  //     const kw = extractIngredientKeyword(ing);
+  //     if (!kw || !currentStepText) return [];
+  //     return new RegExp(kw, "i").test(currentStepText) ? [i] : [];
+  //   }),
+  // );
 
   function goToNext() {
     if (currentStep === "prepare") {

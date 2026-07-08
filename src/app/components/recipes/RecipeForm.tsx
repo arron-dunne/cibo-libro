@@ -384,7 +384,7 @@ export default function RecipeForm({ mode, recipe, action }: RecipeFormProps) {
           <div className="ml-2 space-y-2">
             <Header textSize="text-4xl">Ingredients</Header>
             <SubHeader>
-              List what you'll need. Press Enter to add more.
+              List what you&apos;ll need. Press Enter to add more.
             </SubHeader>
           </div>
           <div className="flex flex-col gap-4">
@@ -615,33 +615,6 @@ export default function RecipeForm({ mode, recipe, action }: RecipeFormProps) {
   );
 }
 
-// ────────────────────────────────────────────────────────────────────────────
-// Components
-// ────────────────────────────────────────────────────────────────────────────
-
-// Floating panel wrapper
-function Panel({
-  header,
-  subheader,
-  first,
-  icon,
-  children,
-}: {
-  header: string;
-  subheader?: string;
-  first?: boolean;
-  icon?: React.ReactNode;
-  children: React.ReactNode;
-}) {
-  return (
-    <section>
-      <Header textSize={first ? "text-5xl" : "text-3xl"}>{header}</Header>
-      <SubHeader>{subheader}</SubHeader>
-      <div className={first ? "" : "mt-4"}>{children}</div>
-    </section>
-  );
-}
-
 function TagsEditor({
   value,
   onChange,
@@ -704,22 +677,6 @@ function TagsEditor({
     </div>
   );
 }
-
-const Label = ({
-  htmlFor,
-  children,
-}: {
-  htmlFor?: string;
-  children: React.ReactNode;
-}) => (
-  <label htmlFor={htmlFor} className="mb-1 block text-sm font-medium">
-    {children}
-  </label>
-);
-
-// ────────────────────────────────────────────────────────────────────────────
-// Helpers
-// ────────────────────────────────────────────────────────────────────────────
 
 const sanitizeLines = (xs: string[]) => xs.map((s) => s.trim()).filter(Boolean);
 

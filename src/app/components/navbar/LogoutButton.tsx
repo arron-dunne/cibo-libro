@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { LogOut } from "lucide-react";
-import { SecondaryButton, TertiaryButton } from "../buttons/Buttons";
+import { SecondaryButton } from "../buttons/Buttons";
 
 type LogoutButtonProps = {
   action: () => Promise<void>;

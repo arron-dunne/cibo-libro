@@ -2,7 +2,6 @@
 
 import { prisma } from "@/lib/prisma";
 import { auth } from "@/lib/auth/auth";
-import z from "zod";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 
@@ -24,9 +23,9 @@ export async function setRecipeFavourite(slug: string, isFavourite: boolean): Pr
   revalidatePath("/all");
 }
 
-const DeleteRecipeSchema = z.object({
-  slug: z.string(),
-});
+// const DeleteRecipeSchema = z.object({
+//   slug: z.string(),
+// });
 
 export async function deleteRecipe(slug: string): Promise<void> {
   // Check valid user

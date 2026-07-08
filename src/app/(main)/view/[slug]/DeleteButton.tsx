@@ -1,30 +1,25 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
-import { createPortal, useFormStatus } from "react-dom";
+import { useCallback, useEffect, useState } from "react";
+import { createPortal } from "react-dom";
 import { Loader2, Trash2 } from "lucide-react";
 import {
   PrimaryButton,
   SecondaryButton,
-  TertiaryButton,
 } from "@/app/components/buttons/Buttons";
 import { deleteRecipe } from "./actions";
 
 type DeleteButtonProps = {
   slug: string;
-  action: (formData: FormData) => Promise<void>;
   variant?: "inline" | "dropdown";
 };
 
 export function DeleteButton({
   slug,
-  action,
   variant = "inline",
 }: DeleteButtonProps) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
-
-  console.log(isSubmitting);
 
   // needed to avoid hydration mismatch
   const [hasMounted, setHasMounted] = useState<boolean>(false);
@@ -101,7 +96,7 @@ export function DeleteButton({
               <h2 className="mt-4 text-xl font-semibold text-slate-800">
                 Are you sure you want to delete this recipe?
               </h2>
-              <p className="mt-2 text-slate-800">This action can't be undone</p>
+              <p className="mt-2 text-slate-800">This action can&apos;t be undone</p>
 
               <div className="mt-6 flex flex-col gap-3 sm:flex-row">
                 <PrimaryButton

@@ -90,6 +90,7 @@ export async function submitIssue(
     });
     return { status: "success" };
   } catch (err) {
+    console.log(err);
     return { status: "error" };
   }
 }

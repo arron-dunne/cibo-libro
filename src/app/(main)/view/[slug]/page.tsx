@@ -1,10 +1,7 @@
-import Link from "next/link";
 import { notFound } from "next/navigation";
 import { auth } from "@/lib/auth/auth";
 import { prisma } from "@/lib/prisma";
 import {
-  ChefHat,
-  ArrowLeft,
   TagIcon,
   Timer,
   Utensils,
@@ -12,14 +9,8 @@ import {
 } from "lucide-react";
 import { RecipeImage } from "@/app/components/recipes/RecipeImage";
 import { deleteRecipe } from "./actions";
-import { getHostname } from "@/lib/hostname";
-import {
-  PrimaryButton,
-  TertiaryButton,
-} from "@/app/components/buttons/Buttons";
 import { Header, SubHeader } from "@/app/components/text/Headers";
 import { Tag } from "@/app/components/tags/Tags";
-import Image from "next/image";
 import { ButtonBar } from "./ButtonBar";
 import { RecipeType } from "@/types/recipe";
 
@@ -56,7 +47,7 @@ export default async function ViewRecipePage({
   // Normalize timing
   const prep = recipe.prepMins ?? 0;
   const cook = recipe.cookMins ?? 0;
-  const total = prep + cook;
+  // const total = prep + cook;
 
   return (
     <>
@@ -209,7 +200,7 @@ function LinkCardInfoSection() {
   return (
     <div className="mt-8 w-full rounded-2xl px-4 md:px-8 py-4 text-base md:text-lg text-slate-800 font-semibold bg-white flex gap-3 items-center">
       <Info size={28} className="text-orange-600 shrink-0" />
-      We couldn't import the full recipe so we saved this handy link card back
+      We couldn&apos;t import the full recipe so we saved this handy link card back
       to the original.
     </div>
   );

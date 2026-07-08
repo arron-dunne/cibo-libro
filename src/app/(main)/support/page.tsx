@@ -1,13 +1,7 @@
-import { TertiaryButton } from "@/app/components/buttons/Buttons";
-import { Header, SubHeader } from "@/app/components/text/Headers";
+import { Header } from "@/app/components/text/Headers";
 import {
   Bug,
-  ChevronRight,
-  Copyright,
-  FileText,
   Lightbulb,
-  Lock,
-  LucideProps,
   MessageCircle,
 } from "lucide-react";
 import Link from "next/link";
@@ -19,7 +13,7 @@ export default function SupportPage() {
       <div className="mt-4 text-lg">
         <p>
           We love to hear from you! If you have feedback, issues or general
-          enquiries you'd like to send us, get in touch using the links below.
+          enquiries you&apos;d like to send us, get in touch using the links below.
         </p>
       </div>
 

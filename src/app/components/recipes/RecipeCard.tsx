@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { RecipeImage } from "./RecipeImage";
-import { Heart, LinkIcon } from "lucide-react";
+import { Heart } from "lucide-react";
 import { Tag } from "../tags/Tags";
 
 export type RecipeCardProps = {

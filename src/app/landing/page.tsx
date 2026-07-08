@@ -84,7 +84,7 @@ export default function LandingPage() {
             <br className="lg:hidden" /> serve on the table.
           </Header>
           <SubHeader textSize="text-base sm:text-lg" className="px-4 max-w-3xl">
-            Here's how it works...
+            Here&apos;s how it works...
           </SubHeader>
         </div>
         <div className="mt-12 md:mt-16 flex flex-col lg:flex-row gap-12 lg:gap-8 justify-center [&_b]:text-orange-600 [&_b]:font-extrabold">
@@ -157,11 +157,11 @@ export default function LandingPage() {
         className="max-w-4xl mx-auto w-full relative text-center md:text-start"
       >
         <Header textSize="text-4xl sm:text-5xl">
-          We're cooking up something good.
+          We&apos;re cooking up something good.
         </Header>
         <SubHeader textSize="text-base sm:text-lg" className="mt-4">
           Cibo Libro is just getting started. Early adopters are first in line
-          for everything we're building.
+          for everything we&apos;re building.
         </SubHeader>
         <div className="flex mt-12 flex-col gap-4">
           {[

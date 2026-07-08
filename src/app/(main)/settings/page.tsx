@@ -1,6 +1,6 @@
 import { redirect } from "next/navigation";
 import { auth } from "@/lib/auth/auth";
-import { ArrowUpFromLine, CircleUserRound } from "lucide-react";
+import { CircleUserRound } from "lucide-react";
 import ChangePassword from "./ChangePassword";
 import { signOutAllDevices } from "./actions";
 import { Header } from "@/app/components/text/Headers";

@@ -8,7 +8,7 @@ export default function AboutPage() {
       <Header>About</Header>
 
       <p className="mt-4">
-        Hello! My name's Arron and i'm the developer behind Cibo Libro. This has
+        Hello! My name&apos;s Arron and i&apos;m the developer behind Cibo Libro. This has
         been a passion project of mine and has gone through a lot of different
         forms before getting to here.
       </p>
@@ -23,7 +23,7 @@ export default function AboutPage() {
 
       <p className="mt-4">
         I have a lot of ideas how to make Cibo Libro even more useful in the
-        future, and I'm excitied to see how it evolves. Please feel free to
+        future, and I&apos;m excitied to see how it evolves. Please feel free to
         share your own thoughts and experience with Cibo Libro here.
       </p>
 
@@ -37,7 +37,7 @@ export default function AboutPage() {
       </p>
       
       <p className="mt-4">
-        If you've enjoyed Cibo Libro and wish to support it development please
+        If you&apos;ve enjoyed Cibo Libro and wish to support it development please
         consider leaving a tip to show youre appreciation and help support the
         future of Cibo Libro
       </p>
