@@ -8,7 +8,6 @@ import {
   Info,
 } from "lucide-react";
 import { RecipeImage } from "@/app/components/recipes/RecipeImage";
-import { deleteRecipe } from "./actions";
 import { Header, SubHeader } from "@/app/components/text/Headers";
 import { Tag } from "@/app/components/tags/Tags";
 import { ButtonBar } from "./ButtonBar";
@@ -55,7 +54,6 @@ export default async function ViewRecipePage({
         slug={slug}
         isFavorite={recipe.isFavourite}
         recipeType={recipe.type as RecipeType}
-        deleteAction={deleteRecipe}
         sourceUrl={recipe.sourceUrl || null}
       />
       {/* <div className="mt-8 flex justify-between items-center">
