@@ -21,7 +21,6 @@ interface ButtonBarProps {
   slug: string;
   isFavorite: boolean;
   recipeType: RecipeType;
-  deleteAction: () => void;
   sourceUrl?: string | null;
 }
 
@@ -29,14 +28,12 @@ interface MoreOptionPopupProps {
   slug: string;
   isFavorite: boolean;
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
-  deleteAction: () => void;
   sourceUrl?: string | null;
 }
 export function ButtonBar({
   slug,
   isFavorite,
   recipeType,
-  deleteAction,
   sourceUrl,
 }: ButtonBarProps) {
   const [open, setOpen] = useState(false);
@@ -103,7 +100,6 @@ export function ButtonBar({
               slug={slug}
               isFavorite={isFavorite}
               setOpen={setOpen}
-              deleteAction={deleteAction}
               sourceUrl={sourceUrl || null}
             />
           )}
@@ -131,7 +127,7 @@ export function ButtonBar({
               <span>Edit</span>
             </SecondaryButton>
           </Link>
-          <DeleteButton slug={slug} action={deleteAction} />
+          <DeleteButton slug={slug} />
           {sourceUrl && recipeType !== "EXTERNAL_LINK" && (
             <Link href={sourceUrl} target="_blank" aria-label="View original">
               <SecondaryButton type="button">
@@ -169,7 +165,6 @@ function MobileDropdown({
   slug,
   isFavorite,
   setOpen,
-  deleteAction,
   sourceUrl,
 }: MoreOptionPopupProps) {
   return (
@@ -188,7 +183,7 @@ function MobileDropdown({
         <span>Edit</span>
       </Link>
 
-      <DeleteButton slug={slug} action={deleteAction} variant="dropdown" />
+      <DeleteButton slug={slug} variant="dropdown" />
 
       {sourceUrl && (
         <Link
