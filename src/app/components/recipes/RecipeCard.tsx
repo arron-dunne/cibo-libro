@@ -2,7 +2,8 @@
 
 import Link from "next/link";
 import { RecipeImage } from "./RecipeImage";
-import { Heart, LinkIcon } from "lucide-react";
+import { Heart } from "lucide-react";
+import { Tag } from "../tags/Tags";
 
 export type RecipeCardProps = {
   title: string; // required
@@ -23,24 +24,20 @@ export function RecipeCard({ recipe }: { recipe: RecipeCardProps }) {
   const href = `/view/${recipe.slug}`;
 
   return (
-    <article className="relative w-full aspect-square lg:aspect-[0.7] flex flex-col overflow-hidden rounded-2xl border border-zinc-200 bg-white shadow-lg transition hover:scale-105 cursor-pointer">
+    <article className="relative w-full aspect-[0.7] flex flex-col overflow-hidden rounded-2xl border border-white/60 bg-white transition hover:scale-105 cursor-pointer">
       {/* Make whole card link */}
       <Link
         href={href}
         aria-label={`Open ${recipe.title}`}
         className="w-full h-full"
       >
-        {/* External recipe indicator */}
-        {recipe.sourceUrl && (
-          <div className="absolute top-3 right-3 p-1.5 flex items-center
-          bg-linear-to-br from-slate-200 to-slate-300 shadow
-          rounded-full text-slate-700 border border-white/80">
-            <LinkIcon size={14} />
+        {recipe.isFavourite && (
+          <div className="absolute top-4 left-4 rounded-full shrink-0 p-1.5 bg-white/70 border border-white/80">
+            <Heart className="size-4 sm:size-6 lg:size-8 fill-rose-500 text-rose-600" />
           </div>
         )}
-
         {/* Picture */}
-        <div className="w-full h-3/5 overflow-hidden bg-zinc-100">
+        <div className="w-full h-1/2 md:h-3/5 overflow-hidden bg-zinc-100">
           <RecipeImage
             imageKey={recipe.imageKey ?? null}
             externalUrl={recipe.imageExternalUrl ?? null}
@@ -49,40 +46,27 @@ export function RecipeCard({ recipe }: { recipe: RecipeCardProps }) {
         </div>
 
         {/* Content */}
-        <div className="px-4 py-3 h-2/5 flex flex-col justify-between">
+        <div className="px-4 py-3 h-1/2 md:h-2/5 flex flex-col justify-between">
           <div>
-            {recipe.title === "" ? (
-              <h2 className="line-clamp-1 text-xl font-bold italic text-zinc-400">
-                Untitled
-              </h2>
-            ) : (
-              <h2 className="line-clamp-1 text-xl font-bold text-zinc-900">
-                {recipe.title}
-              </h2>
-            )}
+            <h2 className="line-clamp-3 md:line-clamp-1 text-base md:text-xl font-bold text-zinc-900">
+              {recipe.title}
+            </h2>
             {recipe.description && (
-              <p className="mt-1 line-clamp-2 text-sm text-zinc-600">
-                {recipe.description}
-              </p>
+              <div className="hidden md:block">
+                <p className=" mt-1 line-clamp-2 overflow-hidden text-sm text-zinc-600">
+                  {recipe.description}
+                </p>
+              </div>
             )}
           </div>
           <div className="flex items-center justify-between gap-2 text-sm text-zinc-600">
-            <div className="flex items-center gap-2 flex-1 min-w-0 overflow-hidden">
+            <div className="flex items-center gap-2 flex-1 min-w-0 overflow-scroll">
               {(recipe.tags ?? []).map((tag) => (
-                <span
-                  key={tag}
-                  className="rounded-full bg-linear-to-br from-orange-100 to-rose-100 text-rose-500 border border-rose-200 px-3 py-1 font-medium text-nowrap"
-                >
+                <Tag key={tag} padding="py-1 px-2 md:px-4 md:py-2">
                   {tag}
-                </span>
+                </Tag>
               ))}
             </div>
-            {recipe.isFavourite && (
-              <Heart
-                size={24}
-                className="shrink-0 fill-rose-500 text-rose-500"
-              />
-            )}
           </div>
         </div>
       </Link>

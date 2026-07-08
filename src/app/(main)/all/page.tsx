@@ -3,6 +3,7 @@ import { ClientRecipesGrid } from "./ClientRecipesGrid";
 import { prisma } from "@/lib/prisma";
 import { auth } from "@/lib/auth/auth";
 import { SORT_OPTIONS, SortOptionKey } from "./options";
+import { Header, SubHeader } from "@/app/components/text/Headers";
 
 export type RecipeCardRecipe = {
   title: string;
@@ -75,12 +76,20 @@ export default async function RecipesPage({
   }));
 
   return (
+    <>
+    <div className="mt-8 sm:mt-12 ml-2 sm:ml-4 space-y-4 mb-6 sm:mb-8">
+      <Header>
+        Your Cookbook
+      </Header>
+      <SubHeader>Browse your recipes, search by title, or filter by tag. Click a recipe to see full details.</SubHeader>
+    </div>
     <ClientRecipesGrid
       recipes={recipes}
       initialSearch={searchParam}
       initialSort={sortParam}
       initialTags={tagsParam}
-    />
+      />
+    </>
   );
 }
 

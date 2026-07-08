@@ -1,5 +1,8 @@
 import type { RecipeStatus, RecipeType } from "@/prisma/generated/enums";
 
+// TODO: is correct way to type?
+export type RecipeType = "EXTERNAL_FULL" | "EXTERNAL_LINK" | "OWNED";
+
 declare global {
   interface Recipe {
     id?: string;
@@ -38,6 +41,14 @@ interface RecipeFormRecipe {
   tags: string[];
   note?: string | null;
   imageKey?: string | null;
+}
+
+// Recipe used by RecipeLinkForm (EXTERNAL_LINK cards — title, description, tags only)
+export interface RecipeLinkFormRecipe {
+  id: string | null;
+  title?: string | null;
+  description?: string | null;
+  tags: string[];
 }
 
 // Response object returned by server actions handling recipe form submissions

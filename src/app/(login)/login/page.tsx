@@ -1,6 +1,9 @@
+import { CircleAlert } from "lucide-react";
 import { handleSignIn } from "./actions";
 import { SubmitButton } from "../components/SubmitButton";
-import { CircleAlert } from "lucide-react";
+import { TertiaryButton } from "@/app/components/buttons/Buttons";
+import { Header, SubHeader } from "@/app/components/text/Headers";
+import { Input } from "@/app/components/forms/Inputs";
 
 export default async function LoginPage({
   searchParams,
@@ -18,10 +21,10 @@ export default async function LoginPage({
     <>
       {/* Header */}
       <header className="text-center">
-        <h1 className="text-4xl font-bold">Welcome</h1>
-        <p className="mt-1 text-gray-600">
-          Sign in to your cookbook to save and cook recipes.
-        </p>
+        <Header className="mb-2">Welcome back</Header>
+        <SubHeader className="justify-center">
+          Sign in to to get cooking again.
+        </SubHeader>
       </header>
 
       {/* Status banners */}
@@ -40,71 +43,51 @@ export default async function LoginPage({
           Your session has expired. Please login again.
         </div>
       )}
+      {error === "invalid" && (
+        <p className="mt-2 flex items-center gap-2 text-sm font-semibold text-red-600">
+          <CircleAlert height={18} />
+          Invalid email or password
+        </p>
+      )}
 
       {/* Form */}
-      <form action={handleSignIn} className="mt-6 space-y-5">
-        <div>
-          <label htmlFor="email" className="text-sm font-semibold">
-            Email
-          </label>
-          <input
-            name="email"
-            id="email"
-            type="email"
-            required
-            autoComplete="email"
-            placeholder="you@example.com"
-            className={`mt-1 px-4 py-3 w-full rounded-2xl border bg-white
-              outline-none focus:ring-2
-              ${error === "invalid" ? "border-2 ring-blue-400 border-red-400" : "border-zinc-300 focus:ring-blue-500"}`}
-          />
-          {error === "invalid" && (
-            <p className="mt-2 flex items-center gap-2 text-sm font-semibold text-red-600">
-              <CircleAlert height={18} />
-              Invalid email or password
-            </p>
-          )}
-        </div>
+      <form action={handleSignIn} className="mt-6">
+        <Input
+          label="Email"
+          invalid={error === "invalid"}
+          name="email"
+          id="email"
+          type="email"
+          required
+          autoComplete="email"
+        />
 
-        <div>
-          <label htmlFor="password" className="text-sm font-semibold">
-            Password
-          </label>
-          <input
+        <div className="mt-6">
+          <Input
+            invalid={error === "invalid"}
+            label="Password"
             name="password"
             id="password"
             type="password"
             required
             autoComplete="current-password"
-            placeholder="••••••••"
-            className={`mt-1 px-4 py-3 w-full rounded-2xl border bg-white
-              outline-none focus:ring-2
-              ${error === "invalid" ? "border-2 ring-blue-400 border-red-400" : "border-zinc-300 focus:ring-blue-500"}`}
           />
         </div>
 
-        <div className="flex items-center justify-between text-gray-600">
-          <a
-            href="/forgot"
-            className=" hover:underline transition hover:text-gray-700"
-          >
-            Forgot password
-          </a>
-          <span className="text-gray-600">
-            Need help?{" "}
-            <a href="/support" className="text-orange-700 hover:underline">
-              Support
-            </a>
-          </span>
+        <div className="mt-8">
+          <SubmitButton text="Login" />
         </div>
 
-        <SubmitButton text="Login" pendingText="Logging in" />
-
-        <div className="flex items-center justify-center gap-2 text-gray-600">
-          New here?
-          <a href="/register" className="font-medium text-orange-700 hover:underline">
-            Create an account
+        <div className="mt-6 flex px-2 items-center justify-between text-gray-600">
+          <a href="/forgot">
+            <TertiaryButton type="button">Forgot password</TertiaryButton>
           </a>
+          <div className="flex gap-2 items-center">
+            <span className="text-slate-600 font-semibold">Need help?</span>
+            <a href="/support">
+              <TertiaryButton type="button">Support</TertiaryButton>
+            </a>
+          </div>
         </div>
       </form>
     </>

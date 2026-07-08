@@ -6,8 +6,22 @@ import { useState, useRef, useEffect } from "react";
 import { compressImageFile } from "@/lib/images/compress";
 import { MAX_SIZE_BYTES } from "@/lib/images/constants";
 import { RecipeFormRecipe } from "@/types/recipe";
-import { X, ChefHat, Tag as TagIcon, CircleAlert } from "lucide-react";
-import { FormSubmitButton } from "@/app/components/forms/FormSubmitButton";
+import {
+  X,
+  Tag as TagIcon,
+  CircleAlert,
+  ImagePlus,
+  Loader2,
+} from "lucide-react";
+import { Header, SubHeader } from "@/app/components/text/Headers";
+import { Input, TextArea } from "@/app/components/forms/Inputs";
+import {
+  PrimaryButton,
+  SecondaryButton,
+  TertiaryButton,
+} from "@/app/components/buttons/Buttons";
+import { Tag } from "../tags/Tags";
+import Link from "next/link";
 
 // ────────────────────────────────────────────────────────────────────────────
 // Types
@@ -50,7 +64,6 @@ export default function RecipeForm({ mode, recipe, action }: RecipeFormProps) {
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const [uploading, setUploading] = useState(false);
   const [uploadError, setUploadError] = useState<string | null>(null);
-  const [imageNotice, setImageNotice] = useState<string | null>(null);
   const [deleting, setDeleting] = useState(false);
 
   // Handle form submission
@@ -183,24 +196,20 @@ export default function RecipeForm({ mode, recipe, action }: RecipeFormProps) {
 
   const onPick = async (e: React.ChangeEvent<HTMLInputElement>) => {
     setUploadError(null);
-    setImageNotice(null);
 
     const raw = e.target.files?.[0];
     if (!raw) return;
 
-    // 1) Instant preview swap (optimistic)
     const localUrl = URL.createObjectURL(raw);
-    setImagePreview(localUrl);
 
-    // 2) If there was a previous image, remove it silently
+    // If there was a previous image, remove it silently
     const previousKey = imageKey;
     if (previousKey) {
-      // Fire-and-forget delete (cleanup handled by background job if it fails)
       deleteImageSilent(previousKey);
       setImageKey(null);
+      setImagePreview(null);
     }
 
-    // 3) Upload new image
     setUploading(true);
     try {
       const compressed = await compressImageFile(raw, {
@@ -242,6 +251,7 @@ export default function RecipeForm({ mode, recipe, action }: RecipeFormProps) {
       }
 
       setImageKey(key);
+      setImagePreview(localUrl);
 
       const fileName =
         (raw.name.replace(/\.\w+$/, "") || "image") +
@@ -250,7 +260,6 @@ export default function RecipeForm({ mode, recipe, action }: RecipeFormProps) {
         type: compressed.type,
       });
       setFileInput(compressedFile);
-
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : "Upload failed";
       setUploadError(message);
@@ -272,32 +281,22 @@ export default function RecipeForm({ mode, recipe, action }: RecipeFormProps) {
 
   async function deleteImage() {
     if (!imageKey) return;
-    // optimistic UI: hide immediately
-    const prevPreview = imagePreview;
-    const prevImageKey = imageKey;
+    const keyToDelete = imageKey;
 
     setDeleting(true);
-    setImagePreview(null);
-    setImageKey(null);
-    setImageNotice("Deleting…");
-
     try {
       const res = await fetch("/api/images/delete", {
         method: "POST",
         headers: { "content-type": "application/json" },
-        body: JSON.stringify({ key: prevImageKey }),
+        body: JSON.stringify({ key: keyToDelete }),
       });
       if (!res.ok) throw new Error(String(res.status));
 
       if (fileInputRef.current) fileInputRef.current.value = "";
-      setImageNotice("Image removed");
-      setTimeout(() => setImageNotice(null), 1500);
+      setImageKey(null);
+      setImagePreview(null);
     } catch {
-      // revert on failure
-      setImageKey(prevImageKey);
-      setImagePreview(prevPreview);
-      setImageNotice("Failed to remove image");
-      setTimeout(() => setImageNotice(null), 2000);
+      // silently fail — image stays visible, user can retry
     } finally {
       setDeleting(false);
     }
@@ -319,92 +318,83 @@ export default function RecipeForm({ mode, recipe, action }: RecipeFormProps) {
   // Render
   // ──────────────────────────────────────────────────────────────────────────
   return (
-    <div className="max-w-3xl w-full mx-auto mt-8">
-      <form className="flex flex-col gap-10" onSubmit={handleSubmit}>
+    <div className="mt-12 max-w-3xl w-full mx-auto">
+      <form className="space-y-16" onSubmit={handleSubmit}>
         {/* Summary Panel */}
-        <Panel
-          header={ mode === "new" ? "Create a New Recipe" : "Edit Your Recipe" }
-          subheader="Fill in the details and save it to your cookbook."
-          first
-          icon={
-            <ChefHat aria-hidden="true" className="w-8 h-8 sm:w-10 sm:h-10" />
-          }
-        >
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-            <div className="sm:col-span-2">
-              <Label htmlFor="title">Title</Label>
-              <input
-                id="title"
-                name="title"
-                type="text"
-                className="w-full px-3 py-2.5 rounded-2xl border border-zinc-300 bg-white"
-                placeholder="e.g. Spaghetti Bolognese"
-                required
-                defaultValue={recipe?.title ?? ""}
-              />
-            </div>
-
-            <div className="sm:col-span-2">
-              <Label htmlFor="description">Description</Label>
-              <textarea
-                id="description"
-                name="description"
-                rows={3}
-                className="w-full px-3 py-2.5 rounded-2xl border border-zinc-300 bg-white"
-                defaultValue={recipe?.description ?? ""}
-              />
-            </div>
-
-            <div>
-              <Label>Prep time (min)</Label>
-              <input
-                name="prepMins"
-                type="number"
-                inputMode="numeric"
-                className="w-full px-3 py-2.5 rounded-2xl border border-zinc-300 bg-white"
-                defaultValue={recipe?.prepMins?.toString() ?? ""}
-              />
-            </div>
-            <div>
-              <Label>Cook time (min)</Label>
-              <input
-                name="cookMins"
-                type="number"
-                inputMode="numeric"
-                className="w-full px-3 py-2.5 rounded-2xl border border-zinc-300 bg-white"
-                defaultValue={recipe?.cookMins?.toString() ?? ""}
-              />
-            </div>
-            <div>
-              <Label>Servings</Label>
-              <input
-                name="servings"
-                type="number"
-                inputMode="numeric"
-                className="w-full px-3 py-2.5 rounded-2xl border border-zinc-300 bg-white"
-                defaultValue={recipe?.servings?.toString() ?? ""}
-              />
-            </div>
-
-            <div className="sm:col-span-2">
-              <Label>Tags</Label>
-              <TagsEditor value={tags} onChange={setTags} />
-            </div>
+        <section className="space-y-6">
+          <div className="space-y-2">
+            <Header textSize="text-5xl">
+              {recipe ? "Edit recipe" : "Create a new recipe"}
+            </Header>
+            <SubHeader>
+              {recipe
+                ? "Update details and save changes."
+                : "Fill in the details and save it to your cookbook."}
+            </SubHeader>
           </div>
-        </Panel>
+
+          <Input
+            label="Title"
+            name="title"
+            type="text"
+            placeholder="e.g. Spaghetti Bolognese"
+            required
+            defaultValue={recipe?.title ?? ""}
+          />
+
+          <TextArea
+            label="Description"
+            name="description"
+            rows={3}
+            defaultValue={recipe?.description ?? ""}
+          />
+
+          <div className="flex flex-col md:flex-row gap-4">
+            <Input
+              label="Prep time (mins)"
+              name="prepMins"
+              type="number"
+              inputMode="numeric"
+              defaultValue={recipe?.prepMins?.toString() ?? ""}
+            />
+            <Input
+              label="Cook time (mins)"
+              name="cookMins"
+              type="number"
+              inputMode="numeric"
+              defaultValue={recipe?.cookMins?.toString() ?? ""}
+            />
+          </div>
+
+          <div className="w-full md:w-1/2">
+            <Input
+              label="Servings"
+              name="servings"
+              type="number"
+              inputMode="numeric"
+              defaultValue={recipe?.servings?.toString() ?? ""}
+            />
+          </div>
+
+          <TagsEditor value={tags} onChange={setTags} />
+        </section>
 
         {/* Ingredients */}
-        <Panel
-          header="Ingredients"
-          subheader="List what you'll need. Press Enter to add more."
-        >
-          <div className="flex flex-col gap-3">
+        <section className="space-y-6">
+          <div className="ml-2 space-y-2">
+            <Header textSize="text-4xl">Ingredients</Header>
+            <SubHeader>
+              List what you&apos;ll need. Press Enter to add more.
+            </SubHeader>
+          </div>
+          <div className="flex flex-col gap-4">
             {ingredients.map((val, i) => (
-              <div key={`ing-${i}`} className="flex items-center gap-4">
-                <input
+              <div key={`ing-${i}`} className="flex items-center gap-2">
+                <Input
+                  name={`ing-${i}`}
                   type="text"
                   aria-label={`Ingredient ${i + 1}`}
-                  className="ingredient-input w-full px-3 py-2.5 rounded-2xl border border-zinc-300 bg-white"
+                  className="ingredient-input"
                   placeholder={i === 0 ? "e.g. 250g dried pasta" : ""}
                   value={val}
                   onChange={(e) =>
@@ -419,45 +409,40 @@ export default function RecipeForm({ mode, recipe, action }: RecipeFormProps) {
                     "input.ingredient-input",
                   )}
                 />
-
-                <button
+                <SecondaryButton
+                  width="w-10"
+                  height="h-10"
                   type="button"
-                  className="shrink-0 w-10 h-10 flex items-center justify-center
-              bg-linear-to-br from-slate-100 to-slate-200
-              rounded-full text-slate-800 border border-slate-300
-              cursor-pointer hover:brightness-90 active:brightness-75"
                   onClick={() => removeRow(setIngredients, i)}
                   disabled={ingredients.length === 1}
                   aria-label="Remove ingredient"
                 >
-                  <X size={16} />
-                </button>
+                  <X size={20} />
+                </SecondaryButton>
               </div>
             ))}
-            <div>
-              <button
-                type="button"
-                className="mt-2 px-4 h-11 flex gap-2 items-center bg-linear-to-br from-slate-100 to-slate-200 rounded-full text-slate-800 border border-slate-300 cursor-pointer hover:brightness-90 active:brightness-75"
-                onClick={() => addRow(setIngredients)}
-              >
-                Add Ingredient
-              </button>
-            </div>
           </div>
-        </Panel>
+          <PrimaryButton type="button" onClick={() => addRow(setIngredients)}>
+            Add Ingredient
+          </PrimaryButton>
+        </section>
 
         {/* Steps */}
-        <Panel
-          header="Steps"
-          subheader="Walk through how to make it, one step at a time."
-        >
-          <div className="flex flex-col gap-3">
+        <section className="space-y-6">
+          <div className="ml-2 space-y-2">
+            <Header textSize="text-4xl">Steps</Header>
+            <SubHeader>
+              Walk through how to make it, one step at a time.
+            </SubHeader>
+          </div>
+          <div className="flex flex-col gap-4">
             {steps.map((val, i) => (
               <div key={`step-${i}`} className="flex items-start gap-4">
-                <textarea
+                <TextArea
+                  name={`step-${i}`}
                   rows={2}
                   aria-label={`Step ${i + 1}`}
-                  className="step-input w-full px-3 py-2.5 rounded-2xl border border-zinc-300 bg-white"
+                  className="step-input"
                   placeholder={
                     i === 0 ? "e.g. Preheat oven to 180°C (fan)." : ""
                   }
@@ -468,35 +453,27 @@ export default function RecipeForm({ mode, recipe, action }: RecipeFormProps) {
                     )
                   }
                 />
-
-                <button
+                <SecondaryButton
+                  width="w-10"
+                  height="h-10"
                   type="button"
-                  className="shrink-0 w-10 h-10 flex items-center justify-center
-              bg-linear-to-br from-slate-100 to-slate-200
-              rounded-full text-slate-800 border border-slate-300
-              cursor-pointer hover:brightness-90 active:brightness-75"
                   onClick={() => removeRow(setSteps, i)}
                   disabled={steps.length === 1}
                   aria-label="Remove step"
                 >
-                  <X size={16} />
-                </button>
+                  <X size={20} />
+                </SecondaryButton>
               </div>
             ))}
-            <div>
-              <button
-                type="button"
-                className="mt-2 px-4 h-11 flex gap-2 items-center bg-linear-to-br from-slate-100 to-slate-200 rounded-full text-slate-800 border border-slate-300 cursor-pointer hover:brightness-90 active:brightness-75"
-                onClick={() => addRow(setSteps)}
-              >
-                Add Step
-              </button>
-            </div>
           </div>
-        </Panel>
+
+          <PrimaryButton type="button" onClick={() => addRow(setSteps)}>
+            Add Step
+          </PrimaryButton>
+        </section>
 
         {/* Notes */}
-        <Panel
+        {/* <Panel
           header="Notes"
           subheader="Preparation notes, variations, serving ideas, or any other personal touches."
         >
@@ -506,75 +483,105 @@ export default function RecipeForm({ mode, recipe, action }: RecipeFormProps) {
             className="w-full px-3 py-2.5 rounded-2xl border border-zinc-300 bg-white"
             defaultValue={recipe?.note ?? ""}
           />
-        </Panel>
+        </Panel> */}
 
         {/* Cover Image */}
-        <Panel
-          header="Picture"
-          subheader="Choose a cover picture (JPEG, PNG, WebP)"
-        >
-          <div>
-            <input
-              ref={fileInputRef}
-              type="file"
-              accept="image/jpeg,image/png,image/webp"
-              onChange={onPick}
-              className="block w-full rounded-2xl border border-slate-300 bg-linear-to-br from-slate-100 to-slate-200 px-3 py-2.5 hover:brightness-90 active:brightness-75 cursor-pointer"
-              disabled={uploading}
-            />
+        <section className="space-y-6">
+          <div className="ml-2 space-y-2">
+            <Header textSize="text-4xl">Picture</Header>
+            <SubHeader>Choose a cover image to show with your recipe</SubHeader>
+          </div>
 
-            {/* Upload status + inline delete (under the file input) */}
-            <div className="mt-2 flex flex-wrap items-center gap-3 text-sm">
-              {(uploading || deleting) && (
-                <span className="flex items-center gap-2 text-zinc-600">
-                  <span className="animate-spin h-4 w-4 border-2 border-orange-500 border-t-transparent rounded-full"></span>
-                  {uploading ? "Uploading…" : "Deleting…"}
-                </span>
-              )}
-
-              {!uploading && !deleting && imageKey && !uploadError && (
-                <div className="flex items-center gap-3">
-                  <span className="text-emerald-600">
-                    Uploaded successfully
-                  </span>
-                  <button
-                    type="button"
-                    disabled={uploading || deleting}
-                    onClick={async () => {
-                      // This path is an explicit *delete*; shows "Deleting…"
-                      await deleteImage();
-                    }}
-                    className="rounded-md border border-zinc-300 bg-white px-2 py-1 text-xs hover:bg-zinc-50 disabled:opacity-50"
-                  >
-                    Remove
-                  </button>
+          <div className="w-full">
+            {imagePreview ? (
+              /* Success state: preview + remove button */
+              <div className="space-y-4">
+                <div className="relative aspect-video w-full overflow-hidden rounded-2xl border border-white/80">
+                  <Image
+                    src={imagePreview}
+                    alt="Cover image preview"
+                    fill
+                    sizes="100vw"
+                    className="object-cover"
+                  />
                 </div>
-              )}
-
-              {uploadError && (
-                <span className="text-red-600">
-                  Upload failed: {uploadError}
-                </span>
-              )}
-              {imageNotice && (
-                <span className="text-zinc-700">{imageNotice}</span>
-              )}
-            </div>
-
-            {/* Preview image */}
-            {imagePreview && (
-              <div className="mt-3 relative aspect-video w-full overflow-hidden rounded-lg border">
-                <Image
-                  src={imagePreview}
-                  alt="Cover image preview"
-                  fill
-                  sizes="100vw"
-                  className={`object-cover ${uploadError ? "opacity-70 grayscale" : ""}`}
-                />
+                <SecondaryButton
+                  type="button"
+                  onClick={deleteImage}
+                  disabled={deleting}
+                >
+                  {deleting ? (
+                    <>
+                      <span>Removing…</span>
+                      <Loader2 size={20} className="animate-spin" />
+                    </>
+                  ) : (
+                    "Remove photo"
+                  )}
+                </SecondaryButton>
               </div>
+            ) : (
+              /* Upload zone: idle, uploading, or error */
+              <label
+                className={`m-2 group block rounded-2xl border-3 border-dashed border-rose-500 transition-colors
+                  ${uploading ? "cursor-not-allowed opacity-80" : "cursor-pointer hover:brightness-125 hover:bg-white/30"}`}
+              >
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept="image/*"
+                  onChange={onPick}
+                  className="hidden"
+                  disabled={uploading}
+                />
+                <div className="flex flex-col items-center justify-center gap-3 py-10 px-6 text-center">
+                  {uploading ? (
+                    <>
+                      <Loader2
+                        size={42}
+                        className="text-rose-500 animate-spin"
+                      />
+                      <p className="text-slate-800">Uploading image…</p>
+                    </>
+                  ) : uploadError ? (
+                    <>
+                      <CircleAlert size={38} className="text-rose-500" />
+
+                      <div className="space-y-1">
+                        <p className="text-rose-600 font-semibold">
+                          {uploadError}
+                        </p>
+                        <div className="text-sm text-slate-800 flex gap-1">
+                          <span>
+                            If this problem persists, please try again later or
+                          </span>
+                          <Link href="/support/issues">
+                            <TertiaryButton type="button" className="z-10">
+                              contact support
+                            </TertiaryButton>
+                          </Link>
+                        </div>
+                      </div>
+                    </>
+                  ) : (
+                    <>
+                      <ImagePlus size={38} className="text-rose-500" />
+                      <div className="space-y-1">
+                        <p className="text-slate-800">
+                          Drop your photo here or{" "}
+                          <span className="font-extrabold bg-linear-to-r from-orange-500 to-rose-500 bg-clip-text text-transparent">
+                            click to browse
+                          </span>
+                        </p>
+                        <p className="text-sm text-slate-600">Max 20 MB</p>
+                      </div>
+                    </>
+                  )}
+                </div>
+              </label>
             )}
           </div>
-        </Panel>
+        </section>
 
         {/* Save button */}
         {saveError && (
@@ -585,65 +592,26 @@ export default function RecipeForm({ mode, recipe, action }: RecipeFormProps) {
             </div>
           </div>
         )}
-        <FormSubmitButton
-          pendingLabel="Saving..."
-          isPending={saving}
-          disabled={uploading || deleting}
-        >
-          Save
-        </FormSubmitButton>
+
+        <div className="pt-8 max-w-md mx-auto">
+          <PrimaryButton
+            className="shadow-xl shadow-rose-300/50"
+            size="lg"
+            width="w-full"
+            type="submit"
+          >
+            {saving ? (
+              <>
+                Saving...
+                <Loader2 size={28} className="ml-2 animate-spin" />
+              </>
+            ) : (
+              <>Save Recipe</>
+            )}
+          </PrimaryButton>
+        </div>
       </form>
     </div>
-  );
-}
-
-// ────────────────────────────────────────────────────────────────────────────
-// Components
-// ────────────────────────────────────────────────────────────────────────────
-
-// Floating panel wrapper
-function Panel({
-  header,
-  subheader,
-  first,
-  icon,
-  children,
-}: {
-  header: string;
-  subheader?: string;
-  first?: boolean;
-  icon?: React.ReactNode;
-  children: React.ReactNode;
-}) {
-  return (
-    <section className="rounded-3xl border border-white/70 bg-white/95 p-8 shadow-lg backdrop-blur">
-      {first ? (
-        <div className="mb-6 flex flex-col sm:flex-row items-center sm:items-start gap-3 sm:gap-6 md:mb-8">
-          {icon && (
-            <div className="hidden sm:flex w-20 h-18 items-center justify-center rounded-3xl bg-linear-to-br from-orange-100 to-rose-100 text-rose-500 border border-rose-200">
-              {icon}
-            </div>
-          )}
-          <div className="text-center sm:text-start">
-            <h1 className="text-3xl font-bold leading-tight text-gray-900 md:text-4xl">
-              {header}
-            </h1>
-            {subheader && (
-              <p className="text-gray-700">{subheader}</p>
-            )}
-          </div>
-        </div>
-      ) : (
-        <>
-          <h3 className="text-2xl font-bold">{header}</h3>
-          {subheader && (
-            <p className="mt-1 text-sm text-zinc-600">{subheader}</p>
-          )}
-        </>
-      )}
-
-      <div className={first ? "" : "mt-4"}>{children}</div>
-    </section>
   );
 }
 
@@ -663,9 +631,11 @@ function TagsEditor({
   };
   const remove = (t: string) => onChange(value.filter((x) => x !== t));
   return (
-    <div className="flex flex-col gap-4">
-      <div className="flex items-center gap-2">
-        <input
+    <div className="w-full">
+      <div className="w-full flex items-end gap-2">
+        <Input
+          label="Tags (press enter to add)"
+          name="tags"
           type="text"
           value={draft}
           onChange={(e) => setDraft(e.target.value)}
@@ -677,62 +647,36 @@ function TagsEditor({
             if (e.key === "Backspace" && draft === "" && value.length)
               remove(value[value.length - 1]);
           }}
-          placeholder="e.g. Dinner, Healthy..."
-          className="w-full rounded-2xl border border-zinc-300 bg-white/95 px-3 py-2.5"
+          placeholder="Dinner, Healthy, Party ..."
           aria-label="Add tag"
         />
-        <button
-          type="button"
-          onClick={add}
-          className="shrink-0 px-3 py-2 flex items-center gap-2
-              bg-linear-to-br from-slate-100 to-slate-200
-              rounded-full text-sm text-slate-800 border border-slate-300
-              cursor-pointer hover:brightness-90 active:brightness-75"
-        >
-          <TagIcon size={16} />
+
+        <PrimaryButton type="button" height="h-12" onClick={add}>
           Add
-        </button>
+          <TagIcon size={16} />
+        </PrimaryButton>
       </div>
 
       {value.length >= 1 && (
-        <div className="w-full h-max mb-1 flex flex-wrap gap-2">
+        <div className="w-full h-max mt-6 flex flex-wrap gap-2">
           {value.map((t) => (
-            <div
+            <button
               key={t}
-              className="group flex items-center gap-1 rounded-full bg-linear-to-br from-orange-100 to-rose-100 text-rose-500 border border-rose-200 px-3 py-1 font-medium text-nowrap"
+              type="button"
+              onClick={() => remove(t)}
+              aria-label={`Remove tag ${t}`}
             >
-              <span className="ml-1">{t}</span>
-              <button
-                type="button"
-                onClick={() => remove(t)}
-                aria-label={`Remove tag ${t}`}
-                className="rounded-full p-0.5 cursor-pointer"
-              >
-                <X size={14} className="text-orange-600" />
-              </button>
-            </div>
+              <Tag interactive>
+                <span>{t}</span>
+                <X size={16} className="ml-2" />
+              </Tag>
+            </button>
           ))}
         </div>
       )}
     </div>
   );
 }
-
-const Label = ({
-  htmlFor,
-  children,
-}: {
-  htmlFor?: string;
-  children: React.ReactNode;
-}) => (
-  <label htmlFor={htmlFor} className="mb-1 block text-sm font-medium">
-    {children}
-  </label>
-);
-
-// ────────────────────────────────────────────────────────────────────────────
-// Helpers
-// ────────────────────────────────────────────────────────────────────────────
 
 const sanitizeLines = (xs: string[]) => xs.map((s) => s.trim()).filter(Boolean);
 

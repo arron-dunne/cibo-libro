@@ -30,7 +30,7 @@ export function RecipeImage({
   // Show skeleton while trying to sign an R2 image
   // const showSkeleton = !!imageKey && (loading || (!url && !error));
 
-  // If we have a signed R2 URL, use Next/Image (optimized for your host or unoptimized)
+  // If we have a signed R2 URL, use Next/Image
   if (signedUrl) {
     return (
       <div className="relative w-full h-full">
@@ -64,11 +64,11 @@ export function RecipeImage({
 
   // Final placeholder
   return (
-    <div className="w-full h-full flex flex-col items-center justify-center bg-linear-to-br from-orange-100 to-rose-100">
+    <div className="w-full h-full flex flex-col items-center justify-center bg-linear-to-br from-white to-rose-50">
       <div className="text-orange-400">
-        <ImageIcon size={32} />
+        <ImageIcon className="size-8 sm:size-12" />
       </div>
-      <p className="mt-2 text-xs font-medium text-zinc-500">
+      <p className="mt-2 text-xs sm:text-sm font-medium text-slate-600">
         No image available
       </p>
     </div>

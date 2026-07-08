@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ArrowLeft, MailCheck, Send } from "lucide-react";
+import { ArrowLeft, MailCheck } from "lucide-react";
 import { resetPassword } from "./actions";
 import { SubmitButton } from "../components/SubmitButton";
 
@@ -65,7 +65,8 @@ export default async function ForgotPasswordPage({
                 outline-none focus:ring-2 border-zinc-300 focus:ring-blue-500"
           />
 
-          <SubmitButton text="Send Email" pendingText="Sending" icon={<Send size={22} />}/>
+          <SubmitButton text="Send Email" pendingText="Sending"/>
+          {/* <SubmitButton text="Send Email" pendingText="Sending" icon={<Send size={22} />}/> */}
         </form>
       )}
     </div>

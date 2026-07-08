@@ -2,7 +2,8 @@ import { notFound, redirect } from "next/navigation";
 import { auth } from "@/lib/auth/auth";
 import { prisma } from "@/lib/prisma";
 import RecipeForm from "@/app/components/recipes/RecipeForm";
-import { updateRecipe } from "./actions";
+import RecipeLinkForm from "@/app/components/recipes/RecipeLinkForm";
+import { updateRecipe, updateRecipeLink } from "./actions";
 
 export const dynamic = "force-dynamic";
 
@@ -21,6 +22,10 @@ export default async function EditRecipePage({
   });
 
   if (!recipe || recipe.ownerId !== session.user.id) notFound();
+
+  if (recipe.type === "EXTERNAL_LINK") {
+    return <RecipeLinkForm recipe={recipe} action={updateRecipeLink} />;
+  }
 
   return <RecipeForm mode="edit" recipe={recipe} action={updateRecipe} />;
 }

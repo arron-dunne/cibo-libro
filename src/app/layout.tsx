@@ -1,45 +1,40 @@
-import "@/styles/globals.css";
 import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import type { Metadata } from "next";
-import { Nunito } from "next/font/google";
+import { auth } from "@/lib/auth/auth";
+import "@/styles/globals.css";
+import { nunito } from "@/app/fonts";
+import { Footer } from "@/app/components/footer/Footer";
+import { Navbar } from "@/app/components/navbar/Navbar";
 
 export const metadata: Metadata = {
   title: "Cibo Libro",
   description: "A digital cookbook.",
 };
 
-const nunito = Nunito({ subsets: ["latin"], variable: "--font-nunito" });
-
 export default async function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const session = await auth();
+
   return (
     <html lang="en">
       <body className={nunito.className}>
         <Analytics />
         <SpeedInsights />
 
-        <div className="min-h-screen text-gray-900 antialiased">
+        <div className="min-h-screen antialiased flex flex-col">
           {/* Background */}
-          <div className="fixed h-screen w-full -z-10 overscroll-none inset-0">
-            <div
-              aria-hidden
-              className="absolute w-full h-full inset-0 bg-linear-to-br from-orange-400 via-orange-500 to-rose-500"
-            />
-            <div
-              aria-hidden
-              className="fixed -top-24 -left-24 h-72 w-72 rounded-full bg-orange-200/35 blur-3xl pointer-events-none "
-            />
-            <div
-              aria-hidden
-              className="fixed inset-0 bg-linear-to-b from-transparent to-white/10 pointer-events-none"
-            />
+          <div className="fixed h-full w-full -z-100 overscroll-none inset-0 bg-linear-to-br from-orange-100 to-rose-200">
           </div>
 
-          {children}
+          <Navbar session={session}/>
+          <div className="flex-1">
+            {children}
+          </div>
+          <Footer />
         </div>
       </body>
     </html>

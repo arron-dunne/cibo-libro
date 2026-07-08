@@ -4,7 +4,11 @@ import { z } from "zod";
 import { prisma } from "@/lib/prisma";
 import { auth } from "@/lib/auth/auth";
 import { uniqueRecipeSlug } from "@/lib/uniqueSlug";
-import { RecipeFormActionResponse, RecipeFormRecipe } from "@/types/recipe";
+import {
+  RecipeFormActionResponse,
+  RecipeFormRecipe,
+  RecipeLinkFormRecipe,
+} from "@/types/recipe";
 
 // Validation
 const UpdateRecipeSchema = z.object({
@@ -38,6 +42,70 @@ const UpdateRecipeSchema = z.object({
   note: z.string().trim().min(0).max(10000).nullable().optional(),
   imageKey: z.string().min(3).max(512).nullable().optional(),
 });
+
+const UpdateRecipeLinkSchema = z.object({
+  id: z.string(),
+  title: z.string().trim().min(1).max(1000),
+  description: z.string().trim().min(0).max(10000).nullable().optional(),
+  tags: z
+    .array(z.string())
+    .transform((xs) => xs.map((s) => s.trim()).filter(Boolean)),
+});
+
+export async function updateRecipeLink(
+  recipe: RecipeLinkFormRecipe,
+): Promise<RecipeFormActionResponse> {
+  try {
+    // user authentication
+    const session = await auth();
+    if (!session?.user?.id)
+      return { success: false, error: "Not authenticated" };
+    const userId = session.user.id;
+
+    // zod validation
+    const data = UpdateRecipeLinkSchema.parse(recipe);
+
+    // Validate user owns recipe
+    const existingRecipe = await prisma.recipe.findUnique({
+      where: { id: data.id },
+      select: { ownerId: true, title: true, slug: true, type: true },
+    });
+
+    if (!existingRecipe || existingRecipe.ownerId !== userId) {
+      return { success: false, error: "Unauthorized" };
+    }
+
+    if (existingRecipe.type !== "EXTERNAL_LINK") {
+      return { success: false, error: "Recipe is not a link card" };
+    }
+
+    // Update slug if title changed
+    let slug = existingRecipe.slug;
+    if (data.title !== existingRecipe.title) {
+      slug = await uniqueRecipeSlug(data.title);
+    }
+
+    // Perform update
+    const updated = await prisma.recipe.update({
+      where: { id: data.id },
+      data: {
+        title: data.title,
+        description: data.description ?? "",
+        tags: data.tags,
+        updatedAt: new Date(),
+        slug,
+      },
+      select: { slug: true },
+    });
+
+    return { success: true, slug: updated.slug };
+  } catch (error) {
+    if (error instanceof z.ZodError) {
+      return { success: false, error: error.issues[0]?.message ?? "Invalid input" };
+    }
+    return { success: false, error: "Something went wrong. Please try again." };
+  }
+}
 
 // Server Action
 export async function updateRecipe(

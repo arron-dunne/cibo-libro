@@ -1,6 +1,8 @@
 import { handleRegister } from "./actions";
 import { SubmitButton } from "../components/SubmitButton";
 import { CircleAlert } from "lucide-react";
+import { Header, SubHeader } from "@/app/components/text/Headers";
+import { TertiaryButton } from "@/app/components/buttons/Buttons";
 
 export default async function RegisterPage({
   searchParams,
@@ -13,16 +15,16 @@ export default async function RegisterPage({
     <>
       {/* Header */}
       <header className="text-center">
-        <h1 className="text-4xl font-bold">Create your account</h1>
-        <p className="mt-1 text-gray-600">
-          Get started with your new digital cookbook.
-        </p>
+        <Header className="mb-2">Get Started</Header>
+        <SubHeader className="justify-center">
+          Open your new cookbook for free
+        </SubHeader>
       </header>
 
       {/* Form */}
-      <form action={handleRegister} className="mt-6 space-y-5">
+      <form action={handleRegister} className="mt-6">
         <div>
-          <label htmlFor="email" className="text-sm font-semibold">
+          <label htmlFor="email" className="ml-2 font-semibold">
             Email
           </label>
           <input
@@ -30,7 +32,6 @@ export default async function RegisterPage({
             id="email"
             type="email"
             required
-            placeholder="you@example.com"
             className={`mt-1 px-4 py-3 w-full rounded-2xl border bg-white
               outline-none focus:ring-2
               ${error === "existing" ? "border-2 ring-blue-400 border-red-400" : "border-zinc-300 focus:ring-blue-500"}`}
@@ -43,8 +44,8 @@ export default async function RegisterPage({
           )}
         </div>
 
-        <div>
-          <label htmlFor="password" className="text-sm font-semibold">
+        <div className="mt-6">
+          <label htmlFor="password" className="ml-2 font-semibold">
             Password (at least 8 characters)
           </label>
           <input
@@ -54,15 +55,14 @@ export default async function RegisterPage({
             required
             autoComplete="new-password"
             minLength={8}
-            placeholder="••••••••"
             className={`mt-1 px-4 py-3 w-full rounded-2xl border bg-white
               outline-none focus:ring-2
               ${error === "mismatch" ? "border-2 ring-blue-400 border-red-400" : "border-zinc-300 focus:ring-blue-500"}`}
           />
         </div>
 
-        <div className="mb-8">
-          <label htmlFor="confirm-password" className="text-sm font-semibold">
+        <div className="mt-6">
+          <label htmlFor="confirm-password" className="ml-2 font-semibold">
             Confirm Password
           </label>
           <input
@@ -72,7 +72,6 @@ export default async function RegisterPage({
             required
             autoComplete="off"
             minLength={8}
-            placeholder="••••••••"
             className={`mt-1 px-4 py-3 w-full rounded-2xl border bg-white
               outline-none focus:ring-2
               ${error === "mismatch" ? "border-2 ring-blue-400 border-red-400" : "border-zinc-300 focus:ring-blue-500"}`}
@@ -85,13 +84,17 @@ export default async function RegisterPage({
           )}
         </div>
 
-        <SubmitButton text="Sign up" pendingText="Signing up" />
+        <div className="mt-8">
+          <SubmitButton text="Sign up" pendingText="Signing up" />
+        </div>
 
-        <div className="flex items-center justify-center gap-2 text-gray-600">
-          Already have an account?
-          <a href="/login" className="font-medium text-orange-700 hover:underline">
-            Login
-          </a>
+        <div className="mt-6 flex px-2 items-center justify-start text-slate-500">
+          <div className="flex gap-2 items-center">
+            <span className="text-slate-600 font-semibold">Need help?</span>
+            <a href="/support">
+              <TertiaryButton type="button">Support</TertiaryButton>
+            </a>
+          </div>
         </div>
       </form>
     </>

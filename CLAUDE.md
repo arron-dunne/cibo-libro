@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-Cibo Libro is a web app designed to be the best digital cookbook and assistant available. The goal is to be user's one-stop cooking app for all things food related. We want to orangise users recipes so they never forget one again. Let them browse and choose what to cook for dinner easily. We want to provide all the tools a food lover needs: unit conversion, browsing friends recipes, keeping a shopping list, and so much more. In the future we want to leverage the power of AI to be the cooking-brain for people: generating recipes, smart recommendations, orchastrating cooking and shopping seamlessly, and more. We want this to be a revenue-making product, but not greedy or expensive.
+Cibo Libro is a web app designed to be the best digital cookbook and cooking assistant available. The goal is to be user's one-stop cooking app for all things food related. We want to orangise users recipes so they never forget one again. Let them browse and choose what to cook for dinner easily. We want to provide all the tools a food lover needs: unit conversion, browsing friends recipes, keeping a shopping list, and so much more. In the future we want to leverage the power of AI to be the cooking-brain for people: generating recipes, smart recommendations, orchastrating cooking and shopping seamlessly, and more. We want this to be a revenue-making product, but not greedy or expensive.
 
 ### Philosophy
 
@@ -12,7 +12,7 @@ Cibo Libro translates literally from Italain as Food Book. We are the bridge bet
 
 ### Goal
 
-The goal is to acheive millions of regular users by providing an essential product that improves people's lives. The app should be the best on the market and beat every competitor out there on at least 1 front - price, features, visuals, performance etc. The visual design should be world-class - think apple liquid glass and not ai slop.
+The goal is to acheive thousands of regular users by providing an essential product that improves people's lives. The app should be the best on the market and beat every competitor out there on at least 1 front - price, features, visuals, performance etc. The visual design is world-class - think apple liquid glass and not ai slop.
 
 ### Features
 
@@ -30,20 +30,18 @@ The abstract features are in bold with some examples of features and how we coul
 
 ### UI/UX
 
-The aesthetic is warm, rounded, and premium — food-forward without being cold or clinical.
+The aesthetic is warm, rounded, playful and premium — food-forward without being cold or clinical.
 
-**Palette:** Orange-to-rose gradient as the primary brand colour (`from-orange-400 via-orange-500 to-rose-500`). White cards and surfaces sit on top of the gradient background. Zinc greys (`zinc-600`, `zinc-900`) for text. Rose accents for tags and interactive highlights.
+**Palette:** Orange-to-rose gradient as the primary brand colour (`from-orange-500 to-rose-500`) for primary buttons etc.`slate-800` for most text.
 
-**Background:** Fixed full-screen gradient with a soft blur orb (`bg-orange-200/35 blur-3xl`) for depth. Inspired by Apple liquid glass — layered, not flat.
+**Background:** Fixed full-screen gradient of softer shades of the primary colors (`from-orange-100` `to-rose-200`) to provide a warm feel without contrasting too strongly with the main page elements.
 
-**Font:** [Nunito](https://fonts.google.com/specimen/Nunito) (Google Fonts) — rounded, friendly, highly legible. Applied globally via `--font-nunito`.
+**Font:** Sansita for headers and Nunito for the rest - [src/app/fonts.ts]
 
-**Components:**
-- Cards: `rounded-2xl` / `rounded-3xl`, `shadow-lg`, white background, subtle `border-zinc-200`
-- Buttons: Gradient orange-to-rose pill shape, white text, `hover:brightness-90 active:brightness-75`
-- Tags: Pill badges with `from-orange-100 to-rose-100` fill and `border-rose-200`
-- Modals/menus: White `rounded-3xl` with `shadow-2xl`, `backdrop-blur-sm` overlays
-- Hover interactions: `hover:scale-105` on cards; brightness shifts on buttons
+**Components:** are abstracted where possible to ensure consistency throughout the site.
+- [Headers](src/app/components/text/Headers.tsx)
+- [Buttons] (src/app/components/buttons/Buttons.tsx)
+- [Form Inputs](src/app/components/forms/Inputs.tsx)
 
 **Icons:** Lucide React throughout.
 
