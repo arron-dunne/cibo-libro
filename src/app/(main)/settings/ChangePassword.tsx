@@ -1,8 +1,8 @@
 "use client";
 
-import { useState, useEffect, useActionState } from "react";
+import { useState, useActionState } from "react";
 import { changePassword } from "./actions";
-import { KeyRound, Loader2, X } from "lucide-react";
+import { KeyRound, Loader2 } from "lucide-react";
 import {
   PrimaryButton,
   SecondaryButton,

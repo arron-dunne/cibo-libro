@@ -18,7 +18,7 @@ export function Modal({
   isOpen,
   closeModal,
   icon: Icon,
-  header,
+  // header,
   subheader,
   // confirmAction,
   children,
@@ -38,7 +38,7 @@ export function Modal({
     }
     window.addEventListener("keydown", onKeyDown);
     return () => window.removeEventListener("keydown", onKeyDown);
-  }, [isOpen]);
+  }, [isOpen, closeModal]);
 
   return (
     <>

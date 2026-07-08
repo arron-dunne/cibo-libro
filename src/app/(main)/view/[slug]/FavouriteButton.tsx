@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { Heart } from "lucide-react";
 import { setRecipeFavourite } from "./actions";
-import { SecondaryButton, TertiaryButton } from "@/app/components/buttons/Buttons";
+import { SecondaryButton } from "@/app/components/buttons/Buttons";
 
 export function FavouriteButton({
   slug,

@@ -1,9 +1,6 @@
 "use client";
 
-import {
-  PrimaryButton,
-  SecondaryButton,
-} from "@/app/components/buttons/Buttons";
+import { PrimaryButton } from "@/app/components/buttons/Buttons";
 import { ArrowUpFromLine, Loader2 } from "lucide-react";
 import { startTransition, useState } from "react";
 import { exportRecipes } from "./actions";

@@ -3,12 +3,10 @@
 import {
   PrimaryButton,
   SecondaryButton,
-  TertiaryButton,
 } from "@/app/components/buttons/Buttons";
 import {
   ArrowLeft,
   ChefHat,
-  Ellipsis,
   EllipsisVertical,
   LinkIcon,
   Pencil,
@@ -23,7 +21,7 @@ interface ButtonBarProps {
   slug: string;
   isFavorite: boolean;
   recipeType: RecipeType;
-  deleteAction: any; //TODO : properly type
+  deleteAction: () => void;
   sourceUrl?: string | null;
 }
 
@@ -31,7 +29,7 @@ interface MoreOptionPopupProps {
   slug: string;
   isFavorite: boolean;
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
-  deleteAction: any; //TODO : properly type
+  deleteAction: () => void;
   sourceUrl?: string | null;
 }
 export function ButtonBar({

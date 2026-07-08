@@ -11,12 +11,11 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 }
 
 export function PrimaryButton({
-  type,
   size = "md",
   width = "w-max",
   height = "h-max",
   disabled = false,
-  className,
+  className = "",
   children,
   ...props
 }: ButtonProps) {

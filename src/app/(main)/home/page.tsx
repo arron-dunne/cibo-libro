@@ -15,8 +15,7 @@ import {
   RecipeCardProps,
 } from "@/app/components/recipes/RecipeCard";
 import { Header, SubHeader } from "@/app/components/text/Headers";
-import { PrimaryButton, SecondaryButton } from "@/app/components/buttons/Buttons";
-import Image from "next/image";
+import { PrimaryButton } from "@/app/components/buttons/Buttons";
 import { Tag } from "@/app/components/tags/Tags";
 
 export default async function HomePage() {

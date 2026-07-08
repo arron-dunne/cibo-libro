@@ -1,8 +1,6 @@
-import Image from "next/image";
 import { importRecipe } from "./actions";
 import { UrlInput } from "./UrlInput";
 import {
-  Download,
   LucideProps,
   MousePointerClick,
   UserPen,

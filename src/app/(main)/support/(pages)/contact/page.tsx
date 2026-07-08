@@ -1,8 +1,6 @@
 "use client";
 
 import {
-  CheckCircle,
-  CircleX,
   Loader2,
   Mail,
   MessageSquare,

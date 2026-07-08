@@ -7,7 +7,6 @@ import {
   CookingPot,
   Download,
   HomeIcon,
-  Import,
   Settings,
 } from "lucide-react";
 

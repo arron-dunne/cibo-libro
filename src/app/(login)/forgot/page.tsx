@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ArrowLeft, MailCheck, Send } from "lucide-react";
+import { ArrowLeft, MailCheck } from "lucide-react";
 import { resetPassword } from "./actions";
 import { SubmitButton } from "../components/SubmitButton";
 
