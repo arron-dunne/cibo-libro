@@ -10,6 +10,10 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   invalid?: boolean;
 }
 
+interface TertiaryButtonProps extends ButtonProps {
+  underline?: boolean;
+}
+
 export function PrimaryButton({
   size = "md",
   width = "w-max",
@@ -92,10 +96,10 @@ export function SecondaryButton({
   );
 }
 
-export function TertiaryButton({ children, className="", ...props }: ButtonProps) {
+export function TertiaryButton({ children, underline=true, className="", ...props }: TertiaryButtonProps) {
   return (
     <button
-      className={`flex no-wrap justify-center items-center gap-2 text-orange-600 font-bold underline cursor-pointer border border-transparent active:border-orange-500 ${className}`}
+      className={`${underline ? "underline" : "" }flex no-wrap justify-center items-center gap-2 text-orange-600 font-bold cursor-pointer border border-transparent active:border-orange-500 ${className}`}
       {...props}
     >
       {children}
