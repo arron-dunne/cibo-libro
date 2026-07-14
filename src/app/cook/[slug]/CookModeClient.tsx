@@ -195,7 +195,7 @@ export default function CookModeClient({
               <ul className="space-y-6">
                 {ingredients.map((line, i) => (
                   <li key={i}>
-                    <label className="flex items-center gap-3 cursor-pointer">
+                    <label className="flex items-center gap-3 cursor-pointer hover:text-stone-400">
                       <input
                         type="checkbox"
                         className="sr-only"
@@ -211,7 +211,7 @@ export default function CookModeClient({
                       )}
                       <span
                         className={`text-xl/9 leading-6 ${
-                          checked[i] ? "text-stone-400" : "text-black hover:text-stone-400"
+                          checked[i] ? "text-stone-400" : ""
                         }`}
                       >
                         {line}
