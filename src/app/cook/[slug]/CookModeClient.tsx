@@ -1,19 +1,21 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 import { extractIngredientKeyword } from "@/lib/ingredients/extractKeywords";
 import { StepText } from "./components/StepText";
 import {
   ArrowLeft,
   Circle,
-  CheckCircle2,
+  CheckCircle,
   ChevronLeft,
   ChevronRight,
   CookingPot,
   Pencil,
 } from "lucide-react";
 import {
+  PrimaryButton,
   SecondaryButton,
   TertiaryButton,
 } from "@/app/components/buttons/Buttons";
@@ -108,14 +110,30 @@ export default function CookModeClient({
   const canGoPrevious = currentStep !== "prepare";
   const canGoNext = currentStep !== "finish";
 
+  // Navigate with arrow keys
+  useEffect(() => {
+    function handleKeyDown(event: KeyboardEvent) {
+      if (event.key === "ArrowRight") {
+        event.preventDefault();
+        goToNext();
+      }
+      else if (event.key === "ArrowLeft") {
+        event.preventDefault();
+        goToPrevious();
+      }
+    }
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  })
+
   return (
-    <main className="h-dvh overflow-hidden mx-auto max-w-7xl px-4 py-4 sm:py-8 text-white flex flex-col gap-8 justify-between">
+    <main className="h-dvh overflow-hidden mx-auto max-w-7xl px-4 py-4 sm:py-8 flex flex-col gap-8 md:gap-12 justify-between">
       {/* Header */}
       <header className="flex flex-col gap-3">
         {/* Desktop header */}
         <div className="hidden sm:flex items-center justify-between gap-3">
           <Link href={`/view/${slug}`} aria-label="Back to recipe">
-            <TertiaryButton type="button">
+            <TertiaryButton type="button" underline={false}>
               <ArrowLeft size={20} />
               Back
             </TertiaryButton>
@@ -169,15 +187,15 @@ export default function CookModeClient({
       </header>
 
       {/* Main content area */}
-      <section className="w-full max-w-5xl mx-auto overflow-scroll flex-1">
+      <section className="relative w-full max-w-3xl mx-auto overflow-auto flex-1">
         {/* Prepare Ingredients step */}
         {currentStep === "prepare" && (
-          <div className="w-full max-w-2xl mx-auto">
+          <div className="w-full h-full">
             {ingredients.length ? (
-              <ul className="space-y-1">
+              <ul className="space-y-6">
                 {ingredients.map((line, i) => (
                   <li key={i}>
-                    <label className="flex items-center gap-3 px-3 py-2.5 cursor-pointer rounded-2xl hover:bg-orange-50 transition-colors">
+                    <label className="flex items-center gap-3 cursor-pointer hover:text-stone-400">
                       <input
                         type="checkbox"
                         className="sr-only"
@@ -187,13 +205,13 @@ export default function CookModeClient({
                         }
                       />
                       {checked[i] ? (
-                        <CheckCircle2 className="h-5 w-5 shrink-0 text-emerald-500" />
+                        <CheckCircle className="h-4 w-4 shrink-0 text-emerald-600" />
                       ) : (
-                        <Circle className="h-5 w-5 shrink-0 text-orange-300" />
+                        <Circle className="h-4 w-4 shrink-0 text-orange-600" />
                       )}
                       <span
-                        className={`text-base leading-6 ${
-                          checked[i] ? "text-gray-400" : "text-black"
+                        className={`text-xl/9 leading-6 ${
+                          checked[i] ? "text-stone-400" : ""
                         }`}
                       >
                         {line}
@@ -288,31 +306,42 @@ export default function CookModeClient({
 
         {/* Finish panel */}
         {currentStep === "finish" && (
-          <div className="max-w-2xl mx-auto rounded-4xl border border-white/60 bg-white shadow-xl text-gray-900 text-center px-10 pt-10 pb-8">
-            <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-linear-to-br from-orange-100 to-rose-100 text-rose-500">
-              <CookingPot size={28} />
-            </div>
-            <h2 className="mt-4 text-3xl font-bold text-gray-900">
-              Enjoy your meal!
-            </h2>
-            <p className="mt-2 text-gray-500">
-              All steps done — now comes the best part.
-            </p>
+          <div className="w-full h-full flex flex-col gap-8 items-center justify-center">
+            <Image 
+              src="/icons/food.png" 
+              alt="serving plate" 
+              width={512} 
+              height={512}
+              className="w-32"
+            />
 
-            <div className="mt-6 flex flex-col gap-3 sm:flex-row">
-              <Link
-                href="/all"
-                className="w-full inline-flex items-center justify-center gap-2 rounded-full bg-linear-to-r from-orange-500 to-rose-500 px-4 py-3 text-base font-semibold text-white hover:brightness-95 active:brightness-75"
-              >
-                <ArrowLeft className="h-4 w-4" />
-                Back to cookbook
+            <div className="space-y-2 text-center">
+              <h2 className="text-3xl font-bold">Bon Appétit</h2>
+              <p className="text-lg text-stone-600">
+                You completed this recipe. Now enjoy your meal! 
+              </p>
+            </div>
+
+            <div className="w-full flex flex-col gap-4 md:flex-row md:max-w-xl">
+              <Link href="/all" className="w-full">
+                <PrimaryButton 
+                  type="button"
+                  size="lg"
+                  width="w-full"
+                >
+                  <ArrowLeft className="h-6 w-6" />
+                  Back to cookbook
+                </PrimaryButton>
               </Link>
-              <Link
-                href={`/edit/${slug}`}
-                className="w-full inline-flex items-center justify-center gap-2 rounded-full bg-linear-to-br from-slate-100 to-slate-200 border border-slate-300 px-4 py-3 text-base font-semibold text-slate-800 hover:brightness-90 active:brightness-75"
-              >
-                <Pencil className="h-4 w-4" />
-                Edit this recipe
+              <Link href={`/edit/${slug}`} className="w-full">
+                <SecondaryButton 
+                  type="button"
+                  size="lg"
+                  width="w-full"
+                >
+                  <Pencil className="h-6 w-6" />
+                  Edit this recipe
+                </SecondaryButton>
               </Link>
             </div>
           </div>
@@ -320,51 +349,41 @@ export default function CookModeClient({
       </section>
 
       {/* Bottom navigation */}
-      <nav className="pb-8 h-18 z-10">
-        <div className="mb-4 h-1.5 w-full max-w-lg mx-auto rounded-full bg-white overflow-hidden">
-          <div
-            className="h-1.5 rounded-full bg-linear-to-r from-orange-500 to-rose-500"
-            style={{
-              width: `${progress * 100}%`,
-            }}
-          />
+      <nav className="w-72 z-10 mx-auto pb-4 flex gap-4 items-center justify-between">
+        <SecondaryButton
+          type="button"
+          onClick={goToPrevious}
+          disabled={!canGoPrevious}
+          size="custom"
+          height="h-12"
+          width="w-12"
+        >
+          <ChevronLeft size={20} />
+        </SecondaryButton>
+        <div className="text-lg sm:text-2xl font-semibold text-black">
+          {currentStep === "prepare" ? (
+            <>Ingredients</>
+          ) : currentStep === "finish" ? (
+            <>Finished</>
+          ) : (
+            <div className="flex items-end justify-center gap-2">
+              <span>Step {currentStep}</span>
+              <span className="text-base font-medium mb-0.5">
+                of {steps.length}
+              </span>
+            </div>
+          )}
         </div>
-        <div className="w-72 mx-auto flex gap-4 items-center justify-between">
-          <SecondaryButton
-            type="button"
-            onClick={goToPrevious}
-            disabled={!canGoPrevious}
-            size="custom"
-            height="h-12"
-            width="w-12"
-          >
-            <ChevronLeft size={20} />
-          </SecondaryButton>
-          <div className="text-lg sm:text-2xl font-semibold text-black">
-            {currentStep === "prepare" ? (
-              <>Ingredients</>
-            ) : currentStep === "finish" ? (
-              <>Finished</>
-            ) : (
-              <div className="flex items-end justify-center gap-2">
-                <span>Step {currentStep}</span>
-                <span className="text-base font-medium mb-0.5">
-                  of {steps.length}
-                </span>
-              </div>
-            )}
-          </div>
-          <SecondaryButton
-            type="button"
-            onClick={goToNext}
-            disabled={!canGoNext}
-            size="custom"
-            height="h-12"
-            width="w-12"
-          >
-            <ChevronRight className="h-5 w-5" />
-          </SecondaryButton>
-        </div>
+        <SecondaryButton
+          type="button"
+          onClick={goToNext}
+          disabled={!canGoNext}
+          size="custom"
+          height="h-12"
+          width="w-12"
+        >
+          <ChevronRight className="h-5 w-5" />
+        </SecondaryButton>
       </nav>
     </main>
   );
