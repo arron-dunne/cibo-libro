@@ -11,7 +11,6 @@ import {
   CheckCircle,
   ChevronLeft,
   ChevronRight,
-  CookingPot,
   Pencil,
 } from "lucide-react";
 import {
@@ -43,10 +42,10 @@ export default function CookModeClient({
   const [wakeLockActive, setWakeLockActive] = useState(false);
   const wakeLockRef = useRef<WakeLockSentinel | null>(null);
 
-  let progress: number;
-  if (currentStep === "prepare") progress = 0;
-  else if (currentStep === "finish") progress = 1;
-  else progress = currentStep / (steps.length + 1);
+  // let progress: number;
+  // if (currentStep === "prepare") progress = 0;
+  // else if (currentStep === "finish") progress = 1;
+  // else progress = currentStep / (steps.length + 1);
 
   useEffect(() => {
     if (!("wakeLock" in navigator)) return;

@@ -1,9 +1,8 @@
 import Link from "next/link";
-import { ArrowLeft, MailCheck } from "lucide-react";
 import { resetPassword } from "./actions";
 import { SubmitButton } from "../components/SubmitButton";
-import { PrimaryButton, SecondaryButton, TertiaryButton } from "@/app/components/buttons/Buttons";
-import { Header, SubHeader } from "@/app/components/text/Headers";
+import { PrimaryButton, SecondaryButton } from "@/app/components/buttons/Buttons";
+import { Header } from "@/app/components/text/Headers";
 import { Input } from "@/app/components/forms/Inputs";
 import { SuccessBanner } from "@/app/(main)/support/components/Banners";
 
@@ -19,7 +18,7 @@ export default async function ForgotPasswordPage({
     <div className="flex flex-col gap-8">
       <div className="mt-8 text-center space-y-4">
         <Header>Reset Password</Header>
-        <p className="text-stone-800">Enter your email address below and we'll send you instructions with how to reset your password.</p>
+        <p className="text-stone-800">Enter your email address below and we&apos;ll send you instructions with how to reset your password.</p>
       </div>
 
       {sent ? (
