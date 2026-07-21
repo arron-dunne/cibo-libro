@@ -14,7 +14,6 @@ export async function submitFeedback(
   formData: FormData,
 ): Promise<FeedbackActionState> {
   try {
-    throw new Error("temp")
     const session = await auth();
     const userId = session?.user?.id ?? undefined;
 

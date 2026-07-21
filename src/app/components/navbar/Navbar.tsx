@@ -124,20 +124,14 @@ export function Navbar({ session }: { session?: Session | null }) {
           </Link>
         </div>
       ) : (
-        <>
-          <Link
-            href="/login"
-            className="flex items-center justify-center rounded-full border border-white/70 bg-linear-to-br text-slate-900 from-slate-200 to-slate-300 px-4 py-2 font-semibold shadow hover:brightness-90 active:brightness-75"
-          >
-            Login
+        <div className="flex gap-4 h-max">
+          <Link className="hidden md:block" href="/register">
+            <SecondaryButton type="button">Register</SecondaryButton>
           </Link>
-          <Link
-            href="/register"
-            className="flex items-center justify-center border border-white/70 rounded-full bg-linear-to-br from-orange-500 to-rose-500 text-white px-4 py-2 font-semibold shadow hover:brightness-90 active:brightness-75"
-          >
-            Regsiter
+          <Link href="/login">
+            <PrimaryButton type="button">Login</PrimaryButton>
           </Link>
-        </>
+        </div>
       )}
     </nav>
   );
