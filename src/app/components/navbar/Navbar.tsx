@@ -86,12 +86,12 @@ export function Navbar({ session }: { session?: Session | null }) {
         ) : (
           <>
             {/* Navigation */}
-            <div className="hidden md:flex gap-6">
-              <DesktopNavLink type="home" />
-              <DesktopNavLink type="all" />
-              <DesktopNavLink type="new" />
-              <DesktopNavLink type="import" />
-              <DesktopNavLink type="settings" />
+            <div className="hidden md:flex gap-6 items-center">
+              <DesktopNavLink type="home" selected={/^\/home/.test(pathname)}/>
+              <DesktopNavLink type="all" selected={/^\/(all|view|edit)/.test(pathname)}/>
+              <DesktopNavLink type="new" selected={/^\/add/.test(pathname)}/>
+              <DesktopNavLink type="import" selected={/^\/import/.test(pathname)}/>
+              <DesktopNavLink type="settings" selected={/^\/settings/.test(pathname)}/>
             </div>
 
             {/* Logout */}

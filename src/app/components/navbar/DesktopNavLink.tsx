@@ -9,25 +9,25 @@ import {
   HomeIcon,
   Settings,
 } from "lucide-react";
+import { PrimaryButton, TertiaryButton } from "../buttons/Buttons";
 
 export type NavLinkType = "home" | "all" | "new" | "import" | "settings" | "logout";
 
-export function DesktopNavLink({ type }: { type: NavLinkType }) {
-  const { label, href, icon: Icon, highlight } = useInfo(type);
+export function DesktopNavLink({ type, selected }: { type: NavLinkType, selected: boolean }) {
+  
+  const { label, href, icon: Icon } = useInfo(type);
 
   return (
-    <Link
-      href={href}
-      className={`flex flex-col sm:flex-row items-center justify-center gap-0 sm:gap-1 font-medium rounded-full transition 
-      ${
-        highlight
-          ? "bg-linear-to-r from-orange-500 to-rose-500 text-white px-4 py-2 font-bold shadow"
-          : "text-orange-700 hover:brightness-200"
-      }`}
-    >
-      <Icon size={18} className="block sm:hidden"/>
-      {highlight && <Icon className="hidden sm:block" size={18} />}
-      <span className="text-xs sm:text-base">{label}</span>
+    <Link href={href}>
+      { selected ? 
+        <PrimaryButton type="button">
+          <Icon className="hidden sm:block" size={18} />
+          <span className="text-xs sm:text-base">{label}</span>
+        </PrimaryButton> : 
+        <TertiaryButton type="button" underline={false}>
+          <span className="text-xs sm:text-base">{label}</span>
+        </TertiaryButton>
+      }
     </Link>
   );
 }
@@ -41,35 +41,30 @@ export function useInfo(type: NavLinkType) {
         label: "Recipes",
         href: "/all",
         icon: CookingPot,
-        highlight: pathname === "/all" || RegExp("/view/").test(pathname) || RegExp("/edit/").test(pathname),
       };
     case "new":
       return {
         label: "Add",
         href: "/add",
         icon: CirclePlus,
-        highlight: pathname === "/add",
       };
     case "import":
       return {
         label: "Import",
         href: "/import",
         icon: Download,
-        highlight: RegExp("/import*").test(pathname),
       };
     case "settings":
       return {
         label: "Settings",
         href: "/settings",
         icon: Settings,
-        highlight: pathname === "/settings",
       };
     default:
       return {
         label: "Home",
         href: "/home",
         icon: HomeIcon,
-        highlight: pathname === "/home",
       };
   }
 }

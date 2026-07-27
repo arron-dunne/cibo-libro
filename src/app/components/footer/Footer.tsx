@@ -19,8 +19,8 @@ export function Footer() {
           <Image
             src="/icon.png"
             alt="icon"
-            width={50}
-            height={50}
+            width={91}
+            height={102}
             className="hidden sm:block"
           />
         </div>
