@@ -3,7 +3,6 @@ import React, { ButtonHTMLAttributes } from "react";
 type Size = "md" | "lg" | "xl" | "custom";
 
 interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
-  type: "submit" | "button" // required to prevent incorrect default assignment
   size?: Size;
   width?: string;
   height?: string;
@@ -19,6 +18,7 @@ export function PrimaryButton({
   width = "w-max",
   height = "h-max",
   disabled = false,
+  type = "button",
   className = "",
   children,
   ...props
@@ -50,6 +50,7 @@ export function PrimaryButton({
   return (
     <button
       className={`${width} ${height} ${sizeStyle} ${disabledStyle} flex no-wrap justify-center items-center gap-2 rounded-full bg-linear-to-r from-orange-500 to-rose-500 text-white font-bold ${className}`}
+      type={type}
       {...props}
     >
       {children}
@@ -62,6 +63,7 @@ export function SecondaryButton({
   width = "w-max",
   height = "h-max",
   className = "",
+  type = "button",
   children,
   disabled = false,
   ...props
@@ -82,13 +84,14 @@ export function SecondaryButton({
       break;
   }
 
-    const disabledStyle = disabled
+  const disabledStyle = disabled
     ? "cursor-not-allowed brightness-90"
-    : "cursor-pointer hover:bg-rose-100/70 active:bg-rose-200/80";
+    : "cursor-pointer hover:bg-stone-100/70 active:bg-rose-200/80";
 
   return (
     <button
       className={`${width} ${height} ${sizeStyle} ${disabledStyle} flex gap-2 justify-center items-center rounded-full bg-white/70 backdrop-blur-lg border border-rose-500/70 text-rose-500 font-bold ${className}`}
+      type={type}
       {...props}
     >
       {children}
@@ -96,10 +99,17 @@ export function SecondaryButton({
   );
 }
 
-export function TertiaryButton({ children, underline=true, className="", ...props }: TertiaryButtonProps) {
+export function TertiaryButton({
+  children,
+  underline = true,
+  type = "button",
+  className = "",
+  ...props
+}: TertiaryButtonProps) {
   return (
     <button
-      className={`${underline ? "underline" : "" }flex no-wrap justify-center items-center gap-2 text-orange-600 font-bold cursor-pointer border border-transparent hover:brightness-125 active:brightness-90 ${className}`}
+      className={`${underline ? "underline" : ""}flex no-wrap justify-center items-center gap-2 text-orange-600 font-bold cursor-pointer border border-transparent hover:brightness-125 active:brightness-90 ${className}`}
+      type={type}
       {...props}
     >
       {children}

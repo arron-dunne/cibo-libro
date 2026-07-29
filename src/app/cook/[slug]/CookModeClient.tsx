@@ -3,8 +3,6 @@
 import Link from "next/link";
 import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
-import { extractIngredientKeyword } from "@/lib/ingredients/extractKeywords";
-import { StepText } from "./components/StepText";
 import {
   ArrowLeft,
   Circle,
@@ -12,6 +10,7 @@ import {
   ChevronLeft,
   ChevronRight,
   Pencil,
+  X,
 } from "lucide-react";
 import {
   PrimaryButton,
@@ -37,18 +36,11 @@ export default function CookModeClient({
 }: CookModeClientProps) {
   const [currentStep, setCurrentStep] = useState<StepType>("prepare");
   const [checked, setChecked] = useState<Record<number, boolean>>({});
-  // const [ingredientsOpen, setIngredientsOpen] = useState(false);
-  // const [highlightEnabled, setHighlightEnabled] = useState(true);
   const [wakeLockActive, setWakeLockActive] = useState<boolean>(false);
   const wakeLockRef = useRef<WakeLockSentinel | null>(null);
 
   const [showIngredientsSidebar, setShowIngredientsSidebar] =
     useState<boolean>(false);
-
-  // let progress: number;
-  // if (currentStep === "prepare") progress = 0;
-  // else if (currentStep === "finish") progress = 1;
-  // else progress = currentStep / (steps.length + 1);
 
   useEffect(() => {
     if (!("wakeLock" in navigator)) return;
@@ -78,28 +70,12 @@ export default function CookModeClient({
     };
   }, []);
 
-  const ingredientKeywords = ingredients
-    .map(extractIngredientKeyword)
-    .filter(Boolean) as string[];
+  const currentStepText =
+    typeof currentStep === "number" ? steps[currentStep - 1] : null;
 
-  // const currentStepText =
-  //   typeof currentStep === "number" ? steps[currentStep - 1] : null;
-
-  // const activeIngredients = new Set(
-  //   ingredients.flatMap((ing, i) => {
-  //     const kw = extractIngredientKeyword(ing);
-  //     if (!kw || !currentStepText) return [];
-  //     return new RegExp(kw, "i").test(currentStepText) ? [i] : [];
-  //   }),
-  // );
-
-  function goToNext() {
-    if (currentStep === "prepare") {
-      setCurrentStep(steps.length > 0 ? 1 : "finish");
-    } else if (typeof currentStep === "number") {
-      setCurrentStep(currentStep < steps.length ? currentStep + 1 : "finish");
-    }
-  }
+  // Navigation handlers
+  const canGoPrevious = currentStep !== "prepare";
+  const canGoNext = currentStep !== "finish";
 
   function goToPrevious() {
     if (currentStep === "finish") {
@@ -109,16 +85,26 @@ export default function CookModeClient({
     }
   }
 
-  const canGoPrevious = currentStep !== "prepare";
-  const canGoNext = currentStep !== "finish";
+  function goToNext() {
+    if (currentStep === "prepare") {
+      setCurrentStep(steps.length > 0 ? 1 : "finish");
+    } else if (typeof currentStep === "number") {
+      setCurrentStep(currentStep < steps.length ? currentStep + 1 : "finish");
+    }
+  }
 
-  // Navigate with arrow keys
+  // Keyboard handlers
   useEffect(() => {
     function handleKeyDown(event: KeyboardEvent) {
-      if (event.key === "ArrowRight") {
+      if (event.key === "Escape") {
+        event.preventDefault();
+        closeSidebar();
+      }
+      else if (event.key === "ArrowRight") {
         event.preventDefault();
         goToNext();
-      } else if (event.key === "ArrowLeft") {
+      }
+      else if (event.key === "ArrowLeft") {
         event.preventDefault();
         goToPrevious();
       }
@@ -127,56 +113,51 @@ export default function CookModeClient({
     return () => window.removeEventListener("keydown", handleKeyDown);
   });
 
+  // Ingredients sidebar handlers
+  function closeSidebar() {
+    setShowIngredientsSidebar(false);
+  }
+
   function toggleShowIngredientsSidebar() {
     setShowIngredientsSidebar(!showIngredientsSidebar);
   }
 
   return (
-    <main className="w-full h-dvh overflow-hidden flex flex-row-reverse">
-      
-      {showIngredientsSidebar && <IngredientsSidebar />}
-      
+    <main className="relative w-full h-dvh overflow-hidden">
+      {showIngredientsSidebar && (
+        <IngredientsSidebar
+          ingredients={ingredients}
+          closeSidebar={closeSidebar}
+        />
+      )}
+
       <div className="w-full h-full mx-auto max-w-7xl px-4 py-4 sm:py-8 flex flex-col gap-8 md:gap-12 justify-between">
         {/* Header */}
-        <header className="flex flex-col gap-3">
-          {/* Desktop header */}
-          <DesktopHeader
-            title={title}
-            slug={slug}
-            toggleShowIngredientsSidebar={toggleShowIngredientsSidebar}
-          />
-
-          {/* Mobile header */}
-          <div className="sm:hidden">
-            <div className="flex items-center justify-between gap-3">
-              <Link
-                href={`/view/${slug}`}
-                aria-label="Back to recipe"
-                className="shrink-0 w-max flex items-center gap-2 text-base font-semibold text-slate-900 cursor-pointer hover:brightness-90 active:brightness-75"
-              >
-                <div className="p-2 rounded-full border border-white/80 bg-linear-to-br from-slate-200 to-slate-300 shadow-lg">
-                  <ArrowLeft size={18} />
-                </div>
-                Back
-              </Link>
-              <IngredientsButton
-                toggleShowIngredientsSidebar={toggleShowIngredientsSidebar}
-              />
-            </div>
-            <h1
-              className="mt-4 text-4xl font-black text-white text-center"
-              style={{
-                WebkitTextStroke: "4px black",
-                paintOrder: "stroke fill",
-              }}
-            >
-              {title}
-            </h1>
-          </div>
+        <header className="grid grid-cols-[auto] sm:grid-cols-[auto_1fr_auto] gap-4">
+          <Link
+            href={`/view/${slug}`}
+            aria-label="Back to recipe"
+            className="col-start-1 row-start-2 sm:row-start-1"
+          >
+            <SecondaryButton width="w-full sm:w-max">
+              <ArrowLeft size={20} />
+              Back
+            </SecondaryButton>
+          </Link>
+          <Header textSize="text-3xl sm:text-5xl" className="row-start-1 col-start-1 col-span-2 sm:col-start-2 sm:col-span-1 text-center truncate">
+            {title}
+          </Header>
+          <SecondaryButton
+            width="w-full sm:w-max"
+            className="row-start-2 col-start-2 sm:row-start-1 sm:col-start-3"
+            onClick={toggleShowIngredientsSidebar}
+          >
+            Ingredients
+          </SecondaryButton>
         </header>
 
         {/* Main content area */}
-        <section className="relative w-full max-w-3xl mx-auto overflow-auto flex-1 flex justify-center items-center">
+        <section className="relative w-full max-w-3xl mx-auto px-4 overflow-auto flex-1 flex justify-center items-center">
           {/* Prepare Ingredients step */}
           {currentStep === "prepare" && (
             <div className="w-max h-max">
@@ -220,76 +201,10 @@ export default function CookModeClient({
           {/* Step view — sidebar + step panel */}
           {typeof currentStep === "number" && (
             <div className="h-full flex items-center">
-              {/* Mobile ingredients dropdown */}
-              {/* <div className="sm:hidden">
-              <button
-                onClick={() => setIngredientsOpen((o) => !o)}
-                className="relative z-10 w-full flex items-center justify-between px-6 py-3 rounded-full border border-white/70 font-semibold text-slate-700 bg-linear-to-r from-slate-200 to-slate-300 cursor-pointer transition hover:brightness-90 active:brightness-75"
-              >
-                <span>Ingredients</span>
-                <ChevronDown
-                  size={16}
-                  className={`text-zinc-500 transition-transform ${ingredientsOpen ? "rotate-180" : ""}`}
-                />
-              </button>
-              {ingredientsOpen && ingredients.length > 0 && (
-                <div className="relative -top-6 mx-2 -mb-4 pt-10 pb-8 px-6 rounded-bl-3xl rounded-br-3xl bg-white shadow">
-                  <ul className="space-y-1">
-                    {ingredients.map((line, i) => (
-                      <li
-                        key={i}
-                        className={`text-black flex gap-2 items-center rounded-lg px-3 py-1 ${highlightEnabled && activeIngredients.has(i) ? "bg-linear-to-r from-orange-100 to-rose-100 font-bold" : ""}`}
-                      >
-                        <div className="h-2 w-2 shrink-0 rounded-full bg-orange-400" />
-                        {line}
-                      </li>
-                    ))}
-                  </ul>
-                  <HighlightToggle
-                    enabled={highlightEnabled}
-                    onToggle={() => setHighlightEnabled((h) => !h)}
-                    className="z-10 mt-4"
-                  />
-                </div>
-              )}
-            </div> */}
-
-              {/* Desktop ingredients sidebar */}
-              {/* <div className="hidden sm:block h-max sm:w-[33%] rounded-4xl border border-white/60 bg-white shadow-xl text-gray-900 overflow-hidden">
-              <h3 className="px-6 pt-8 pb-5 text-2xl font-semibold text-black text-center">
-                Ingredients
-              </h3>
-              {ingredients.length ? (
-                <>
-                  <ul className="px-3 space-y-1">
-                    {ingredients.map((line, i) => (
-                      <li
-                        key={i}
-                        className={`flex gap-2 items-center rounded-lg px-3 py-1 ${highlightEnabled && activeIngredients.has(i) ? "bg-linear-to-r from-orange-100 to-rose-100 font-bold" : ""}`}
-                      >
-                        <div className="h-2 w-2 shrink-0 rounded-full bg-orange-400" />
-                        {line}
-                      </li>
-                    ))}
-                  </ul>
-                  <HighlightToggle
-                    enabled={highlightEnabled}
-                    onToggle={() => setHighlightEnabled((h) => !h)}
-                    className="px-6 py-4"
-                  />
-                </>
-              ) : (
-                <p className="px-6 pb-8 text-sm text-gray-500 text-center">
-                  No ingredients found.
-                </p>
-              )}
-            </div> */}
-
               {/* Step panel */}
-              <StepText
-                text={steps[currentStep - 1]}
-                keywords={ingredientKeywords}
-              />
+              <p className="text-center text-3xl/12 tracking-normal text-black">
+                {currentStepText}
+              </p>
             </div>
           )}
 
@@ -304,12 +219,7 @@ export default function CookModeClient({
                 className="w-32"
               />
 
-              <div className="space-y-2 text-center">
-                <h2 className="text-3xl font-bold">Bon Appétit</h2>
-                <p className="text-lg text-stone-600">
-                  You completed this recipe. Now enjoy your meal!
-                </p>
-              </div>
+              <h2 className="text-3xl">Bon Appétit!</h2>
 
               <div className="w-full flex flex-col gap-4 md:flex-row md:max-w-xl">
                 <Link href="/all" className="w-full">
@@ -330,18 +240,23 @@ export default function CookModeClient({
         </section>
 
         {/* Bottom navigation */}
-        <nav className="w-72 z-10 mx-auto pb-4 flex gap-4 items-center justify-between">
-          <SecondaryButton
-            type="button"
-            onClick={goToPrevious}
-            disabled={!canGoPrevious}
-            size="custom"
-            height="h-12"
-            width="w-12"
-          >
-            <ChevronLeft size={20} />
-          </SecondaryButton>
-          <div className="text-lg sm:text-2xl font-semibold text-black">
+        <nav className="max-w-72 w-full mx-auto pb-4 flex gap-4 items-center justify-between">
+          {currentStep === "prepare" ? (
+            <div className="size-12 opacity-0 shrink-0" />
+          ) : (
+            <PrimaryButton
+              onClick={goToPrevious}
+              disabled={!canGoPrevious}
+              size="custom"
+              height="h-12"
+              width="w-12"
+              className="shrink-0"
+            >
+              <ChevronLeft size={20} />
+            </PrimaryButton>
+          )}
+
+          <div className="text-2xl font-semibold text-black">
             {currentStep === "prepare" ? (
               <>Ingredients</>
             ) : currentStep === "finish" ? (
@@ -355,16 +270,21 @@ export default function CookModeClient({
               </div>
             )}
           </div>
-          <SecondaryButton
-            type="button"
-            onClick={goToNext}
-            disabled={!canGoNext}
-            size="custom"
-            height="h-12"
-            width="w-12"
-          >
-            <ChevronRight className="h-5 w-5" />
-          </SecondaryButton>
+
+          {currentStep === "finish" ? (
+            <div className="size-12 opacity-0 shrink-0" />
+          ) : (
+            <PrimaryButton
+              onClick={goToNext}
+              disabled={!canGoNext}
+              size="custom"
+              height="h-12"
+              width="w-12"
+              className="shrink-0"
+            >
+              <ChevronRight className="h-5 w-5" />
+            </PrimaryButton>
+          )}
         </nav>
       </div>
     </main>
@@ -387,43 +307,29 @@ function WakeLockIndicator({ active }: { active: boolean }) {
   );
 }
 
-function IngredientsButton({
-  toggleShowIngredientsSidebar,
+function IngredientsSidebar({
+  ingredients,
+  closeSidebar,
 }: {
-  toggleShowIngredientsSidebar: () => void;
+  ingredients: string[];
+  closeSidebar: () => void;
 }) {
   return (
-    <SecondaryButton type="button" onClick={toggleShowIngredientsSidebar}>
-      Ingredients
-    </SecondaryButton>
-  );
-}
-
-function DesktopHeader({
-  title,
-  slug,
-  toggleShowIngredientsSidebar,
-}: {
-  title: string;
-  slug: string;
-  toggleShowIngredientsSidebar: () => void;
-}) {
-  return (
-    <div className="hidden sm:flex items-center justify-between gap-3">
-      <Link href={`/view/${slug}`} aria-label="Back to recipe">
-        <TertiaryButton type="button" underline={false}>
-          <ArrowLeft size={20} />
-          Back
+    <div className="absolute right-0 top-0 max-w-sm w-full h-full z-10 bg-white p-8">
+      <div className="w-full flex justify-end">
+        <TertiaryButton underline={false} onClick={closeSidebar}>
+          <X size={32} />
         </TertiaryButton>
-      </Link>
-      <Header className="truncate">{title}</Header>
-      <IngredientsButton
-        toggleShowIngredientsSidebar={toggleShowIngredientsSidebar}
-      />
+      </div>
+      <h2 className="mt-4 text-2xl font-bold">Ingredients</h2>
+      <ul className="mt-4 space-y-2">
+        {ingredients.map((ing, i) => (
+          <li key={`ing-${i}`} className="flex gap-4 text-md">
+            <div className="z-10 h-2 w-2 mt-2 shrink-0 rounded-full bg-linear-to-r from-orange-500 to-rose-500" />
+            {ing}
+          </li>
+        ))}
+      </ul>
     </div>
   );
-}
-
-function IngredientsSidebar() {
-  return <div className="w-72 h-full bg-white"></div>;
 }
