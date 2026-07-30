@@ -1,7 +1,6 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
 import {
   CirclePlus,
   CookingPot,
@@ -33,7 +32,6 @@ export function DesktopNavLink({ type, selected }: { type: NavLinkType, selected
 }
 
 export function useInfo(type: NavLinkType) {
-  const pathname = usePathname();
 
   switch (type) {
     case "all":

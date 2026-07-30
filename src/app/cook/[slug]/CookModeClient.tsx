@@ -11,6 +11,7 @@ import {
   ChevronRight,
   Pencil,
   X,
+  Settings,
 } from "lucide-react";
 import {
   PrimaryButton,
@@ -18,6 +19,8 @@ import {
   TertiaryButton,
 } from "@/app/components/buttons/Buttons";
 import { Header } from "@/app/components/text/Headers";
+import { Modal } from "@/app/components/modals/Modal";
+import Toggle from "@/app/components/Toggle";
 
 interface CookModeClientProps {
   slug: string;
@@ -38,6 +41,8 @@ export default function CookModeClient({
   const [checked, setChecked] = useState<Record<number, boolean>>({});
   const [wakeLockActive, setWakeLockActive] = useState<boolean>(false);
   const wakeLockRef = useRef<WakeLockSentinel | null>(null);
+
+  const [showSettings, setShowSettings] = useState(false);
 
   const [showIngredientsSidebar, setShowIngredientsSidebar] =
     useState<boolean>(false);
@@ -70,6 +75,10 @@ export default function CookModeClient({
     };
   }, []);
 
+  function toggleWakeLock() {
+    setWakeLockActive(!wakeLockActive);
+  }
+
   const currentStepText =
     typeof currentStep === "number" ? steps[currentStep - 1] : null;
 
@@ -99,12 +108,10 @@ export default function CookModeClient({
       if (event.key === "Escape") {
         event.preventDefault();
         closeSidebar();
-      }
-      else if (event.key === "ArrowRight") {
+      } else if (event.key === "ArrowRight") {
         event.preventDefault();
         goToNext();
-      }
-      else if (event.key === "ArrowLeft") {
+      } else if (event.key === "ArrowLeft") {
         event.preventDefault();
         goToPrevious();
       }
@@ -112,6 +119,15 @@ export default function CookModeClient({
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
   });
+
+  // Settings handler
+  function openSettings() {
+    setShowSettings(true);
+  }
+
+  function closeSettings() {
+    setShowSettings(false);
+  }
 
   // Ingredients sidebar handlers
   function closeSidebar() {
@@ -131,29 +147,33 @@ export default function CookModeClient({
         />
       )}
 
+      {showSettings && (
+        <SettingsModal
+          isOpen={showSettings}
+          closeModal={closeSettings}
+          isWakeLock={wakeLockActive}
+          toggleWakeLock={toggleWakeLock}
+        />
+      )}
+
       <div className="w-full h-full mx-auto max-w-7xl px-4 py-4 sm:py-8 flex flex-col gap-8 md:gap-12 justify-between">
         {/* Header */}
-        <header className="grid grid-cols-[auto] sm:grid-cols-[auto_1fr_auto] gap-4">
-          <Link
-            href={`/view/${slug}`}
-            aria-label="Back to recipe"
-            className="col-start-1 row-start-2 sm:row-start-1"
+        <header className="grid grid-cols-[auto_1fr_auto] sm:grid-cols-[auto_auto_1fr_auto] gap-4">
+          <BackButton slug={slug} />
+
+          <SettingsButton
+            openSettings={openSettings}
+            closeSettings={closeSettings}
+          />
+
+          <Header
+            textSize="text-3xl sm:text-5xl"
+            className="row-start-1 col-start-1 col-span-3 sm:col-start-3 sm:col-span-1 text-center truncate"
           >
-            <SecondaryButton width="w-full sm:w-max">
-              <ArrowLeft size={20} />
-              Back
-            </SecondaryButton>
-          </Link>
-          <Header textSize="text-3xl sm:text-5xl" className="row-start-1 col-start-1 col-span-2 sm:col-start-2 sm:col-span-1 text-center truncate">
             {title}
           </Header>
-          <SecondaryButton
-            width="w-full sm:w-max"
-            className="row-start-2 col-start-2 sm:row-start-1 sm:col-start-3"
-            onClick={toggleShowIngredientsSidebar}
-          >
-            Ingredients
-          </SecondaryButton>
+
+          <IngredientsButton toggleSidebar={toggleShowIngredientsSidebar} />
         </header>
 
         {/* Main content area */}
@@ -162,10 +182,10 @@ export default function CookModeClient({
           {currentStep === "prepare" && (
             <div className="w-max h-max">
               {ingredients.length ? (
-                <ul className="space-y-6">
+                <ul className="space-y-6 sm:space-y-8">
                   {ingredients.map((line, i) => (
                     <li key={i}>
-                      <label className="flex items-center gap-3 cursor-pointer hover:text-stone-400">
+                      <label className="flex items-center gap-4 cursor-pointer hover:text-stone-400">
                         <input
                           type="checkbox"
                           className="sr-only"
@@ -180,7 +200,7 @@ export default function CookModeClient({
                           <Circle className="h-4 w-4 shrink-0 text-orange-600" />
                         )}
                         <span
-                          className={`text-xl/9 leading-6 ${
+                          className={`text-xl sm:text-2xl ${
                             checked[i] ? "text-stone-400" : ""
                           }`}
                         >
@@ -331,5 +351,73 @@ function IngredientsSidebar({
         ))}
       </ul>
     </div>
+  );
+}
+
+function BackButton({ slug }: { slug: string }) {
+  return (
+    <Link
+      href={`/view/${slug}`}
+      aria-label="Back to recipe"
+      className="col-start-1 row-start-2 sm:row-start-1"
+    >
+      <SecondaryButton width="w-10.5 sm:w-max" height="h-10.5">
+        <ArrowLeft size={20} />
+        <span className="hidden sm:block">Back</span>
+      </SecondaryButton>
+    </Link>
+  );
+}
+
+function SettingsButton({
+  openSettings,
+  closeSettings,
+}: {
+  openSettings: () => void;
+  closeSettings: () => void;
+}) {
+  return (
+    <SecondaryButton
+      width="w-10.5"
+      height="h-10.5"
+      size="custom"
+      className="col-start-3 row-start-2 sm:row-start-1 sm:col-start-2"
+      onClick={openSettings}
+    >
+      <Settings size={22} />
+    </SecondaryButton>
+  );
+}
+
+function IngredientsButton({ toggleSidebar }: { toggleSidebar: () => void }) {
+  return (
+    <SecondaryButton
+      width="w-full sm:w-max"
+      className="row-start-2 col-start-2 sm:row-start-1 sm:col-start-4"
+      onClick={toggleSidebar}
+    >
+      Ingredients
+    </SecondaryButton>
+  );
+}
+
+function SettingsModal({
+  isOpen,
+  closeModal,
+  isWakeLock,
+  toggleWakeLock,
+}: {
+  isOpen: boolean;
+  closeModal: () => void;
+  isWakeLock: boolean;
+  toggleWakeLock: () => void;
+}) {
+  return (
+    <Modal isOpen={isOpen} closeModal={closeModal} header="Settings">
+      <div className="flex justify-between">
+        Screen Lock
+        <Toggle isOn={isWakeLock} toggle={toggleWakeLock} />
+      </div>
+    </Modal>
   );
 }
