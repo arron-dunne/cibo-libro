@@ -4,7 +4,7 @@ import Link from "next/link";
 
 export default function AboutPage() {
   return (
-    <div className="mt-12 max-w-3xl mx-auto">
+    <div className="mt-12 max-w-2xl mx-auto text-lg">
       <Header>About</Header>
 
       <p className="mt-4">
@@ -45,7 +45,7 @@ export default function AboutPage() {
       <Link
         href="https://buy.stripe.com/28E8wObEx1pQ6sw8BxfEk00"
         target="_blank"
-        className="flex mt-8"
+        className="flex mt-12 mx-auto max-w-md"
       >
         <PrimaryButton type="button" width="w-full" size="lg">
           Leave a Tip

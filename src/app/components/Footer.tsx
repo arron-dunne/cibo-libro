@@ -14,17 +14,17 @@ export function Footer() {
   }
   
   return (
-    <footer className="mt-12 sm:mt-18 border-t border-white/80 bg-white/50 px-12 py-4 text-slate-600 backdrop-blur-xl flex flex-col sm:flex-row gap-4 items-center justify-between">
+    <footer className="mt-12 border-t border-white/80 bg-white/50 px-12 py-4 text-slate-600 backdrop-blur-xl flex flex-col md:flex-row gap-4 items-center justify-between">
         <div className="flex-1">
           <Image
             src="/icon.png"
-            alt="icon"
+            alt="Icon"
             width={91}
             height={102}
-            className="hidden sm:block"
+            className="hidden md:block w-8"
           />
         </div>
-        <nav className="flex justify-center flex-wrap gap-4 text-orange-700 font-semibold">
+        <nav className="flex justify-center flex-wrap gap-4 md:gap-8 text-orange-700 font-semibold">
           {/* <Link className="hover:underline" href="/about">
             About
           </Link> */}
@@ -44,9 +44,9 @@ export function Footer() {
             Support
           </Link>
         </nav>
-        <div className="text-sm flex-1 flex justify-end">
+        <span className="flex-1 text-end text-sm">
           © 2026 cibo libro. All rights reserved.
-        </div>
+        </span>
     </footer>
   );
 }

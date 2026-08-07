@@ -19,7 +19,7 @@ import {
   TertiaryButton,
 } from "@/app/components/buttons/Buttons";
 import { Header } from "@/app/components/text/Headers";
-import { Modal } from "@/app/components/modals/Modal";
+import { Modal } from "@/app/components/Modal";
 import Toggle from "@/app/components/Toggle";
 
 interface CookModeClientProps {

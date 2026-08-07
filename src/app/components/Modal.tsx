@@ -3,7 +3,7 @@
 import { LucideIcon, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
-import { TertiaryButton } from "../buttons/Buttons";
+import { TertiaryButton } from "./buttons/Buttons";
 
 interface ModalProps {
   isOpen: boolean;

@@ -4,12 +4,15 @@ import type { Metadata } from "next";
 import { auth } from "@/lib/auth/auth";
 import "@/styles/globals.css";
 import { nunito } from "@/app/fonts";
-import { Footer } from "@/app/components/footer/Footer";
+import { Footer } from "@/app/components/Footer";
 import { Navbar } from "@/app/components/navbar/Navbar";
 
 export const metadata: Metadata = {
   title: "Cibo Libro",
   description: "A digital cookbook.",
+  icons: {
+    icon: "/icon.png",
+  },
 };
 
 export default async function RootLayout({

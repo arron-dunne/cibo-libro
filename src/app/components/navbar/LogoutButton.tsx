@@ -59,7 +59,7 @@ export function LogoutButton({ action }: LogoutButtonProps) {
         typeof window !== "undefined" &&
         createPortal(
           <div
-            className={`fixed inset-0 z-20 flex items-center justify-center bg-black/50 backdrop-blur-sm px-4 transition duration-200 ${isDialogOpen ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"}`}
+            className={`fixed inset-0 z-100 flex items-center justify-center bg-black/50 backdrop-blur-sm px-4 transition duration-200 ${isDialogOpen ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"}`}
             aria-hidden={!isDialogOpen}
           >
             <div

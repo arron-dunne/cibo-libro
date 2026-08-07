@@ -33,7 +33,7 @@ export function Navbar({ session }: { session?: Session | null }) {
 
   return (
     <nav
-      className={`w-full sticky top-0 px-8 sm:px-12 z-10 flex gap-4 items-center justify-between transition-all border-white/80 ${scrolled ? "py-3 bg-white/50 backdrop-blur-xl border-b" : "pt-8 bg-transparent"}`}
+      className={`w-full sticky top-0 px-8 sm:px-12 z-40 flex gap-4 items-center justify-between transition-all border-white/80 ${scrolled ? "py-3 bg-white/50 backdrop-blur-xl border-b" : "pt-8 bg-transparent"}`}
     >
       {/* Logo */}
       <Link href="/" className="w-60 grow" aria-label="cibo libro home">
