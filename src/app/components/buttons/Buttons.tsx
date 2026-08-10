@@ -101,14 +101,14 @@ export function SecondaryButton({
 
 export function TertiaryButton({
   children,
-  underline = true,
-  type = "button",
-  className = "",
+  underline=true,
+  type="button",
+  className="",
   ...props
 }: TertiaryButtonProps) {
   return (
     <button
-      className={`${underline ? "underline" : ""}flex no-wrap justify-center items-center gap-2 text-orange-600 font-bold cursor-pointer border border-transparent hover:brightness-125 active:brightness-90 ${className}`}
+      className={`${underline ? "underline" : ""} flex no-wrap justify-center items-center gap-2 text-orange-600 font-bold cursor-pointer border border-transparent hover:brightness-125 active:brightness-90 ${className}`}
       type={type}
       {...props}
     >

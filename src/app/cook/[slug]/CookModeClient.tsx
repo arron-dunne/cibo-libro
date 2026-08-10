@@ -39,7 +39,7 @@ export default function CookModeClient({
 }: CookModeClientProps) {
   const [currentStep, setCurrentStep] = useState<StepType>("prepare");
   const [checked, setChecked] = useState<Record<number, boolean>>({});
-  const [wakeLockActive, setWakeLockActive] = useState<boolean>(false);
+  const [wakeLockActive, setWakeLockActive] = useState<boolean>(true);
   const wakeLockRef = useRef<WakeLockSentinel | null>(null);
 
   const [showSettings, setShowSettings] = useState(false);
@@ -182,7 +182,7 @@ export default function CookModeClient({
           {currentStep === "prepare" && (
             <div className="w-max h-max">
               {ingredients.length ? (
-                <ul className="space-y-6 sm:space-y-8">
+                <ul className="space-y-6">
                   {ingredients.map((line, i) => (
                     <li key={i}>
                       <label className="flex items-center gap-4 cursor-pointer hover:text-stone-400">
@@ -200,7 +200,7 @@ export default function CookModeClient({
                           <Circle className="h-4 w-4 shrink-0 text-orange-600" />
                         )}
                         <span
-                          className={`text-xl sm:text-2xl ${
+                          className={`text-lg sm:text-xl ${
                             checked[i] ? "text-stone-400" : ""
                           }`}
                         >
