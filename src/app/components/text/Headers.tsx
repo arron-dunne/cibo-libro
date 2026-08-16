@@ -3,7 +3,7 @@ import { sansita } from "@/app/fonts";
 
 export function Header({
   className = "",
-  textSize="text-5xl",
+  textSize="text-4xl sm:text-5xl",
   children,
 }: {
   className?: string;
@@ -21,7 +21,7 @@ export function Header({
 
 export function SubHeader({
   className = "",
-  textSize="text-lg",
+  textSize="text-base sm:text-lg",
   children,
 }: {
   className?: string;

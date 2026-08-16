@@ -36,14 +36,13 @@ export function Navbar({ session }: { session?: Session | null }) {
       className={`w-full sticky top-0 px-8 sm:px-12 z-40 flex gap-4 items-center justify-between transition-all border-white/80 ${scrolled ? "py-3 bg-white/50 backdrop-blur-xl border-b" : "pt-8 bg-transparent"}`}
     >
       {/* Logo */}
-      <Link href="/" className="w-60 grow" aria-label="cibo libro home">
+      <Link href="/" className="grow" aria-label="cibo libro home">
         <Image
           src="/logo.png"
           alt="cibo libro"
           width={563}
           height={102}
-          className={`${scrolled ? "max-w-48 sm:max-w-52" : "max-w-52 sm:max-w-56"} w-full h-auto`}
-          // className={`${scrolled ? "h-9 sm:h-10" : "h-10 sm:h-12"} w-auto`}
+          className={`${scrolled ? "max-w-48 sm:max-w-52" : "max-w-48 sm:max-w-56"} w-full h-auto`}
           priority
         />
       </Link>
@@ -109,7 +108,7 @@ export function Navbar({ session }: { session?: Session | null }) {
         )
       ) : pathname === "/register" ? (
         <>
-          <span className="font-semibold text-slate-600">
+          <span className="hidden sm:block font-semibold text-slate-600">
             Already have an account?
           </span>
           <Link href="/login">
@@ -118,7 +117,7 @@ export function Navbar({ session }: { session?: Session | null }) {
         </>
       ) : pathname === "/login" ? (
         <div className="flex gap-2 sm:gap-4 items-center">
-          <span className="font-semibold text-slate-600">New here?</span>
+          <span className="hidden sm:block font-semibold text-slate-600">New here?</span>
           <Link href="/register">
             <SecondaryButton type="button">Create Account</SecondaryButton>
           </Link>
