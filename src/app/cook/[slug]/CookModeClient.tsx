@@ -1,6 +1,5 @@
 "use client";
 
-import Link from "next/link";
 import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 import {
@@ -18,6 +17,10 @@ import {
   SecondaryButton,
   TertiaryButton,
 } from "@/app/components/buttons/Buttons";
+import {
+  PrimaryLinkButton,
+  SecondaryLinkButton,
+} from "@/app/components/LinkButtons";
 import { Header } from "@/app/components/text/Headers";
 import { Modal } from "@/app/components/Modal";
 import Toggle from "@/app/components/Toggle";
@@ -276,18 +279,18 @@ export default function CookModeClient({
               <h2 className="text-3xl">Bon Appétit!</h2>
 
               <div className="w-full flex flex-col gap-4 md:flex-row md:max-w-xl">
-                <Link href="/all" className="w-full">
-                  <PrimaryButton type="button" size="lg" width="w-full">
-                    <ArrowLeft className="h-6 w-6" />
-                    Back to cookbook
-                  </PrimaryButton>
-                </Link>
-                <Link href={`/edit/${slug}`} className="w-full">
-                  <SecondaryButton type="button" size="lg" width="w-full">
-                    <Pencil className="h-6 w-6" />
-                    Edit this recipe
-                  </SecondaryButton>
-                </Link>
+                <PrimaryLinkButton href="/all" size="lg" width="w-full">
+                  <ArrowLeft className="h-6 w-6" />
+                  Back to cookbook
+                </PrimaryLinkButton>
+                <SecondaryLinkButton
+                  href={`/edit/${slug}`}
+                  size="lg"
+                  width="w-full"
+                >
+                  <Pencil className="h-6 w-6" />
+                  Edit this recipe
+                </SecondaryLinkButton>
               </div>
             </div>
           )}
@@ -374,16 +377,16 @@ function IngredientsSidebar({
 
 function BackButton({ slug }: { slug: string }) {
   return (
-    <Link
+    <SecondaryLinkButton
       href={`/view/${slug}`}
       aria-label="Back to recipe"
       className="col-start-1 row-start-2 sm:row-start-1"
+      width="w-10.5 sm:w-max"
+      height="h-10.5"
     >
-      <SecondaryButton width="w-10.5 sm:w-max" height="h-10.5">
-        <ArrowLeft size={20} />
-        <span className="hidden sm:block">Back</span>
-      </SecondaryButton>
-    </Link>
+      <ArrowLeft size={20} />
+      <span className="hidden sm:block">Back</span>
+    </SecondaryLinkButton>
   );
 }
 

@@ -18,10 +18,9 @@ import { Input, TextArea } from "@/app/components/forms/Inputs";
 import {
   PrimaryButton,
   SecondaryButton,
-  TertiaryButton,
 } from "@/app/components/buttons/Buttons";
+import { TertiaryLinkButton } from "@/app/components/LinkButtons";
 import { Tag } from "../tags/Tags";
-import Link from "next/link";
 
 // ────────────────────────────────────────────────────────────────────────────
 // Types
@@ -555,11 +554,12 @@ export default function RecipeForm({ mode, recipe, action }: RecipeFormProps) {
                           <span>
                             If this problem persists, please try again later or
                           </span>
-                          <Link href="/support/issues">
-                            <TertiaryButton type="button" className="z-10">
-                              contact support
-                            </TertiaryButton>
-                          </Link>
+                          <TertiaryLinkButton
+                            href="/support/issue"
+                            className="z-10"
+                          >
+                            contact support
+                          </TertiaryLinkButton>
                         </div>
                       </div>
                     </>

@@ -1,7 +1,9 @@
-import Link from "next/link";
 import { resetPassword } from "./actions";
 import { SubmitButton } from "../components/SubmitButton";
-import { PrimaryButton, SecondaryButton } from "@/app/components/buttons/Buttons";
+import {
+  PrimaryLinkButton,
+  SecondaryLinkButton,
+} from "@/app/components/LinkButtons";
 import { Header } from "@/app/components/text/Headers";
 import { Input } from "@/app/components/forms/Inputs";
 import { SuccessBanner } from "@/app/(main)/support/components/Banners";
@@ -25,16 +27,12 @@ export default async function ForgotPasswordPage({
         <>
           <SuccessBanner text="Email requested. Check your inbox and spam folder." />
           
-          <Link href="/forgot">
-            <PrimaryButton type="button" size="lg" width="w-full">
-              Send Another Email
-            </PrimaryButton>
-          </Link>
-          <Link href="/login">
-            <SecondaryButton type="button" size="lg" width="w-full">
-              Back to Login
-            </SecondaryButton>
-          </Link>
+          <PrimaryLinkButton href="/forgot" size="lg" width="w-full">
+            Send Another Email
+          </PrimaryLinkButton>
+          <SecondaryLinkButton href="/login" size="lg" width="w-full">
+            Back to Login
+          </SecondaryLinkButton>
         </>
       ) : (
         <form action={resetPassword} className="space-y-8">

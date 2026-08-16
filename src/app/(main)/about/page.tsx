@@ -1,6 +1,5 @@
-import { PrimaryButton } from "@/app/components/buttons/Buttons";
+import { PrimaryLinkButton } from "@/app/components/LinkButtons";
 import { Header } from "@/app/components/text/Headers";
-import Link from "next/link";
 
 export default function AboutPage() {
   return (
@@ -42,15 +41,16 @@ export default function AboutPage() {
         future of Cibo Libro
       </p>
 
-      <Link
+      <PrimaryLinkButton
         href="https://buy.stripe.com/28E8wObEx1pQ6sw8BxfEk00"
         target="_blank"
+        rel="noreferrer"
         className="flex mt-12 mx-auto max-w-md"
+        width="w-full"
+        size="lg"
       >
-        <PrimaryButton type="button" width="w-full" size="lg">
-          Leave a Tip
-        </PrimaryButton>
-      </Link>
+        Leave a Tip
+      </PrimaryLinkButton>
     </div>
   );
 }

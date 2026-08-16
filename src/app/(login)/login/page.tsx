@@ -1,7 +1,7 @@
 import { CircleAlert } from "lucide-react";
 import { handleSignIn } from "./actions";
 import { SubmitButton } from "../components/SubmitButton";
-import { TertiaryButton } from "@/app/components/buttons/Buttons";
+import { TertiaryLinkButton } from "@/app/components/LinkButtons";
 import { Header, SubHeader } from "@/app/components/text/Headers";
 import { Input } from "@/app/components/forms/Inputs";
 
@@ -79,14 +79,12 @@ export default async function LoginPage({
         </div>
 
         <div className="mt-6 flex px-2 items-center justify-between text-gray-600">
-          <a href="/forgot">
-            <TertiaryButton type="button">Forgot password</TertiaryButton>
-          </a>
+          <TertiaryLinkButton href="/forgot">
+            Forgot password
+          </TertiaryLinkButton>
           <div className="flex gap-2 items-center">
             <span className="text-slate-600 font-semibold">Need help?</span>
-            <a href="/support">
-              <TertiaryButton type="button">Support</TertiaryButton>
-            </a>
+            <TertiaryLinkButton href="/support">Support</TertiaryLinkButton>
           </div>
         </div>
       </form>

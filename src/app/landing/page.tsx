@@ -1,9 +1,9 @@
 import Image from "next/image";
 import {
-  PrimaryButton,
-  SecondaryButton,
-  TertiaryButton,
-} from "@/app/components/buttons/Buttons";
+  PrimaryLinkButton,
+  SecondaryLinkButton,
+  TertiaryLinkButton,
+} from "@/app/components/LinkButtons";
 import { Header, SubHeader } from "@/app/components/text/Headers";
 import {
   Calendar,
@@ -13,7 +13,6 @@ import {
   ShoppingBasket,
   UsersRound,
 } from "lucide-react";
-import Link from "next/link";
 
 export default function LandingPage() {
   return (
@@ -42,24 +41,20 @@ export default function LandingPage() {
 
             {/* Buttons */}
             <div className="w-full flex justify-center lg:justify-start gap-4 flex-wrap">
-              <Link href="/register">
-                <PrimaryButton
-                  type="button"
-                  size="md"
-                  className="sm:px-5 sm:py-3 sm:text-xl"
-                >
-                  Start for free
-                </PrimaryButton>
-              </Link>
-              <Link href="#how-it-works">
-                <SecondaryButton
-                  type="button"
-                  size="md"
-                  className="sm:px-5 sm:py-3 sm:text-xl"
-                >
-                  See how it works
-                </SecondaryButton>
-              </Link>
+              <PrimaryLinkButton
+                href="/register"
+                size="md"
+                className="sm:px-5 sm:py-3 sm:text-xl"
+              >
+                Start for free
+              </PrimaryLinkButton>
+              <SecondaryLinkButton
+                href="#how-it-works"
+                size="md"
+                className="sm:px-5 sm:py-3 sm:text-xl"
+              >
+                See how it works
+              </SecondaryLinkButton>
             </div>
           </div>
 
@@ -210,9 +205,9 @@ export default function LandingPage() {
         <div className="mt-8 sm:mt-2 w-full flex justify-end">
           <div className="w-md px-2 flex flex-col sm:flex-row gap-0 md:gap-2 items-center justify-between text-lg">
             <SubHeader>What would you love to see?</SubHeader>
-            <Link href="/support/feedback">
-              <TertiaryButton type="button">Request a feature</TertiaryButton>
-            </Link>
+            <TertiaryLinkButton href="/support/feedback">
+              Request a feature
+            </TertiaryLinkButton>
           </div>
         </div>
         <Image
@@ -239,16 +234,14 @@ export default function LandingPage() {
         className="w-full flex flex-col items-center text-center md:text-start"
       >
         <Header textSize="text-4xl sm:text-5xl">Ready to get cooking?</Header>
-        <Link className="mt-10 mb-12" href="register">
-          <PrimaryButton
-            type="button"
-            size="lg"
-            className="sm:px-9 sm:py-5 sm:text-2xl"
-          >
-            Create your free cookbook
-            <ChevronRight size={30} />
-          </PrimaryButton>
-        </Link>
+        <PrimaryLinkButton
+          className="mt-10 mb-12 sm:px-9 sm:py-5 sm:text-2xl"
+          href="/register"
+          size="lg"
+        >
+          Create your free cookbook
+          <ChevronRight size={30} />
+        </PrimaryLinkButton>
         {/* <div className="mt-16 flex flex-col md:flex-row gap-0 md:gap-3 items-center text-base">
           <SubHeader>Still not sure how it works?</SubHeader>
           <TertiaryButton type="button">

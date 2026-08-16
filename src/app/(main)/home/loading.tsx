@@ -9,6 +9,7 @@ import {
   Tag as TagIcon,
 } from "lucide-react";
 import { PrimaryButton } from "@/app/components/buttons/Buttons";
+import { PrimaryLinkButton } from "@/app/components/LinkButtons";
 import { Header, SubHeader } from "@/app/components/text/Headers";
 
 export default function Loading() {
@@ -88,11 +89,9 @@ export default function Loading() {
           <Header className="ml-2" textSize="text-3xl sm:text-4xl">
             Recently Added
           </Header>
-          <Link href="/all?sort=created">
-            <PrimaryButton type="button">
-              More <ChevronRight size={16} />
-            </PrimaryButton>
-          </Link>
+          <PrimaryLinkButton href="/all?sort=created">
+            More <ChevronRight size={16} />
+          </PrimaryLinkButton>
         </div>
         <div className="grid gap-6 grid-cols-2 lg:grid-cols-4" />
       </section>

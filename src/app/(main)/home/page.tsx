@@ -17,6 +17,7 @@ import {
 } from "@/app/components/recipes/RecipeCard";
 import { Header, SubHeader } from "@/app/components/text/Headers";
 import { PrimaryButton } from "@/app/components/buttons/Buttons";
+import { PrimaryLinkButton } from "@/app/components/LinkButtons";
 import { Tag } from "@/app/components/tags/Tags";
 
 export default async function HomePage() {
@@ -132,11 +133,9 @@ export default async function HomePage() {
       <section className="mt-10">
         <div className="flex items-center justify-between mb-4">
           <Header className="ml-2" textSize="text-3xl sm:text-4xl">Recently Added</Header>
-          <Link href="/all?sort=created">
-            <PrimaryButton type="button">
-              More <ChevronRight size={16} />
-            </PrimaryButton>
-          </Link>
+          <PrimaryLinkButton href="/all?sort=created">
+            More <ChevronRight size={16} />
+          </PrimaryLinkButton>
         </div>
         <div className="grid gap-6 grid-cols-2 lg:grid-cols-4">
           {recentRecipes.map((recipe, i) => (
