@@ -9,7 +9,7 @@ import { LogoutButton } from "./LogoutButton";
 import { logout } from "@/app/actions/logout";
 import { Session } from "next-auth";
 import { useEffect, useState } from "react";
-import { PrimaryButton, SecondaryButton } from "../buttons/Buttons";
+import { PrimaryLinkButton, SecondaryLinkButton } from "../LinkButtons";
 import { ChefHat, Home } from "lucide-react";
 
 export function Navbar({ session }: { session?: Session | null }) {
@@ -50,22 +50,16 @@ export function Navbar({ session }: { session?: Session | null }) {
       {/* Show different navbar depending on page and session */}
       {pathname === "/landing" ? (
         <>
-          <Link href="/login">
-            <PrimaryButton type="button" className="block md:hidden shrink-0">
-              <ChefHat size={20} className="-rotate-12" />
-              <span>
-                <span>Start</span>
-                <span className="hidden sm:inline">&nbsp;Cooking</span>
-              </span>
-            </PrimaryButton>
-          </Link>
+          <PrimaryLinkButton href="/login" className="block md:hidden shrink-0">
+            <ChefHat size={20} className="-rotate-12" />
+            <span>
+              <span>Start</span>
+              <span className="hidden sm:inline">&nbsp;Cooking</span>
+            </span>
+          </PrimaryLinkButton>
           <div className="hidden md:flex gap-4 h-max">
-            <Link href="/login">
-              <SecondaryButton type="button">Login</SecondaryButton>
-            </Link>
-            <Link href="/register">
-              <PrimaryButton type="button">Get Started</PrimaryButton>
-            </Link>
+            <SecondaryLinkButton href="/login">Login</SecondaryLinkButton>
+            <PrimaryLinkButton href="/register">Get Started</PrimaryLinkButton>
           </div>
         </>
       ) : session?.user ? (
@@ -74,12 +68,10 @@ export function Navbar({ session }: { session?: Session | null }) {
             {/* Home button */}
             <span className="text-slate-800">{session.user.email}</span>
             <div className="ml-4">
-              <Link href="/home">
-                <PrimaryButton type="button">
-                  <Home size={20} />
-                  Home
-                </PrimaryButton>
-              </Link>
+              <PrimaryLinkButton href="/home">
+                <Home size={20} />
+                Home
+              </PrimaryLinkButton>
             </div>
           </div>
         ) : (
@@ -111,25 +103,17 @@ export function Navbar({ session }: { session?: Session | null }) {
           <span className="hidden sm:block font-semibold text-slate-600">
             Already have an account?
           </span>
-          <Link href="/login">
-            <SecondaryButton type="button">Login</SecondaryButton>
-          </Link>
+          <SecondaryLinkButton href="/login">Login</SecondaryLinkButton>
         </>
       ) : pathname === "/login" ? (
         <div className="flex gap-2 sm:gap-4 items-center">
           <span className="hidden sm:block font-semibold text-slate-600">New here?</span>
-          <Link href="/register">
-            <SecondaryButton type="button">Create Account</SecondaryButton>
-          </Link>
+          <SecondaryLinkButton href="/register">Create Account</SecondaryLinkButton>
         </div>
       ) : (
         <div className="flex gap-4 h-max">
-          <Link className="hidden md:block" href="/register">
-            <SecondaryButton type="button">Register</SecondaryButton>
-          </Link>
-          <Link href="/login">
-            <PrimaryButton type="button">Login</PrimaryButton>
-          </Link>
+          <SecondaryLinkButton className="hidden md:block" href="/register">Register</SecondaryLinkButton>
+          <PrimaryLinkButton href="/login">Login</PrimaryLinkButton>
         </div>
       )}
     </nav>

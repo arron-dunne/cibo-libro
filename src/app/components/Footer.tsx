@@ -1,9 +1,8 @@
 "use client";
 
 import Image from "next/image";
-import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { TertiaryButton } from "./buttons/Buttons";
+import { TertiaryLinkButton } from "./LinkButtons";
 
 export function Footer() {
   const pathname = usePathname();
@@ -25,21 +24,11 @@ export function Footer() {
         />
       </div>
       <nav className="flex justify-center flex-wrap gap-4 md:gap-8 text-orange-700 font-semibold">
-        <Link className="hover:underline" href="/about">
-          <TertiaryButton underline={false} >About</TertiaryButton>
-        </Link>
-        <Link className="hover:underline" href="/support/terms">
-          <TertiaryButton underline={false} >Terms of Use</TertiaryButton>
-        </Link>
-        <Link className="hover:underline" href="/support/privacy">
-          <TertiaryButton underline={false} >Privacy Policy</TertiaryButton>
-        </Link>
-        <Link className="hover:underline" href="/support">
-          <TertiaryButton underline={false} >Contact</TertiaryButton>
-        </Link>
-        <Link className="hover:underline" href="/support">
-          <TertiaryButton underline={false} >Support</TertiaryButton>
-        </Link>
+        <TertiaryLinkButton className="hover:underline" href="/about" underline={false}>About</TertiaryLinkButton>
+        <TertiaryLinkButton className="hover:underline" href="/support/terms" underline={false}>Terms of Use</TertiaryLinkButton>
+        <TertiaryLinkButton className="hover:underline" href="/support/privacy" underline={false}>Privacy Policy</TertiaryLinkButton>
+        <TertiaryLinkButton className="hover:underline" href="/support" underline={false}>Contact</TertiaryLinkButton>
+        <TertiaryLinkButton className="hover:underline" href="/support" underline={false}>Support</TertiaryLinkButton>
       </nav>
       <span className="flex-1 text-end text-sm">
         © 2026 cibo libro. All rights reserved.
