@@ -188,18 +188,36 @@ On the `/all` endpoint users can view all their recipes stored in the database. 
 
 ## Testing
 
-Tests use Vitest with jsdom environment. Integration tests override to node environment.
+All tests are saved in `src/test`.
+
+### Test Framwork
+
+Unit and integration tests use Vitest with jsdom environment.
 
 ```bash
+# Run all unit tests
+npm run test:unit
+
+# Run all integration tests
+npm run test:int
+
 # Run specific test file
 npx vitest run src/test/unit/isSafeUrl.unit.test.ts
 
 # Run tests matching pattern
 npx vitest run -t "parseIsoDuration"
-
-# Watch mode
-npx vitest
 ```
+
+End-to-end tests use Playwright
+
+```bash
+# Run all end-to-end tests
+npm run test:e2e
+```
+
+### Writing Tests
+
+When more information about writing, reviewing, assessing and investigating tests is needed read the document `docs/test-guide.md`
 
 ## Path Aliases
 
