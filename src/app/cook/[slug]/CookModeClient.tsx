@@ -30,6 +30,7 @@ interface CookModeClientProps {
 }
 
 type StepType = "prepare" | "finish" | number;
+type WakeLockState = "on" | "off" | "unavailable";
 
 export default function CookModeClient({
   slug,
@@ -39,7 +40,7 @@ export default function CookModeClient({
 }: CookModeClientProps) {
   const [currentStep, setCurrentStep] = useState<StepType>("prepare");
   const [checked, setChecked] = useState<Record<number, boolean>>({});
-  const [wakeLockActive, setWakeLockActive] = useState<boolean>(true);
+  const [wakeLock, setWakeLock] = useState<WakeLockState>("on");
   const wakeLockRef = useRef<WakeLockSentinel | null>(null);
 
   const [showSettings, setShowSettings] = useState(false);
@@ -48,21 +49,53 @@ export default function CookModeClient({
     useState<boolean>(false);
 
   useEffect(() => {
-    if (!("wakeLock" in navigator)) return;
+    if (wakeLock === "unavailable") return;
+
+    if (!("wakeLock" in navigator)) {
+      setWakeLock("unavailable");
+      return;
+    }
+
+    if (wakeLock === "off") {
+      wakeLockRef.current?.release();
+      wakeLockRef.current = null;
+      return;
+    }
+
+    let cancelled = false;
+    let requesting = false;
 
     async function requestWakeLock() {
+      if (
+        requesting ||
+        document.visibilityState !== "visible" ||
+        (wakeLockRef.current && !wakeLockRef.current.released)
+      ) {
+        return;
+      }
+
+      requesting = true;
+
       try {
-        wakeLockRef.current = await navigator.wakeLock.request("screen");
-        setWakeLockActive(true);
-        wakeLockRef.current.addEventListener("release", () =>
-          setWakeLockActive(false),
-        );
+        const sentinel = await navigator.wakeLock.request("screen");
+
+        if (cancelled) {
+          await sentinel.release();
+          return;
+        }
+
+        wakeLockRef.current = sentinel;
+        sentinel.addEventListener("release", () => {
+          if (wakeLockRef.current === sentinel) wakeLockRef.current = null;
+        });
       } catch {
-        setWakeLockActive(false);
+        if (!cancelled) setWakeLock("unavailable");
+      } finally {
+        requesting = false;
       }
     }
 
-    requestWakeLock();
+    if (document.visibilityState === "visible") requestWakeLock();
 
     const handleVisibilityChange = () => {
       if (document.visibilityState === "visible") requestWakeLock();
@@ -70,13 +103,17 @@ export default function CookModeClient({
     document.addEventListener("visibilitychange", handleVisibilityChange);
 
     return () => {
+      cancelled = true;
       document.removeEventListener("visibilitychange", handleVisibilityChange);
       wakeLockRef.current?.release();
+      wakeLockRef.current = null;
     };
-  }, []);
+  }, [wakeLock]);
 
   function toggleWakeLock() {
-    setWakeLockActive(!wakeLockActive);
+    setWakeLock((current) =>
+      current === "on" ? "off" : current === "off" ? "on" : current,
+    );
   }
 
   const currentStepText =
@@ -151,7 +188,7 @@ export default function CookModeClient({
         <SettingsModal
           isOpen={showSettings}
           closeModal={closeSettings}
-          isWakeLock={wakeLockActive}
+          wakeLock={wakeLock}
           toggleWakeLock={toggleWakeLock}
         />
       )}
@@ -161,10 +198,7 @@ export default function CookModeClient({
         <header className="grid grid-cols-[auto_1fr_auto] sm:grid-cols-[auto_auto_1fr_auto] gap-4">
           <BackButton slug={slug} />
 
-          <SettingsButton
-            openSettings={openSettings}
-            closeSettings={closeSettings}
-          />
+          <SettingsButton openSettings={openSettings} />
 
           <Header
             textSize="text-3xl sm:text-5xl"
@@ -311,22 +345,6 @@ export default function CookModeClient({
   );
 }
 
-function WakeLockIndicator({ active }: { active: boolean }) {
-  return (
-    <div className="flex gap-2 shrink-0 items-center rounded-full bg-white/60 border border-white/80 text-black shadow px-3 py-1.5">
-      {active ? (
-        <span className="relative flex h-2.5 w-2.5">
-          <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
-          <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500" />
-        </span>
-      ) : (
-        <span className="inline-flex rounded-full h-2.5 w-2.5 bg-zinc-300" />
-      )}
-      <span className="text-sm font-semibold">Screen Awake</span>
-    </div>
-  );
-}
-
 function IngredientsSidebar({
   ingredients,
   closeSidebar,
@@ -371,10 +389,8 @@ function BackButton({ slug }: { slug: string }) {
 
 function SettingsButton({
   openSettings,
-  closeSettings,
 }: {
   openSettings: () => void;
-  closeSettings: () => void;
 }) {
   return (
     <SecondaryButton
@@ -404,19 +420,30 @@ function IngredientsButton({ toggleSidebar }: { toggleSidebar: () => void }) {
 function SettingsModal({
   isOpen,
   closeModal,
-  isWakeLock,
+  wakeLock,
   toggleWakeLock,
 }: {
   isOpen: boolean;
   closeModal: () => void;
-  isWakeLock: boolean;
+  wakeLock: WakeLockState;
   toggleWakeLock: () => void;
 }) {
   return (
     <Modal isOpen={isOpen} closeModal={closeModal} header="Settings">
       <div className="flex justify-between">
         Screen Lock
-        <Toggle isOn={isWakeLock} toggle={toggleWakeLock} />
+        <div className="flex flex-col items-end gap-1">
+          <Toggle
+            isOn={wakeLock === "on"}
+            toggle={toggleWakeLock}
+            disabled={wakeLock === "unavailable"}
+          />
+          {wakeLock === "unavailable" && (
+            <span className="text-sm text-neutral-500">
+              Wake lock unavailable
+            </span>
+          )}
+        </div>
       </div>
     </Modal>
   );
