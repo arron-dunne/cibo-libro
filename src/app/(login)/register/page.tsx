@@ -2,7 +2,6 @@ import { handleRegister } from "./actions";
 import { SubmitButton } from "../components/SubmitButton";
 import { CircleAlert } from "lucide-react";
 import { Header, SubHeader } from "@/app/components/text/Headers";
-import { TertiaryButton } from "@/app/components/buttons/Buttons";
 import { Input } from "@/app/components/forms/Inputs";
 
 export default async function RegisterPage({

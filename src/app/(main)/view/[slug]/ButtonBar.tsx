@@ -1,9 +1,6 @@
 "use client";
 
-import {
-  PrimaryButton,
-  SecondaryButton,
-} from "@/app/components/buttons/Buttons";
+import { SecondaryButton } from "@/app/components/buttons/Buttons";
 import {
   PrimaryLinkButton,
   SecondaryLinkButton,
@@ -69,12 +66,16 @@ export function ButtonBar({
         </SecondaryLinkButton>
 
         {recipeType === "EXTERNAL_LINK" ? (
-          <Link href={sourceUrl || ""} target="_blank">
-            <PrimaryButton type="button">
+          sourceUrl && (
+            <PrimaryLinkButton
+              href={sourceUrl}
+              target="_blank"
+              rel="noreferrer"
+            >
               <LinkIcon size={20} />
               View Original
-            </PrimaryButton>
-          </Link>
+            </PrimaryLinkButton>
+          )
         ) : (
           <PrimaryLinkButton href={`/cook/${slug}`}>
             <ChefHat size={20} className="-rotate-12 shrink-0" />
@@ -138,12 +139,16 @@ export function ButtonBar({
         {/* Primary action button */}
         {recipeType === "EXTERNAL_LINK" ? (
           // View Original
-          <Link href={sourceUrl || ""} target="_blank" rel="noreferrer">
-            <PrimaryButton type="button">
+          sourceUrl && (
+            <PrimaryLinkButton
+              href={sourceUrl}
+              target="_blank"
+              rel="noreferrer"
+            >
               <LinkIcon size={20} className="shrink-0" />
               <span className="text-nowrap">View Original</span>
-            </PrimaryButton>
-          </Link>
+            </PrimaryLinkButton>
+          )
         ) : (
           // Cook mode
           <PrimaryLinkButton href={`/cook/${slug}`}>
