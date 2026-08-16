@@ -17,8 +17,8 @@ import type * as Prisma from "./prismaNamespace"
 
 const config: runtime.GetPrismaClientConfig = {
   "previewFeatures": [],
-  "clientVersion": "7.5.0",
-  "engineVersion": "280c870be64f457428992c43c1f6d557fab6e29e",
+  "clientVersion": "7.9.1",
+  "engineVersion": "e922089b7d7502aff4249d5da3420f6fa55fc6ad",
   "activeProvider": "postgresql",
   "inlineSchema": "generator client {\n  provider = \"prisma-client\"\n  output   = \"../src/prisma/generated/\"\n}\n\ndatasource db {\n  provider = \"postgresql\"\n}\n\nenum RecipeType {\n  OWNED\n  EXTERNAL_FULL\n  EXTERNAL_LINK\n}\n\nenum ImportStatus {\n  PENDING\n  SUCCESS\n  FAILED\n}\n\nenum RecipeStatus {\n  DRAFT\n  PUBLISHED\n}\n\nenum UserContactType {\n  FEEDBACK\n  BUG\n  DMCA\n  REPORT\n  GENERAL\n}\n\nmodel User {\n  id           String   @id @default(cuid())\n  email        String   @unique\n  passwordHash String?\n  createdAt    DateTime @default(now())\n  updatedAt    DateTime @updatedAt\n\n  sessionVersion Int @default(0)\n\n  // Relations\n  recipes    Recipe[]\n  importJobs ImportJob[] // ← add this line\n  accounts   Account[]\n  sessions   Session[]\n\n  uploads      Upload[]\n  userContacts UserContact[]\n}\n\nmodel Recipe {\n  id               String       @id @default(cuid())\n  ownerId          String\n  type             RecipeType\n  title            String       @default(\"\")\n  description      String       @default(\"\")\n  prepMins         Int?\n  cookMins         Int?\n  servings         Int?\n  imageKey         String?      @unique\n  imageExternalUrl String?\n  ingredients      String[]\n  steps            String[]\n  tags             String[]\n  note             String       @default(\"\")\n  sourceUrl        String?\n  slug             String       @unique\n  isFavourite      Boolean      @default(false)\n  isPublic         Boolean      @default(false)\n  status           RecipeStatus @default(PUBLISHED)\n  createdAt        DateTime     @default(now())\n  updatedAt        DateTime     @updatedAt\n\n  owner User @relation(fields: [ownerId], references: [id], onDelete: Cascade)\n\n  @@index([ownerId])\n  @@index([isPublic])\n}\n\nmodel Upload {\n  id          String   @id @default(uuid()) // \"uploadId\" returned to client\n  userId      String\n  key         String   @unique // e.g. user/<userId>/<uuid>.<ext>\n  size        Int // bytes (after client compression)\n  contentType String // image/jpeg | image/png | image/webp\n  createdAt   DateTime @default(now())\n\n  user User @relation(fields: [userId], references: [id], onDelete: Cascade)\n\n  @@index([userId])\n}\n\nmodel ImportJob {\n  id         String       @id @default(cuid())\n  userId     String\n  sourceUrl  String\n  status     ImportStatus @default(PENDING)\n  rawHtml    String?\n  parsedJson Json?\n  errorMsg   String?\n  createdAt  DateTime     @default(now())\n  updatedAt  DateTime     @updatedAt\n\n  user User @relation(fields: [userId], references: [id], onDelete: Cascade)\n\n  @@index([userId, status])\n  @@index([sourceUrl])\n}\n\nmodel UserContact {\n  id          String          @id @default(cuid())\n  userId      String?\n  contactType UserContactType @default(GENERAL)\n  metaData    Json?\n  data        Json?\n  createdAt   DateTime        @default(now())\n\n  user User? @relation(fields: [userId], references: [id], onDelete: Cascade)\n\n  @@index([contactType])\n  @@index([userId])\n}\n\n/**\n * * Auth.js adapter tables **\n */\nmodel Account {\n  id                String  @id @default(cuid())\n  userId            String\n  type              String\n  provider          String\n  providerAccountId String\n  refresh_token     String? @db.Text\n  access_token      String? @db.Text\n  expires_at        Int?\n  token_type        String?\n  scope             String?\n  id_token          String? @db.Text\n  session_state     String?\n\n  user User @relation(fields: [userId], references: [id], onDelete: Cascade)\n\n  @@unique([provider, providerAccountId])\n}\n\nmodel Session {\n  id           String   @id @default(cuid())\n  sessionToken String   @unique\n  userId       String\n  expires      DateTime\n\n  user User @relation(fields: [userId], references: [id], onDelete: Cascade)\n}\n\nmodel VerificationToken {\n  identifier String\n  token      String   @unique\n  expires    DateTime\n\n  @@unique([identifier, token])\n}\n",
   "runtimeDataModel": {
@@ -82,7 +82,7 @@ export interface PrismaClientConstructor {
     LogOpts extends LogOptions<Options> = LogOptions<Options>,
     OmitOpts extends Prisma.PrismaClientOptions['omit'] = Options extends { omit: infer U } ? U : Prisma.PrismaClientOptions['omit'],
     ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs
-  >(options: Prisma.Subset<Options, Prisma.PrismaClientOptions> ): PrismaClient<LogOpts, OmitOpts, ExtArgs>
+  >(options: Prisma.PrismaClientConstructorArgs<Options>): PrismaClient<LogOpts, OmitOpts, ExtArgs>
 }
 
 /**
@@ -103,7 +103,7 @@ export interface PrismaClientConstructor {
 
 export interface PrismaClient<
   in LogOpts extends Prisma.LogLevel = never,
-  in out OmitOpts extends Prisma.PrismaClientOptions['omit'] = undefined,
+  in out OmitOpts extends Prisma.PrismaClientOptions['omit'] = Prisma.PrismaClientOptions['omit'],
   in out ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs
 > {
   [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['other'] }
@@ -180,7 +180,7 @@ export interface PrismaClient<
    * 
    * Read more in our [docs](https://www.prisma.io/docs/orm/prisma-client/queries/transactions).
    */
-  $transaction<P extends Prisma.PrismaPromise<any>[]>(arg: [...P], options?: { isolationLevel?: Prisma.TransactionIsolationLevel }): runtime.Types.Utils.JsPromise<runtime.Types.Utils.UnwrapTuple<P>>
+  $transaction<P extends Prisma.PrismaPromise<any>[]>(arg: [...P], options?: { maxWait?: number, timeout?: number, isolationLevel?: Prisma.TransactionIsolationLevel }): runtime.Types.Utils.JsPromise<runtime.Types.Utils.UnwrapTuple<P>>
 
   $transaction<R>(fn: (prisma: Omit<PrismaClient, runtime.ITXClientDenyList>) => runtime.Types.Utils.JsPromise<R>, options?: { maxWait?: number, timeout?: number, isolationLevel?: Prisma.TransactionIsolationLevel }): runtime.Types.Utils.JsPromise<R>
 

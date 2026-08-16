@@ -1,12 +1,14 @@
+import { Header } from "@/app/components/text/Headers";
 import Link from "next/link";
 
 export default function TermsPage() {
   return (
-    <article className="max-w-none rounded-3xl border border-white/70 bg-white/95 p-8 shadow-lg backdrop-blur text-orange-950 prose prose-orange prose-headings:font-semibold prose-headings:text-orange-900">
-      <h1 className="text-center text-4xl font-bold mb-2">Terms of Use</h1>
+    <article className="text-black prose prose-rose prose-headings:font-semibold">
+      
+      <Header className="text-center mb-0">Terms of Use</Header>
 
-      <p className="mb-6 text-center text-sm text-orange-700 border-t pt-2">
-        Last updated: November 2025
+      <p className="mb-6 text-center text-sm text-neautral-600">
+        Last updated: January 2026
       </p>
 
       <p>
@@ -23,9 +25,8 @@ export default function TermsPage() {
 
       <h2>1. About Us</h2>
       <p>
-        Cibo Libro is operated by <strong>Cibo Libro Ltd</strong>, a company
-        registered in England and Wales (Company No. [TBD]), with its registered
-        office at [Registered Office Address, UK]. You can contact us at{" "}
+        Cibo Libro is operated by <strong>Arron Dunne</strong>, an independent
+        developer based in Sydney, Australia. You can contact us at{" "}
         <a href="mailto:support@cibolibro.com">support@cibolibro.com</a>.
       </p>
 
@@ -61,12 +62,8 @@ export default function TermsPage() {
       </p>
       <p>
         If you publish recipes publicly, you warrant that you own or have
-        permission to publish them. Rights-holders can file takedown notices via
-        our{" "}
-        <Link href="/legal/dmca" className="underline">
-          DMCA / Copyright Policy
-        </Link>{" "}
-        page.
+        permission to publish them. Rights-holders can file takedown notices via{" "}
+        <a href="mailto:support@cibolibro.com">support@cibolibro.com</a>.
       </p>
 
       <h2>5. Intellectual Property</h2>
@@ -82,7 +79,7 @@ export default function TermsPage() {
       <h2>6. Privacy</h2>
       <p>
         Your privacy is important to us. See our{" "}
-        <Link href="/legal/privacy" className="underline">
+        <Link href="/support/privacy" className="underline">
           Privacy Policy
         </Link>{" "}
         for details on how we collect and use your data.
@@ -111,7 +108,7 @@ export default function TermsPage() {
 
       <h2>10. Limitation of Liability</h2>
       <p>
-        To the maximum extent permitted by law, Cibo Libro Ltd is not liable for
+        To the maximum extent permitted by law, We are not liable for
         any indirect, incidental, or consequential damages. Our total liability
         shall not exceed the amount (if any) you paid us in the 12 months prior
         to the claim.
@@ -125,8 +122,7 @@ export default function TermsPage() {
 
       <h2>12. Governing Law</h2>
       <p>
-        These Terms are governed by the laws of England and Wales. The courts of
-        England and Wales have exclusive jurisdiction.
+        These Terms are governed by the laws of Australia.
       </p>
 
       <h2>13. Contact</h2>
@@ -134,7 +130,7 @@ export default function TermsPage() {
         Questions? Email{" "}
         <a href="mailto:support@cibolibro.com">support@cibolibro.com</a> or
         visit our{" "}
-        <Link href="/contact" className="underline">
+        <Link href="/support/contact" className="underline">
           Contact page
         </Link>
         .

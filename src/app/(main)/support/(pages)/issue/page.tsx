@@ -38,11 +38,11 @@ export default function ReportIssuesPage() {
   return (
     <div>
       {state.status === "success" && (
-        <SuccessBanner text="Your issue was submitted." />
+        <SuccessBanner className="mb-8" text="Your issue was submitted." />
       )}
 
       {state.status === "error" && (
-        <ErrorBanner text="Something went wrong. Please try again or come back later." />
+        <ErrorBanner className="mb-8" text="Something went wrong. Please try again or come back later." />
       )}
 
       {/* Header */}

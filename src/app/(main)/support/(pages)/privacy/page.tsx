@@ -1,15 +1,14 @@
+import { Header } from "@/app/components/text/Headers";
 import Link from "next/link";
 
 export default function PrivacyPage() {
   return (
-    <article
-      className="max-w-none rounded-3xl p-8 shadow backdrop-blur
-      border border-white/70 bg-white/90 text-orange-950 
-      prose prose-orange prose-headings:font-semibold prose-headings:text-orange-900"
-    >
-      <h1 className="text-center text-4xl font-bold mb-2">Privacy Policy</h1>
-      <p className="text-center text-sm text-orange-700 border-t pt-2">
-        Last updated: November 2025
+    <article className="text-black prose prose-rose prose-headings:font-semibold">
+      
+      <Header className="mb-0 text-center">Privacy Policy</Header>
+      
+      <p className="mb-6 text-center text-sm text-neutral-600">
+        Last updated: January 2026
       </p>
 
       <p>
@@ -19,9 +18,9 @@ export default function PrivacyPage() {
 
       <h2>1. Who We Are</h2>
       <p>
-        Cibo Libro Ltd, registered in England & Wales (Company No. [TBD]),
-        Registered Office: [Registered Office Address, UK]. Email:{" "}
-        <a href="mailto:privacy@cibolibro.com">privacy@cibolibro.com</a>.
+        Cibo Libro is operated by <strong>Arron Dunne</strong>, an independent
+        developer based in Sydney, Australia. You can contact us at{" "}
+        <a href="mailto:support@cibolibro.com">support@cibolibro.com</a>.
       </p>
 
       <h2>2. Information We Collect</h2>
@@ -77,7 +76,7 @@ export default function PrivacyPage() {
 
       <h2>7. International Data Transfers</h2>
       <p>
-        Data may be processed in the UK, EU, US, or Australia with safeguards
+        Data may be processed in the US, UK, EU, or Australia with safeguards
         such as Standard Contractual Clauses (SCCs).
       </p>
 
@@ -86,9 +85,6 @@ export default function PrivacyPage() {
         <li>Access, correct, or delete your data</li>
         <li>Withdraw consent (where applicable)</li>
         <li>Request data export</li>
-        <li>
-          Lodge a complaint with the UK Information Commissioner’s Office (ICO)
-        </li>
       </ul>
 
       <h2>9. Cookies</h2>
@@ -99,7 +95,7 @@ export default function PrivacyPage() {
 
       <h2>10. Children</h2>
       <p>
-        Cibo Libro is intended for users aged 16+. We do not knowingly collect
+        Cibo Libro is intended for users aged 18+. We do not knowingly collect
         data from children.
       </p>
 
@@ -114,7 +110,7 @@ export default function PrivacyPage() {
         For privacy matters, email{" "}
         <a href="mailto:privacy@cibolibro.com">privacy@cibolibro.com</a> or
         visit our{" "}
-        <Link href="/legal/contact" className="underline">
+        <Link href="/support/contact" className="underline">
           Contact page
         </Link>
         .

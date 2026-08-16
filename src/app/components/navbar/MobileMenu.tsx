@@ -1,5 +1,7 @@
 "use client";
 
+import Image from "next/image";
+import { usePathname } from "next/navigation";
 import { useState } from "react";
 import { createPortal } from "react-dom";
 import { LogOut, Menu, X } from "lucide-react";
@@ -7,7 +9,6 @@ import { type NavLinkType } from "./DesktopNavLink";
 import { MobileNavLink } from "./MobileNavLink";
 import { logout } from "@/app/actions/logout";
 import { TertiaryButton } from "../buttons/Buttons";
-import Image from "next/image";
 
 const navItems: NavLinkType[] = ["home", "all", "new", "import", "settings"];
 
@@ -39,6 +40,7 @@ function Popup({
 }: {
   setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }) {
+  const pathname = usePathname();
   return (
     <>
       {/* black background */}
@@ -70,7 +72,7 @@ function Popup({
           <div className="mt-6 flex flex-col">
             {navItems.map((type) => (
               <div key={type} onClick={() => setIsOpen(false)}>
-                <MobileNavLink type={type} />
+                <MobileNavLink type={type} selected={new RegExp(`^/${type}`).test(pathname)} />
               </div>
             ))}
             <form className="w-full" action={logout}>

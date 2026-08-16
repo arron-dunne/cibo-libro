@@ -28,11 +28,11 @@ export default function ContactPage() {
   return (
     <div>
       {state.status === "success" && (
-        <SuccessBanner text="Message sent. Thanks for getting in touch." />
+        <SuccessBanner className="mb-8" text="Message sent. Thanks for getting in touch." />
       )}
 
       {state.status === "error" && (
-        <ErrorBanner text="Please try again or come back later" />
+        <ErrorBanner className="mb-8" text="Please try again or come back later" />
       )}
 
       {/* Header */}

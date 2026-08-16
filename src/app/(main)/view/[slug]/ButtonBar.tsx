@@ -1,9 +1,10 @@
 "use client";
 
+import { SecondaryButton } from "@/app/components/buttons/Buttons";
 import {
-  PrimaryButton,
-  SecondaryButton,
-} from "@/app/components/buttons/Buttons";
+  PrimaryLinkButton,
+  SecondaryLinkButton,
+} from "@/app/components/LinkButtons";
 import {
   ArrowLeft,
   ChefHat,
@@ -54,34 +55,32 @@ export function ButtonBar({
     <>
       {/* Mobile bar  */}
       <div className="mt-6 flex md:hidden justify-between items-center">
-        <Link
+        <SecondaryLinkButton
           href="/all"
+          size="custom"
+          width="w-10"
+          height="h-10"
           className="w-max flex items-center gap-3 text-lg font-semibold text-slate-900 cursor-pointer hover:brightness-90 active:brightness-75"
         >
-          <SecondaryButton
-            type="button"
-            size="custom"
-            width="w-10"
-            height="h-10"
-          >
-            <ArrowLeft size={20} />
-          </SecondaryButton>
-        </Link>
+          <ArrowLeft size={20} />
+        </SecondaryLinkButton>
 
         {recipeType === "EXTERNAL_LINK" ? (
-          <Link href={sourceUrl || ""} target="_blank">
-            <PrimaryButton type="button">
+          sourceUrl && (
+            <PrimaryLinkButton
+              href={sourceUrl}
+              target="_blank"
+              rel="noreferrer"
+            >
               <LinkIcon size={20} />
               View Original
-            </PrimaryButton>
-          </Link>
+            </PrimaryLinkButton>
+          )
         ) : (
-          <Link href={`/cook/${slug}`}>
-            <PrimaryButton type="button">
-              <ChefHat size={20} className="-rotate-12 shrink-0" />
-              <span className="text-nowrap">Start Cooking</span>
-            </PrimaryButton>
-          </Link>
+          <PrimaryLinkButton href={`/cook/${slug}`}>
+            <ChefHat size={20} className="-rotate-12 shrink-0" />
+            <span className="text-nowrap">Start Cooking</span>
+          </PrimaryLinkButton>
         )}
 
         <div className="relative" ref={menuRef}>
@@ -109,52 +108,53 @@ export function ButtonBar({
 
       {/* Deskop bar */}
       <div className="mt-6 hidden md:flex justify-between items-center">
-        <Link
+        <SecondaryLinkButton
           href="/all"
           className="w-max flex items-center gap-3 text-lg font-semibold text-slate-900 cursor-pointer hover:brightness-90 active:brightness-75"
         >
-          <SecondaryButton type="button">
-            <ArrowLeft size={20} />
-            <span className="hidden sm:block">Back</span>
-          </SecondaryButton>
-        </Link>
+          <ArrowLeft size={20} />
+          <span className="hidden sm:block">Back</span>
+        </SecondaryLinkButton>
 
         <div className="flex gap-2">
           <FavouriteButton slug={slug} initialIsFavourite={isFavorite} />
-          <Link href={`/edit/${slug}`}>
-            <SecondaryButton type="button">
-              <Pencil size={20} />
-              <span>Edit</span>
-            </SecondaryButton>
-          </Link>
+          <SecondaryLinkButton href={`/edit/${slug}`}>
+            <Pencil size={20} />
+            <span>Edit</span>
+          </SecondaryLinkButton>
           <DeleteButton slug={slug} />
           {sourceUrl && recipeType !== "EXTERNAL_LINK" && (
-            <Link href={sourceUrl} target="_blank" aria-label="View original">
-              <SecondaryButton type="button">
-                <LinkIcon size={20} />
-                <span>Original</span>
-              </SecondaryButton>
-            </Link>
+            <SecondaryLinkButton
+              href={sourceUrl}
+              target="_blank"
+              rel="noreferrer"
+              aria-label="View original"
+            >
+              <LinkIcon size={20} />
+              <span>Original</span>
+            </SecondaryLinkButton>
           )}
         </div>
 
         {/* Primary action button */}
         {recipeType === "EXTERNAL_LINK" ? (
           // View Original
-          <Link href={sourceUrl || ""} target="_blank" rel="noreferrer">
-            <PrimaryButton type="button">
+          sourceUrl && (
+            <PrimaryLinkButton
+              href={sourceUrl}
+              target="_blank"
+              rel="noreferrer"
+            >
               <LinkIcon size={20} className="shrink-0" />
               <span className="text-nowrap">View Original</span>
-            </PrimaryButton>
-          </Link>
+            </PrimaryLinkButton>
+          )
         ) : (
           // Cook mode
-          <Link href={`/cook/${slug}`}>
-            <PrimaryButton type="button">
-              <ChefHat size={20} className="-rotate-12 shrink-0" />
-              <span className="text-nowrap">Start Cooking</span>
-            </PrimaryButton>
-          </Link>
+          <PrimaryLinkButton href={`/cook/${slug}`}>
+            <ChefHat size={20} className="-rotate-12 shrink-0" />
+            <span className="text-nowrap">Start Cooking</span>
+          </PrimaryLinkButton>
         )}
       </div>
     </>

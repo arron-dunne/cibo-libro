@@ -182,7 +182,7 @@ export type ImportJobGroupByOutputType = {
   _max: ImportJobMaxAggregateOutputType | null
 }
 
-type GetImportJobGroupByPayload<T extends ImportJobGroupByArgs> = Prisma.PrismaPromise<
+export type GetImportJobGroupByPayload<T extends ImportJobGroupByArgs> = Prisma.PrismaPromise<
   Array<
     Prisma.PickEnumerable<ImportJobGroupByOutputType, T['by']> &
       {

@@ -7,7 +7,7 @@ import {
   PrimaryButton,
   SecondaryButton,
 } from "@/app/components/buttons/Buttons";
-import { Modal } from "@/app/components/modals/Modal";
+import { Modal } from "@/app/components/Modal";
 import { Input } from "@/app/components/forms/Inputs";
 
 export default function ChangePassword() {

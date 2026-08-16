@@ -1,5 +1,9 @@
 # Test Plan
 
+This document is provided to give an overivew of the test philisophy in Cibo Libro, 
+the different types of tests used in Cibo Libro and to help others write, update,
+and understand tests.
+
 ---
 
 ### Purpose of Testing

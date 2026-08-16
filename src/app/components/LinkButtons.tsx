@@ -1,28 +1,30 @@
-import React, { ButtonHTMLAttributes } from "react";
+import React, { AnchorHTMLAttributes } from "react";
+import Link from "next/link";
 
 type Size = "md" | "lg" | "xl" | "custom";
 
-interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
+interface LinkButtonProps extends AnchorHTMLAttributes<HTMLAnchorElement> {
+  href: string;
   size?: Size;
   width?: string;
   height?: string;
   invalid?: boolean;
+  disabled?: boolean;
 }
 
-interface TertiaryButtonProps extends ButtonProps {
+interface TertiaryLinkButtonProps extends LinkButtonProps {
   underline?: boolean;
 }
 
-export function PrimaryButton({
+export function PrimaryLinkButton({
   size = "md",
   width = "w-max",
   height = "h-max",
   disabled = false,
-  type = "button",
   className = "",
   children,
   ...props
-}: ButtonProps) {
+}: LinkButtonProps) {
   let sizeStyle: string;
   switch (size) {
     case "xl":
@@ -48,26 +50,24 @@ export function PrimaryButton({
     : "cursor-pointer hover:brightness-90 active:brightness-75";
 
   return (
-    <button
+    <Link
       className={`${width} ${height} ${sizeStyle} ${disabledStyle} flex no-wrap justify-center items-center gap-2 rounded-full bg-linear-to-r from-orange-500 to-rose-500 text-white font-bold ${className}`}
-      type={type}
       {...props}
     >
       {children}
-    </button>
+    </Link>
   );
 }
 
-export function SecondaryButton({
+export function SecondaryLinkButton({
   size = "md",
   width = "w-max",
   height = "h-max",
   className = "",
-  type = "button",
   children,
   disabled = false,
   ...props
-}: ButtonProps) {
+}: LinkButtonProps) {
   let sizeStyle: string;
   switch (size) {
     case "lg":
@@ -89,30 +89,27 @@ export function SecondaryButton({
     : "cursor-pointer hover:bg-stone-100/70 active:bg-rose-200/80";
 
   return (
-    <button
+    <Link
       className={`${width} ${height} ${sizeStyle} ${disabledStyle} flex gap-2 justify-center items-center rounded-full bg-white/50 backdrop-blur-lg border border-orange-500/70 text-orange-500 font-bold ${className}`}
-      type={type}
       {...props}
     >
       {children}
-    </button>
+    </Link>
   );
 }
 
-export function TertiaryButton({
+export function TertiaryLinkButton({
   children,
-  underline=true,
-  type="button",
-  className="",
+  underline = true,
+  className = "",
   ...props
-}: TertiaryButtonProps) {
+}: TertiaryLinkButtonProps) {
   return (
-    <button
+    <Link
       className={`${underline ? "underline" : ""} flex no-wrap justify-center items-center gap-2 text-orange-600 font-bold cursor-pointer border border-transparent hover:brightness-125 active:brightness-90 ${className}`}
-      type={type}
       {...props}
     >
       {children}
-    </button>
+    </Link>
   );
 }

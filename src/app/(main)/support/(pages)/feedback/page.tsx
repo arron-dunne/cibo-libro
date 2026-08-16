@@ -37,11 +37,11 @@ export default function FeedbackPage() {
     <div>
       {/* Feedback Panel */}
       {state.status === "success" && (
-        <SuccessBanner text="Your feedback was submitted. Thank you." />
+        <SuccessBanner className="mb-8" text="Your feedback was submitted. Thank you." />
       )}
 
       {state.status === "error" && (
-        <ErrorBanner text="Something went wrong. Please try again or come back later." />
+        <ErrorBanner className="mb-8" text="Something went wrong. Please try again or come back later." />
       )}
 
       {/* Header */}

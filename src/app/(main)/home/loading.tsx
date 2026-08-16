@@ -1,7 +1,4 @@
 import Link from "next/link";
-import { redirect } from "next/navigation";
-import { prisma } from "@/lib/prisma";
-import { auth } from "@/lib/auth/auth";
 import {
   ChevronRight,
   CookingPot,
@@ -11,56 +8,22 @@ import {
   Search,
   Tag as TagIcon,
 } from "lucide-react";
-import {
-  RecipeCard,
-  RecipeCardProps,
-} from "@/app/components/recipes/RecipeCard";
-import { Header, SubHeader } from "@/app/components/text/Headers";
 import { PrimaryButton } from "@/app/components/buttons/Buttons";
 import { PrimaryLinkButton } from "@/app/components/LinkButtons";
-import { Tag } from "@/app/components/tags/Tags";
+import { Header, SubHeader } from "@/app/components/text/Headers";
 
-export default async function HomePage() {
-  const session = await auth();
-
-  if(!session) {
-    redirect("/login");
-  }
-
-  const recentRecipes = await prisma?.recipe.findMany({
-    where: { ownerId: session.user.id },
-    orderBy: { createdAt: "desc" },
-    take: 4,
-    select: {
-      title: true,
-      description: true,
-      tags: true,
-      slug: true,
-      imageKey: true,
-      imageExternalUrl: true,
-    },
-  });
-
-  const allTags = (
-    await prisma.$queryRaw<{ tag: string }[]>`
-      SELECT tag
-      FROM "Recipe"
-      CROSS JOIN LATERAL unnest("tags") AS tag
-      WHERE "ownerId" = ${session.user.id}
-      GROUP BY tag
-      ORDER BY COUNT(*) DESC
-      LIMIT 10
-    `
-  ).map((r) => r.tag);
-
+export default function Loading() {
   return (
     <>
       {/* Header */}
       <div className="mt-12 ml-2 space-y-2">
         <Header>What&apos;s cooking?</Header>
-        <SubHeader>Browse your cookbook, add new recipes, or import them so you never forget the food you love to cook.</SubHeader>
+        <SubHeader>
+          Browse your cookbook, add new recipes, or import them so you never
+          forget the food you love to cook.
+        </SubHeader>
       </div>
-      
+
       {/* Main actions card */}
       <section className="w-full mt-4">
         <div className="mt-8 flex flex-wrap gap-4">
@@ -88,10 +51,10 @@ export default async function HomePage() {
       {/* Quick Search Section */}
       <section className="mt-14 rounded-3xl border border-white/50 bg-white p-6 sm:p-8">
         <Header textSize="text-3xl">What do you feel like today?</Header>
-        
+
         {/* Search Bar */}
         <SubHeader className="mt-6 ml-2 mb-4">
-          <Search size={24}/>
+          <Search size={24} />
           Search your cookbook
         </SubHeader>
         <form action="/all" method="get" className="h-12 flex gap-2">
@@ -104,46 +67,43 @@ export default async function HomePage() {
           />
           <PrimaryButton type="submit" height="h-full">
             Search
-            <ChevronRight size={20}/>
+            <ChevronRight size={20} />
           </PrimaryButton>
         </form>
 
         {/* Tag Cloud */}
         <SubHeader className="mt-6 ml-2 mb-4">
-          <TagIcon size={24}/>
+          <TagIcon size={24} />
           Filter by tags
         </SubHeader>
-        {allTags.length > 0 && (
-          <div className="flex flex-wrap gap-3">
-            {allTags.map((tag, i) => (
-              <Link
-                key={i}
-                href={`/all?tags=${encodeURIComponent(tag)}`}
-              >
-                <Tag interactive={true}>
-                  {tag}
-                </Tag>
-              </Link>
-            ))}
-          </div>
-        )}
+        <div className="flex flex-wrap gap-3" aria-hidden="true">
+          <LoadingTag width="w-20" />
+          <LoadingTag width="w-28" />
+          <LoadingTag width="w-24" />
+        </div>
       </section>
 
       {/* Recently Added */}
       <section className="mt-10">
         <div className="flex items-center justify-between mb-4">
-          <Header className="ml-2" textSize="text-3xl sm:text-4xl">Recently Added</Header>
+          <Header className="ml-2" textSize="text-3xl sm:text-4xl">
+            Recently Added
+          </Header>
           <PrimaryLinkButton href="/all?sort=created">
             More <ChevronRight size={16} />
           </PrimaryLinkButton>
         </div>
-        <div className="grid gap-6 grid-cols-2 lg:grid-cols-4">
-          {recentRecipes.map((recipe, i) => (
-            <RecipeCard key={i} recipe={recipe as RecipeCardProps} />
-          ))}
-        </div>
+        <div className="grid gap-6 grid-cols-2 lg:grid-cols-4" />
       </section>
     </>
+  );
+}
+
+function LoadingTag({ width }: { width: string }) {
+  return (
+    <div
+      className={`${width} h-11 animate-pulse rounded-full border border-rose-300 bg-rose-50`}
+    />
   );
 }
 

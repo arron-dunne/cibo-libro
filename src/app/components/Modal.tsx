@@ -3,23 +3,23 @@
 import { LucideIcon, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
+import { TertiaryButton } from "./buttons/Buttons";
 
 interface ModalProps {
   isOpen: boolean;
   closeModal: () => void;
-  icon?: LucideIcon;
-  header: string;
+  header?: string;
   subheader?: string;
-  // confirmAction: () => void;
+  icon?: LucideIcon;
   children: React.ReactNode;
 }
 
 export function Modal({
   isOpen,
   closeModal,
-  icon: Icon,
-  // header,
+  header,
   subheader,
+  icon: Icon,
   // confirmAction,
   children,
 }: ModalProps) {
@@ -33,6 +33,7 @@ export function Modal({
     function onKeyDown(e: KeyboardEvent) {
       if (e.key === "Escape") {
         e.preventDefault();
+        e.stopPropagation();
         closeModal();
       }
     }
@@ -56,28 +57,30 @@ export function Modal({
               aria-modal="true"
             >
               {/* Close button */}
-              <button
+              <TertiaryButton
                 onClick={() => closeModal()}
-                className="absolute right-4 top-4 text-orange-600 hover:text-gray-600"
+                className="absolute right-4 top-4"
               >
                 <X size={24} />
-              </button>
+              </TertiaryButton>
 
               {/* Icon */}
               {Icon && (
-                <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-linear-to-br from-orange-100 to-rose-100 text-rose-500">
+                <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-linear-to-br from-orange-100 to-rose-100 text-rose-500">
                   <Icon size={28} />
                 </div>
               )}
 
               {/* Header */}
-              <h2 className="mt-4 text-xl font-bold text-gray-900">
-                Change Password
-              </h2>
+              {header && (
+                <h2 className="mb-4 text-xl font-bold text-gray-900">
+                  {header}
+                </h2>
+              )}
 
               {/* Subheader */}
               {subheader && (
-                <p className="mt-2 text-sm text-gray-500">
+                <p className="mb-4 text-sm text-gray-500">
                   Enter your current password and choose a new one.
                 </p>
               )}

@@ -3,5 +3,5 @@ export default function LoginLayout({
 }: {
   children: React.ReactNode;
 }) {
-  return <div className="mt-12 px-8 max-w-md mx-auto">{children}</div>;
+  return <div className="mt-10 sm:mt-12 px-8 max-w-md mx-auto">{children}</div>;
 }

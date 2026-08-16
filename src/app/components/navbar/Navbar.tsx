@@ -9,7 +9,7 @@ import { LogoutButton } from "./LogoutButton";
 import { logout } from "@/app/actions/logout";
 import { Session } from "next-auth";
 import { useEffect, useState } from "react";
-import { PrimaryButton, SecondaryButton } from "../buttons/Buttons";
+import { PrimaryLinkButton, SecondaryLinkButton } from "../LinkButtons";
 import { ChefHat, Home } from "lucide-react";
 
 export function Navbar({ session }: { session?: Session | null }) {
@@ -33,17 +33,16 @@ export function Navbar({ session }: { session?: Session | null }) {
 
   return (
     <nav
-      className={`w-full sticky top-0 px-8 sm:px-12 z-10 flex gap-4 items-center justify-between transition-all border-white/80 ${scrolled ? "py-3 bg-white/50 backdrop-blur-xl border-b" : "pt-8 bg-transparent"}`}
+      className={`w-full sticky top-0 px-8 sm:px-12 z-40 flex gap-4 items-center justify-between transition-all border-white/80 ${scrolled ? "py-3 bg-white/50 backdrop-blur-xl border-b" : "pt-8 bg-transparent"}`}
     >
       {/* Logo */}
-      <Link href="/" className="w-60 grow" aria-label="cibo libro home">
+      <Link href="/" className="grow" aria-label="cibo libro home">
         <Image
           src="/logo.png"
           alt="cibo libro"
           width={563}
           height={102}
-          className={`${scrolled ? "max-w-48 sm:max-w-52" : "max-w-52 sm:max-w-56"} w-full h-auto`}
-          // className={`${scrolled ? "h-9 sm:h-10" : "h-10 sm:h-12"} w-auto`}
+          className={`${scrolled ? "max-w-48 sm:max-w-52" : "max-w-48 sm:max-w-56"} w-full h-auto`}
           priority
         />
       </Link>
@@ -51,22 +50,16 @@ export function Navbar({ session }: { session?: Session | null }) {
       {/* Show different navbar depending on page and session */}
       {pathname === "/landing" ? (
         <>
-          <Link href="/login">
-            <PrimaryButton type="button" className="block md:hidden shrink-0">
-              <ChefHat size={20} className="-rotate-12" />
-              <span>
-                <span>Start</span>
-                <span className="hidden sm:inline">&nbsp;Cooking</span>
-              </span>
-            </PrimaryButton>
-          </Link>
+          <PrimaryLinkButton href="/login" className="block md:hidden shrink-0">
+            <ChefHat size={20} className="-rotate-12" />
+            <span>
+              <span>Start</span>
+              <span className="hidden sm:inline">&nbsp;Cooking</span>
+            </span>
+          </PrimaryLinkButton>
           <div className="hidden md:flex gap-4 h-max">
-            <Link href="/login">
-              <SecondaryButton type="button">Login</SecondaryButton>
-            </Link>
-            <Link href="/register">
-              <PrimaryButton type="button">Get Started</PrimaryButton>
-            </Link>
+            <SecondaryLinkButton href="/login">Login</SecondaryLinkButton>
+            <PrimaryLinkButton href="/register">Get Started</PrimaryLinkButton>
           </div>
         </>
       ) : session?.user ? (
@@ -75,23 +68,21 @@ export function Navbar({ session }: { session?: Session | null }) {
             {/* Home button */}
             <span className="text-slate-800">{session.user.email}</span>
             <div className="ml-4">
-              <Link href="/home">
-                <PrimaryButton type="button">
-                  <Home size={20} />
-                  Home
-                </PrimaryButton>
-              </Link>
+              <PrimaryLinkButton href="/home">
+                <Home size={20} />
+                Home
+              </PrimaryLinkButton>
             </div>
           </div>
         ) : (
           <>
             {/* Navigation */}
-            <div className="hidden md:flex gap-6">
-              <DesktopNavLink type="home" />
-              <DesktopNavLink type="all" />
-              <DesktopNavLink type="new" />
-              <DesktopNavLink type="import" />
-              <DesktopNavLink type="settings" />
+            <div className="hidden md:flex gap-6 items-center">
+              <DesktopNavLink type="home" selected={/^\/home/.test(pathname)}/>
+              <DesktopNavLink type="all" selected={/^\/(all|view|edit)/.test(pathname)}/>
+              <DesktopNavLink type="new" selected={/^\/add/.test(pathname)}/>
+              <DesktopNavLink type="import" selected={/^\/import/.test(pathname)}/>
+              <DesktopNavLink type="settings" selected={/^\/settings/.test(pathname)}/>
             </div>
 
             {/* Logout */}
@@ -109,35 +100,21 @@ export function Navbar({ session }: { session?: Session | null }) {
         )
       ) : pathname === "/register" ? (
         <>
-          <span className="font-semibold text-slate-600">
+          <span className="hidden sm:block font-semibold text-slate-600">
             Already have an account?
           </span>
-          <Link href="/login">
-            <SecondaryButton type="button">Login</SecondaryButton>
-          </Link>
+          <SecondaryLinkButton href="/login">Login</SecondaryLinkButton>
         </>
       ) : pathname === "/login" ? (
         <div className="flex gap-2 sm:gap-4 items-center">
-          <span className="font-semibold text-slate-600">New here?</span>
-          <Link href="/register">
-            <SecondaryButton type="button">Create Account</SecondaryButton>
-          </Link>
+          <span className="hidden sm:block font-semibold text-slate-600">New here?</span>
+          <SecondaryLinkButton href="/register">Create Account</SecondaryLinkButton>
         </div>
       ) : (
-        <>
-          <Link
-            href="/login"
-            className="flex items-center justify-center rounded-full border border-white/70 bg-linear-to-br text-slate-900 from-slate-200 to-slate-300 px-4 py-2 font-semibold shadow hover:brightness-90 active:brightness-75"
-          >
-            Login
-          </Link>
-          <Link
-            href="/register"
-            className="flex items-center justify-center border border-white/70 rounded-full bg-linear-to-br from-orange-500 to-rose-500 text-white px-4 py-2 font-semibold shadow hover:brightness-90 active:brightness-75"
-          >
-            Regsiter
-          </Link>
-        </>
+        <div className="flex gap-4 h-max">
+          <SecondaryLinkButton className="hidden md:block" href="/register">Register</SecondaryLinkButton>
+          <PrimaryLinkButton href="/login">Login</PrimaryLinkButton>
+        </div>
       )}
     </nav>
   );
