@@ -1,4 +1,5 @@
 import React, { AnchorHTMLAttributes } from "react";
+import Link from "next/link";
 
 type Size = "md" | "lg" | "xl" | "custom";
 
@@ -49,12 +50,12 @@ export function PrimaryLinkButton({
     : "cursor-pointer hover:brightness-90 active:brightness-75";
 
   return (
-    <a
+    <Link
       className={`${width} ${height} ${sizeStyle} ${disabledStyle} flex no-wrap justify-center items-center gap-2 rounded-full bg-linear-to-r from-orange-500 to-rose-500 text-white font-bold ${className}`}
       {...props}
     >
       {children}
-    </a>
+    </Link>
   );
 }
 
@@ -88,12 +89,12 @@ export function SecondaryLinkButton({
     : "cursor-pointer hover:bg-stone-100/70 active:bg-rose-200/80";
 
   return (
-    <a
+    <Link
       className={`${width} ${height} ${sizeStyle} ${disabledStyle} flex gap-2 justify-center items-center rounded-full bg-white/50 backdrop-blur-lg border border-orange-500/70 text-orange-500 font-bold ${className}`}
       {...props}
     >
       {children}
-    </a>
+    </Link>
   );
 }
 
@@ -104,11 +105,11 @@ export function TertiaryLinkButton({
   ...props
 }: TertiaryLinkButtonProps) {
   return (
-    <a
+    <Link
       className={`${underline ? "underline" : ""} flex no-wrap justify-center items-center gap-2 text-orange-600 font-bold cursor-pointer border border-transparent hover:brightness-125 active:brightness-90 ${className}`}
       {...props}
     >
       {children}
-    </a>
+    </Link>
   );
 }
