@@ -19,7 +19,7 @@ import {
   PrimaryButton,
   SecondaryButton,
 } from "@/app/components/buttons/Buttons";
-import { TertiaryLinkButton } from "@/app/components/LinkButtons";
+import { TertiaryLinkButton } from "@/app/components/buttons/LinkButtons";
 import { Tag } from "../tags/Tags";
 
 // ────────────────────────────────────────────────────────────────────────────

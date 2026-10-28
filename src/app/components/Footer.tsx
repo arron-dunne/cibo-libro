@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import { usePathname } from "next/navigation";
-import { TertiaryLinkButton } from "./LinkButtons";
+import { TertiaryLinkButton } from "./buttons/LinkButtons";
 
 export function Footer() {
   const pathname = usePathname();
