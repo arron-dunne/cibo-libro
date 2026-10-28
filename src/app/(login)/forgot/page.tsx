@@ -3,7 +3,7 @@ import { SubmitButton } from "../components/SubmitButton";
 import {
   PrimaryLinkButton,
   SecondaryLinkButton,
-} from "@/app/components/LinkButtons";
+} from "@/app/components/buttons/LinkButtons";
 import { Header } from "@/app/components/text/Headers";
 import { Input } from "@/app/components/forms/Inputs";
 import { SuccessBanner } from "@/app/(main)/support/components/Banners";

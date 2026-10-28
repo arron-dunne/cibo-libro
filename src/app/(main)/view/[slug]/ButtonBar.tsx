@@ -4,7 +4,7 @@ import { SecondaryButton } from "@/app/components/buttons/Buttons";
 import {
   PrimaryLinkButton,
   SecondaryLinkButton,
-} from "@/app/components/LinkButtons";
+} from "@/app/components/buttons/LinkButtons";
 import {
   ArrowLeft,
   ChefHat,

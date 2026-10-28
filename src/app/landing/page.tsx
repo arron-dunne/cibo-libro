@@ -3,7 +3,7 @@ import {
   PrimaryLinkButton,
   SecondaryLinkButton,
   TertiaryLinkButton,
-} from "@/app/components/LinkButtons";
+} from "@/app/components/buttons/LinkButtons";
 import { Header, SubHeader } from "@/app/components/text/Headers";
 import {
   Calendar,

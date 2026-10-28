@@ -1,4 +1,4 @@
-import { PrimaryLinkButton } from "@/app/components/LinkButtons";
+import { PrimaryLinkButton } from "@/app/components/buttons/LinkButtons";
 import { Header } from "@/app/components/text/Headers";
 
 export default function AboutPage() {

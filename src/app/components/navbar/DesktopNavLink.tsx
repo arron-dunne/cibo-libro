@@ -7,7 +7,7 @@ import {
   HomeIcon,
   Settings,
 } from "lucide-react";
-import { PrimaryLinkButton, TertiaryLinkButton } from "../LinkButtons";
+import { PrimaryLinkButton, TertiaryLinkButton } from "../buttons/LinkButtons";
 
 export type NavLinkType = "home" | "all" | "new" | "import" | "settings" | "logout";
 
