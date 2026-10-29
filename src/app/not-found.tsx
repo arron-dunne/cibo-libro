@@ -12,7 +12,7 @@ export default function NotFound() {
   return (
     <div className="mt-48 flex flex-col items-center">
       <Header>Page Not Found</Header>
-      <p className="mt-4 mb-8 text-base sm:text-lg">We couldn't find page you're looking for.</p>
+      <p className="mt-4 mb-8 text-base sm:text-lg">We couldn&apos;t find page you&apos;re looking for.</p>
 
       <div className="flex gap-4">
         <SecondaryButton width="w-max sm:w-40" type="button" size="lg" onClick={() => router.back()}>
