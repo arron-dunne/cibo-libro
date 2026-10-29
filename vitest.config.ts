@@ -16,6 +16,7 @@ export default defineConfig({
   test: {
     dir: "src/test/",
     environment: "jsdom", // components; integration tests can override to 'node'
+    watch: false,
     // setupFiles: ['./tests/vitest/setupTests.ts'],
     // coverage: { provider: 'vs8', reporter: ['text', 'lcov'] }
   },
