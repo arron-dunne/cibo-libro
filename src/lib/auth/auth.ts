@@ -48,6 +48,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         return {
           id: user.id,
           email: user.email,
+          isAdmin: user.isAdmin,
           sessionVersion: user.sessionVersion,
         };
       },
@@ -57,9 +58,15 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
   callbacks: {
     async jwt({ token, user }) {
       if (user) {
-        const u = user as { id: string; email: string; sessionVersion: number };
+        const u = user as {
+          id: string;
+          email: string;
+          isAdmin: boolean;
+          sessionVersion: number;
+        };
         (token as JWT).userId = u.id;
         (token as JWT).email = u.email;
+        (token as JWT).isAdmin = u.isAdmin;
         (token as JWT).sessionVersion = u.sessionVersion;
       }
 
@@ -84,6 +91,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         session.user = {
           id: userId as string,
           email: token.email as string,
+          isAdmin: token.isAdmin as boolean,
           sessionVersion: token.sessionVersion as number,
         };
       }

@@ -40,6 +40,7 @@ export type UserMinAggregateOutputType = {
   passwordHash: string | null
   createdAt: Date | null
   updatedAt: Date | null
+  isAdmin: boolean | null
   sessionVersion: number | null
 }
 
@@ -49,6 +50,7 @@ export type UserMaxAggregateOutputType = {
   passwordHash: string | null
   createdAt: Date | null
   updatedAt: Date | null
+  isAdmin: boolean | null
   sessionVersion: number | null
 }
 
@@ -58,6 +60,7 @@ export type UserCountAggregateOutputType = {
   passwordHash: number
   createdAt: number
   updatedAt: number
+  isAdmin: number
   sessionVersion: number
   _all: number
 }
@@ -77,6 +80,7 @@ export type UserMinAggregateInputType = {
   passwordHash?: true
   createdAt?: true
   updatedAt?: true
+  isAdmin?: true
   sessionVersion?: true
 }
 
@@ -86,6 +90,7 @@ export type UserMaxAggregateInputType = {
   passwordHash?: true
   createdAt?: true
   updatedAt?: true
+  isAdmin?: true
   sessionVersion?: true
 }
 
@@ -95,6 +100,7 @@ export type UserCountAggregateInputType = {
   passwordHash?: true
   createdAt?: true
   updatedAt?: true
+  isAdmin?: true
   sessionVersion?: true
   _all?: true
 }
@@ -191,6 +197,7 @@ export type UserGroupByOutputType = {
   passwordHash: string | null
   createdAt: Date
   updatedAt: Date
+  isAdmin: boolean
   sessionVersion: number
   _count: UserCountAggregateOutputType | null
   _avg: UserAvgAggregateOutputType | null
@@ -223,6 +230,7 @@ export type UserWhereInput = {
   passwordHash?: Prisma.StringNullableFilter<"User"> | string | null
   createdAt?: Prisma.DateTimeFilter<"User"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"User"> | Date | string
+  isAdmin?: Prisma.BoolFilter<"User"> | boolean
   sessionVersion?: Prisma.IntFilter<"User"> | number
   recipes?: Prisma.RecipeListRelationFilter
   importJobs?: Prisma.ImportJobListRelationFilter
@@ -238,6 +246,7 @@ export type UserOrderByWithRelationInput = {
   passwordHash?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  isAdmin?: Prisma.SortOrder
   sessionVersion?: Prisma.SortOrder
   recipes?: Prisma.RecipeOrderByRelationAggregateInput
   importJobs?: Prisma.ImportJobOrderByRelationAggregateInput
@@ -256,6 +265,7 @@ export type UserWhereUniqueInput = Prisma.AtLeast<{
   passwordHash?: Prisma.StringNullableFilter<"User"> | string | null
   createdAt?: Prisma.DateTimeFilter<"User"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"User"> | Date | string
+  isAdmin?: Prisma.BoolFilter<"User"> | boolean
   sessionVersion?: Prisma.IntFilter<"User"> | number
   recipes?: Prisma.RecipeListRelationFilter
   importJobs?: Prisma.ImportJobListRelationFilter
@@ -271,6 +281,7 @@ export type UserOrderByWithAggregationInput = {
   passwordHash?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  isAdmin?: Prisma.SortOrder
   sessionVersion?: Prisma.SortOrder
   _count?: Prisma.UserCountOrderByAggregateInput
   _avg?: Prisma.UserAvgOrderByAggregateInput
@@ -288,6 +299,7 @@ export type UserScalarWhereWithAggregatesInput = {
   passwordHash?: Prisma.StringNullableWithAggregatesFilter<"User"> | string | null
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"User"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"User"> | Date | string
+  isAdmin?: Prisma.BoolWithAggregatesFilter<"User"> | boolean
   sessionVersion?: Prisma.IntWithAggregatesFilter<"User"> | number
 }
 
@@ -297,6 +309,7 @@ export type UserCreateInput = {
   passwordHash?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  isAdmin?: boolean
   sessionVersion?: number
   recipes?: Prisma.RecipeCreateNestedManyWithoutOwnerInput
   importJobs?: Prisma.ImportJobCreateNestedManyWithoutUserInput
@@ -312,6 +325,7 @@ export type UserUncheckedCreateInput = {
   passwordHash?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  isAdmin?: boolean
   sessionVersion?: number
   recipes?: Prisma.RecipeUncheckedCreateNestedManyWithoutOwnerInput
   importJobs?: Prisma.ImportJobUncheckedCreateNestedManyWithoutUserInput
@@ -327,6 +341,7 @@ export type UserUpdateInput = {
   passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  isAdmin?: Prisma.BoolFieldUpdateOperationsInput | boolean
   sessionVersion?: Prisma.IntFieldUpdateOperationsInput | number
   recipes?: Prisma.RecipeUpdateManyWithoutOwnerNestedInput
   importJobs?: Prisma.ImportJobUpdateManyWithoutUserNestedInput
@@ -342,6 +357,7 @@ export type UserUncheckedUpdateInput = {
   passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  isAdmin?: Prisma.BoolFieldUpdateOperationsInput | boolean
   sessionVersion?: Prisma.IntFieldUpdateOperationsInput | number
   recipes?: Prisma.RecipeUncheckedUpdateManyWithoutOwnerNestedInput
   importJobs?: Prisma.ImportJobUncheckedUpdateManyWithoutUserNestedInput
@@ -357,6 +373,7 @@ export type UserCreateManyInput = {
   passwordHash?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  isAdmin?: boolean
   sessionVersion?: number
 }
 
@@ -366,6 +383,7 @@ export type UserUpdateManyMutationInput = {
   passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  isAdmin?: Prisma.BoolFieldUpdateOperationsInput | boolean
   sessionVersion?: Prisma.IntFieldUpdateOperationsInput | number
 }
 
@@ -375,6 +393,7 @@ export type UserUncheckedUpdateManyInput = {
   passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  isAdmin?: Prisma.BoolFieldUpdateOperationsInput | boolean
   sessionVersion?: Prisma.IntFieldUpdateOperationsInput | number
 }
 
@@ -384,6 +403,7 @@ export type UserCountOrderByAggregateInput = {
   passwordHash?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  isAdmin?: Prisma.SortOrder
   sessionVersion?: Prisma.SortOrder
 }
 
@@ -397,6 +417,7 @@ export type UserMaxOrderByAggregateInput = {
   passwordHash?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  isAdmin?: Prisma.SortOrder
   sessionVersion?: Prisma.SortOrder
 }
 
@@ -406,6 +427,7 @@ export type UserMinOrderByAggregateInput = {
   passwordHash?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  isAdmin?: Prisma.SortOrder
   sessionVersion?: Prisma.SortOrder
 }
 
@@ -433,6 +455,10 @@ export type NullableStringFieldUpdateOperationsInput = {
 
 export type DateTimeFieldUpdateOperationsInput = {
   set?: Date | string
+}
+
+export type BoolFieldUpdateOperationsInput = {
+  set?: boolean
 }
 
 export type IntFieldUpdateOperationsInput = {
@@ -535,6 +561,7 @@ export type UserCreateWithoutRecipesInput = {
   passwordHash?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  isAdmin?: boolean
   sessionVersion?: number
   importJobs?: Prisma.ImportJobCreateNestedManyWithoutUserInput
   accounts?: Prisma.AccountCreateNestedManyWithoutUserInput
@@ -549,6 +576,7 @@ export type UserUncheckedCreateWithoutRecipesInput = {
   passwordHash?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  isAdmin?: boolean
   sessionVersion?: number
   importJobs?: Prisma.ImportJobUncheckedCreateNestedManyWithoutUserInput
   accounts?: Prisma.AccountUncheckedCreateNestedManyWithoutUserInput
@@ -579,6 +607,7 @@ export type UserUpdateWithoutRecipesInput = {
   passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  isAdmin?: Prisma.BoolFieldUpdateOperationsInput | boolean
   sessionVersion?: Prisma.IntFieldUpdateOperationsInput | number
   importJobs?: Prisma.ImportJobUpdateManyWithoutUserNestedInput
   accounts?: Prisma.AccountUpdateManyWithoutUserNestedInput
@@ -593,6 +622,7 @@ export type UserUncheckedUpdateWithoutRecipesInput = {
   passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  isAdmin?: Prisma.BoolFieldUpdateOperationsInput | boolean
   sessionVersion?: Prisma.IntFieldUpdateOperationsInput | number
   importJobs?: Prisma.ImportJobUncheckedUpdateManyWithoutUserNestedInput
   accounts?: Prisma.AccountUncheckedUpdateManyWithoutUserNestedInput
@@ -607,6 +637,7 @@ export type UserCreateWithoutUploadsInput = {
   passwordHash?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  isAdmin?: boolean
   sessionVersion?: number
   recipes?: Prisma.RecipeCreateNestedManyWithoutOwnerInput
   importJobs?: Prisma.ImportJobCreateNestedManyWithoutUserInput
@@ -621,6 +652,7 @@ export type UserUncheckedCreateWithoutUploadsInput = {
   passwordHash?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  isAdmin?: boolean
   sessionVersion?: number
   recipes?: Prisma.RecipeUncheckedCreateNestedManyWithoutOwnerInput
   importJobs?: Prisma.ImportJobUncheckedCreateNestedManyWithoutUserInput
@@ -651,6 +683,7 @@ export type UserUpdateWithoutUploadsInput = {
   passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  isAdmin?: Prisma.BoolFieldUpdateOperationsInput | boolean
   sessionVersion?: Prisma.IntFieldUpdateOperationsInput | number
   recipes?: Prisma.RecipeUpdateManyWithoutOwnerNestedInput
   importJobs?: Prisma.ImportJobUpdateManyWithoutUserNestedInput
@@ -665,6 +698,7 @@ export type UserUncheckedUpdateWithoutUploadsInput = {
   passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  isAdmin?: Prisma.BoolFieldUpdateOperationsInput | boolean
   sessionVersion?: Prisma.IntFieldUpdateOperationsInput | number
   recipes?: Prisma.RecipeUncheckedUpdateManyWithoutOwnerNestedInput
   importJobs?: Prisma.ImportJobUncheckedUpdateManyWithoutUserNestedInput
@@ -679,6 +713,7 @@ export type UserCreateWithoutImportJobsInput = {
   passwordHash?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  isAdmin?: boolean
   sessionVersion?: number
   recipes?: Prisma.RecipeCreateNestedManyWithoutOwnerInput
   accounts?: Prisma.AccountCreateNestedManyWithoutUserInput
@@ -693,6 +728,7 @@ export type UserUncheckedCreateWithoutImportJobsInput = {
   passwordHash?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  isAdmin?: boolean
   sessionVersion?: number
   recipes?: Prisma.RecipeUncheckedCreateNestedManyWithoutOwnerInput
   accounts?: Prisma.AccountUncheckedCreateNestedManyWithoutUserInput
@@ -723,6 +759,7 @@ export type UserUpdateWithoutImportJobsInput = {
   passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  isAdmin?: Prisma.BoolFieldUpdateOperationsInput | boolean
   sessionVersion?: Prisma.IntFieldUpdateOperationsInput | number
   recipes?: Prisma.RecipeUpdateManyWithoutOwnerNestedInput
   accounts?: Prisma.AccountUpdateManyWithoutUserNestedInput
@@ -737,6 +774,7 @@ export type UserUncheckedUpdateWithoutImportJobsInput = {
   passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  isAdmin?: Prisma.BoolFieldUpdateOperationsInput | boolean
   sessionVersion?: Prisma.IntFieldUpdateOperationsInput | number
   recipes?: Prisma.RecipeUncheckedUpdateManyWithoutOwnerNestedInput
   accounts?: Prisma.AccountUncheckedUpdateManyWithoutUserNestedInput
@@ -751,6 +789,7 @@ export type UserCreateWithoutUserContactsInput = {
   passwordHash?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  isAdmin?: boolean
   sessionVersion?: number
   recipes?: Prisma.RecipeCreateNestedManyWithoutOwnerInput
   importJobs?: Prisma.ImportJobCreateNestedManyWithoutUserInput
@@ -765,6 +804,7 @@ export type UserUncheckedCreateWithoutUserContactsInput = {
   passwordHash?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  isAdmin?: boolean
   sessionVersion?: number
   recipes?: Prisma.RecipeUncheckedCreateNestedManyWithoutOwnerInput
   importJobs?: Prisma.ImportJobUncheckedCreateNestedManyWithoutUserInput
@@ -795,6 +835,7 @@ export type UserUpdateWithoutUserContactsInput = {
   passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  isAdmin?: Prisma.BoolFieldUpdateOperationsInput | boolean
   sessionVersion?: Prisma.IntFieldUpdateOperationsInput | number
   recipes?: Prisma.RecipeUpdateManyWithoutOwnerNestedInput
   importJobs?: Prisma.ImportJobUpdateManyWithoutUserNestedInput
@@ -809,6 +850,7 @@ export type UserUncheckedUpdateWithoutUserContactsInput = {
   passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  isAdmin?: Prisma.BoolFieldUpdateOperationsInput | boolean
   sessionVersion?: Prisma.IntFieldUpdateOperationsInput | number
   recipes?: Prisma.RecipeUncheckedUpdateManyWithoutOwnerNestedInput
   importJobs?: Prisma.ImportJobUncheckedUpdateManyWithoutUserNestedInput
@@ -823,6 +865,7 @@ export type UserCreateWithoutAccountsInput = {
   passwordHash?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  isAdmin?: boolean
   sessionVersion?: number
   recipes?: Prisma.RecipeCreateNestedManyWithoutOwnerInput
   importJobs?: Prisma.ImportJobCreateNestedManyWithoutUserInput
@@ -837,6 +880,7 @@ export type UserUncheckedCreateWithoutAccountsInput = {
   passwordHash?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  isAdmin?: boolean
   sessionVersion?: number
   recipes?: Prisma.RecipeUncheckedCreateNestedManyWithoutOwnerInput
   importJobs?: Prisma.ImportJobUncheckedCreateNestedManyWithoutUserInput
@@ -867,6 +911,7 @@ export type UserUpdateWithoutAccountsInput = {
   passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  isAdmin?: Prisma.BoolFieldUpdateOperationsInput | boolean
   sessionVersion?: Prisma.IntFieldUpdateOperationsInput | number
   recipes?: Prisma.RecipeUpdateManyWithoutOwnerNestedInput
   importJobs?: Prisma.ImportJobUpdateManyWithoutUserNestedInput
@@ -881,6 +926,7 @@ export type UserUncheckedUpdateWithoutAccountsInput = {
   passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  isAdmin?: Prisma.BoolFieldUpdateOperationsInput | boolean
   sessionVersion?: Prisma.IntFieldUpdateOperationsInput | number
   recipes?: Prisma.RecipeUncheckedUpdateManyWithoutOwnerNestedInput
   importJobs?: Prisma.ImportJobUncheckedUpdateManyWithoutUserNestedInput
@@ -895,6 +941,7 @@ export type UserCreateWithoutSessionsInput = {
   passwordHash?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  isAdmin?: boolean
   sessionVersion?: number
   recipes?: Prisma.RecipeCreateNestedManyWithoutOwnerInput
   importJobs?: Prisma.ImportJobCreateNestedManyWithoutUserInput
@@ -909,6 +956,7 @@ export type UserUncheckedCreateWithoutSessionsInput = {
   passwordHash?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  isAdmin?: boolean
   sessionVersion?: number
   recipes?: Prisma.RecipeUncheckedCreateNestedManyWithoutOwnerInput
   importJobs?: Prisma.ImportJobUncheckedCreateNestedManyWithoutUserInput
@@ -939,6 +987,7 @@ export type UserUpdateWithoutSessionsInput = {
   passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  isAdmin?: Prisma.BoolFieldUpdateOperationsInput | boolean
   sessionVersion?: Prisma.IntFieldUpdateOperationsInput | number
   recipes?: Prisma.RecipeUpdateManyWithoutOwnerNestedInput
   importJobs?: Prisma.ImportJobUpdateManyWithoutUserNestedInput
@@ -953,6 +1002,7 @@ export type UserUncheckedUpdateWithoutSessionsInput = {
   passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  isAdmin?: Prisma.BoolFieldUpdateOperationsInput | boolean
   sessionVersion?: Prisma.IntFieldUpdateOperationsInput | number
   recipes?: Prisma.RecipeUncheckedUpdateManyWithoutOwnerNestedInput
   importJobs?: Prisma.ImportJobUncheckedUpdateManyWithoutUserNestedInput
@@ -1043,6 +1093,7 @@ export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   passwordHash?: boolean
   createdAt?: boolean
   updatedAt?: boolean
+  isAdmin?: boolean
   sessionVersion?: boolean
   recipes?: boolean | Prisma.User$recipesArgs<ExtArgs>
   importJobs?: boolean | Prisma.User$importJobsArgs<ExtArgs>
@@ -1059,6 +1110,7 @@ export type UserSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   passwordHash?: boolean
   createdAt?: boolean
   updatedAt?: boolean
+  isAdmin?: boolean
   sessionVersion?: boolean
 }, ExtArgs["result"]["user"]>
 
@@ -1068,6 +1120,7 @@ export type UserSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   passwordHash?: boolean
   createdAt?: boolean
   updatedAt?: boolean
+  isAdmin?: boolean
   sessionVersion?: boolean
 }, ExtArgs["result"]["user"]>
 
@@ -1077,10 +1130,11 @@ export type UserSelectScalar = {
   passwordHash?: boolean
   createdAt?: boolean
   updatedAt?: boolean
+  isAdmin?: boolean
   sessionVersion?: boolean
 }
 
-export type UserOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "email" | "passwordHash" | "createdAt" | "updatedAt" | "sessionVersion", ExtArgs["result"]["user"]>
+export type UserOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "email" | "passwordHash" | "createdAt" | "updatedAt" | "isAdmin" | "sessionVersion", ExtArgs["result"]["user"]>
 export type UserInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   recipes?: boolean | Prisma.User$recipesArgs<ExtArgs>
   importJobs?: boolean | Prisma.User$importJobsArgs<ExtArgs>
@@ -1109,6 +1163,7 @@ export type $UserPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     passwordHash: string | null
     createdAt: Date
     updatedAt: Date
+    isAdmin: boolean
     sessionVersion: number
   }, ExtArgs["result"]["user"]>
   composites: {}
@@ -1544,6 +1599,7 @@ export interface UserFieldRefs {
   readonly passwordHash: Prisma.FieldRef<"User", 'String'>
   readonly createdAt: Prisma.FieldRef<"User", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"User", 'DateTime'>
+  readonly isAdmin: Prisma.FieldRef<"User", 'Boolean'>
   readonly sessionVersion: Prisma.FieldRef<"User", 'Int'>
 }
     
