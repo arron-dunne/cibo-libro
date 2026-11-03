@@ -796,10 +796,6 @@ export type RecipeUpdatetagsInput = {
   push?: string | string[]
 }
 
-export type BoolFieldUpdateOperationsInput = {
-  set?: boolean
-}
-
 export type EnumRecipeStatusFieldUpdateOperationsInput = {
   set?: $Enums.RecipeStatus
 }

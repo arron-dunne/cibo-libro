@@ -11,7 +11,8 @@
     "test:unit": "vitest unit.test.ts",
     "test:int": "vitest int.test.ts",
     "test:e2e": "playwright test",
-    "test:smoke": "playwright test -g \"@smoke\""
+    "test:smoke": "playwright test -g \"@smoke\"",
+    "preflight": "npm run lint && npm run build && npm run test:unit && npm run test:int && npm run test:e2e"
   },
   "dependencies": {
     "@auth/prisma-adapter": "^2.10.0",

@@ -5,8 +5,6 @@ import ChangePassword from "./ChangePassword";
 import { signOutAllDevices } from "./actions";
 import { Header } from "@/app/components/text/Headers";
 import { SecondaryButton } from "@/app/components/buttons/Buttons";
-import { logout } from "@/app/actions/logout";
-import LogoutButton from "./LogoutButton";
 import { ExportRecipes } from "./ExportRecipes";
 
 export default async function SettingsPage() {
@@ -18,8 +16,8 @@ export default async function SettingsPage() {
   const email = session.user.email ?? "Unknown";
 
   return (
-    <div className="mt-12 max-w-lg w-full mx-auto space-y-8">
-      <Header>Settings</Header>
+    <div className="mt-12 max-w-3xl w-full mx-auto space-y-8">
+      <Header className="ml-2">Settings</Header>
 
       {/* Account Details */}
       <section className="rounded-3xl bg-white p-8">
@@ -28,20 +26,17 @@ export default async function SettingsPage() {
           Account Details
         </h2>
 
-        <div className="flex items-center justify-between mb-8">
+        <div className="flex items-center justify-between px-2">
           <p className="text-lg font-medium text-slate-500">Email</p>
           <p className="text-lg text-slate-800">{email}</p>
         </div>
 
-        <div className="flex flex-col gap-6">
-          <form action={logout}>
-            <LogoutButton />
-          </form>
+        <div className="mt-6 flex flex-col gap-6">
 
           <ChangePassword />
 
           <form action={signOutAllDevices}>
-            <SecondaryButton type="submit" width="w-full">
+            <SecondaryButton type="submit" width="w-full" size="lg">
               Sign out of all devices
             </SecondaryButton>
           </form>

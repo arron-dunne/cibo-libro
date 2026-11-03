@@ -17,7 +17,7 @@ import {
 } from "@/app/components/recipes/RecipeCard";
 import { Header, SubHeader } from "@/app/components/text/Headers";
 import { PrimaryButton } from "@/app/components/buttons/Buttons";
-import { PrimaryLinkButton } from "@/app/components/LinkButtons";
+import { PrimaryLinkButton } from "@/app/components/buttons/LinkButtons";
 import { Tag } from "@/app/components/tags/Tags";
 
 export default async function HomePage() {

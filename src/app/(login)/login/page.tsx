@@ -1,7 +1,7 @@
 import { CircleAlert } from "lucide-react";
 import { handleSignIn } from "./actions";
 import { SubmitButton } from "../components/SubmitButton";
-import { TertiaryLinkButton } from "@/app/components/LinkButtons";
+import { TertiaryLinkButton } from "@/app/components/buttons/LinkButtons";
 import { Header, SubHeader } from "@/app/components/text/Headers";
 import { Input } from "@/app/components/forms/Inputs";
 

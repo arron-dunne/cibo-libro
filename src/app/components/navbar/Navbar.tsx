@@ -9,7 +9,7 @@ import { LogoutButton } from "./LogoutButton";
 import { logout } from "@/app/actions/logout";
 import { Session } from "next-auth";
 import { useEffect, useState } from "react";
-import { PrimaryLinkButton, SecondaryLinkButton } from "../LinkButtons";
+import { PrimaryLinkButton, SecondaryLinkButton } from "../buttons/LinkButtons";
 import { ChefHat, Home } from "lucide-react";
 
 export function Navbar({ session }: { session?: Session | null }) {

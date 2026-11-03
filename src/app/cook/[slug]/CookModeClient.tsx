@@ -20,7 +20,7 @@ import {
 import {
   PrimaryLinkButton,
   SecondaryLinkButton,
-} from "@/app/components/LinkButtons";
+} from "@/app/components/buttons/LinkButtons";
 import { Header } from "@/app/components/text/Headers";
 import { Modal } from "@/app/components/Modal";
 import Toggle from "@/app/components/Toggle";
