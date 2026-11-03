@@ -1,4 +1,4 @@
-import { Header, SubHeader } from "@/app/components/text/Headers";
+import { Header } from "@/app/components/text/Headers";
 import { auth } from "@/lib/auth/auth";
 import { prisma } from "@/lib/prisma";
 import { redirect } from "next/navigation";
