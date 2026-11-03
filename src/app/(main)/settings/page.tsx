@@ -5,8 +5,6 @@ import ChangePassword from "./ChangePassword";
 import { signOutAllDevices } from "./actions";
 import { Header } from "@/app/components/text/Headers";
 import { SecondaryButton } from "@/app/components/buttons/Buttons";
-import { logout } from "@/app/actions/logout";
-import LogoutButton from "./LogoutButton";
 import { ExportRecipes } from "./ExportRecipes";
 
 export default async function SettingsPage() {
