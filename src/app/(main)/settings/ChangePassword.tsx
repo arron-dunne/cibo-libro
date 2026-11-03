@@ -21,7 +21,7 @@ export default function ChangePassword() {
   return (
     <>
       {/* Trigger Button */}
-      <SecondaryButton type="button" width="w-full" onClick={() => setIsModalOpen(true)}>
+      <SecondaryButton type="button" width="w-full" size="lg" onClick={() => setIsModalOpen(true)}>
         Change Password
       </SecondaryButton>
 
